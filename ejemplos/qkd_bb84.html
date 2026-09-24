@@ -1,528 +1,186 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../" data-page="ej-bb84">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QKD (BB84) - Ejemplos Prácticos - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/prism.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ejemplo E5 · Protocolo BB84 — Curso PQC</title>
+  <meta name="description" content="Simulador de BB84 en el navegador: ruido de canal, espía de interceptación-reenvío, cribado, estimación del QBER con intervalo de confianza, reconciliación Cascade, amplificación de privacidad con Toeplitz y longitud final de clave.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/course-data.js" defer></script>
+  <script src="../js/course.js" defer></script>
+  <script src="../js/qkd_bb84_interactive.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Inicio</a></li>
-                <li><a href="../programa.html">Programa</a></li>
-                <li><a href="../temas/tema1/index.html">Temas</a></li>
-                <li><a href="index.html">Ejemplos Prácticos</a></li>
-                <li><a href="../guias/index.html">Guías de Laboratorio</a></li>
-                <li><a href="../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../index.html">Inicio</a> &gt; <a href="index.html">Ejemplos Prácticos</a> &gt; QKD (BB84)
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../index.html">Inicio</a>
+        <a href="../programa.html">Programa</a>
+        <a href="../temas/index.html">Temas</a>
+        <a href="../ejemplos/index.html" aria-current="page">Ejemplos</a>
+        <a href="../guias/index.html">Laboratorios</a>
+        <a href="../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Distribución Cuántica de Claves: Protocolo BB84</h1>
-        
-        <section class="intro">
-            <p>La Distribución Cuántica de Claves (QKD, por sus siglas en inglés) es un método para compartir claves criptográficas que utiliza principios de la mecánica cuántica para garantizar la seguridad. A diferencia de la criptografía post-cuántica, que utiliza matemáticas clásicas resistentes a ataques cuánticos, QKD aprovecha las propiedades fundamentales de la física cuántica.</p>
-            <p>El protocolo BB84, propuesto por Bennett y Brassard en 1984, fue el primer protocolo QKD y sigue siendo uno de los más importantes. En este ejemplo, exploraremos cómo funciona BB84 y veremos una implementación simplificada que ilustra sus principios fundamentales.</p>
-        </section>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../index.html">Inicio</a></li><li><a href="../ejemplos/index.html">Ejemplos</a></li><li aria-current="page">E5 · BB84</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Ejemplo E5 · Tema 6</p>
+        <h1>Protocolo <em>BB84</em>, de los fotones a la clave</h1>
+        <p class="lede">Un simulador completo de BB84 en el navegador: elija cuántos fotones enviar, cuánto ruido tiene el canal y qué fracción intercepta Eve, y siga cada fase hasta la clave final, con sus números reales.</p>
+        <dl class="page-meta">
+          <div><dt>Tema</dt><dd><a href="../temas/tema6/index.html">Tema 6 · QKD</a></dd></div>
+          <div><dt>Nivel</dt><dd>Intermedio</dd></div>
+          <div><dt>Tiempo</dt><dd>30–45 min</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
 
-        <section class="example-code">
-            <h2>Implementación Simplificada del Protocolo BB84</h2>
-            <p>El siguiente código es una implementación didáctica simplificada del protocolo BB84. No es una implementación real de QKD (que requeriría hardware cuántico), sino una simulación para ilustrar los conceptos.</p>
-            
-            <pre><code class="language-python">"""
-Simulación didáctica del protocolo BB84 para Distribución Cuántica de Claves
-NOTA: Esta implementación es solo para fines educativos y simula los efectos cuánticos.
-"""
-import numpy as np
-import random
-import hashlib
-from enum import Enum
+      <article class="prose">
+        <h2 id="modelo"><span class="sec">E5.1</span>Qué se simula</h2>
+        <p>Cada ejecución reproduce el protocolo descrito en la <a href="../temas/tema6/index.html">sección 6.2 del Tema 6</a> con este modelo:</p>
+        <ul>
+          <li><strong>Fuente ideal de fotón único</strong>: sin pérdidas, sin pulsos multifotón (el ataque PNS no aparece) y sin cuentas oscuras. Todos los fotones llegan.</li>
+          <li><strong>Ruido de canal</strong> <var>e</var>: cada resultado de Bob se invierte con probabilidad <var>e</var>, un modelo sencillo de desalineación óptica.</li>
+          <li><strong>Eve</strong> intercepta cada fotón con probabilidad <var>p</var>, lo mide en una base aleatoria y reenvía el estado obtenido. El QBER esperado es <span class="math"><var>Q</var> = <var>e</var> + (1 − 2<var>e</var>)·<var>p</var>/4</span>.</li>
+          <li><strong>Postprocesado</strong>: cribado; estimación del QBER sobre una muestra aleatoria con intervalo de Wilson al 95&nbsp;% y cota de Hoeffding; aborto si <span class="math"><var>Q̂</var></span> supera el umbral; reconciliación Cascade (o BINARY sin retroceso, para comparar); amplificación de privacidad con una matriz de Toeplitz.</li>
+        </ul>
+        <p>Los números aleatorios salen de un generador con semilla (mulberry32), de modo que cada semilla reproduce la misma ejecución. No es criptográfico ni lo necesita: es una simulación.</p>
 
-class Basis(Enum):
-    RECTILINEAR = 0  # Base + (horizontal/vertical)
-    DIAGONAL = 1     # Base × (diagonal)
-
-class Qubit:
-    def __init__(self, bit_value, basis):
-        """
-        Inicializa un qubit con un valor de bit y una base de medición
-        
-        Args:
-            bit_value (int): 0 o 1
-            basis (Basis): Base de preparación (RECTILINEAR o DIAGONAL)
-        """
-        self.bit_value = bit_value
-        self.basis = basis
-    
-    def measure(self, measurement_basis):
-        """
-        Mide el qubit en la base especificada
-        
-        Args:
-            measurement_basis (Basis): Base de medición
-            
-        Returns:
-            int: Resultado de la medición (0 o 1)
-        """
-        if measurement_basis == self.basis:
-            # Si medimos en la misma base, obtenemos el valor original
-            return self.bit_value
-        else:
-            # Si medimos en una base diferente, obtenemos un resultado aleatorio
-            return random.randint(0, 1)
-    
-    def __str__(self):
-        basis_symbol = "+" if self.basis == Basis.RECTILINEAR else "×"
-        return f"{self.bit_value}{basis_symbol}"
-
-class QuantumChannel:
-    def __init__(self, error_rate=0.0, eve_present=False):
-        """
-        Inicializa un canal cuántico con una tasa de error y presencia de espía
-        
-        Args:
-            error_rate (float): Tasa de error del canal (0.0 a 1.0)
-            eve_present (bool): Si hay un espía (Eve) en el canal
-        """
-        self.error_rate = error_rate
-        self.eve_present = eve_present
-        self.eve_bases = []  # Bases que Eve usará para medir
-    
-    def transmit(self, qubits):
-        """
-        Transmite qubits a través del canal
-        
-        Args:
-            qubits (list): Lista de objetos Qubit
-            
-        Returns:
-            list: Lista de qubits potencialmente alterados
-        """
-        transmitted_qubits = []
-        
-        # Si Eve está presente, genera bases aleatorias para medir
-        if self.eve_present:
-            self.eve_bases = [random.choice(list(Basis)) for _ in range(len(qubits))]
-            self.eve_measurements = []
-        
-        for i, qubit in enumerate(qubits):
-            # Copia del qubit original
-            transmitted = Qubit(qubit.bit_value, qubit.basis)
-            
-            # Si Eve está presente, intercepta y mide el qubit
-            if self.eve_present:
-                eve_measurement = qubit.measure(self.eve_bases[i])
-                self.eve_measurements.append(eve_measurement)
-                
-                # Eve reenvía un nuevo qubit basado en su medición
-                transmitted = Qubit(eve_measurement, self.eve_bases[i])
-            
-            # Simular errores del canal
-            if random.random() < self.error_rate:
-                # Invertir el bit con probabilidad error_rate
-                transmitted.bit_value = 1 - transmitted.bit_value
-            
-            transmitted_qubits.append(transmitted)
-        
-        return transmitted_qubits
-
-class BB84Protocol:
-    def __init__(self, num_bits=1000, error_rate=0.0, eve_present=False):
-        """
-        Inicializa el protocolo BB84
-        
-        Args:
-            num_bits (int): Número de bits a transmitir
-            error_rate (float): Tasa de error del canal
-            eve_present (bool): Si hay un espía en el canal
-        """
-        self.num_bits = num_bits
-        self.channel = QuantumChannel(error_rate, eve_present)
-        
-        # Datos de Alice
-        self.alice_bits = []
-        self.alice_bases = []
-        
-        # Datos de Bob
-        self.bob_bases = []
-        self.bob_measurements = []
-        
-        # Datos de Eve (si está presente)
-        self.eve_bases = []
-        self.eve_measurements = []
-        
-        # Resultados del protocolo
-        self.matching_bases_indices = []
-        self.sample_indices = []
-        self.key_indices = []
-        self.error_rate = 0.0
-        self.final_key = []
-    
-    def alice_prepares_qubits(self):
-        """Alice prepara qubits aleatorios en bases aleatorias"""
-        self.alice_bits = [random.randint(0, 1) for _ in range(self.num_bits)]
-        self.alice_bases = [random.choice(list(Basis)) for _ in range(self.num_bits)]
-        
-        qubits = [Qubit(self.alice_bits[i], self.alice_bases[i]) 
-                 for i in range(self.num_bits)]
-        
-        return qubits
-    
-    def bob_measures_qubits(self, qubits):
-        """Bob mide los qubits recibidos en bases aleatorias"""
-        self.bob_bases = [random.choice(list(Basis)) for _ in range(len(qubits))]
-        self.bob_measurements = [qubits[i].measure(self.bob_bases[i]) 
-                               for i in range(len(qubits))]
-    
-    def compare_bases(self):
-        """Alice y Bob comparan sus bases y descartan las no coincidentes"""
-        self.matching_bases_indices = [i for i in range(self.num_bits) 
-                                     if self.alice_bases[i] == self.bob_bases[i]]
-        
-        print(f"Bases coincidentes: {len(self.matching_bases_indices)}/{self.num_bits}")
-    
-    def estimate_error_rate(self, sample_size=100):
-        """
-        Alice y Bob estiman la tasa de error sacrificando algunos bits
-        
-        Args:
-            sample_size (int): Número de bits a sacrificar para la estimación
-        """
-        # Asegurarse de que no intentamos muestrear más bits de los disponibles
-        sample_size = min(sample_size, len(self.matching_bases_indices))
-        
-        # Seleccionar índices aleatorios para el muestreo
-        self.sample_indices = random.sample(self.matching_bases_indices, sample_size)
-        
-        # Contar errores en los bits de muestra
-        errors = sum(1 for i in self.sample_indices 
-                    if self.alice_bits[i] != self.bob_measurements[i])
-        
-        self.error_rate = errors / sample_size
-        
-        print(f"Tasa de error estimada: {self.error_rate:.2%}")
-        
-        # Determinar si la tasa de error es aceptable (típicamente < 11%)
-        return self.error_rate < 0.11
-    
-    def generate_key(self):
-        """Alice y Bob generan la clave final con los bits restantes"""
-        # Excluir los bits usados para la estimación de error
-        self.key_indices = [i for i in self.matching_bases_indices 
-                          if i not in self.sample_indices]
-        
-        # Extraer los bits para la clave final
-        self.final_key = [self.alice_bits[i] for i in self.key_indices]
-        
-        # En una implementación real, se aplicaría:
-        # 1. Reconciliación de información (corrección de errores)
-        # 2. Amplificación de privacidad (hash)
-        
-        # Simulamos la amplificación de privacidad con un hash simple
-        key_string = ''.join(str(bit) for bit in self.final_key)
-        hashed_key = hashlib.sha256(key_string.encode()).hexdigest()
-        
-        print(f"Longitud de la clave final: {len(self.final_key)} bits")
-        print(f"Muestra de la clave: {''.join(str(bit) for bit in self.final_key[:16])}...")
-        print(f"Clave hash: {hashed_key}")
-        
-        return self.final_key
-    
-    def run_protocol(self):
-        """Ejecuta el protocolo BB84 completo"""
-        print("=== Iniciando Protocolo BB84 ===")
-        
-        # Paso 1: Alice prepara qubits
-        print("\nPaso 1: Alice prepara qubits")
-        qubits = self.alice_prepares_qubits()
-        
-        # Paso 2: Alice envía qubits a Bob a través del canal cuántico
-        print("\nPaso 2: Transmisión por canal cuántico")
-        received_qubits = self.channel.transmit(qubits)
-        
-        # Si Eve está presente, guardamos sus datos
-        if self.channel.eve_present:
-            self.eve_bases = self.channel.eve_bases
-            self.eve_measurements = self.channel.eve_measurements
-        
-        # Paso 3: Bob mide los qubits recibidos
-        print("\nPaso 3: Bob mide los qubits recibidos")
-        self.bob_measures_qubits(received_qubits)
-        
-        # Paso 4: Alice y Bob comparan bases
-        print("\nPaso 4: Comparación de bases")
-        self.compare_bases()
-        
-        # Paso 5: Estimación de la tasa de error
-        print("\nPaso 5: Estimación de la tasa de error")
-        error_acceptable = self.estimate_error_rate()
-        
-        if not error_acceptable:
-            print("\n⚠️ Tasa de error demasiado alta. Posible presencia de espía.")
-            print("Protocolo abortado.")
-            return None
-        
-        # Paso 6: Generación de la clave final
-        print("\nPaso 6: Generación de la clave final")
-        key = self.generate_key()
-        
-        print("\n=== Protocolo BB84 completado con éxito ===")
-        
-        return key
-
-# Ejemplo de uso
-if __name__ == "__main__":
-    # Ejecutar protocolo sin espía
-    print("\n=== EJECUCIÓN SIN ESPÍA ===")
-    protocol = BB84Protocol(num_bits=1000, error_rate=0.05, eve_present=False)
-    key_without_eve = protocol.run_protocol()
-    
-    # Ejecutar protocolo con espía
-    print("\n\n=== EJECUCIÓN CON ESPÍA ===")
-    protocol_with_eve = BB84Protocol(num_bits=1000, error_rate=0.05, eve_present=True)
-    key_with_eve = protocol_with_eve.run_protocol()
-</code></pre>
-        </section>
-
-        <section class="explanation">
-            <h2>Explicación del Protocolo BB84</h2>
-            
-            <h3>Fundamentos Cuánticos</h3>
-            <p>El protocolo BB84 se basa en dos principios fundamentales de la mecánica cuántica:</p>
-            <ol>
-                <li><strong>Principio de incertidumbre de Heisenberg:</strong> No es posible medir simultáneamente ciertas propiedades complementarias de un sistema cuántico con precisión arbitraria.</li>
-                <li><strong>Teorema de no clonación:</strong> Es imposible crear una copia exacta de un estado cuántico desconocido.</li>
-            </ol>
-            
-            <p>Estos principios garantizan que cualquier intento de interceptar la comunicación cuántica alterará inevitablemente los estados, permitiendo detectar la presencia de un espía.</p>
-            
-            <h3>Pasos del Protocolo BB84</h3>
-            <div class="protocol-steps">
-                <div class="step">
-                    <h4>Paso 1: Preparación de Qubits</h4>
-                    <p>Alice genera dos secuencias aleatorias:</p>
-                    <ul>
-                        <li>Una secuencia de bits (0s y 1s)</li>
-                        <li>Una secuencia de bases (rectilinear + y diagonal ×)</li>
-                    </ul>
-                    <p>Para cada bit, Alice prepara un qubit en la base correspondiente:</p>
-                    <ul>
-                        <li>Base rectilinear (+): |0⟩ para bit 0, |1⟩ para bit 1</li>
-                        <li>Base diagonal (×): |+⟩ para bit 0, |−⟩ para bit 1</li>
-                    </ul>
-                </div>
-                
-                <div class="step">
-                    <h4>Paso 2: Transmisión Cuántica</h4>
-                    <p>Alice envía los qubits a Bob a través de un canal cuántico.</p>
-                    <p>Si Eve intenta interceptar los qubits, debe elegir una base para medirlos:</p>
-                    <ul>
-                        <li>Si elige la misma base que Alice, obtiene el bit correcto pero altera el estado</li>
-                        <li>Si elige una base diferente, obtiene un resultado aleatorio y altera el estado</li>
-                    </ul>
-                </div>
-                
-                <div class="step">
-                    <h4>Paso 3: Medición de Qubits</h4>
-                    <p>Bob genera una secuencia aleatoria de bases y mide cada qubit recibido en la base correspondiente.</p>
-                    <p>Resultados de la medición:</p>
-                    <ul>
-                        <li>Si Bob usa la misma base que Alice, obtiene el bit original con alta probabilidad</li>
-                        <li>Si Bob usa una base diferente, obtiene un resultado aleatorio (0 o 1 con igual probabilidad)</li>
-                    </ul>
-                </div>
-                
-                <div class="step">
-                    <h4>Paso 4: Comparación de Bases</h4>
-                    <p>Alice y Bob revelan públicamente las bases que utilizaron (pero no los bits).</p>
-                    <p>Descartan todos los bits donde usaron bases diferentes, conservando solo aquellos donde coincidieron las bases.</p>
-                    <p>Aproximadamente el 50% de los bits se conservan en este paso.</p>
-                </div>
-                
-                <div class="step">
-                    <h4>Paso 5: Estimación de Error</h4>
-                    <p>Alice y Bob revelan públicamente una muestra aleatoria de sus bits coincidentes para estimar la tasa de error.</p>
-                    <p>Si la tasa de error es mayor que un umbral (típicamente 11%), sospechan la presencia de un espía y abortan el protocolo.</p>
-                    <p>La presencia de Eve introduce errores porque:</p>
-                    <ul>
-                        <li>Eve elige la base incorrecta aproximadamente el 50% del tiempo</li>
-                        <li>Cuando Eve elige la base incorrecta, introduce un error del 50%</li>
-                        <li>Esto resulta en una tasa de error del 25% cuando Eve intercepta todos los qubits</li>
-                    </ul>
-                </div>
-                
-                <div class="step">
-                    <h4>Paso 6: Procesamiento Final</h4>
-                    <p>Si la tasa de error es aceptable, Alice y Bob:</p>
-                    <ul>
-                        <li>Realizan reconciliación de información (corrección de errores)</li>
-                        <li>Aplican amplificación de privacidad (funciones hash) para eliminar cualquier información parcial que Eve pudiera haber obtenido</li>
-                    </ul>
-                    <p>El resultado es una clave secreta compartida que puede usarse para cifrado simétrico.</p>
-                </div>
+        <h2 id="simulador"><span class="sec">E5.2</span>Simulador</h2>
+        <section class="demo" id="demo-bb84" aria-labelledby="demo-bb84-t">
+          <div class="demo-head"><p class="demo-title" id="demo-bb84-t">Simulador BB84</p><button class="btn ghost" type="button" id="bb-reset">Valores iniciales</button></div>
+          <div class="demo-body">
+            <div class="controls">
+              <label class="field">Fotones enviados: <output id="bb-n-out">4&#8239;000</output><input id="bb-n" type="range" min="200" max="100000" step="200" value="4000"></label>
+              <label class="field">Ruido del canal e: <output id="bb-noise-out">2,0&nbsp;%</output><input id="bb-noise" type="range" min="0" max="15" step="0.5" value="2"></label>
+              <label class="field">Eve intercepta p: <output id="bb-eve-out">0&nbsp;%</output><input id="bb-eve" type="range" min="0" max="100" step="5" value="0"></label>
+              <label class="field">Muestra para el QBER: <output id="bb-sample-out">20&nbsp;%</output><input id="bb-sample" type="range" min="5" max="50" step="5" value="20"></label>
             </div>
-        </section>
-
-        <section class="comparison">
-            <h2>QKD vs. Criptografía Post-Cuántica</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Característica</th>
-                        <th>Distribución Cuántica de Claves (QKD)</th>
-                        <th>Criptografía Post-Cuántica (PQC)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Base de seguridad</td>
-                        <td>Leyes de la física cuántica</td>
-                        <td>Problemas matemáticos computacionalmente difíciles</td>
-                    </tr>
-                    <tr>
-                        <td>Hardware requerido</td>
-                        <td>Dispositivos cuánticos especializados</td>
-                        <td>Hardware convencional</td>
-                    </tr>
-                    <tr>
-                        <td>Distancia</td>
-                        <td>Limitada (típicamente <100 km sin repetidores)</td>
-                        <td>Ilimitada</td>
-                    </tr>
-                    <tr>
-                        <td>Tasa de transferencia</td>
-                        <td>Baja (kbps o menos)</td>
-                        <td>Alta (comparable a criptografía clásica)</td>
-                    </tr>
-                    <tr>
-                        <td>Infraestructura</td>
-                        <td>Requiere canales cuánticos dedicados</td>
-                        <td>Compatible con infraestructura existente</td>
-                    </tr>
-                    <tr>
-                        <td>Aplicación</td>
-                        <td>Solo distribución de claves</td>
-                        <td>Cifrado, firmas, intercambio de claves</td>
-                    </tr>
-                    <tr>
-                        <td>Madurez</td>
-                        <td>Implementaciones comerciales limitadas</td>
-                        <td>Estándares emergentes (NIST)</td>
-                    </tr>
-                    <tr>
-                        <td>Seguridad probada</td>
-                        <td>Seguridad incondicional (teóricamente)</td>
-                        <td>Seguridad computacional (basada en supuestos)</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        <section class="applications">
-            <h2>Aplicaciones Prácticas de QKD</h2>
-            <p>A pesar de sus limitaciones, QKD ya se está utilizando en varios contextos:</p>
-            <ul>
-                <li><strong>Redes financieras:</strong> Bancos y bolsas de valores para proteger transacciones de alta seguridad.</li>
-                <li><strong>Infraestructuras críticas:</strong> Protección de comunicaciones en redes eléctricas, plantas nucleares y sistemas de control industrial.</li>
-                <li><strong>Comunicaciones gubernamentales:</strong> Agencias de inteligencia y defensa para comunicaciones ultra-seguras.</li>
-                <li><strong>Redes metropolitanas:</strong> Implementaciones en ciudades como Tokio, Viena, Boston y Pekín.</li>
-                <li><strong>Comunicaciones satelitales:</strong> China ha demostrado QKD vía satélite (Micius) a distancias de más de 1,200 km.</li>
-            </ul>
-            
-            <p>El futuro de QKD incluye el desarrollo de repetidores cuánticos y redes cuánticas que podrían extender significativamente su alcance y aplicabilidad.</p>
-        </section>
-
-        <div class="interactive-demo">
-            <h2>Demostración Interactiva: Protocolo BB84</h2>
-            <div class="demo-container">
-                <div class="demo-controls">
-                    <div class="control-group">
-                        <label for="eve-checkbox">Incluir espía (Eve):</label>
-                        <input type="checkbox" id="eve-checkbox">
-                    </div>
-                    <button id="start-qkd-btn">Iniciar Simulación</button>
-                    <button id="next-step-btn" disabled>Siguiente Paso</button>
-                    <button id="reset-qkd-btn" disabled>Reiniciar</button>
-                </div>
-                <div class="demo-output">
-                    <div class="output-section">
-                        <h3>Estado</h3>
-                        <div id="qkd-status-output" class="status-box">Esperando inicio de simulación...</div>
-                    </div>
-                    <div class="output-section">
-                        <h3>Alice</h3>
-                        <div id="alice-display" class="participant-box"></div>
-                    </div>
-                    <div class="output-section">
-                        <h3>Canal Cuántico</h3>
-                        <div id="quantum-channel-display" class="channel-box"></div>
-                    </div>
-                    <div class="output-section">
-                        <h3>Bob</h3>
-                        <div id="bob-display" class="participant-box"></div>
-                    </div>
-                    <div class="output-section">
-                        <h3>Canal Clásico</h3>
-                        <div id="classical-channel-display" class="channel-box"></div>
-                    </div>
-                    <div class="output-section">
-                        <h3>Clave Final</h3>
-                        <div id="final-key-display" class="key-box"></div>
-                    </div>
-                </div>
+            <div class="controls">
+              <label class="field">Umbral de aborto: <output id="bb-thr-out">11,0&nbsp;%</output><input id="bb-thr" type="range" min="5" max="20" step="0.5" value="11"></label>
+              <label class="field">ε de la estimación
+                <select id="bb-eps"><option value="0.01">10⁻²</option><option value="0.001" selected>10⁻³</option><option value="0.000001">10⁻⁶</option></select></label>
+              <label class="field">Pasadas de reconciliación
+                <select id="bb-passes"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option></select></label>
+              <label class="field">Algoritmo
+                <select id="bb-bt"><option value="1" selected>Cascade</option><option value="0">BINARY sin retroceso</option></select></label>
+              <button class="btn" type="button" id="bb-run">Nueva semilla</button>
+              <span class="small" id="bb-seed">Semilla 12345</span>
             </div>
-        </div>
+            <div class="stat-row">
+              <div class="stat"><b id="bb-s-sift">—</b><small>bits cribados</small></div>
+              <div class="stat"><b id="bb-s-qber">—</b><small>QBER estimado Q̂</small></div>
+              <div class="stat"><b id="bb-s-theory">—</b><small>QBER teórico</small></div>
+              <div class="stat"><b id="bb-s-raw">—</b><small>clave bruta</small></div>
+              <div class="stat"><b id="bb-s-leak">—</b><small>bits revelados (EC)</small></div>
+              <div class="stat"><b id="bb-s-final">—</b><small>clave final ℓ</small></div>
+            </div>
+            <div class="bar" aria-hidden="true"><span id="bb-bar" style="width:0%"></span></div>
+            <p class="small" id="bb-bar-txt">Rendimiento: —</p>
+            <p class="small">Resultados de Bob para los primeros 96 fotones: verde, cribado y correcto; rojo, cribado con error; atenuado, base distinta (descartado).</p>
+            <div class="bits" id="bb-bits" aria-label="Bits de Bob"></div>
+            <div class="table-wrap"><table>
+              <caption>Primeros 32 fotones · estados H = 0°, V = 90°, D = +45°, A = −45°</caption>
+              <thead><tr><th class="num">#</th><th>Bit A</th><th>Base A</th><th>Estado</th><th>Eve</th><th>Base B</th><th>Bit B</th><th>¿α = β?</th><th>Uso</th><th>Resultado</th></tr></thead>
+              <tbody id="bb-rows"><tr><td colspan="10">Se necesita JavaScript para ejecutar la simulación.</td></tr></tbody>
+            </table></div>
+            <div class="output" id="bb-out" aria-live="polite">Se necesita JavaScript para ejecutar la simulación.</div>
+            <figure class="diagram">
+              <svg viewBox="0 0 660 300" role="img" aria-labelledby="bb-plot-title">
+                <title id="bb-plot-title">QBER frente a la probabilidad de interceptación</title>
+                <g id="bb-plot-g"></g>
+              </svg>
+              <figcaption><b>Figura E5.1.</b> <span id="bb-plot-txt">QBER frente a la probabilidad de interceptación p: recta teórica, puntos simulados y umbral.</span></figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <h2 id="experimentos"><span class="sec">E5.3</span>Guion de experimentos</h2>
+        <ol>
+          <li><strong>Canal perfecto.</strong> Ruido 0&nbsp;%, Eve 0&nbsp;%. El QBER es 0 y Cascade no revela más que las paridades de bloque. El techo es el 40&nbsp;% de los fotones enviados (50&nbsp;% de cribado × 80&nbsp;% no muestreado); con 4&#8239;000 fotones se obtiene en torno al 20&nbsp;% y con 100&#8239;000 en torno al 34&nbsp;%, porque aun sin errores la cota de Hoeffding no deja que <var>Q</var><sub>U</sub> sea 0.</li>
+          <li><strong>Espía total.</strong> Eve 100&nbsp;%. El QBER estimado ronda el 25&nbsp;% y el protocolo aborta. Cambie la semilla varias veces: con 4&#8239;000 fotones el QBER fluctúa ±2 puntos; con 100&#8239;000, ±0,4.</li>
+          <li><strong>Espía parcial.</strong> Ruido 2&nbsp;%, Eve 30&nbsp;%. La teoría da <span class="math">0,02 + 0,96·0,075 = 9,2&nbsp;%</span>: no se aborta, pero la longitud final se desploma. La prueba de seguridad ha «cobrado» la información de Eve sin necesidad de saber que existía.</li>
+          <li><strong>El umbral.</strong> Con ruido 2&nbsp;%, el cruce es <span class="math"><var>p</var> = 4(0,11 − 0,02)/0,96 ≈ 37,5&nbsp;%</span>. Compruébelo en la gráfica y observe que, con ruido del 11&nbsp;% o más, cualquier <var>p</var> provoca el aborto.</li>
+          <li><strong>Tamaño finito.</strong> Ruido 3&nbsp;%, Eve 0&nbsp;%, y compare 4&#8239;000 con 100&#8239;000 fotones. La longitud asintótica escala linealmente; la «didáctica» casi se anula con pocos fotones porque la cota de Hoeffding añade <span class="math">√(ln(1/ε)/2<var>k</var>)</span> al QBER. Pruebe también ε = 10⁻⁶.</li>
+          <li><strong>Cascade frente a BINARY.</strong> Ruido 5&nbsp;%, 20&#8239;000 fotones. Con BINARY sin retroceso suelen quedar errores (bloques con un número par de errores); con Cascade desaparecen porque cada bit corregido reabre los bloques de pasadas anteriores. Compare también los bits revelados y la eficiencia <var>f</var>.</li>
+        </ol>
+
+        <h2 id="lectura"><span class="sec">E5.4</span>Cómo leer cada fase</h2>
+        <h3>Estimación del QBER</h3>
+        <p>El simulador muestra dos cosas distintas. El <strong>intervalo de Wilson al 95&nbsp;%</strong> describe la incertidumbre estadística de la muestra. La <strong>cota de Hoeffding</strong> <span class="math"><var>Q</var><sub>U</sub> = <var>Q̂</var> + √(ln(1/ε)/2<var>k</var>)</span> es la que se usa para la seguridad: vale con probabilidad al menos 1 − ε sea cual sea la distribución de los errores, que Eve controla. La línea «QBER real» solo existe porque esto es una simulación; en un sistema real nadie lo conoce.</p>
+        <h3>Reconciliación</h3>
+        <p>El tamaño del primer bloque es <span class="math"><var>k</var><sub>1</sub> = 0,73/<var>Q̂</var></span>, la heurística de Brassard y Salvail; cada pasada dobla el tamaño tras una permutación pública. La traza muestra la bisección del primer bloque con paridad distinta. Los <strong>bits revelados</strong> (una paridad por bloque más una por paso de bisección) se cuentan como información de Eve. La eficiencia <span class="math"><var>f</var> = leak/(<var>n</var>·<var>h</var>(<var>Q</var>))</span> compara con el mínimo de Shannon; en las pruebas con 20&#8239;000 fotones y 5&nbsp;% de ruido la media fue <var>f</var> ≈ 1,18.</p>
+        <h3>Amplificación de privacidad</h3>
+        <p>Se genera una semilla pública de <span class="math"><var>n</var> + ℓ − 1</span> bits que define una matriz de Toeplitz ℓ × <var>n</var>; Alice y Bob multiplican su clave reconciliada por ella en GF(2). La implementación empaqueta los bits en palabras de 32 bits, de modo que cada bit de salida es la paridad de un AND entre la clave y un tramo contiguo de la semilla. El simulador muestra dos longitudes:</p>
+        <ul>
+          <li><strong>Asintótica</strong>, <span class="math">ℓ = <var>n</var>(1 − 2<var>h</var>(<var>Q̂</var>))</span>: ecuación de Shor–Preskill, como si el bloque fuera infinito y la reconciliación, perfecta.</li>
+          <li><strong>Didáctica</strong>, <span class="math">ℓ = <var>n</var>(1 − <var>h</var>(<var>Q</var><sub>U</sub>)) − leak<sub>EC</sub> − 2 log₂(1/ε<sub>PA</sub>)</span> con ε<sub>PA</sub> = 10⁻¹⁰: usa la cota de Hoeffding para el error de fase y descuenta lo que la reconciliación ha revelado de verdad.</li>
+        </ul>
+        <div class="callout warning"><span class="callout-title">Advertencia</span><p>La longitud «didáctica» ilustra de dónde salen los términos finitos, pero <strong>no es una prueba de seguridad</strong>. Un análisis riguroso de clave finita (Tomamichel et al., 2012) usa relaciones de incertidumbre entrópicas, trata el muestreo sin reemplazo, la verificación y la autenticación, y se aplica a un modelo realista de la fuente y los detectores.</p></div>
+
+        <h2 id="limitaciones"><span class="sec">E5.5</span>Lo que el modelo deja fuera</h2>
+        <ul>
+          <li><strong>Pérdidas y cuentas oscuras.</strong> En fibra real la mayoría de los fotones no llegan: con 0,2 dB/km a 100 km llega el 1&nbsp;%. El laboratorio L5 añade este modelo y la cota PLOB.</li>
+          <li><strong>Pulsos multifotón y señuelos.</strong> Con láser atenuado, Eve puede montar un ataque PNS sin inducir QBER; los estados señuelo permiten detectarlo. No se simula.</li>
+          <li><strong>Ataques más fuertes</strong> que la interceptación-reenvío (clonación óptima, ataques colectivos o coherentes): inducen menos QBER por bit de información; la prueba de seguridad los cubre, el simulador no los dibuja.</li>
+          <li><strong>Autenticación.</strong> El canal clásico se supone autenticado; en la práctica, con una clave previa o firmas post-cuánticas.</li>
+        </ul>
+
+        <h2 id="ejercicios"><span class="sec">E5.6</span>Ejercicios</h2>
+        <div class="exercise"><span class="ex-title">Ejercicio E5.1 <span class="level">Básico</span></span>
+          <p>Con 100&#8239;000 fotones, ruido 0&nbsp;% y Eve 40&nbsp;%, ¿qué QBER predice la teoría? Compruébelo con tres semillas y dé el intervalo de Wilson de una de ellas.</p>
+          <details><summary>Solución</summary><div class="details-body"><p><span class="math"><var>Q</var> = 0,40/4 = 10&nbsp;%</span>. Con ~10&#8239;000 bits muestreados, el intervalo de Wilson tiene una semianchura de unos 0,6 puntos, así que los valores observados caerán típicamente entre el 9,4&nbsp;% y el 10,6&nbsp;%. Por debajo del 11&nbsp;%: no se aborta, pero la fracción secreta asintótica es solo <span class="math">1 − 2<var>h</var>(0,10) ≈ 0,06</span>.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio E5.2 <span class="level">Intermedio</span></span>
+          <p>Con ruido 3&nbsp;% y Eve 0&nbsp;%, busque el menor número de fotones para el que la longitud didáctica supera 1&#8239;000 bits con ε = 10⁻³. Repita con ε = 10⁻⁶. Explique la diferencia.</p>
+          <details><summary>Solución</summary><div class="details-body"><p>Depende algo de la semilla; en nuestras pruebas (cinco semillas) hicieron falta ≈ 8&#8239;500 fotones con ε = 10⁻³ y ≈ 10&#8239;000 con ε = 10⁻⁶. Pasar de 10⁻³ a 10⁻⁶ duplica <span class="math">ln(1/ε)</span> (de 6,9 a 13,8), así que el término de Hoeffding crece un factor √2 y la cota <var>Q</var><sub>U</sub> sube; como <var>h</var> es muy empinada cerca de 0, eso consume mucha clave. Exigir más seguridad cuesta bloques más grandes.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio E5.3 <span class="level">Avanzado</span></span>
+          <p>Lea <code>js/qkd_bb84_interactive.js</code>. (a) Demuestre que <code>toeplitzHash</code> es lineal: <span class="math"><var>T</var>(<var>x</var> ⊕ <var>y</var>) = <var>Tx</var> ⊕ <var>Ty</var></span>. (b) ¿Por qué implica esto que, si Bob acaba con un solo bit distinto, las claves finales difieren en aproximadamente la mitad de los bits?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>(a) Es un producto matriz-vector sobre GF(2), lineal por definición; el fichero se comprobó con node frente a una implementación directa y verificando <span class="math"><var>T</var>(<var>x</var>⊕<var>y</var>) = <var>Tx</var>⊕<var>Ty</var></span>. (b) <span class="math"><var>K</var><sub>A</sub> ⊕ <var>K</var><sub>B</sub> = <var>T</var>(<var>x</var><sub>A</sub> ⊕ <var>x</var><sub>B</sub>) = <var>T</var><var>e</var><sub><var>j</var></sub></span>, que es la columna <var>j</var> de <var>T</var>: un tramo de la semilla aleatoria, con la mitad de unos en media. Por eso hay que verificar la reconciliación antes de amplificar.</p></div></details></div>
+
+        <h2 id="referencias">Referencias</h2>
+        <ol class="refs">
+          <li>C. H. Bennett, G. Brassard. <a href="https://arxiv.org/abs/2003.06557">Quantum cryptography: Public key distribution and coin tossing</a>. <span class="src">1984 (arXiv:2003.06557).</span></li>
+          <li>P. W. Shor, J. Preskill. <a href="https://link.aps.org/doi/10.1103/PhysRevLett.85.441">Simple proof of security of the BB84 quantum key distribution protocol</a>. <span class="src">Phys. Rev. Lett. 85, 441, 2000.</span></li>
+          <li>G. Brassard, L. Salvail. <a href="https://link.springer.com/chapter/10.1007/3-540-48285-7_35">Secret-key reconciliation by public discussion</a>. <span class="src">EUROCRYPT '93, LNCS 765.</span></li>
+          <li>J. Martinez-Mateo, C. Pacher, M. Peev, A. Ciurana, V. Martin. <a href="https://arxiv.org/abs/1407.3257">Demystifying the information reconciliation protocol Cascade</a>. <span class="src">Quantum Inf. Comput. 15, 453–477, 2015.</span></li>
+          <li>M. Tomamichel, C. C. W. Lim, N. Gisin, R. Renner. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3274703/">Tight finite-key analysis for quantum cryptography</a>. <span class="src">Nature Communications 3, 634, 2012.</span></li>
+        </ol>
+        <p>Continúe con el <a href="../guias/qkd.html">Laboratorio L5</a>, que reproduce estas fases en Python, añade pérdidas y conecta la clave a una aplicación mediante la API ETSI GS QKD 014.</p>
+      </article>
+
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../index.html">Inicio</a></li>
-                    <li><a href="../programa.html">Programa</a></li>
-                    <li><a href="../temas/tema1/index.html">Temas</a></li>
-                    <li><a href="index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="../guias/index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Ejemplos</h3>
-                <ul>
-                    <li><a href="algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="ml_kem.html">ML-KEM</a></li>
-                    <li><a href="ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="qkd_bb84.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../js/script.js"></script>
-    <script src="../js/examples.js"></script>
-    <script src="../js/qkd_bb84_interactive.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../glosario.html">Glosario</a>
+        <a href="../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

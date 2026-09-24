@@ -1,258 +1,157 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="" data-page="programa">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programa - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Programa y calendario — Curso PQC</title>
+  <meta name="description" content="Programa del Curso de Criptografía Post-Cuántica: resultados de aprendizaje, calendario de ocho sesiones, metodología, evaluación y proyecto final.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/course-data.js" defer></script>
+  <script src="js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="programa.html">Programa</a></li>
-                <li><a href="temas/tema1/index.html">Temas</a></li>
-                <li><a href="ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="guias/index.html">Guías de Laboratorio</a></li>
-                <li><a href="recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="index.html">Inicio</a> &gt; Programa
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="index.html">Inicio</a>
+        <a href="programa.html" aria-current="page">Programa</a>
+        <a href="temas/index.html">Temas</a>
+        <a href="ejemplos/index.html">Ejemplos</a>
+        <a href="guias/index.html">Laboratorios</a>
+        <a href="recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Programa del Curso</h1>
-        
-        <section class="course-info">
-            <h2>Información General</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <h3>Duración</h3>
-                    <p>16 horas (curso intensivo de una semana)</p>
-                </div>
-                <div class="info-item">
-                    <h3>Nivel</h3>
-                    <p>Introductorio (conocimientos básicos de criptografía recomendados)</p>
-                </div>
-                <div class="info-item">
-                    <h3>Enfoque</h3>
-                    <p>Equilibrio entre teoría y práctica</p>
-                </div>
-                <div class="info-item">
-                    <h3>Evaluación</h3>
-                    <p>Ejercicios prácticos y proyecto final</p>
-                </div>
-            </div>
-        </section>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="index.html">Inicio</a></li><li aria-current="page">Programa</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Programa · Edición 2026</p>
+        <h1>Programa y <em>calendario</em></h1>
+        <p class="lede">Qué se aprende, en qué orden, con qué actividades y cómo se evalúa. Pensado para ocho sesiones presenciales de dos horas, con trabajo práctico entre sesiones.</p>
+        <dl class="page-meta">
+          <div><dt>Duración</dt><dd>16 h lectivas</dd></div>
+          <div><dt>Formato</dt><dd>8 sesiones de 2 h</dd></div>
+          <div><dt>Idioma</dt><dd>Español</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
+      <article class="prose">
+        <h2 id="descripcion"><span class="sec">1</span>Descripción</h2>
+        <p>La criptografía de clave pública que protege Internet (RSA, Diffie–Hellman y las curvas elípticas) se basa en problemas que un ordenador cuántico suficientemente grande resolvería de forma eficiente. La criptografía post-cuántica (PQC) sustituye esos problemas por otros que, hasta donde sabemos, resisten también a los algoritmos cuánticos, y se ejecuta en los ordenadores y redes actuales.</p>
+        <p>El curso recorre el problema completo: la amenaza y su calendario, dónde está desplegada la criptografía vulnerable, las matemáticas de las nuevas familias, los estándares publicados por el NIST desde 2024, cómo se migra un sistema real y qué aporta la distribución cuántica de claves. Mantiene el equilibrio entre la intuición y el detalle técnico: cada tema explica los mecanismos con ejemplos resueltos y se acompaña de un ejemplo interactivo o un laboratorio.</p>
 
-        <section class="course-description">
-            <h2>Descripción del Curso</h2>
-            <p>Este curso introductorio de Criptografía Post-Cuántica (PQC) está diseñado para proporcionar a los estudiantes una comprensión clara de los fundamentos, desafíos y soluciones en este campo emergente. Con la llegada de la computación cuántica, muchos de los algoritmos criptográficos actuales se volverán vulnerables, creando una necesidad urgente de alternativas resistentes a ataques cuánticos.</p>
-            
-            <p>A lo largo del curso, los estudiantes explorarán los principios matemáticos detrás de los algoritmos post-cuánticos, analizarán los estándares emergentes del NIST, y obtendrán experiencia práctica implementando y evaluando soluciones criptográficas resistentes a ataques cuánticos.</p>
-            
-            <p>El curso mantiene un equilibrio entre claridad conceptual y contenido técnico, haciéndolo accesible para estudiantes con conocimientos básicos de criptografía, mientras proporciona suficiente profundidad para comprender las complejidades del campo.</p>
-        </section>
+        <h2 id="objetivos"><span class="sec">2</span>Resultados de aprendizaje</h2>
+        <p>Al terminar el curso, el alumno será capaz de:</p>
+        <ol>
+          <li><strong>Explicar</strong> por qué los algoritmos de Shor y Grover afectan de forma distinta a la criptografía asimétrica y a la simétrica, y estimar el riesgo de unos datos concretos con la desigualdad de Mosca.</li>
+          <li><strong>Localizar</strong> la criptografía vulnerable en protocolos e infraestructuras reales (TLS, PKI, SSH, IPsec, firma de código) y razonar el impacto de sustituirla.</li>
+          <li><strong>Describir</strong> los problemas matemáticos de las familias post-cuánticas (retículos, códigos, hash, multivariante, isogenias) y resolver ejemplos pequeños a mano.</li>
+          <li><strong>Comparar</strong> ML-KEM, ML-DSA, SLH-DSA, FN-DSA y HQC por seguridad, tamaños y rendimiento, y elegir parámetros para un caso de uso.</li>
+          <li><strong>Diseñar</strong> un plan de migración con inventario, priorización, hibridación y agilidad criptográfica, conforme a los calendarios regulatorios vigentes.</li>
+          <li><strong>Configurar y medir</strong> TLS 1.3 con intercambio de claves híbrido y certificados post-cuánticos con herramientas actuales.</li>
+          <li><strong>Evaluar</strong> con criterio la distribución cuántica de claves frente a la criptografía post-cuántica.</li>
+        </ol>
 
-        <section class="course-objectives">
-            <h2>Objetivos de Aprendizaje</h2>
-            <ul>
-                <li>Comprender los fundamentos de la criptografía moderna y sus vulnerabilidades ante la computación cuántica</li>
-                <li>Explorar los principios matemáticos detrás de los algoritmos post-cuánticos</li>
-                <li>Analizar los estándares emergentes de criptografía post-cuántica</li>
-                <li>Implementar y evaluar soluciones criptográficas resistentes a ataques cuánticos</li>
-                <li>Examinar casos de uso prácticos y estrategias de migración</li>
-            </ul>
-        </section>
+        <h2 id="requisitos"><span class="sec">3</span>Requisitos previos</h2>
+        <ul>
+          <li>Criptografía básica: cifrado simétrico, clave pública, funciones hash y firmas, a nivel de un primer curso.</li>
+          <li>Matemáticas: aritmética modular, álgebra lineal (matrices, vectores, producto escalar) y probabilidad elemental.</li>
+          <li>Programación en Python y manejo básico de la línea de comandos.</li>
+        </ul>
+        <p>No hace falta saber mecánica ni computación cuántica: el tema 1 introduce lo imprescindible y el tema 6 lo amplía para QKD.</p>
 
-        <section class="course-content">
-            <h2>Contenido del Curso</h2>
-            
-            <div class="topic">
-                <h3>Tema 1: Fundamentos de Criptografía Moderna</h3>
-                <div class="topic-content">
-                    <ul>
-                        <li>Revisión de criptografía simétrica (AES, ChaCha20)</li>
-                        <li>Revisión de criptografía asimétrica (RSA, ECC)</li>
-                        <li>Funciones hash y firmas digitales</li>
-                        <li>Algoritmos cuánticos de Shor y Grover</li>
-                        <li>Impacto de la computación cuántica en la criptografía actual</li>
-                    </ul>
-                    <div class="topic-details">
-                        <p><strong>Duración:</strong> 2 horas</p>
-                        <p><strong>Actividades:</strong> Análisis de vulnerabilidades, simulación del algoritmo de Shor</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="topic">
-                <h3>Tema 2: Infraestructura de Seguridad en Internet</h3>
-                <div class="topic-content">
-                    <ul>
-                        <li>Infraestructura de clave pública (PKI)</li>
-                        <li>TLS/SSL y protocolos de seguridad</li>
-                        <li>Certificados digitales y autoridades de certificación</li>
-                        <li>Impacto de la computación cuántica en la infraestructura actual</li>
-                        <li>Desafíos de la transición a PQC</li>
-                    </ul>
-                    <div class="topic-details">
-                        <p><strong>Duración:</strong> 2 horas</p>
-                        <p><strong>Actividades:</strong> Análisis de protocolos, evaluación de riesgos</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="topic">
-                <h3>Tema 3: Fundamentos de Criptografía Post-Cuántica</h3>
-                <div class="topic-content">
-                    <ul>
-                        <li>Introducción a problemas matemáticos resistentes a ataques cuánticos</li>
-                        <li>Criptografía basada en retículos (problemas LWE, RLWE)</li>
-                        <li>Criptografía basada en códigos</li>
-                        <li>Criptografía basada en isogenias</li>
-                        <li>Criptografía multivariable</li>
-                        <li>Criptografía basada en hash</li>
-                    </ul>
-                    <div class="topic-details">
-                        <p><strong>Duración:</strong> 4 horas</p>
-                        <p><strong>Actividades:</strong> Ejercicios matemáticos, implementaciones básicas</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="topic">
-                <h3>Tema 4: Estandarización de Criptografía Post-Cuántica</h3>
-                <div class="topic-content">
-                    <ul>
-                        <li>Proceso de estandarización del NIST</li>
-                        <li>ML-KEM (CRYSTALS-Kyber): Mecanismo de encapsulamiento de claves</li>
-                        <li>ML-DSA (CRYSTALS-Dilithium): Firma digital</li>
-                        <li>SLH-DSA (SPHINCS+): Firma digital basada en hash</li>
-                        <li>Otros finalistas y alternativas</li>
-                        <li>Estándares FIPS 203, 204 y 205</li>
-                    </ul>
-                    <div class="topic-details">
-                        <p><strong>Duración:</strong> 3 horas</p>
-                        <p><strong>Actividades:</strong> Implementación de ML-KEM y ML-DSA</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="topic">
-                <h3>Tema 5: Implementaciones, Consideraciones y Desafíos</h3>
-                <div class="topic-content">
-                    <ul>
-                        <li>Estrategias de migración a PQC</li>
-                        <li>Criptografía híbrida (combinación de algoritmos clásicos y post-cuánticos)</li>
-                        <li>Consideraciones de rendimiento y tamaño</li>
-                        <li>Implementaciones en hardware y software</li>
-                        <li>Desafíos en dispositivos con recursos limitados (IoT)</li>
-                        <li>Casos de uso y aplicaciones prácticas</li>
-                    </ul>
-                    <div class="topic-details">
-                        <p><strong>Duración:</strong> 3 horas</p>
-                        <p><strong>Actividades:</strong> Implementación de criptografía híbrida, análisis de rendimiento</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="topic">
-                <h3>Tema 6: Distribución Cuántica de Claves (QKD)</h3>
-                <div class="topic-content">
-                    <ul>
-                        <li>Principios de la distribución cuántica de claves</li>
-                        <li>Protocolo BB84 y variantes</li>
-                        <li>Implementaciones prácticas de QKD</li>
-                        <li>Limitaciones y desafíos de QKD</li>
-                        <li>Comparación entre QKD y PQC</li>
-                        <li>El futuro de la criptografía cuántica</li>
-                    </ul>
-                    <div class="topic-details">
-                        <p><strong>Duración:</strong> 2 horas</p>
-                        <p><strong>Actividades:</strong> Simulación del protocolo BB84</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <h2 id="calendario"><span class="sec">4</span>Calendario de sesiones</h2>
+        <div class="table-wrap"><table>
+          <caption>Propuesta para ocho sesiones de dos horas. Los laboratorios se inician en clase y se terminan como trabajo autónomo.</caption>
+          <thead><tr><th>Sesión</th><th>Contenido</th><th>Práctica</th><th>Trabajo autónomo</th></tr></thead>
+          <tbody>
+            <tr><th>1</th><td><a href="temas/tema1/index.html">Tema 1</a>. Primitivas actuales, computación cuántica mínima, Shor y Grover, Mosca y HNDL.</td><td><a href="ejemplos/algoritmo_shor.html">E1</a> en clase</td><td><a href="guias/algoritmo_shor.html">L1</a></td></tr>
+            <tr><th>2</th><td><a href="temas/tema2/index.html">Tema 2</a>. PKI, TLS 1.3, SSH, IPsec, DNSSEC y firma de código; coste de los tamaños post-cuánticos.</td><td>Análisis de un handshake real</td><td>Lectura: ejercicios del tema 2</td></tr>
+            <tr><th>3</th><td><a href="temas/tema3/index.html">Tema 3</a> (I). Retículos, SVP y CVP, reducción de bases, LWE, Ring-LWE y Module-LWE.</td><td>Ejercicios de LWE a mano</td><td>Ejercicios 3.1–3.4</td></tr>
+            <tr><th>4</th><td><a href="temas/tema3/index.html">Tema 3</a> (II). Firmas en retículos, NTRU, códigos, hash, multivariante e isogenias.</td><td><a href="ejemplos/ml_kem.html">E2</a> y <a href="ejemplos/ml_dsa.html">E3</a></td><td>Resto de ejercicios del tema 3</td></tr>
+            <tr><th>5</th><td><a href="temas/tema4/index.html">Tema 4</a> (I). Proceso del NIST, ML-KEM y ML-DSA en detalle.</td><td>Inicio de <a href="guias/ml_kem.html">L2</a></td><td><a href="guias/ml_kem.html">L2</a></td></tr>
+            <tr><th>6</th><td><a href="temas/tema4/index.html">Tema 4</a> (II). SLH-DSA, FN-DSA, HQC, firmas con estado y normalización internacional. <a href="temas/tema5/index.html">Tema 5</a> (I): calendarios y regulación.</td><td>Inicio de <a href="guias/ml_dsa.html">L3</a></td><td><a href="guias/ml_dsa.html">L3</a></td></tr>
+            <tr><th>7</th><td><a href="temas/tema5/index.html">Tema 5</a> (II). Inventario, agilidad, hibridación, implementación segura y casos reales.</td><td><a href="ejemplos/criptografia_hibrida.html">E4</a> e inicio de <a href="guias/criptografia_hibrida.html">L4</a></td><td><a href="guias/criptografia_hibrida.html">L4</a>; propuesta de proyecto</td></tr>
+            <tr><th>8</th><td><a href="temas/tema6/index.html">Tema 6</a>. QKD: BB84, tasa de clave, ataques, redes y comparación con PQC. Cierre del curso.</td><td><a href="ejemplos/qkd_bb84.html">E5</a> e inicio de <a href="guias/qkd.html">L5</a></td><td><a href="guias/qkd.html">L5</a>; proyecto final</td></tr>
+          </tbody>
+        </table></div>
+        <div class="table-wrap"><table>
+          <caption>Carga lectiva por tema</caption>
+          <thead><tr><th>Tema</th><th class="num">Horas</th><th>Nivel</th></tr></thead>
+          <tbody>
+            <tr><td>1 · Criptografía moderna y la amenaza cuántica</td><td class="num">2</td><td>Introductorio</td></tr>
+            <tr><td>2 · PKI, TLS y la infraestructura de Internet</td><td class="num">2</td><td>Intermedio</td></tr>
+            <tr><td>3 · Fundamentos matemáticos de la PQC</td><td class="num">4</td><td>Intermedio–avanzado</td></tr>
+            <tr><td>4 · Estándares: ML-KEM, ML-DSA, SLH-DSA y más</td><td class="num">3</td><td>Intermedio</td></tr>
+            <tr><td>5 · Migración, hibridación e implementación</td><td class="num">3</td><td>Intermedio</td></tr>
+            <tr><td>6 · Distribución cuántica de claves (QKD)</td><td class="num">2</td><td>Intermedio</td></tr>
+            <tr><th>Total</th><td class="num"><strong>16</strong></td><td></td></tr>
+          </tbody>
+        </table></div>
 
-        <section class="methodology">
-            <h2>Metodología</h2>
-            <p>El curso combina diferentes metodologías para facilitar el aprendizaje:</p>
-            <ul>
-                <li><strong>Clases teóricas:</strong> Presentación de conceptos fundamentales y principios matemáticos</li>
-                <li><strong>Demostraciones prácticas:</strong> Implementación de algoritmos y protocolos</li>
-                <li><strong>Laboratorios guiados:</strong> Ejercicios prácticos con guías paso a paso</li>
-                <li><strong>Discusiones:</strong> Análisis de casos de uso y consideraciones de implementación</li>
-                <li><strong>Proyecto final:</strong> Implementación de una solución criptográfica post-cuántica</li>
-            </ul>
-        </section>
+        <h2 id="metodologia"><span class="sec">5</span>Metodología</h2>
+        <dl>
+          <dt>Clases expositivas con pizarra</dt><dd>Conceptos y ejemplos resueltos a mano; las páginas de cada tema son el material de referencia.</dd>
+          <dt>Demostraciones interactivas</dt><dd>Los <a href="ejemplos/index.html">ejemplos</a> se usan en clase para explorar parámetros y fallos.</dd>
+          <dt>Laboratorios</dt><dd>Cinco <a href="guias/index.html">guías</a> con herramientas reales, iniciadas en clase y completadas de forma autónoma.</dd>
+          <dt>Discusión de casos</dt><dd>Despliegues reales, decisiones de diseño y posiciones de distintas agencias.</dd>
+          <dt>Proyecto final</dt><dd>Un trabajo aplicado, individual o en pareja, con informe y defensa breve.</dd>
+        </dl>
 
-        <section class="evaluation">
-            <h2>Evaluación</h2>
-            <p>La evaluación del curso se basa en los siguientes componentes:</p>
-            <ul>
-                <li><strong>Participación en clase:</strong> 10%</li>
-                <li><strong>Ejercicios prácticos:</strong> 40%</li>
-                <li><strong>Proyecto final:</strong> 50%</li>
-            </ul>
-            <p>El proyecto final consistirá en la implementación de una solución criptográfica post-cuántica para un caso de uso específico, incluyendo documentación y análisis de seguridad.</p>
-        </section>
+        <h2 id="evaluacion"><span class="sec">6</span>Evaluación</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Componente</th><th class="num">Peso</th><th>Qué se valora</th></tr></thead>
+          <tbody>
+            <tr><th>Participación</th><td class="num">10 %</td><td>Asistencia activa, resolución de ejercicios en clase y discusión de casos.</td></tr>
+            <tr><th>Laboratorios</th><td class="num">40 %</td><td>Informes de L1–L5 según la rúbrica de cada guía (8 % cada uno).</td></tr>
+            <tr><th>Proyecto final</th><td class="num">50 %</td><td>Implementación o análisis, informe técnico y defensa de 10 minutos.</td></tr>
+          </tbody>
+        </table></div>
+        <h3 id="proyecto">Propuestas de proyecto final</h3>
+        <ul>
+          <li><strong>Plan de migración</strong> para una organización ficticia pero realista: inventario (CBOM), priorización con Mosca, calendario alineado con la hoja de ruta europea y plan de pruebas.</li>
+          <li><strong>Medición de TLS post-cuántico</strong>: latencia y bytes del handshake con distintos grupos y cadenas de certificados, en red local y con pérdidas simuladas.</li>
+          <li><strong>Firma de firmware</strong> con LMS o ML-DSA en un microcontrolador o en un emulador, con gestión del estado de la clave.</li>
+          <li><strong>Análisis de un producto o biblioteca</strong>: qué algoritmos soporta, cómo negocia, qué validaciones tiene y qué falta.</li>
+          <li><strong>Criptoanálisis de juguete</strong>: ataque con reducción de bases (LLL/BKZ) a instancias pequeñas de LWE y extrapolación con el estimador de retículos.</li>
+          <li><strong>QKD y PQC combinadas</strong>: derivar claves de una API de entrega de claves simulada y de un KEM post-cuántico en una aplicación.</li>
+        </ul>
+        <p>El informe (8–12 páginas) debe incluir objetivos, diseño, resultados reproducibles, análisis de seguridad y limitaciones. Se valoran la corrección técnica (40 %), la calidad del análisis (30 %), la reproducibilidad (15 %) y la claridad de la presentación (15 %).</p>
 
-        <section class="prerequisites">
-            <h2>Requisitos Previos</h2>
-            <p>Para aprovechar al máximo este curso, se recomienda que los estudiantes tengan:</p>
-            <ul>
-                <li>Conocimientos básicos de criptografía (simétrica, asimétrica, funciones hash)</li>
-                <li>Familiaridad con conceptos matemáticos (álgebra lineal, teoría de números)</li>
-                <li>Experiencia básica en programación (preferiblemente Python)</li>
-            </ul>
-            <p>No se requieren conocimientos previos de mecánica cuántica o computación cuántica.</p>
-        </section>
+        <h2 id="bibliografia"><span class="sec">7</span>Bibliografía básica</h2>
+        <p>Cada tema cierra con sus referencias primarias. La lista comentada completa, con estándares, guías de agencias y herramientas, está en <a href="recursos/index.html">Recursos</a>; para empezar, basta con los estándares FIPS 203, 204 y 205 del NIST y un texto general de criptografía moderna.</p>
+      </article>
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="programa.html">Programa</a></li>
-                    <li><a href="temas/tema1/index.html">Temas</a></li>
-                    <li><a href="ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="guias/index.html">Guías de Laboratorio</a></li>
-                    <li><a href="recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Ejemplos</h3>
-                <ul>
-                    <li><a href="ejemplos/algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="ejemplos/ml_kem.html">ML-KEM</a></li>
-                    <li><a href="ejemplos/ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="ejemplos/criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="ejemplos/qkd_bb84.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="js/script.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="glosario.html">Glosario</a>
+        <a href="recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

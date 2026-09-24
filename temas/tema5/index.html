@@ -1,715 +1,559 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../../" data-page="tema5">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tema 5: Implementaciones, Consideraciones y Desafíos - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="../../css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tema 5 · Migración, hibridación e implementación — Curso PQC</title>
+  <meta name="description" content="Por qué y cómo migrar a la criptografía post-cuántica: calendarios regulatorios a septiembre de 2026, inventario y CBOM, agilidad criptográfica, intercambio de claves híbrido y combinadores, certificados compuestos, implementación segura y despliegues reales.">
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../css/styles.css">
+  <script src="../../js/course-data.js" defer></script>
+  <script src="../../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../../index.html">Inicio</a></li>
-                <li><a href="../../programa.html">Programa</a></li>
-                <li><a href="../tema1/index.html">Temas</a></li>
-                <li><a href="../../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="../../guias/index.html">Guías de Laboratorio</a></li>
-                <li><a href="../../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../../index.html">Inicio</a> &gt; <a href="../tema1/index.html">Temas</a> &gt; Tema 5: Implementaciones, Consideraciones y Desafíos
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../../index.html">Inicio</a>
+        <a href="../../programa.html">Programa</a>
+        <a href="../../temas/index.html" aria-current="page">Temas</a>
+        <a href="../../ejemplos/index.html">Ejemplos</a>
+        <a href="../../guias/index.html">Laboratorios</a>
+        <a href="../../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Tema 5: Implementaciones, Consideraciones y Desafíos</h1>
-        
-        <div class="tema-navegacion">
-            <div class="tema-nav-item">
-                <a href="../tema1/index.html">
-                    <span>Tema 1</span>
-                    <p>Fundamentos de Criptografía Moderna</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema2/index.html">
-                    <span>Tema 2</span>
-                    <p>Infraestructura de Seguridad en Internet</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema3/index.html">
-                    <span>Tema 3</span>
-                    <p>Fundamentos de Criptografía Post-Cuántica</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema4/index.html">
-                    <span>Tema 4</span>
-                    <p>Estandarización de Criptografía Post-Cuántica</p>
-                </a>
-            </div>
-            <div class="tema-nav-item actual">
-                <span>Tema 5</span>
-                <p>Implementaciones, Consideraciones y Desafíos</p>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema6/index.html">
-                    <span>Tema 6</span>
-                    <p>Distribución Cuántica de Claves (QKD)</p>
-                </a>
-            </div>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../../index.html">Inicio</a></li><li><a href="../../temas/index.html">Temas</a></li><li aria-current="page">Tema 5</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Tema 05 · 3 horas</p>
+        <h1>Migración, <em>hibridación</em> e implementación</h1>
+        <p class="lede">Los estándares ya existen; lo difícil es cambiar miles de sistemas sin romperlos. Este tema explica qué exigen los reguladores y cuándo, cómo se organiza una migración real, cómo se combinan de forma segura un algoritmo clásico y uno post-cuántico, y qué hace falta para que una implementación de ML-KEM o ML-DSA sea segura de verdad.</p>
+        <dl class="page-meta">
+          <div><dt>Duración</dt><dd>3 h</dd></div>
+          <div><dt>Nivel</dt><dd>Intermedio</dd></div>
+          <div><dt>Requisitos</dt><dd>Temas 1, 2 y 4</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
+
+      <article class="prose">
+        <h2 id="objetivos"><span class="sec">5.0</span>Objetivos</h2>
+        <p>Al terminar este tema deberías ser capaz de:</p>
+        <ul>
+          <li>Justificar con la desigualdad de Mosca por qué la migración de la confidencialidad es urgente aunque no exista aún un CRQC.</li>
+          <li>Comparar los calendarios de NIST, NSA, el Gobierno de EE. UU., la UE, España, Alemania, Francia, Reino Unido, Canadá, Australia y Japón, y distinguir qué es obligatorio, qué es recomendación y qué sigue en borrador.</li>
+          <li>Diseñar un plan de migración: inventario y CBOM, priorización por riesgo, agilidad criptográfica y relación con los proveedores.</li>
+          <li>Explicar cómo funciona un intercambio de claves híbrido (X25519MLKEM768), qué propiedades debe tener el combinador y por qué XOR no basta.</li>
+          <li>Argumentar a favor y en contra de la hibridación, y distinguir certificados compuestos de certificados duales.</li>
+          <li>Identificar los riesgos de implementación (tiempo constante, canales laterales, fallos) y las garantías que aportan la validación FIPS 140-3 y la verificación formal.</li>
+          <li>Citar con datos verificados el estado real del despliegue en la web, SSH, mensajería y la nube.</li>
+        </ul>
+
+        <!-- ============================================================ -->
+        <h2 id="por-que-migrar"><span class="sec">5.1</span>Por qué migrar ahora</h2>
+        <p>En el <a href="../../temas/tema1/index.html">Tema 1</a> vimos que el algoritmo de Shor rompe RSA, Diffie–Hellman y las curvas elípticas en un ordenador cuántico criptográficamente relevante (CRQC), y que la estimación publicada por Gidney en mayo de 2025 rebaja a menos de un millón de cúbits físicos ruidosos, y menos de una semana, el coste de factorizar RSA-2048. Nadie sabe cuándo existirá un CRQC. La migración, sin embargo, no puede esperar a saberlo, por tres razones.</p>
+        <h3>«Almacenar ahora, descifrar después»</h3>
+        <p>Un adversario puede grabar hoy tráfico TLS, VPN o de mensajería cifrado con ECDHE y descifrarlo cuando disponga de un CRQC. El ataque (<em>harvest now, decrypt later</em>, HNDL) afecta a la <strong>confidencialidad</strong> de todo lo que se transmite antes de migrar el intercambio de claves. Las firmas son distintas: una firma ECDSA falsificada en 2035 no sirve para engañar a un verificador de 2026. Por eso todos los calendarios de la sección 5.2 priorizan el <strong>establecimiento de claves</strong> sobre la autenticación, con dos excepciones importantes: las firmas de larga vida (firmware, raíces de PKI, contratos, documentos notariales) y los dispositivos que no podrán actualizarse después.</p>
+        <h3>La desigualdad de Mosca</h3>
+        <p>Sean <var>x</var> los años que los datos deben seguir siendo confidenciales, <var>y</var> los años que tardará la migración y <var>z</var> los años hasta que exista un CRQC. Hay un problema si</p>
+        <div class="equation"><var>x</var> + <var>y</var> &gt; <var>z</var><span class="eq-label">(5.1)</span></div>
+        <p><b>Ejemplo.</b> Un hospital guarda historias clínicas que deben seguir siendo confidenciales 25 años (<var>x</var> = 25). Su migración, con cientos de aplicaciones y equipos médicos certificados, se estima en <var>y</var> = 7 años. Aunque el CRQC tardase <var>z</var> = 15 años, el tráfico que se grabe hoy seguirá siendo sensible cuando llegue: 25 + 7 = 32 &gt; 15. El margen es negativo en 17 años. Ni siquiera con <var>x</var> = 5 años (sesiones bancarias) y <var>y</var> = 5 se estaría a salvo si <var>z</var> &lt; 10. La desigualdad no depende de acertar con <var>z</var>: basta con que <var>z</var> sea incierto y <var>x</var> + <var>y</var> grande.</p>
+        <h3>Dispositivos y raíces de confianza de larga vida</h3>
+        <p>Un coche, un contador inteligente, un satélite o un sistema de control industrial que se venden en 2026 seguirán en servicio en 2040. Si su cargador de arranque verifica el firmware con ECDSA grabado en ROM, un CRQC permitirá instalar firmware malicioso y no habrá forma de corregirlo por software. La misma lógica se aplica a las claves raíz de una PKI, que suelen tener 20–25 años de validez. Para estos casos la migración de las <strong>firmas</strong> es tan urgente como la del intercambio de claves; de ahí que CNSA 2.0 exija firmas post-cuánticas en firmware antes que en ningún otro caso, y que el CCN recomiende su uso inmediato (sección 5.2).</p>
+        <div class="callout"><span class="callout-title">Idea clave</span><p>La urgencia la marca <var>x</var> + <var>y</var>, que es conocido y grande, no <var>z</var>, que es incierto. Migrar el intercambio de claves protege ya el tráfico que se graba hoy; migrar firmas protege los sistemas que no se podrán cambiar mañana.</p></div>
+
+        <!-- ============================================================ -->
+        <h2 id="calendarios"><span class="sec">5.2</span>Calendarios regulatorios y de las agencias</h2>
+        <p>A septiembre de 2026, todos los grandes marcos convergen en dos fechas: <strong>2030</strong> para los sistemas de alto riesgo o para el establecimiento de claves, y <strong>2035</strong> para terminar la migración. Difieren en el alcance (sistemas de seguridad nacional, administración civil, infraestructuras críticas), en la fuerza jurídica y, sobre todo, en su postura sobre la hibridación. La tabla resume los documentos primarios; los detalles vienen a continuación.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Calendarios de migración a PQC (estado a septiembre de 2026)</caption>
+            <thead><tr><th>Jurisdicción</th><th>Documento</th><th>Alcance y fuerza</th><th>Hitos</th><th>Hibridación</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">NIST (EE. UU.)</th><td>NIST IR 8547, <em>Transition to PQC Standards</em>, nov. 2024 [1] <span class="badge draft">Borrador</span></td><td>Estándares federales (FIPS/SP); referencia para M-26-15</td><td>Algoritmos cuánticamente vulnerables de 112 bits (RSA-2048, P-224…) <em>obsoletos</em> después de 2030; <em>no permitidos</em> todos los cuánticamente vulnerables después de 2035</td><td>Permitida; SP 800-227 (sep. 2025) describe KEM compuestos [2]</td></tr>
+              <tr><th scope="row">NSA (EE. UU.)</th><td>CNSA 2.0, FAQ v2.1, dic. 2024 [3]</td><td>Sistemas de seguridad nacional (NSS); obligatorio</td><td>Nuevas adquisiciones NSS conformes desde 1 ene. 2027; uso exclusivo: firma de software/firmware y equipos de red 2030, navegadores, nube y sistemas operativos 2033; todo NSS 2035</td><td>No la exige; admite híbridos cuando el protocolo lo requiera. Solo ML-KEM-1024 y ML-DSA-87 (más LMS/XMSS)</td></tr>
+              <tr><th scope="row">Gobierno civil de EE. UU.</th><td>EO 14306 (6 jun. 2025); EO 14412 (22 jun. 2026) [4]; OMB M-26-15 (24 jun. 2026) [5]</td><td>Agencias federales (no NSS) y, por regla FAR, contratistas; obligatorio</td><td>Planes en 120 días; TLS 1.3 antes del 2 ene. 2030; HVA y sistemas de alto impacto con PQC para establecimiento de claves el 31 dic. 2030 y para firmas el 31 dic. 2031; resto en 2035</td><td>Opcional, según análisis de riesgo; M-26-15 la llama «recurso transitorio complejo»</td></tr>
+              <tr><th scope="row">Unión Europea</th><td>Recomendación (UE) 2024/1101 (11 abr. 2024) [6]; <em>Coordinated Implementation Roadmap</em>, v1.1, jun. 2025 [7]</td><td>Estados miembros, administraciones e infraestructuras críticas (NIS2); recomendación coordinada</td><td>Fin de 2026: planes nacionales, inventario y pilotos; fin de 2030: casos de uso de alto riesgo migrados; fin de 2035: el resto, en la medida de lo posible</td><td>Recomendada; lo desarrolla cada Estado</td></tr>
+              <tr><th scope="row">España</th><td>CCN-TEC 009 / BP-37, jul. 2026 [8]; CCN-STIC 221 (nov. 2025)</td><td>Sector público (ENS) y recomendaciones generales</td><td>31 dic. 2026: estrategia, inventario y pilotos; 31 dic. 2030: riesgo alto; 31 dic. 2035: riesgo medio y, si es posible, bajo. Firma PQ de firmware: uso inmediato</td><td>Recomendada «cuanto antes»; firmas de retículos híbridas; hash (XMSS, SLH-DSA) sin hibridar. Admite FrodoKEM</td></tr>
+              <tr><th scope="row">Alemania</th><td>BSI TR-02102-1, versión 2026-01 (23 ene. 2026) [9]</td><td>Directriz técnica (recomendación); referencia para administración y evaluaciones del BSI</td><td>Acuerdo de claves solo clásico: hasta fin de 2031 (fin de 2030 para protección muy alta); firmas solo clásicas: hasta fin de 2035</td><td>Solo recomienda KEM PQ (ML-KEM-768/1024, FrodoKEM, Classic McEliece) en modo híbrido; firmas PQ solo en combinación, salvo hash</td></tr>
+              <tr><th scope="row">Francia</th><td>ANSSI, <em>FAQ PQC</em> y dictámenes 2022–2023 [10]</td><td>Cualificación de productos de seguridad</td><td>Requisitos PQC para entrar en cualificación desde 2027; «no será razonable» comprar productos sin PQC después de 2030</td><td>Esencial; solo SLH-DSA, XMSS y LMS pueden usarse sin hibridar</td></tr>
+              <tr><th scope="row">Reino Unido</th><td>NCSC, <em>Timelines for migration to PQC</em>, 20 mar. 2025 [11]</td><td>Orientación; referencia para operadores NIS</td><td>2028: objetivos, inventario completo y plan; 2031: migraciones prioritarias; 2035: migración completa</td><td>Aceptada como paso intermedio</td></tr>
+              <tr><th scope="row">Canadá</th><td>ITSM.40.001, 23 jun. 2025 [12]</td><td>Sistemas no clasificados del Gobierno federal</td><td>Abril de 2026: plan departamental e informes anuales; fin de 2031: sistemas prioritarios; fin de 2035: el resto</td><td>—</td></tr>
+              <tr><th scope="row">Australia</th><td>ASD, ISM y <em>Planning for PQC</em> [13]</td><td>Administración y proveedores sujetos al ISM</td><td>Fin de 2026: plan refinado; 2028: inicio en sistemas críticos; fin de 2030: dejar de usar criptografía asimétrica tradicional</td><td>—</td></tr>
+              <tr><th scope="row">Japón</th><td>NCO (antes NISC), informe intermedio, nov. 2025 [14]</td><td>Agencias gubernamentales</td><td>Migración completa en 2035; hoja de ruta detallada en el año fiscal 2026</td><td>Recomendada como estrategia de transición</td></tr>
+            </tbody>
+          </table>
         </div>
 
-        <section class="tema-intro">
-            <h2>Introducción</h2>
-            <p>Este tema aborda los aspectos prácticos de la implementación de criptografía post-cuántica, incluyendo consideraciones de rendimiento, seguridad y despliegue. Examinaremos los desafíos que enfrentan las organizaciones al migrar a algoritmos post-cuánticos y las estrategias para una transición exitosa.</p>
-            
-            <div class="tema-info">
-                <div class="info-item">
-                    <h3>Duración</h3>
-                    <p>3 horas</p>
-                </div>
-                <div class="info-item">
-                    <h3>Objetivos</h3>
-                    <ul>
-                        <li>Analizar implementaciones prácticas de algoritmos post-cuánticos</li>
-                        <li>Comprender las consideraciones de rendimiento y optimización</li>
-                        <li>Explorar estrategias de migración y criptografía híbrida</li>
-                        <li>Examinar vulnerabilidades y ataques de implementación</li>
-                        <li>Evaluar el impacto en diferentes sectores y aplicaciones</li>
-                        <li>Desarrollar un plan de migración para escenarios reales</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 400" role="img" aria-labelledby="f51t f51d">
+            <title id="f51t">Hitos de migración a PQC por jurisdicción, 2024–2036</title>
+            <desc id="f51d">Eje temporal de 2024 a 2036 con los hitos principales de NIST, NSA, Gobierno civil de EE. UU., UE y España, BSI, NCSC, Canadá, Australia y Japón. La mayoría se concentra en 2030–2031 y 2035.</desc>
+            <g class="svg-muted">
+              <text x="160" y="24" text-anchor="middle">2024</text><text x="250" y="24" text-anchor="middle">2026</text><text x="340" y="24" text-anchor="middle">2028</text><text x="430" y="24" text-anchor="middle">2030</text><text x="520" y="24" text-anchor="middle">2032</text><text x="610" y="24" text-anchor="middle">2034</text><text x="700" y="24" text-anchor="middle">2036</text>
+            </g>
+            <g class="svg-line" stroke-width="1" stroke-dasharray="2 4">
+              <line x1="160" y1="32" x2="160" y2="390"/><line x1="250" y1="32" x2="250" y2="390"/><line x1="340" y1="32" x2="340" y2="390"/><line x1="430" y1="32" x2="430" y2="390"/><line x1="520" y1="32" x2="520" y2="390"/><line x1="610" y1="32" x2="610" y2="390"/><line x1="700" y1="32" x2="700" y2="390"/>
+            </g>
+            <line class="svg-stroke-amber" x1="280" y1="32" x2="280" y2="390" stroke-width="1.5"/>
+            <text class="svg-muted" x="284" y="44">sep. 2026</text>
+            <g class="svg-text">
+              <text x="8" y="64">NIST IR 8547*</text>
+              <text x="8" y="100">NSA CNSA 2.0</text>
+              <text x="8" y="136">EE. UU. civil</text>
+              <text x="8" y="172">UE · España</text>
+              <text x="8" y="208">BSI</text>
+              <text x="8" y="244">NCSC (R. U.)</text>
+              <text x="8" y="280">Canadá</text>
+              <text x="8" y="316">Australia</text>
+              <text x="8" y="352">Japón</text>
+            </g>
+            <g class="svg-line" stroke-width="1">
+              <line x1="160" y1="60" x2="700" y2="60"/><line x1="160" y1="96" x2="700" y2="96"/><line x1="160" y1="132" x2="700" y2="132"/><line x1="160" y1="168" x2="700" y2="168"/><line x1="160" y1="204" x2="700" y2="204"/><line x1="160" y1="240" x2="700" y2="240"/><line x1="160" y1="276" x2="700" y2="276"/><line x1="160" y1="312" x2="700" y2="312"/><line x1="160" y1="348" x2="700" y2="348"/>
+            </g>
+            <!-- x(año) = 160 + 45·(año − 2024); fin de año = año + 1 -->
+            <g class="svg-amber">
+              <circle cx="475" cy="60" r="5"/><circle cx="700" cy="60" r="5"/>
+              <circle cx="295" cy="96" r="5"/><circle cx="475" cy="96" r="5"/><circle cx="610" cy="96" r="5"/><circle cx="700" cy="96" r="5"/>
+              <circle cx="430" cy="132" r="5"/><circle cx="475" cy="132" r="5"/><circle cx="520" cy="132" r="5"/><circle cx="700" cy="132" r="5"/>
+              <circle cx="295" cy="168" r="5"/><circle cx="475" cy="168" r="5"/><circle cx="700" cy="168" r="5"/>
+              <circle cx="475" cy="204" r="5"/><circle cx="520" cy="204" r="5"/><circle cx="700" cy="204" r="5"/>
+              <circle cx="385" cy="240" r="5"/><circle cx="520" cy="240" r="5"/><circle cx="700" cy="240" r="5"/>
+              <circle cx="261" cy="276" r="5"/><circle cx="520" cy="276" r="5"/><circle cx="700" cy="276" r="5"/>
+              <circle cx="295" cy="312" r="5"/><circle cx="385" cy="312" r="5"/><circle cx="475" cy="312" r="5"/>
+              <circle cx="700" cy="348" r="5"/>
+            </g>
+            <g class="svg-muted">
+              <text x="475" y="80" text-anchor="middle">112 bits</text><text x="690" y="80" text-anchor="end">todo</text>
+              <text x="295" y="116" text-anchor="middle">compras</text><text x="475" y="116" text-anchor="middle">firmware, red</text><text x="610" y="116" text-anchor="middle">nav., SO</text><text x="690" y="116" text-anchor="end">todo</text>
+              <text x="425" y="152" text-anchor="end">TLS 1.3</text><text x="475" y="152" text-anchor="middle">KEM</text><text x="520" y="152" text-anchor="middle">firmas</text><text x="690" y="152" text-anchor="end">todo</text>
+              <text x="295" y="188" text-anchor="middle">planes</text><text x="475" y="188" text-anchor="middle">alto riesgo</text><text x="690" y="188" text-anchor="end">resto</text>
+              <text x="470" y="224" text-anchor="end">muy alta</text><text x="525" y="224" text-anchor="start">KEM</text><text x="690" y="224" text-anchor="end">firmas</text>
+              <text x="385" y="260" text-anchor="middle">inventario</text><text x="520" y="260" text-anchor="middle">prioritarios</text><text x="690" y="260" text-anchor="end">todo</text>
+              <text x="261" y="296" text-anchor="middle">planes</text><text x="520" y="296" text-anchor="middle">prioritarios</text><text x="690" y="296" text-anchor="end">resto</text>
+              <text x="295" y="332" text-anchor="middle">plan</text><text x="385" y="332" text-anchor="middle">inicio</text><text x="475" y="332" text-anchor="middle">fin clásica</text>
+              <text x="690" y="368" text-anchor="end">todo</text>
+              <text x="8" y="388">* borrador · cada punto, al final del año indicado salvo fechas concretas</text>
+            </g>
+          </svg>
+          <figcaption><b>Figura 5.1.</b> Hitos principales por jurisdicción. Cada punto se sitúa al final del año del hito (p. ej. «31 dic. 2030»); los de Canadá (abril de 2026), NSA (1 ene. 2027) y TLS 1.3 en EE. UU. (2 ene. 2030) usan su fecha exacta. La línea vertical marca septiembre de 2026. Fuentes: tabla anterior.</figcaption>
+        </figure>
 
-        <section class="tema-contenido">
-            <h2>Contenido del Tema</h2>
-            
-            <div class="subtema">
-                <h3>5.1 Implementaciones de Algoritmos Post-Cuánticos</h3>
-                <p>La implementación efectiva de algoritmos post-cuánticos requiere considerar diversos aspectos técnicos, desde bibliotecas de software hasta optimizaciones específicas de hardware.</p>
-                
-                <h4>Bibliotecas y Frameworks</h4>
-                <ul>
-                    <li><strong>liboqs:</strong> Biblioteca C de código abierto que implementa algoritmos post-cuánticos, desarrollada por el Open Quantum Safe Project.</li>
-                    <li><strong>PQCRYPTO:</strong> Conjunto de implementaciones de algoritmos post-cuánticos desarrollado por el proyecto PQCRYPTO de la UE.</li>
-                    <li><strong>BoringSSL/OpenSSL:</strong> Implementaciones experimentales de algoritmos post-cuánticos en bibliotecas SSL/TLS.</li>
-                    <li><strong>PQClean:</strong> Colección de implementaciones "limpias" de algoritmos post-cuánticos.</li>
-                    <li><strong>SUPERCOP:</strong> Sistema para medir el rendimiento y la corrección de implementaciones criptográficas.</li>
-                </ul>
-                
-                <h4>Consideraciones de Implementación</h4>
-                <ul>
-                    <li><strong>Generación de Números Aleatorios:</strong> Crucial para la seguridad, requiere fuentes de entropía de alta calidad.</li>
-                    <li><strong>Gestión de Memoria:</strong> Algunos algoritmos post-cuánticos requieren más memoria que los algoritmos clásicos.</li>
-                    <li><strong>Precisión Numérica:</strong> Implementaciones de punto fijo vs. punto flotante para operaciones matemáticas.</li>
-                    <li><strong>Portabilidad:</strong> Consideraciones para diferentes arquitecturas y sistemas operativos.</li>
-                    <li><strong>Interoperabilidad:</strong> Formatos de codificación y serialización para claves y firmas.</li>
-                </ul>
-                
-                <h4>Optimizaciones</h4>
-                <ul>
-                    <li><strong>Optimizaciones a Nivel de Algoritmo:</strong>
-                        <ul>
-                            <li>Transformada Número-Teórica (NTT) rápida para operaciones polinomiales.</li>
-                            <li>Técnicas de rechazo eficiente para muestreo de distribuciones.</li>
-                            <li>Representaciones compactas para claves y firmas.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Optimizaciones a Nivel de Software:</strong>
-                        <ul>
-                            <li>Vectorización usando instrucciones SIMD (AVX2, NEON).</li>
-                            <li>Paralelización para operaciones independientes.</li>
-                            <li>Técnicas de programación específicas para reducir sobrecarga.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Optimizaciones a Nivel de Hardware:</strong>
-                        <ul>
-                            <li>Aceleradores hardware para operaciones específicas (NTT, hash).</li>
-                            <li>Implementaciones FPGA para mayor rendimiento y menor consumo de energía.</li>
-                            <li>Diseños ASIC para aplicaciones de alto rendimiento.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Implementaciones en Dispositivos Restringidos</h4>
-                <p>Los dispositivos con recursos limitados presentan desafíos especiales para la implementación de algoritmos post-cuánticos:</p>
-                <ul>
-                    <li><strong>Microcontroladores:</strong> Implementaciones optimizadas para memoria y CPU limitadas.</li>
-                    <li><strong>Tarjetas Inteligentes:</strong> Adaptaciones para entornos con restricciones severas de recursos.</li>
-                    <li><strong>Dispositivos IoT:</strong> Equilibrio entre seguridad y eficiencia energética.</li>
-                    <li><strong>Técnicas de Optimización:</strong>
-                        <ul>
-                            <li>Cálculo en tiempo de compilación cuando sea posible.</li>
-                            <li>Reutilización de memoria para diferentes etapas del algoritmo.</li>
-                            <li>Implementaciones específicas para plataformas particulares.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>5.2 Rendimiento y Comparativas</h3>
-                <p>El rendimiento de los algoritmos post-cuánticos varía significativamente según el tipo de algoritmo, la implementación y la plataforma de ejecución.</p>
-                
-                <h4>Métricas de Rendimiento</h4>
-                <ul>
-                    <li><strong>Tiempo de Ejecución:</strong> Tiempo necesario para operaciones clave (generación de claves, cifrado/firma, descifrado/verificación).</li>
-                    <li><strong>Uso de Memoria:</strong> Requisitos de memoria RAM durante la ejecución.</li>
-                    <li><strong>Tamaño de Código:</strong> Espacio requerido para el código ejecutable.</li>
-                    <li><strong>Consumo de Energía:</strong> Especialmente importante para dispositivos móviles e IoT.</li>
-                    <li><strong>Ancho de Banda:</strong> Impacto en la comunicación debido al mayor tamaño de claves y firmas.</li>
-                </ul>
-                
-                <h4>Comparativa de Rendimiento en CPU de Escritorio</h4>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Algoritmo</th>
-                            <th>Generación de Claves (ms)</th>
-                            <th>Encaps/Firma (ms)</th>
-                            <th>Desencaps/Verificación (ms)</th>
-                            <th>Tamaño de Clave Pública (bytes)</th>
-                            <th>Tamaño de Clave Privada (bytes)</th>
-                            <th>Tamaño de Cifrado/Firma (bytes)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>ML-KEM-768</td>
-                            <td>0.09</td>
-                            <td>0.12</td>
-                            <td>0.13</td>
-                            <td>1,184</td>
-                            <td>2,400</td>
-                            <td>1,088</td>
-                        </tr>
-                        <tr>
-                            <td>ML-DSA-65</td>
-                            <td>0.23</td>
-                            <td>0.87</td>
-                            <td>0.30</td>
-                            <td>1,952</td>
-                            <td>3,856</td>
-                            <td>3,293</td>
-                        </tr>
-                        <tr>
-                            <td>SLH-DSA-SHAKE-128s</td>
-                            <td>0.03</td>
-                            <td>13.50</td>
-                            <td>0.90</td>
-                            <td>32</td>
-                            <td>64</td>
-                            <td>7,856</td>
-                        </tr>
-                        <tr>
-                            <td>Classic McEliece-348864</td>
-                            <td>37.00</td>
-                            <td>0.07</td>
-                            <td>0.11</td>
-                            <td>261,120</td>
-                            <td>6,492</td>
-                            <td>128</td>
-                        </tr>
-                        <tr>
-                            <td>RSA-3072 (referencia)</td>
-                            <td>120.00</td>
-                            <td>0.60</td>
-                            <td>0.03</td>
-                            <td>384</td>
-                            <td>1,192</td>
-                            <td>384</td>
-                        </tr>
-                        <tr>
-                            <td>ECDSA-P256 (referencia)</td>
-                            <td>0.07</td>
-                            <td>0.09</td>
-                            <td>0.20</td>
-                            <td>32</td>
-                            <td>32</td>
-                            <td>64</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p><em>Nota: Los valores son aproximados y pueden variar según la implementación y el hardware.</em></p>
-                
-                <h4>Rendimiento en Dispositivos Restringidos</h4>
-                <p>El rendimiento en dispositivos con recursos limitados muestra diferencias significativas:</p>
-                <ul>
-                    <li><strong>Microcontroladores ARM Cortex-M4:</strong> ML-KEM-768 requiere aproximadamente 1.3 millones de ciclos para encapsulamiento y 1.5 millones para desencapsulamiento.</li>
-                    <li><strong>Tarjetas Inteligentes:</strong> Implementaciones de ML-KEM pueden requerir varios segundos para operaciones completas.</li>
-                    <li><strong>Dispositivos IoT:</strong> El consumo de energía para una operación ML-DSA puede ser 2-3 veces mayor que para ECDSA.</li>
-                </ul>
-                
-                <h4>Impacto en Protocolos de Red</h4>
-                <p>El mayor tamaño de claves y firmas post-cuánticas afecta a los protocolos de red:</p>
-                <ul>
-                    <li><strong>TLS:</strong> El handshake con ML-KEM-768 aumenta aproximadamente 3 KB en comparación con ECDHE.</li>
-                    <li><strong>HTTPS:</strong> Latencia adicional de 5-15% en el establecimiento de conexiones.</li>
-                    <li><strong>IKE/IPsec:</strong> Aumento del 200-300% en el tamaño de los paquetes de negociación.</li>
-                    <li><strong>DNSSEC:</strong> Las firmas más grandes pueden causar fragmentación de paquetes DNS.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>5.3 Criptografía Híbrida y Estrategias de Migración</h3>
-                <p>La transición a la criptografía post-cuántica requiere estrategias cuidadosamente planificadas para minimizar riesgos y garantizar la compatibilidad.</p>
-                
-                <h4>Criptografía Híbrida</h4>
-                <p>La criptografía híbrida combina algoritmos clásicos y post-cuánticos para proporcionar seguridad contra ataques clásicos y cuánticos:</p>
-                <ul>
-                    <li><strong>Composición en Serie:</strong> Aplicar un algoritmo seguido de otro (por ejemplo, cifrar con AES y luego con ML-KEM).</li>
-                    <li><strong>Composición en Paralelo:</strong> Aplicar ambos algoritmos independientemente y combinar los resultados.</li>
-                    <li><strong>Enfoques de Combinación de Claves:</strong>
-                        <ul>
-                            <li><strong>XOR:</strong> Combinar claves derivadas de ambos algoritmos mediante XOR.</li>
-                            <li><strong>Concatenación + KDF:</strong> Concatenar claves y aplicar una función de derivación de claves.</li>
-                            <li><strong>Dual PRF:</strong> Utilizar ambas claves como entradas a una función pseudoaleatoria.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Ejemplos de Esquemas Híbridos</h4>
-                <ul>
-                    <li><strong>TLS Híbrido:</strong> Combina ECDHE y ML-KEM para el establecimiento de claves.</li>
-                    <li><strong>Firmas Híbridas:</strong> Utiliza tanto ECDSA/RSA como ML-DSA/SLH-DSA para firmar el mismo mensaje.</li>
-                    <li><strong>X.509 Híbrido:</strong> Certificados con múltiples claves públicas y algoritmos.</li>
-                    <li><strong>SSH Híbrido:</strong> Negociación que utiliza tanto algoritmos clásicos como post-cuánticos.</li>
-                </ul>
-                
-                <h4>Estrategias de Migración</h4>
-                <p>La migración a criptografía post-cuántica debe seguir un enfoque estructurado:</p>
-                <ol>
-                    <li><strong>Inventario y Evaluación:</strong>
-                        <ul>
-                            <li>Identificar todos los sistemas que utilizan criptografía vulnerable.</li>
-                            <li>Evaluar la sensibilidad de los datos y los requisitos de protección a largo plazo.</li>
-                            <li>Determinar las dependencias y restricciones técnicas.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Priorización:</strong>
-                        <ul>
-                            <li>Clasificar sistemas según el riesgo y la criticidad.</li>
-                            <li>Identificar "quick wins" y sistemas de alta prioridad.</li>
-                            <li>Desarrollar una línea temporal realista.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Implementación por Fases:</strong>
-                        <ul>
-                            <li><strong>Fase 1:</strong> Implementar criptografía híbrida en sistemas críticos.</li>
-                            <li><strong>Fase 2:</strong> Actualizar bibliotecas y componentes criptográficos centrales.</li>
-                            <li><strong>Fase 3:</strong> Migrar sistemas menos críticos.</li>
-                            <li><strong>Fase 4:</strong> Eliminar gradualmente algoritmos vulnerables.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Pruebas y Validación:</strong>
-                        <ul>
-                            <li>Pruebas de rendimiento y compatibilidad.</li>
-                            <li>Validación de seguridad y auditorías.</li>
-                            <li>Pruebas de interoperabilidad con sistemas externos.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Despliegue y Monitorización:</strong>
-                        <ul>
-                            <li>Implementación controlada con capacidad de reversión.</li>
-                            <li>Monitorización continua del rendimiento y la seguridad.</li>
-                            <li>Actualización de documentación y procedimientos.</li>
-                        </ul>
-                    </li>
-                </ol>
-                
-                <h4>Crypto-Agilidad</h4>
-                <p>La crypto-agilidad es la capacidad de cambiar rápidamente entre diferentes algoritmos criptográficos sin modificaciones significativas en la infraestructura:</p>
-                <ul>
-                    <li><strong>Diseño Modular:</strong> Separación clara entre la lógica de la aplicación y los componentes criptográficos.</li>
-                    <li><strong>Abstracción:</strong> Interfaces genéricas para operaciones criptográficas.</li>
-                    <li><strong>Configuración Dinámica:</strong> Capacidad para cambiar algoritmos sin recompilación.</li>
-                    <li><strong>Metadatos:</strong> Inclusión de información sobre algoritmos utilizados en datos cifrados o firmados.</li>
-                    <li><strong>Pruebas Automatizadas:</strong> Validación continua con diferentes algoritmos.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>5.4 Seguridad de Implementación y Ataques de Canal Lateral</h3>
-                <p>Las implementaciones de algoritmos post-cuánticos pueden ser vulnerables a ataques que explotan características físicas o de implementación, en lugar de debilidades matemáticas.</p>
-                
-                <h4>Tipos de Ataques de Canal Lateral</h4>
-                <ul>
-                    <li><strong>Ataques de Tiempo:</strong> Explotan variaciones en el tiempo de ejecución que dependen de datos secretos.
-                        <ul>
-                            <li>Riesgo en ML-KEM/ML-DSA: Operaciones de rechazo y muestreo pueden tener tiempos variables.</li>
-                            <li>Mitigación: Implementaciones de tiempo constante, especialmente para operaciones que involucran secretos.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Ataques de Consumo de Energía:</strong> Analizan el consumo de energía durante operaciones criptográficas.
-                        <ul>
-                            <li>Técnicas: Análisis simple de consumo (SPA), análisis diferencial de consumo (DPA).</li>
-                            <li>Mitigación: Balanceo de consumo, enmascaramiento de datos, aleatorización.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Ataques Electromagnéticos:</strong> Miden emisiones electromagnéticas durante el procesamiento.
-                        <ul>
-                            <li>Particularmente efectivos contra dispositivos embebidos y tarjetas inteligentes.</li>
-                            <li>Mitigación: Blindaje, aleatorización de ejecución.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Ataques de Fallos:</strong> Inducen errores durante la ejecución para revelar información secreta.
-                        <ul>
-                            <li>Técnicas: Glitches de voltaje, pulsos electromagnéticos, variaciones de temperatura.</li>
-                            <li>Mitigación: Verificación de integridad, redundancia, detección de condiciones anormales.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Ataques de Caché:</strong> Explotan patrones de acceso a memoria a través de la caché del procesador.
-                        <ul>
-                            <li>Técnicas: FLUSH+RELOAD, PRIME+PROBE, EVICT+TIME.</li>
-                            <li>Mitigación: Accesos a memoria independientes de datos secretos, prefetching.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Vulnerabilidades Específicas en Algoritmos Post-Cuánticos</h4>
-                <ul>
-                    <li><strong>ML-KEM/ML-DSA:</strong>
-                        <ul>
-                            <li>Vulnerabilidades en la generación de polinomios secretos.</li>
-                            <li>Fugas durante operaciones NTT.</li>
-                            <li>Ataques durante el muestreo de distribuciones de error.</li>
-                        </ul>
-                    </li>
-                    <li><strong>SLH-DSA:</strong>
-                        <ul>
-                            <li>Fugas durante la generación de semillas.</li>
-                            <li>Vulnerabilidades en la construcción de árboles de Merkle.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Classic McEliece:</strong>
-                        <ul>
-                            <li>Ataques durante la decodificación de códigos de Goppa.</li>
-                            <li>Fugas en la manipulación de matrices de gran tamaño.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Técnicas de Mitigación</h4>
-                <ul>
-                    <li><strong>Implementaciones de Tiempo Constante:</strong> Asegurar que el tiempo de ejecución no dependa de datos secretos.</li>
-                    <li><strong>Enmascaramiento:</strong> Dividir valores secretos en partes aleatorias para ocultar su procesamiento.</li>
-                    <li><strong>Aleatorización:</strong> Introducir aleatoriedad en la ejecución para dificultar la correlación.</li>
-                    <li><strong>Verificación de Integridad:</strong> Detectar y responder a manipulaciones.</li>
-                    <li><strong>Contramedidas Específicas:</strong>
-                        <ul>
-                            <li>Técnicas de muestreo resistentes a ataques de tiempo.</li>
-                            <li>Implementaciones NTT protegidas contra fugas.</li>
-                            <li>Protección de accesos a memoria en operaciones con matrices grandes.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Validación y Certificación de Seguridad</h4>
-                <ul>
-                    <li><strong>Evaluación FIPS 140-3:</strong> Estándar para módulos criptográficos seguros.</li>
-                    <li><strong>Common Criteria:</strong> Marco para evaluación de seguridad de productos IT.</li>
-                    <li><strong>Pruebas de Penetración:</strong> Evaluación activa de resistencia a ataques.</li>
-                    <li><strong>Análisis Formal:</strong> Verificación matemática de propiedades de seguridad.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>5.5 Impacto en Diferentes Sectores y Aplicaciones</h3>
-                <p>La transición a la criptografía post-cuántica afectará a diferentes sectores de manera distinta, dependiendo de sus requisitos específicos y restricciones.</p>
-                
-                <h4>Sector Financiero</h4>
-                <ul>
-                    <li><strong>Banca en Línea:</strong> Necesidad de actualizar protocolos TLS y autenticación de clientes.</li>
-                    <li><strong>Pagos Electrónicos:</strong> Impacto en infraestructuras de tarjetas de pago y sistemas de pago móvil.</li>
-                    <li><strong>Blockchain y Criptomonedas:</strong> Vulnerabilidad de esquemas de firma existentes, necesidad de nuevos algoritmos.</li>
-                    <li><strong>Consideraciones Específicas:</strong>
-                        <ul>
-                            <li>Alta sensibilidad a latencia en transacciones.</li>
-                            <li>Requisitos estrictos de cumplimiento normativo.</li>
-                            <li>Necesidad de interoperabilidad global.</li>
-                            <li>Protección a largo plazo de datos financieros.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Sector Sanitario</h4>
-                <ul>
-                    <li><strong>Registros Médicos Electrónicos:</strong> Protección a largo plazo de datos sensibles.</li>
-                    <li><strong>Telemedicina:</strong> Seguridad en comunicaciones en tiempo real.</li>
-                    <li><strong>Dispositivos Médicos:</strong> Actualización de firmware y protocolos en dispositivos con larga vida útil.</li>
-                    <li><strong>Consideraciones Específicas:</strong>
-                        <ul>
-                            <li>Requisitos de privacidad y cumplimiento (HIPAA, GDPR).</li>
-                            <li>Sistemas heredados con ciclos de actualización largos.</li>
-                            <li>Dispositivos con recursos limitados.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Infraestructuras Críticas</h4>
-                <ul>
-                    <li><strong>Energía:</strong> Protección de sistemas SCADA y redes de distribución.</li>
-                    <li><strong>Transporte:</strong> Seguridad en sistemas de control de tráfico y vehículos conectados.</li>
-                    <li><strong>Telecomunicaciones:</strong> Actualización de infraestructura de red y sistemas de gestión.</li>
-                    <li><strong>Consideraciones Específicas:</strong>
-                        <ul>
-                            <li>Sistemas con ciclos de vida muy largos (15-30 años).</li>
-                            <li>Requisitos de disponibilidad extremadamente altos.</li>
-                            <li>Entornos industriales con restricciones específicas.</li>
-                            <li>Implicaciones para la seguridad nacional.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Gobierno y Defensa</h4>
-                <ul>
-                    <li><strong>Comunicaciones Clasificadas:</strong> Necesidad de protección contra amenazas actuales y futuras.</li>
-                    <li><strong>Identidad Digital:</strong> Actualización de sistemas de identificación y autenticación.</li>
-                    <li><strong>Infraestructura de Clave Pública (PKI):</strong> Migración de CAs gubernamentales.</li>
-                    <li><strong>Consideraciones Específicas:</strong>
-                        <ul>
-                            <li>Requisitos de seguridad extremadamente altos.</li>
-                            <li>Necesidad de soluciones validadas y certificadas.</li>
-                            <li>Protección de información con clasificación de seguridad.</li>
-                            <li>Consideraciones de soberanía tecnológica.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Internet de las Cosas (IoT)</h4>
-                <ul>
-                    <li><strong>Dispositivos de Consumo:</strong> Actualización de protocolos de comunicación y autenticación.</li>
-                    <li><strong>IoT Industrial:</strong> Seguridad en sensores y actuadores en entornos industriales.</li>
-                    <li><strong>Ciudades Inteligentes:</strong> Protección de infraestructura de sensores urbanos.</li>
-                    <li><strong>Consideraciones Específicas:</strong>
-                        <ul>
-                            <li>Severas restricciones de recursos (CPU, memoria, energía).</li>
-                            <li>Ciclos de vida largos con actualizaciones limitadas.</li>
-                            <li>Necesidad de soluciones extremadamente eficientes.</li>
-                            <li>Desafíos de gestión de claves a gran escala.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>5.6 Planificación de Migración y Casos Prácticos</h3>
-                <p>La planificación efectiva de la migración a criptografía post-cuántica requiere un enfoque estructurado y adaptado a las necesidades específicas de cada organización.</p>
-                
-                <h4>Componentes de un Plan de Migración</h4>
-                <ol>
-                    <li><strong>Evaluación y Descubrimiento:</strong>
-                        <ul>
-                            <li>Inventario completo de sistemas criptográficos.</li>
-                            <li>Clasificación de datos según sensibilidad y vida útil.</li>
-                            <li>Identificación de dependencias y interfaces externas.</li>
-                            <li>Evaluación de impacto en rendimiento y operaciones.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Análisis de Riesgos:</strong>
-                        <ul>
-                            <li>Evaluación de amenazas específicas para la organización.</li>
-                            <li>Análisis de vulnerabilidades en sistemas actuales.</li>
-                            <li>Determinación de niveles de riesgo aceptables.</li>
-                            <li>Identificación de sistemas críticos para migración prioritaria.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Estrategia y Planificación:</strong>
-                        <ul>
-                            <li>Selección de algoritmos y enfoques (híbrido vs. reemplazo directo).</li>
-                            <li>Desarrollo de línea temporal realista con hitos claros.</li>
-                            <li>Asignación de recursos y responsabilidades.</li>
-                            <li>Planificación de contingencia y gestión de riesgos.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Implementación:</strong>
-                        <ul>
-                            <li>Desarrollo o adquisición de soluciones.</li>
-                            <li>Pruebas en entornos controlados.</li>
-                            <li>Despliegue por fases con monitorización.</li>
-                            <li>Documentación y formación.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Validación y Mantenimiento:</strong>
-                        <ul>
-                            <li>Verificación continua de seguridad y rendimiento.</li>
-                            <li>Auditorías periódicas.</li>
-                            <li>Actualización según evolución de estándares.</li>
-                            <li>Mejora continua basada en lecciones aprendidas.</li>
-                        </ul>
-                    </li>
-                </ol>
-                
-                <h4>Caso Práctico 1: Institución Financiera</h4>
-                <p><strong>Escenario:</strong> Un banco internacional con múltiples sistemas críticos, incluyendo banca en línea, procesamiento de pagos y sistemas internos.</p>
-                <ul>
-                    <li><strong>Enfoque:</strong> Migración híbrida por fases con priorización basada en riesgo.</li>
-                    <li><strong>Fase 1 (0-12 meses):</strong>
-                        <ul>
-                            <li>Inventario completo y clasificación de sistemas.</li>
-                            <li>Implementación de TLS híbrido (ECDHE+ML-KEM) en servidores de banca en línea.</li>
-                            <li>Pruebas de rendimiento y compatibilidad con diferentes clientes.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Fase 2 (12-24 meses):</strong>
-                        <ul>
-                            <li>Actualización de infraestructura PKI para soportar certificados híbridos.</li>
-                            <li>Migración de sistemas de autenticación a firmas híbridas.</li>
-                            <li>Actualización de APIs y servicios web externos.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Fase 3 (24-36 meses):</strong>
-                        <ul>
-                            <li>Migración de sistemas internos y aplicaciones legacy.</li>
-                            <li>Actualización de protocolos de comunicación con otras instituciones.</li>
-                            <li>Implementación de firmas post-cuánticas para documentos legales.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Fase 4 (36+ meses):</strong>
-                        <ul>
-                            <li>Evaluación para posible eliminación de algoritmos clásicos.</li>
-                            <li>Actualización a versiones mejoradas de algoritmos post-cuánticos.</li>
-                            <li>Revisión y optimización continua.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Caso Práctico 2: Fabricante de Dispositivos IoT</h4>
-                <p><strong>Escenario:</strong> Fabricante de dispositivos IoT para hogares inteligentes con ciclos de vida de producto de 5-10 años.</p>
-                <ul>
-                    <li><strong>Desafíos Específicos:</strong>
-                        <ul>
-                            <li>Dispositivos con recursos limitados (CPU de 32 bits, 256KB RAM).</li>
-                            <li>Necesidad de actualizaciones OTA (Over-The-Air).</li>
-                            <li>Compatibilidad con ecosistemas de terceros.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Enfoque:</strong> Diseño de nueva plataforma con crypto-agilidad y actualización gradual de dispositivos existentes.</li>
-                    <li><strong>Solución:</strong>
-                        <ul>
-                            <li>Desarrollo de biblioteca criptográfica optimizada para ML-KEM-512.</li>
-                            <li>Implementación de capa de abstracción para facilitar futuras actualizaciones.</li>
-                            <li>Nuevos dispositivos con soporte nativo para algoritmos post-cuánticos.</li>
-                            <li>Actualización OTA para dispositivos existentes compatibles.</li>
-                            <li>Programa de reemplazo para dispositivos no actualizables.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Resultados:</strong>
-                        <ul>
-                            <li>Aumento de 15% en uso de memoria RAM.</li>
-                            <li>Incremento de 20% en tiempo de establecimiento de conexión.</li>
-                            <li>Reducción de 5% en duración de batería.</li>
-                            <li>Seguridad mejorada contra amenazas futuras.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Lecciones Aprendidas y Mejores Prácticas</h4>
-                <ul>
-                    <li><strong>Comenzar Temprano:</strong> La migración completa puede llevar años; comenzar ahora reduce riesgos futuros.</li>
-                    <li><strong>Enfoque Incremental:</strong> Implementar soluciones híbridas como primer paso reduce riesgos de compatibilidad.</li>
-                    <li><strong>Priorizar Correctamente:</strong> Enfocarse primero en sistemas con datos de larga vida útil y alta sensibilidad.</li>
-                    <li><strong>Pruebas Exhaustivas:</strong> Probar en diversos entornos y con diferentes clientes antes del despliegue.</li>
-                    <li><strong>Formación y Concienciación:</strong> Educar a equipos técnicos y de gestión sobre la importancia de la migración.</li>
-                    <li><strong>Colaboración:</strong> Trabajar con proveedores, clientes y socios para coordinar la transición.</li>
-                    <li><strong>Documentación:</strong> Mantener registros detallados de cambios y decisiones para futuras auditorías.</li>
-                </ul>
-            </div>
-        </section>
+        <h3>Estados Unidos: tres capas</h3>
+        <p><b>NIST</b> fija los algoritmos (FIPS 203, 204 y 205, agosto de 2024) y el calendario técnico. NIST IR 8547 sigue siendo, en septiembre de 2026, un <strong>borrador inicial</strong> de noviembre de 2024: propone declarar <em>obsoletos</em> (<em>deprecated</em>) después de 2030 los algoritmos cuánticamente vulnerables que dan 112 bits de seguridad y <em>no permitidos</em> (<em>disallowed</em>) todos ellos después de 2035 [1]. Que sea un borrador no le resta peso: M-26-15 obliga a las agencias a alinear sus planes con IR 8547 «o su sucesor».</p>
+        <p><b>La NSA</b> gobierna los sistemas de seguridad nacional con CNSA 2.0 [3]. Es el marco más estricto en parámetros (solo nivel 5: ML-KEM-1024 y ML-DSA-87; LMS o XMSS para firmar software y firmware) y el único que no exige hibridar. La barrera práctica es el 1 de enero de 2027: desde esa fecha las nuevas adquisiciones de NSS deben ser conformes con CNSA 2.0.</p>
+        <p><b>La administración civil</b> ha pasado de la preparación a la ejecución. El memorando OMB M-23-02 (noviembre de 2022) obligó a inventariar la criptografía vulnerable; la orden ejecutiva 14144 (enero de 2025) añadía obligaciones de compra que la EO 14306 (junio de 2025) eliminó, manteniendo el requisito de soportar TLS 1.3 antes del 2 de enero de 2030 y la lista de categorías de productos de CISA, publicada en enero de 2026 [15]. La EO 14412, <em>Securing the Nation Against Advanced Cryptographic Attacks</em> (22 de junio de 2026), fija por primera vez fechas duras: PQC para establecimiento de claves en todos los activos de alto valor (HVA) y sistemas de alto impacto antes del 31 de diciembre de 2030 y para firmas antes del 31 de diciembre de 2031, y encarga una regla FAR para que los contratistas cumplan los FIPS post-cuánticos en 2030 [4]. OMB M-26-15, dos días después, la desarrolla en cinco fases [5]: estrategia, planificación e inventario (2026–2027), pilotos (2027–2028), migración priorizada del establecimiento de claves (2028–2030), migración de firmas (2031) y migración completa (2035). También exige un CBOM automatizado y que los equipos que terminan TLS o IPsec soporten intercambio PQC.</p>
+        <h3>Unión Europea y España</h3>
+        <p>La Recomendación (UE) 2024/1101 pidió a los Estados miembros una estrategia coordinada y creó un grupo de trabajo dentro del Grupo de Cooperación NIS. Su primer entregable, la <em>Coordinated Implementation Roadmap</em> (v1.1, publicada el 23 de junio de 2025), fija tres hitos: a finales de 2026, todos los Estados deben haber empezado la transición, con planes nacionales, inventarios en formato estandarizado y análisis de riesgo cuántico; a finales de 2030, deben estar migrados los casos de uso de alto riesgo, y a finales de 2035 el resto en la medida de lo posible [7]. El grupo prepara un segundo entregable. ENISA no fija un calendario propio: aporta análisis técnico (sus informes de 2021 sobre el estado de la PQC y la mitigación cuántica) y apoya al grupo NIS.</p>
+        <p>En España, el Centro Criptológico Nacional actualizó en julio de 2026 su guía <strong>CCN-TEC 009 / BP-37, <em>Recomendaciones para una transición postcuántica segura</em></strong> para alinearla con la hoja de ruta europea [8]. Fija cinco fases (desde diciembre de 2022 hasta diciembre de 2035) y un decálogo cuyo punto 7 recuerda las fechas: 31/12/2026 estrategia, gobernanza, inventario, clasificación de casos de uso y pilotos en sistemas de riesgo alto y medio; 31/12/2030 migración completa de riesgo alto; 31/12/2035 riesgo medio y, en lo posible, bajo. El CCN recomienda ML-KEM, HQC (cuando se publique) y FrodoKEM para establecimiento de claves; ML-DSA, FN-DSA y SLH-DSA para firmas; XMSS y SLH-DSA para firmar firmware <em>de inmediato</em>; y autoriza AES-128, AES-192 y AES-256. La propia guía remite la clasificación de riesgo a una <em>Hoja de ruta para la transición postcuántica en España</em> que en julio de 2026 figuraba como «pendiente de publicación». Los mecanismos autorizados se enumeran en la guía CCN-STIC 221.</p>
+        <h3>Alemania, Francia y Reino Unido</h3>
+        <p>La TR-02102-1 del BSI, versión 2026-01, introduce por primera vez plazos: el uso <em>exclusivo</em> de acuerdo de claves clásico solo se recomienda hasta el final de 2031 (2030 para requisitos de protección muy altos) y el de firmas clásicas hasta el final de 2035. Los KEM post-cuánticos recomendados son FrodoKEM-976/1344, Classic McEliece y ML-KEM-768/1024, siempre en modo híbrido, combinados con CatKDF (ETSI TS 103 744) o con el KeyCombine de NIST SP 800-227 [9]. Las firmas post-cuánticas solo se recomiendan concatenadas con una clásica, salvo las basadas en hash. El BSI tampoco recomienda QKD por ahora (véase el <a href="../../temas/tema6/index.html">Tema 6</a>).</p>
+        <p>La ANSSI aplica el mismo principio en la cualificación de productos: considera la hibridación esencial y solo exime a SLH-DSA, XMSS y LMS; anuncia requisitos PQC para entrar en cualificación a partir de 2027 y advierte de que no será razonable comprar productos sin PQC después de 2030 [10]. El NCSC británico publicó en marzo de 2025 un calendario en tres etapas (2028, 2031, 2035) que no es legalmente vinculante, pero que los reguladores sectoriales usan como referencia técnica para los operadores NIS [11].</p>
+        <div class="callout warning"><span class="callout-title">Cuidado con las cifras de segunda mano</span><p>Circulan muchas tablas de calendarios con fechas mal copiadas. Tres errores frecuentes: presentar NIST IR 8547 como final (es un borrador); atribuir a la UE la obligación de «migrar todo en 2030» (el hito de 2030 es para alto riesgo); y afirmar que la NSA prohíbe los híbridos (no los exige, pero los admite).</p></div>
+        <div class="exercise"><span class="ex-title">Ejemplo resuelto <span class="level">Básico</span></span><p>Un banco con sede en Madrid, sujeto a NIS2 y DORA, tiene filial en EE. UU. que presta servicios a una agencia federal. ¿Qué fechas le aplican?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>En la UE, la hoja de ruta coordinada y la guía del CCN: inventario, gobernanza y pilotos antes del 31/12/2026; banca en línea, pagos y claves de larga vida (casos de alto riesgo) migrados antes del 31/12/2030; el resto antes del 31/12/2035. La filial, como contratista federal, tendrá que cumplir la regla FAR derivada de la EO 14412: FIPS post-cuánticos antes del 31/12/2030, y soportar TLS 1.3 en los servicios que preste antes del 2/1/2030. En la práctica, la fecha más exigente (2030 para el establecimiento de claves) marca el plan de todo el grupo.</p></div></details></div>
 
-        <section class="tema-recursos">
-            <h2>Recursos Adicionales</h2>
-            
-            <div class="recursos-grid">
-                <div class="recurso-item">
-                    <h3>Lecturas Recomendadas</h3>
-                    <ul>
-                        <li>NIST. (2023). Migration to Post-Quantum Cryptography. NISTIR 8105 (Draft).</li>
-                        <li>Bindel, N., et al. (2021). Transitioning to a Post-Quantum World: Challenges and Opportunities. IEEE Security & Privacy, 19(4), 34-43.</li>
-                        <li>Kampanakis, P., & Sikeridis, D. (2021). Two Post-Quantum Signature Use-cases: Non-issues, Challenges and Potential Solutions. IACR Cryptology ePrint Archive, 2021/1133.</li>
-                    </ul>
-                </div>
-                
-                <div class="recurso-item">
-                    <h3>Recursos en Línea</h3>
-                    <ul>
-                        <li><a href="https://openquantumsafe.org/">Open Quantum Safe Project</a></li>
-                        <li><a href="https://csrc.nist.gov/Projects/post-quantum-cryptography/migration-to-post-quantum-cryptography">NIST: Migración a Criptografía Post-Cuántica</a></li>
-                        <li><a href="https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/Quantentechnologien-und-Post-Quanten-Kryptographie/post-quanten-kryptographie_node.html">BSI: Recomendaciones para Criptografía Post-Cuántica</a></li>
-                    </ul>
-                </div>
-                
-                <div class="recurso-item">
-                    <h3>Ejemplos Prácticos</h3>
-                    <ul>
-                        <li><a href="../../ejemplos/criptografia_hibrida.html">Implementación de Criptografía Híbrida</a></li>
-                        <li><a href="../../guias/criptografia_hibrida.html">Guía de Laboratorio: Criptografía Híbrida</a></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+        <!-- ============================================================ -->
+        <h2 id="metodologia"><span class="sec">5.3</span>Metodología de migración</h2>
+        <p>Todas las guías (M-26-15, CCN-TEC 009, NCSC, la hoja de ruta europea) describen el mismo ciclo, que la figura 5.2 resume. Lo esencial es que no se trata de un proyecto con final, sino de adquirir la capacidad de cambiar la criptografía cuando haga falta.</p>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="f52t f52d">
+            <title id="f52t">Fases de una migración a criptografía post-cuántica</title>
+            <desc id="f52d">Cinco fases en secuencia: gobernanza e inventario, evaluación de riesgo, pilotos híbridos, migración priorizada y retirada de algoritmos vulnerables, con un bucle de realimentación de inventario continuo y agilidad criptográfica.</desc>
+            <defs><marker id="f52a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-ink"/></marker></defs>
+            <rect class="svg-box-ink" x="10" y="40" width="124" height="96" rx="6"/>
+            <text class="svg-on-ink" x="72" y="64" text-anchor="middle" font-weight="600">1 · Gobernanza</text>
+            <text class="svg-on-ink" x="72" y="82" text-anchor="middle">e inventario</text>
+            <text class="svg-on-ink" x="72" y="104" text-anchor="middle" font-size="11">responsables,</text>
+            <text class="svg-on-ink" x="72" y="120" text-anchor="middle" font-size="11">presupuesto, CBOM</text>
+            <rect class="svg-box-signal" x="154" y="40" width="124" height="96" rx="6"/>
+            <text class="svg-text" x="216" y="64" text-anchor="middle" font-weight="600">2 · Riesgo</text>
+            <text class="svg-text" x="216" y="82" text-anchor="middle">y prioridades</text>
+            <text class="svg-muted" x="216" y="104" text-anchor="middle">Mosca (x, y),</text>
+            <text class="svg-muted" x="216" y="120" text-anchor="middle">exposición, criticidad</text>
+            <rect class="svg-box-signal" x="298" y="40" width="124" height="96" rx="6"/>
+            <text class="svg-text" x="360" y="64" text-anchor="middle" font-weight="600">3 · Pilotos</text>
+            <text class="svg-text" x="360" y="82" text-anchor="middle">híbridos</text>
+            <text class="svg-muted" x="360" y="104" text-anchor="middle">TLS, VPN, PKI</text>
+            <text class="svg-muted" x="360" y="120" text-anchor="middle">de pruebas</text>
+            <rect class="svg-box-signal" x="442" y="40" width="124" height="96" rx="6"/>
+            <text class="svg-text" x="504" y="64" text-anchor="middle" font-weight="600">4 · Migración</text>
+            <text class="svg-text" x="504" y="82" text-anchor="middle">priorizada</text>
+            <text class="svg-muted" x="504" y="104" text-anchor="middle">claves (HNDL) →</text>
+            <text class="svg-muted" x="504" y="120" text-anchor="middle">firmas → resto</text>
+            <rect class="svg-box-amber" x="586" y="40" width="124" height="96" rx="6"/>
+            <text class="svg-text" x="648" y="64" text-anchor="middle" font-weight="600">5 · Retirada</text>
+            <text class="svg-text" x="648" y="82" text-anchor="middle">de lo vulnerable</text>
+            <text class="svg-muted" x="648" y="104" text-anchor="middle">desactivar RSA/ECC,</text>
+            <text class="svg-muted" x="648" y="120" text-anchor="middle">evitar degradación</text>
+            <g class="svg-stroke-ink" stroke-width="1.5">
+              <line x1="134" y1="88" x2="152" y2="88" marker-end="url(#f52a)"/>
+              <line x1="278" y1="88" x2="296" y2="88" marker-end="url(#f52a)"/>
+              <line x1="422" y1="88" x2="440" y2="88" marker-end="url(#f52a)"/>
+              <line x1="566" y1="88" x2="584" y2="88" marker-end="url(#f52a)"/>
+            </g>
+            <path class="svg-stroke-amber" d="M648,136 C648,200 72,200 72,140" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#f52a)"/>
+            <text class="svg-text" x="360" y="216" text-anchor="middle">inventario continuo y agilidad criptográfica: la próxima transición empieza aquí</text>
+            <g class="svg-muted">
+              <text x="72" y="28" text-anchor="middle">2026–2027</text><text x="216" y="28" text-anchor="middle">2026–2027</text><text x="360" y="28" text-anchor="middle">2027–2028</text><text x="504" y="28" text-anchor="middle">2028–2031</text><text x="648" y="28" text-anchor="middle">2031–2035</text>
+            </g>
+            <text class="svg-muted" x="360" y="242" text-anchor="middle">fechas orientativas, alineadas con OMB M-26-15 y la hoja de ruta europea</text>
+          </svg>
+          <figcaption><b>Figura 5.2.</b> Hoja de ruta de migración. Las fases 1 y 2 se solapan; los pilotos (3) usan intercambio híbrido porque es lo que ya soportan los productos; la fase 5 exige desactivar los algoritmos antiguos para evitar ataques de degradación.</figcaption>
+        </figure>
 
-        <div class="tema-navegacion-inferior">
-            <div class="nav-anterior">
-                <a href="../tema4/index.html">
-                    <span class="flecha">←</span>
-                    Anterior: Tema 4 - Estandarización de Criptografía Post-Cuántica
-                </a>
-            </div>
-            <div class="nav-siguiente">
-                <a href="../tema6/index.html">
-                    Siguiente: Tema 6 - Distribución Cuántica de Claves (QKD)
-                    <span class="flecha">→</span>
-                </a>
-            </div>
+        <h3>Inventario criptográfico y CBOM</h3>
+        <p>No se puede migrar lo que no se sabe que existe. El inventario debe responder, para cada activo: qué algoritmo y tamaño de clave usa, en qué protocolo, qué biblioteca o módulo lo implementa, dónde se guardan las claves, quién es el responsable, qué datos protege y hasta cuándo (<var>x</var>) y qué costaría cambiarlo (<var>y</var>). El formato de facto es el <strong>CBOM</strong> (<em>Cryptography Bill of Materials</em>) de CycloneDX, integrado en la especificación desde la versión 1.6 (2024), que modela algoritmos, claves, certificados y protocolos como <code>cryptographic-asset</code> con relaciones de dependencia respecto a los componentes de software [16]. Un fragmento:</p>
+        <pre data-lang="json"><code>{
+  <span class="tok-s">"type"</span>: <span class="tok-s">"cryptographic-asset"</span>,
+  <span class="tok-s">"bom-ref"</span>: <span class="tok-s">"crypto/algorithm/ecdh-x25519"</span>,
+  <span class="tok-s">"name"</span>: <span class="tok-s">"X25519"</span>,
+  <span class="tok-s">"cryptoProperties"</span>: {
+    <span class="tok-s">"assetType"</span>: <span class="tok-s">"algorithm"</span>,
+    <span class="tok-s">"algorithmProperties"</span>: {
+      <span class="tok-s">"primitive"</span>: <span class="tok-s">"key-agree"</span>,
+      <span class="tok-s">"curve"</span>: <span class="tok-s">"x25519"</span>,
+      <span class="tok-s">"cryptoFunctions"</span>: [<span class="tok-s">"keygen"</span>, <span class="tok-s">"keyderive"</span>],
+      <span class="tok-s">"nistQuantumSecurityLevel"</span>: <span class="tok-n">0</span>
+    }
+  }
+}</code></pre>
+        <p class="code-caption">El campo <code>nistQuantumSecurityLevel</code> = 0 marca el activo como cuánticamente vulnerable; un ML-KEM-768 llevaría 3.</p>
+        <p>Las fuentes de descubrimiento se complementan: ninguna ve todo.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Técnicas de descubrimiento criptográfico</caption>
+            <thead><tr><th>Técnica</th><th>Qué encuentra</th><th>Qué se le escapa</th><th>Ejemplos</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Escaneo de red pasivo o activo</th><td>Versiones TLS/SSH/IKE, grupos y suites negociados, certificados</td><td>Criptografía de datos en reposo, tráfico interno cifrado a medida</td><td><code>openssl s_client</code>, <code>nmap --script ssl-enum-ciphers</code>, sondas de flujo</td></tr>
+              <tr><th scope="row">Análisis estático de código (SAST)</th><td>Llamadas a APIs criptográficas, algoritmos y claves en código propio</td><td>Binarios de terceros, configuración en tiempo de ejecución</td><td>CBOMkit-hyperion (plugin de SonarQube de IBM) [17]</td></tr>
+              <tr><th scope="row">Análisis de binarios, contenedores y SBOM</th><td>Bibliotecas criptográficas y sus versiones, certificados y claves embebidos</td><td>Qué opciones se usan realmente</td><td>CBOMkit-theia [17], análisis de composición de software</td></tr>
+              <tr><th scope="row">PKI, HSM y KMS</th><td>Certificados emitidos, claves y sus algoritmos, fechas de caducidad</td><td>Claves fuera de los sistemas gestionados</td><td>Inventario de la CA, APIs de KMS en la nube</td></tr>
+              <tr><th scope="row">Cuestionario a proveedores</th><td>Productos cerrados, firmware, dispositivos</td><td>Lo que el proveedor no sabe o no dice</td><td>Petición de CBOM y hoja de ruta PQC</td></tr>
+            </tbody>
+          </table>
         </div>
+        <h3>Priorización por riesgo</h3>
+        <p>Con el inventario se ordena la migración. Un criterio sencillo y defendible combina la desigualdad de Mosca con la exposición: primero lo que (a) protege datos con <var>x</var> grande y viaja por redes que un adversario puede grabar, (b) tiene raíces de confianza difíciles de cambiar, o (c) tarda mucho en migrarse (<var>y</var> grande), por lo que hay que empezar antes.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Ejemplo de priorización (valores ilustrativos)</caption>
+            <thead><tr><th>Sistema</th><th class="num">x (años)</th><th class="num">y (años)</th><th>Exposición a HNDL</th><th>Prioridad</th><th>Acción</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">VPN entre sedes</th><td class="num">10</td><td class="num">1</td><td>Alta (Internet)</td><td><span class="badge broken">1</span></td><td>IKEv2 con intercambio ML-KEM adicional (RFC 9370)</td></tr>
+              <tr><th scope="row">Portal web de clientes</th><td class="num">5</td><td class="num">1</td><td>Alta</td><td><span class="badge broken">1</span></td><td>Activar X25519MLKEM768 en el balanceador</td></tr>
+              <tr><th scope="row">Firma de firmware de equipos de campo</th><td class="num">15</td><td class="num">4</td><td>No aplica (autenticidad)</td><td><span class="badge broken">1</span></td><td>LMS/XMSS o SLH-DSA en el cargador de arranque</td></tr>
+              <tr><th scope="row">PKI interna (raíz)</th><td class="num">20</td><td class="num">5</td><td>Baja</td><td><span class="badge draft">2</span></td><td>Planificar raíz ML-DSA o compuesta; pilotar</td></tr>
+              <tr><th scope="row">Correo cifrado S/MIME</th><td class="num">10</td><td class="num">3</td><td>Media</td><td><span class="badge draft">2</span></td><td>Esperar a clientes con ML-KEM en CMS</td></tr>
+              <tr><th scope="row">API interna en red segmentada</th><td class="num">1</td><td class="num">1</td><td>Baja</td><td><span class="badge info">3</span></td><td>Migrará con la actualización de bibliotecas</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Agilidad criptográfica</h3>
+        <div class="definition"><span class="def-title"><b>Definición</b>Agilidad criptográfica</span><p>Capacidad de un sistema para sustituir algoritmos, parámetros, claves y certificados sin rediseñarlo ni interrumpir el servicio. NIST la desarrolla en CSWP 39 (diciembre de 2025).</p></div>
+        <p>Los patrones que la hacen posible son conocidos:</p>
+        <ul>
+          <li><b>Capa de abstracción con proveedores intercambiables.</b> OpenSSL 3 carga algoritmos como <em>providers</em> (así se añadió ML-KEM antes de 3.5 mediante oqs-provider); Java lo hace con JCA/JCE. El código de aplicación pide «un KEM» o «una firma», no «X25519».</li>
+          <li><b>Configuración en vez de código.</b> Los grupos TLS, las suites y las políticas de firma se eligen en ficheros de configuración o políticas del sistema (por ejemplo, <code>Groups</code> en OpenSSL, <code>KexAlgorithms</code> en OpenSSH, <em>crypto-policies</em> en distribuciones Linux).</li>
+          <li><b>Identificadores de algoritmo en los datos.</b> Todo texto cifrado o firma almacenada debe llevar el OID o identificador del algoritmo, para poder leer datos antiguos y escribir con los nuevos.</li>
+          <li><b>Negociación con protección frente a degradación.</b> El protocolo debe negociar, pero la negociación debe estar autenticada (en TLS 1.3, el transcript firmado) y la política debe poder desactivar lo antiguo.</li>
+          <li><b>Automatización del ciclo de vida.</b> Si renovar un certificado exige intervención manual, cambiar de algoritmo en miles de certificados será inviable. ACME y la gestión automática de claves son requisitos previos.</li>
+          <li><b>Holgura en tamaños.</b> Campos de longitud fija de 256 bytes para una clave pública o de 64 bytes para una firma impiden migrar. Una clave ML-DSA-65 ocupa 1952 bytes y su firma 3309.</li>
+        </ul>
+        <h3>Migrar protocolos frente a migrar bibliotecas</h3>
+        <p>Para el <strong>intercambio de claves en TLS 1.3 o SSH</strong> basta con actualizar la biblioteca en ambos extremos: el protocolo ya negocia grupos y los grupos híbridos son un <code>NamedGroup</code> más. Por eso es lo que primero se ha desplegado a gran escala (sección 5.8). En IKEv2 existe la extensión de intercambios múltiples (RFC 9370), que añade un ML-KEM tras el Diffie–Hellman inicial. En cambio, <strong>las firmas</strong> exigen migrar la PKI entera: CA, formatos de certificado (RFC 9881 para ML-DSA), validadores, HSM y, en la web, programas raíz de los navegadores. Y los <strong>formatos de datos</strong> (CMS/S/MIME, OpenPGP, JWT/COSE, cifrado de ficheros) necesitan especificaciones nuevas y convivir con los datos ya cifrados, que habrá que volver a cifrar si su <var>x</var> es largo. El detalle de TLS y PKI está en el <a href="../../temas/tema2/index.html">Tema 2</a>.</p>
+        <h3>Proveedores</h3>
+        <p>La mayor parte de la criptografía de una organización está en productos de terceros. Conviene incluir en los pliegos y contratos: el CBOM del producto; fechas comprometidas de soporte de FIPS 203/204/205 y de grupos híbridos; plan de validación FIPS 140-3 o de certificación Common Criteria del módulo con los nuevos algoritmos; mecanismo de actualización de algoritmos en campo, y compromiso de no introducir tamaños fijos. En EE. UU., M-26-15 remite a la lista de categorías de productos de CISA para exigir PQC en las compras [15]; en Francia, la cualificación ANSSI hará lo mismo desde 2027.</p>
+
+        <!-- ============================================================ -->
+        <h2 id="hibrido"><span class="sec">5.4</span>Intercambio de claves híbrido</h2>
+        <p>Un esquema híbrido PQ/T combina un algoritmo tradicional (T), cuya seguridad clásica está muy estudiada, con uno post-cuántico (PQ), que resiste a un CRQC pero es más joven. El objetivo es que el resultado sea seguro <strong>si al menos uno de los dos lo es</strong>.</p>
+        <div class="definition"><span class="def-title"><b>Definición</b>KEM híbrido</span><p>Dados KEM<sub>1</sub> = (Gen<sub>1</sub>, Encaps<sub>1</sub>, Decaps<sub>1</sub>) y KEM<sub>2</sub>, el KEM híbrido genera ambos pares de claves, encapsula con los dos, (ct<sub>i</sub>, ss<sub>i</sub>) ← Encaps<sub>i</sub>(pk<sub>i</sub>), envía ct = (ct<sub>1</sub>, ct<sub>2</sub>) y deriva la clave con un <em>combinador</em> <var>W</var>:</p>
+          <div class="equation"><var>K</var> = <var>W</var>(ss<sub>1</sub>, ss<sub>2</sub>, ct<sub>1</sub>, ct<sub>2</sub>, pk<sub>1</sub>, pk<sub>2</sub>, etiqueta)<span class="eq-label">(5.2)</span></div>
+          <p>Un Diffie–Hellman efímero se ve como KEM tomando ct<sub>2</sub> = <var>g</var><sup><var>e</var></sup> (la clave pública efímera) y ss<sub>2</sub> = pk<sub>2</sub><sup><var>e</var></sup>.</p></div>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 280" role="img" aria-labelledby="f53t f53d">
+            <title id="f53t">Combinador de un KEM híbrido ML-KEM-768 + X25519</title>
+            <desc id="f53d">Dos ramas: ML-KEM-768 encapsula contra ek_M y produce ct_M y ss_M; X25519 genera una clave efímera ct_X y calcula ss_X con pk_X. Ambos secretos y el contexto (textos cifrados, claves públicas, etiqueta o transcript) entran en una función de derivación que produce la clave K.</desc>
+            <defs><marker id="f53a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-ink"/></marker></defs>
+            <rect class="svg-box" x="10" y="30" width="150" height="56" rx="6"/>
+            <text class="svg-text" x="85" y="54" text-anchor="middle" font-weight="600">ek_M (1184 B)</text>
+            <text class="svg-muted" x="85" y="72" text-anchor="middle">clave del receptor</text>
+            <rect class="svg-box" x="10" y="176" width="150" height="56" rx="6"/>
+            <text class="svg-text" x="85" y="200" text-anchor="middle" font-weight="600">pk_X (32 B)</text>
+            <text class="svg-muted" x="85" y="218" text-anchor="middle">clave del receptor</text>
+            <rect class="svg-box-signal" x="200" y="30" width="170" height="56" rx="6"/>
+            <text class="svg-text" x="285" y="54" text-anchor="middle" font-weight="600">ML-KEM-768.Encaps</text>
+            <text class="svg-muted" x="285" y="72" text-anchor="middle">FIPS 203 · IND-CCA</text>
+            <rect class="svg-box-amber" x="200" y="176" width="170" height="56" rx="6"/>
+            <text class="svg-text" x="285" y="200" text-anchor="middle" font-weight="600">X25519 efímero</text>
+            <text class="svg-muted" x="285" y="218" text-anchor="middle">ct_X = e·G, ss_X = e·pk_X</text>
+            <g class="svg-stroke-ink" stroke-width="1.5">
+              <line x1="160" y1="58" x2="198" y2="58" marker-end="url(#f53a)"/>
+              <line x1="160" y1="204" x2="198" y2="204" marker-end="url(#f53a)"/>
+              <polyline fill="none" points="370,50 535,50 535,94" marker-end="url(#f53a)"/>
+              <polyline fill="none" points="370,214 535,214 535,168" marker-end="url(#f53a)"/>
+              <line x1="600" y1="131" x2="636" y2="131" marker-end="url(#f53a)"/>
+            </g>
+            <text class="svg-mono svg-text" x="390" y="42" font-size="12">ss_M (32 B)</text>
+            <text class="svg-mono svg-text" x="390" y="232" font-size="12">ss_X (32 B)</text>
+            <text class="svg-muted" x="285" y="104" text-anchor="middle">ct_M (1088 B) → a la red</text>
+            <text class="svg-muted" x="285" y="250" text-anchor="middle">ct_X (32 B) → a la red</text>
+            <rect class="svg-box-ink" x="470" y="96" width="130" height="70" rx="6"/>
+            <text class="svg-on-ink" x="535" y="122" text-anchor="middle" font-weight="600">Combinador W</text>
+            <text class="svg-on-ink" x="535" y="140" text-anchor="middle" font-size="11">KDF(ss_M ‖ ss_X ‖</text>
+            <text class="svg-on-ink" x="535" y="155" text-anchor="middle" font-size="11">contexto)</text>
+            <rect class="svg-box-signal" x="638" y="108" width="72" height="46" rx="6"/>
+            <text class="svg-text" x="674" y="136" text-anchor="middle" font-weight="600">K</text>
+            <text class="svg-muted" x="535" y="272" text-anchor="middle">contexto de W · X-Wing: ct_X, pk_X, etiqueta · TLS 1.3: hash del transcript</text>
+          </svg>
+          <figcaption><b>Figura 5.3.</b> Estructura de un KEM híbrido. Si un CRQC calcula ss<sub>X</sub>, K sigue dependiendo de ss<sub>M</sub>; si se rompe ML-KEM, sigue dependiendo de ss<sub>X</sub>. El contexto evita que dos textos cifrados distintos den la misma clave.</figcaption>
+        </figure>
+
+        <h3>En TLS 1.3: X25519MLKEM768</h3>
+        <p>RFC 9954 (<em>Hybrid Key Exchange in TLS 1.3</em>, informativo, julio de 2026) define el marco: cada combinación es un <code>NamedGroup</code> nuevo, las shares se concatenan sin codificación adicional y los secretos se concatenan y entran en HKDF-Extract como el secreto (EC)DHE [18]. Exige que todas las longitudes sean fijas, porque los secretos de longitud variable abren canales laterales de tiempo, y que los KEM sean IND-CCA si hay reutilización de claves. RFC 10024 (Proposed Standard, agosto de 2026) registra los tres grupos concretos [19]:</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Grupos híbridos de RFC 10024 (tamaños en bytes; «Rec.» = columna Recommended del registro IANA)</caption>
+            <thead><tr><th>Grupo</th><th>Codepoint</th><th>Orden</th><th class="num">Cliente</th><th class="num">Servidor</th><th class="num">Secreto</th><th>Rec.</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">X25519MLKEM768</th><td>0x11EC</td><td>ML-KEM ‖ X25519</td><td class="num">1216</td><td class="num">1120</td><td class="num">64</td><td>Sí</td></tr>
+              <tr><th scope="row">SecP256r1MLKEM768</th><td>0x11EB</td><td>ECDH ‖ ML-KEM</td><td class="num">1249</td><td class="num">1153</td><td class="num">64</td><td>No</td></tr>
+              <tr><th scope="row">SecP384r1MLKEM1024</th><td>0x11ED</td><td>ECDH ‖ ML-KEM</td><td class="num">1665</td><td class="num">1665</td><td class="num">80</td><td>No</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>El orden no es arbitrario: por FIPS, el primer secreto de la concatenación debe venir de una implementación certificada. En X25519MLKEM768 lo es ML-KEM (X25519 no es un esquema aprobado de acuerdo de claves); en las variantes NIST, la curva. Para ML-KEM sin componente clásico existe draft-ietf-tls-mlkem (MLKEM512/768/1024, 0x0200–0x0202), enviado al IESG como informativo y marcado como no recomendado en el registro [20].</p>
+        <p><b>Ejemplo numérico.</b> Con X25519MLKEM768 la share del cliente pasa de 32 a 1216 bytes (+1184) y la del servidor de 32 a 1120 (+1088). Un ClientHello típico, de unos 300 bytes sin la share, pasa a unos 1500: supera los 1460 bytes de un segmento TCP con MSS habitual y viaja en dos paquetes. Esto no añade idas y vueltas, pero ha destapado <em>middleboxes</em> que asumían que el ClientHello cabía en un paquete. En el servidor, el coste de cálculo es menor que el de una firma RSA-2048.</p>
+        <p>Puedes ejecutar este handshake y ver cada byte en el <a href="../../ejemplos/criptografia_hibrida.html">ejemplo E4</a>, y configurarlo con OpenSSL en el <a href="../../guias/criptografia_hibrida.html">laboratorio L4</a>.</p>
+
+        <h3>Por qué el combinador debe preservar IND-CCA</h3>
+        <p>Parece que cualquier forma de mezclar dos secretos aleatorios da un secreto aleatorio. Es cierto frente a un atacante <em>pasivo</em>, pero no en el modelo que importa para un KEM: IND-CCA, en el que el atacante puede pedir desencapsulados de cualquier texto cifrado distinto del reto. Giacon, Heuer y Poettering [21] mostraron el problema con el combinador más ingenuo, <var>K</var> = ss<sub>1</sub> ⊕ ss<sub>2</sub>:</p>
+        <ol>
+          <li>El atacante recibe el reto (ct<sub>1</sub>*, ct<sub>2</sub>*) y supongamos que KEM<sub>2</sub> está roto: conoce ss<sub>2</sub>*.</li>
+          <li>Encapsula él mismo con KEM<sub>2</sub> y obtiene (ct<sub>2</sub>′, ss<sub>2</sub>′). Pide al oráculo Decaps(ct<sub>1</sub>*, ct<sub>2</sub>′), consulta legal porque el par es distinto del reto.</li>
+          <li>El oráculo devuelve ss<sub>1</sub>* ⊕ ss<sub>2</sub>′; como conoce ss<sub>2</sub>′, despeja ss<sub>1</sub>* y calcula <var>K</var>* = ss<sub>1</sub>* ⊕ ss<sub>2</sub>*.</li>
+        </ol>
+        <p>Romper <em>un</em> componente basta para romper el híbrido: exactamente lo que se quería evitar. La solución es que el combinador dependa de los textos cifrados: <var>K</var> = KDF(ss<sub>1</sub> ‖ ss<sub>2</sub> ‖ ct<sub>1</sub> ‖ ct<sub>2</sub>). Un segundo fallo, más sutil, afecta a KDF(ss<sub>1</sub> ‖ ss<sub>2</sub>) <em>sin</em> textos cifrados cuando un componente es maleable: X25519 ignora el bit más significativo de la coordenada <var>u</var> (RFC 7748), así que invertirlo produce un ct<sub>2</sub>′ ≠ ct<sub>2</sub>* con el mismo ss<sub>2</sub>*, y el oráculo devuelve directamente <var>K</var>* sin romper nada. Ambos ataques se pueden ejecutar en el <a href="../../ejemplos/criptografia_hibrida.html">ejemplo E4</a>.</p>
+        <p>En TLS 1.3 la simple concatenación es segura porque el key schedule ya liga los textos cifrados: las claves de tráfico se derivan con el hash del transcript, que incluye ambas shares, y el transcript se autentica con <code>CertificateVerify</code> y <code>Finished</code>. Pero esta seguridad es del protocolo, no del combinador; fuera de TLS (HPKE, cifrado de ficheros, claves estáticas) hace falta un combinador que sea IND-CCA por sí mismo.</p>
+        <h3>X-Wing y los combinadores estandarizados</h3>
+        <p>X-Wing combina ML-KEM-768 y X25519 en un KEM de propósito general [22]:</p>
+        <div class="equation"><var>K</var> = SHA3-256(ss<sub>M</sub> ‖ ss<sub>X</sub> ‖ ct<sub>X</sub> ‖ pk<sub>X</sub> ‖ "\.//^\")<span class="eq-label">(5.3)</span></div>
+        <p>Incluye el texto cifrado y la clave pública de X25519, pero <em>no</em> los de ML-KEM (1088 y 1184 bytes), lo que ahorra hashear más de 2 kB. La prueba se apoya en que ML-KEM, gracias a la transformación FO con rechazo implícito, es resistente a segundas preimágenes de texto cifrado (C2PRI): es inviable encontrar ct<sub>M</sub>′ ≠ ct<sub>M</sub> que desencapsule al mismo secreto. X-Wing mide 1216 bytes de clave pública, 1120 de texto cifrado y 32 de secreto; es un Internet-Draft de envío independiente, sin estatus de RFC, y Apple lo ofrece en su API CryptoKit desde 2025. El borrador de la CFRG <em>Hybrid PQ/T KEMs</em> (revisión 12, julio de 2026) generaliza la idea en cuatro marcos: dos «universales», que hashean todos los textos cifrados y claves públicas y solo exigen IND-CCA de un componente, y dos que omiten los del componente PQ y exigen C2PRI [23]. En el lado de los organismos, NIST SP 800-227 (septiembre de 2025) describe los KEM compuestos y su función KeyCombine, y ETSI TS 103 744 especifica CatKDF y CasKDF; son los dos combinadores que recomienda el BSI [2, 9].</p>
+
+        <!-- ============================================================ -->
+        <h2 id="debate"><span class="sec">5.5</span>Híbrido o PQC pura: el debate</h2>
+        <p>No hay consenso internacional. La tabla de la sección 5.2 muestra dos bloques: la NSA, que confía en ML-KEM-1024 y ML-DSA-87 y no exige hibridación, y las agencias europeas (BSI, ANSSI, NLNCSA, CCN), que la exigen durante la transición salvo para firmas basadas en hash. En la IETF el debate se reprodujo con el borrador de ML-KEM sin componente clásico, que salió adelante como informativo y marcado como no recomendado.</p>
+        <div class="grid-2">
+          <div class="callout note"><span class="callout-title">A favor de hibridar</span><ul>
+            <li>Los algoritmos PQ son jóvenes: SIKE y Rainbow llegaron a rondas avanzadas del concurso NIST y se rompieron con un portátil en 2022.</li>
+            <li>La seguridad de implementación de ML-KEM y ML-DSA está menos madura (sección 5.7).</li>
+            <li>Si la PQ falla, no se retrocede respecto a hoy: la seguridad no baja de la clásica.</li>
+            <li>Facilita cumplir a la vez con FIPS (si el componente certificado va primero) y con las agencias europeas.</li>
+          </ul></div>
+          <div class="callout note"><span class="callout-title">En contra (o solo como transición)</span><ul>
+            <li>Complejidad: dos implementaciones, más código, más superficie de ataque y nuevos formatos (M-26-15 la califica de «recurso transitorio complejo y costoso»).</li>
+            <li>Habrá que migrar dos veces: primero al híbrido y luego, al retirar lo clásico, a PQC pura.</li>
+            <li>Frente a un CRQC el componente clásico no aporta nada; para firmas, además, duplica tamaños y verificaciones.</li>
+            <li>El análisis de ML-KEM y ML-DSA (retículos modulares, más de una década de criptoanálisis) ya es sólido.</li>
+          </ul></div>
+        </div>
+        <p>Para el intercambio de claves el debate está casi zanjado en la práctica: el híbrido X25519MLKEM768 es lo que se ha desplegado, cuesta poco (1–2 kB y fracciones de milisegundo) y satisface a ambos bloques. Para las firmas es más abierto, porque ahí la hibridación duplica los tamaños que ya son el principal problema.</p>
+
+        <!-- ============================================================ -->
+        <h2 id="certificados"><span class="sec">5.6</span>Firmas y certificados híbridos</h2>
+        <p>Hay tres formas de pasar una PKI a firmas post-cuánticas durante la transición:</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Estrategias para certificados durante la transición</caption>
+            <thead><tr><th>Estrategia</th><th>Cómo funciona</th><th>Ventajas</th><th>Inconvenientes</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Certificados PQ puros</th><td>Clave y firma ML-DSA (u otra) con su propio OID</td><td>Simple; sin duplicar</td><td>Clientes antiguos no los entienden; sin respaldo clásico</td><td>RFC 9881 (ML-DSA en X.509) y RFC 9935 (ML-KEM en X.509) <span class="badge final">RFC</span></td></tr>
+              <tr><th scope="row">Certificados duales</th><td>Dos cadenas independientes (una clásica y una PQ); el servidor elige según lo que anuncie el cliente</td><td>Compatibilidad total; cada cadena es estándar</td><td>Doble gestión; la elección de cadena debe protegerse contra degradación</td><td>Posible hoy con <code>signature_algorithms</code> de TLS</td></tr>
+              <tr><th scope="row">Certificados compuestos</th><td>Un solo OID que representa un par (p. ej. ML-DSA-65 + ECDSA P-256); la firma es la concatenación y solo es válida si lo son ambas</td><td>Una sola cadena; seguridad «AND»; sin degradación a un componente</td><td>Nuevo OID que los clientes deben conocer; tamaños suma de ambos</td><td>draft-ietf-lamps-pq-composite-sigs-19, en cola del RFC Editor [24] <span class="badge draft">Borrador</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Los certificados compuestos cumplen lo que piden el BSI y la ANSSI («firma PQ solo en combinación») sin exigir que el protocolo sepa de hibridación, porque para TLS un compuesto es un algoritmo de firma más. Existe también la variante de extensiones alternativas de X.509 (clave y firma PQ en extensiones no críticas de un certificado clásico), que ofrece compatibilidad pero permite a un cliente antiguo ignorar la parte PQ.</p>
+        <p>En la web el problema principal es el tamaño. Con ML-DSA-44 en toda la cadena, dos SCT de Certificate Transparency y <code>CertificateVerify</code>, el servidor envía unos 14,7 kB solo de claves y firmas frente a menos de 0,5 kB con ECDSA (compruébalo en la calculadora del <a href="../../ejemplos/criptografia_hibrida.html">ejemplo E4</a>). Por eso Google anunció en febrero de 2026 un plan basado en <em>Merkle Tree Certificates</em>: la CA firma la raíz de un árbol de Merkle que agrupa muchos certificados y el cliente recibe una prueba de inclusión en lugar de una cadena de firmas. Chrome y Cloudflare lo prueban con tráfico real, con un certificado X.509 clásico de respaldo, y Chrome prevé un almacén raíz específico para certificados resistentes a un CRQC (<em>Chrome Quantum-resistant Root Store</em>) en el tercer trimestre de 2027 [25].</p>
+
+        <!-- ============================================================ -->
+        <h2 id="implementacion"><span class="sec">5.7</span>Implementación segura</h2>
+        <p>Un algoritmo IND-CCA con una prueba sólida puede filtrar la clave en una implementación descuidada. La PQC añade superficie nueva: aritmética polinómica con divisiones y reducciones modulares, muestreo por rechazo, transformación FO con comparación de textos cifrados y, en FN-DSA, aritmética de coma flotante.</p>
+        <h3>Tiempo constante: el caso KyberSlash</h3>
+        <p>En 2024 Bernstein y otros publicaron KyberSlash: la implementación de referencia de Kyber (y muchas derivadas) calculaba en <code>poly_tomsg</code> y <code>poly_compress</code> una división entera por <var>q</var> = 3329 cuyo operando dependía de datos secretos [26]. En muchas CPU la instrucción de división tarda un número de ciclos que depende de sus operandos. Los autores recuperaron la clave secreta en una Raspberry Pi 2 (Cortex-A7) y en un Cortex-M4, en minutos para KyberSlash2 y en horas para KyberSlash1. El trabajo recibió el premio al mejor artículo en CHES 2025.</p>
+        <pre data-lang="c"><code><span class="tok-c">/* Vulnerable: división con dividendo secreto */</span>
+t = ((t &lt;&lt; <span class="tok-n">1</span>) + KYBER_Q / <span class="tok-n">2</span>) / KYBER_Q &amp; <span class="tok-n">1</span>;
+
+<span class="tok-c">/* Corregido: multiplicar por ⌊2^28 / q⌋ y desplazar (sin división) */</span>
+t &lt;&lt;= <span class="tok-n">1</span>;
+t += <span class="tok-n">1665</span>;
+t *= <span class="tok-n">80635</span>;
+t &gt;&gt;= <span class="tok-n">28</span>;
+t &amp;= <span class="tok-n">1</span>;</code></pre>
+        <p class="code-caption">Esquema del parche aplicado en la implementación de referencia: 80635 = ⌊2<sup>28</sup>/3329⌋, de modo que el producto y el desplazamiento dan el mismo cociente para todos los valores posibles de <var>t</var>, con tiempo independiente del dato.</p>
+        <p>La lección es general: todo lo que dependa de secretos debe evitar divisiones, ramas, accesos a memoria indexados y comparaciones con salida temprana. En ML-KEM, la comparación entre el texto cifrado recibido y el recalculado en Decaps y la selección entre <var>K</var>′ y J(z ‖ c) deben ser de tiempo constante; si el atacante distingue el camino de rechazo, recupera información del mensaje (ataques de oráculo de texto cifrado sobre la transformación FO).</p>
+        <h3>Canales laterales físicos e inyección de fallos</h3>
+        <ul>
+          <li><b>ML-DSA.</b> El muestreo por rechazo hace que una firma genere varios intentos descartados. Trabajos de 2025 explotan la fuga de esos intentos rechazados junto con la del válido para recuperar la clave con pocas trazas de consumo [27]. También se ha publicado un ataque de análisis de potencia por correlación (CPA) sobre la implementación hardware de ML-DSA de una raíz de confianza de silicio de código abierto con unas 10 000 trazas [28]. Proteger ML-DSA con enmascaramiento es posible, pero multiplica el coste.</li>
+          <li><b>FN-DSA (Falcon).</b> Su muestreador gaussiano usa coma flotante de doble precisión, difícil de hacer de tiempo constante y de enmascarar; hay ataques de canal lateral desde 2021 y siguen apareciendo en 2025–2026, incluso contra multiplicaciones enmascaradas [29]. Es una de las razones por las que FIPS 206 ha tardado más (su estado se trata en el <a href="../../temas/tema4/index.html">Tema 4</a>).</li>
+          <li><b>Fallos.</b> Si un fallo inducido (tensión, reloj, láser) salta la comparación de re-cifrado en Decaps, ML-KEM pierde la protección CCA; si se corrompe el nonce o la semilla en ML-DSA o se reutiliza aleatoriedad, puede filtrarse la clave. Las contramedidas son las clásicas: redundancia, verificación de la firma antes de emitirla, comprobaciones de integridad de estado.</li>
+          <li><b>Validación de entradas.</b> FIPS 203 exige comprobar el módulo de la clave de encapsulado (que cada coeficiente decodificado sea menor que <var>q</var>) y la coherencia de la clave de desencapsulado (hash de ek almacenado); omitirlas abre ataques con claves malformadas.</li>
+        </ul>
+        <h3>Validación FIPS 140-3</h3>
+        <p>En EE. UU. y en muchos contratos internacionales, un algoritmo no «existe» hasta que está dentro de un módulo validado por el CMVP. El proceso tiene dos pasos: validar cada algoritmo (CAVP, con vectores ACVP para ML-KEM, ML-DSA y SLH-DSA) y validar el módulo completo según FIPS 140-3. El 21 de septiembre de 2026 los certificados FIPS 140-2 restantes pasan a la lista histórica, de modo que las nuevas compras federales exigen FIPS 140-3. AWS-LC FIPS 3.0 fue, en diciembre de 2024, el primer módulo de código abierto que incluyó ML-KEM dentro de su frontera FIPS 140-3 enviado a validación [30]; desde entonces otras bibliotecas y HSM han seguido. La EO 14412 encarga además a NIST agilizar el proceso de validación de módulos con PQC.</p>
+        <h3>Implementaciones verificadas formalmente</h3>
+        <p>Tras KyberSlash, la comunidad ha invertido en implementaciones con pruebas mecánicas:</p>
+        <ul>
+          <li><b>libcrux-ml-kem</b> (Cryspen): Rust verificado con hax y F* en ausencia de pánicos, corrección funcional e independencia de secretos en tiempo; su código C extraído se integra en NSS, la biblioteca de Firefox [31].</li>
+          <li><b>mlkem-native</b> (PQ Code Package, Linux Foundation / PQCA): C90 portable con ausencia de comportamiento indefinido demostrada con CBMC y corrección de rutinas en ensamblador AArch64 demostrada en HOL Light; integrada en AWS-LC y en liboqs [32].</li>
+        </ul>
+        <p>La verificación formal no cubre todo: normalmente excluye el compilador, el hardware y los canales físicos, y a veces solo partes del código. Pero elimina clases enteras de errores, como los desbordamientos en aritmética modular optimizada.</p>
+        <h3>Rendimiento en dispositivos embebidos</h3>
+        <p>En un microcontrolador Cortex-M4, el banco de pruebas pqm4 da las siguientes cifras de ciclos para las implementaciones optimizadas en velocidad [33]:</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Ciclos de reloj en Cortex-M4 (pqm4, implementaciones m4f)</caption>
+            <thead><tr><th>Esquema</th><th class="num">Generación de claves</th><th class="num">Encaps / Firma</th><th class="num">Decaps / Verificación</th><th class="num">ms a 100 MHz (op. central)</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">ML-KEM-512</th><td class="num">392 423</td><td class="num">390 881</td><td class="num">428 167</td><td class="num">3,9 (encaps)</td></tr>
+              <tr><th scope="row">ML-KEM-768</th><td class="num">642 096</td><td class="num">658 754</td><td class="num">707 827</td><td class="num">6,6 (encaps)</td></tr>
+              <tr><th scope="row">ML-KEM-1024</th><td class="num">1 018 976</td><td class="num">1 031 565</td><td class="num">1 094 008</td><td class="num">10,3 (encaps)</td></tr>
+              <tr><th scope="row">ML-DSA-44</th><td class="num">1 426 025</td><td class="num">3 943 121</td><td class="num">1 421 623</td><td class="num">39,4 (firma)</td></tr>
+              <tr><th scope="row">ML-DSA-65</th><td class="num">2 516 006</td><td class="num">6 193 171</td><td class="num">2 415 944</td><td class="num">61,9 (firma)</td></tr>
+              <tr><th scope="row">ML-DSA-87</th><td class="num">4 275 859</td><td class="num">7 947 380</td><td class="num">4 193 104</td><td class="num">79,5 (firma)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>La firma de ML-DSA es un valor medio: por el muestreo por rechazo su tiempo varía entre ejecuciones. El cálculo cabe en casi cualquier microcontrolador moderno; los problemas reales son otros: la <strong>memoria</strong> (una clave expandida y los buffers de ML-DSA-87 ocupan decenas de kB de RAM si no se usan variantes optimizadas en pila), el <strong>ancho de banda</strong> en redes restringidas (LoRaWAN, NB-IoT, CAN) donde un paquete de 1–2 kB no cabe, y el <strong>consumo</strong> en dispositivos con batería. En tarjetas inteligentes y elementos seguros, la limitación son los coprocesadores: están diseñados para aritmética modular de números grandes (RSA/ECC) y no para NTT, por lo que se necesitan nuevos chips o reutilizar el coprocesador con trucos de implementación. Los HSM necesitan firmware nuevo y validación; FIPS 204 permite almacenar la clave privada de ML-DSA como la semilla de 32 bytes y regenerarla, lo que reduce el almacenamiento seguro necesario.</p>
+
+        <!-- ============================================================ -->
+        <h2 id="despliegue"><span class="sec">5.8</span>Casos de despliegue</h2>
+        <p>El intercambio de claves híbrido ya es mayoritario en la web; las firmas post-cuánticas apenas empiezan. Los hitos verificados:</p>
+        <ol class="timeline">
+          <li><span class="when">Abr 2022</span>OpenSSH 9.0 usa por defecto <code>sntrup761x25519-sha512@openssh.com</code>, el primer intercambio híbrido desplegado por defecto en un protocolo masivo.</li>
+          <li><span class="when">Sep 2023</span>Signal introduce PQXDH: el establecimiento inicial de sesión combina X25519 y CRYSTALS-Kyber [34].</li>
+          <li><span class="when">Feb 2024</span>Apple anuncia PQ3 para iMessage (iOS 17.4): Kyber-1024 en el establecimiento inicial y Kyber-768 en el recambio periódico de claves [35].</li>
+          <li><span class="when">2024</span>Chrome activa por defecto en escritorio X25519Kyber768 (borrador); con Chrome 131 (noviembre de 2024) pasa al estándar X25519MLKEM768 (codepoint 0x11EC en vez de 0x6399) [36]. Firefox lo activa por defecto en escritorio en noviembre de 2024.</li>
+          <li><span class="when">Sep 2024</span>OpenSSH 9.9 añade <code>mlkem768x25519-sha256</code>.</li>
+          <li><span class="when">Abr 2025</span>OpenSSL 3.5 (LTS, 8 de abril) incorpora ML-KEM, ML-DSA y SLH-DSA y ofrece por defecto las shares X25519MLKEM768 y X25519 [37]. OpenSSH 10.0 (9 de abril) hace de <code>mlkem768x25519-sha256</code> el intercambio por defecto [38].</li>
+          <li><span class="when">Feb–jun 2025</span>Google Cloud KMS ofrece firmas ML-DSA y SLH-DSA (vista previa, febrero) y AWS KMS ML-DSA-44/65/87 con disponibilidad general (junio) [39].</li>
+          <li><span class="when">Sep–oct 2025</span>iOS 26, iPadOS 26 y macOS Tahoe 26 ofrecen X25519MLKEM768 por defecto en URLSession y Network.framework [40]. Signal despliega el <em>triple ratchet</em> con SPQR (ML-KEM-768 en un ratchet paralelo al doble ratchet; ambas claves se combinan con una KDF) el 2 de octubre [41]. OpenSSH 10.1 (6 de octubre) avisa cuando la conexión usa un intercambio no post-cuántico.</li>
+          <li><span class="when">Oct 2025</span>Cloudflare: más de la mitad del tráfico humano que recibe está protegido con intercambio PQ; el 39 % de los 100 000 dominios principales lo soportan, pero solo el 3,7 % de los servidores de origen [42].</li>
+          <li><span class="when">Feb 2026</span>Google presenta su plan de Merkle Tree Certificates para firmas PQ en HTTPS [25].</li>
+          <li><span class="when">Abr 2026</span>Cloudflare Radar: en torno al 67 % del tráfico HTTPS humano hacia Cloudflare usa intercambio post-cuántico, frente al 32 % de enero de 2025 [43].</li>
+          <li><span class="when">Jul–ago 2026</span>RFC 9954 y RFC 10024 publicados: el intercambio híbrido de TLS 1.3 deja de ser un borrador.</li>
+          <li class="future"><span class="when">2027</span>Adquisiciones NSS conformes con CNSA 2.0; requisitos PQC en la cualificación ANSSI; almacén raíz resistente de Chrome (previsto).</li>
+        </ol>
+        <p>La lectura de estas cifras es doble. El lado del cliente migra rápido porque lo controlan pocos actores (navegadores, sistemas operativos, bibliotecas) y basta una actualización. El lado del servidor de origen va muy por detrás: depende de millones de administradores y de productos de terceros, que es justo donde los inventarios y la presión regulatoria de 5.2 y 5.3 tienen que actuar. Y en autenticación todo está por hacer.</p>
+
+        <!-- ============================================================ -->
+        <h2 id="ejercicios"><span class="sec">5.9</span>Ejercicios</h2>
+        <div class="exercise"><span class="ex-title">Ejercicio 5.1 <span class="level">Básico</span></span><p>Una aseguradora guarda pólizas de vida que deben seguir siendo confidenciales 30 años. Su migración se estima en 6 años. ¿Para qué valores de <var>z</var> (años hasta un CRQC, contados desde hoy) hay riesgo? ¿Cambia la conclusión si solo se considera el tráfico grabado a partir de hoy?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>Hay riesgo si 30 + 6 &gt; <var>z</var>, es decir, para cualquier <var>z</var> &lt; 36 años: prácticamente todas las estimaciones razonables. La conclusión no cambia: el tráfico que se grabe durante los 6 años de migración estará expuesto hasta 30 años después, así que cualquier CRQC anterior a 2026 + 36 = 2062 lo compromete. Lo único que reduce el riesgo es acortar <var>y</var> empezando por el intercambio de claves de los canales que transportan esas pólizas.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 5.2 <span class="level">Básico</span></span><p>Clasifica cada afirmación como correcta o incorrecta y justifícalo con la tabla de 5.2: (a) «NIST prohibirá RSA-2048 en 2030»; (b) «La NSA prohíbe los esquemas híbridos»; (c) «La UE exige migrar todos los sistemas antes de 2030»; (d) «El BSI recomienda ML-KEM-512».</p>
+          <details><summary>Solución</summary><div class="details-body"><p>(a) Incorrecta: el borrador IR 8547 propone declararlo <em>obsoleto</em> tras 2030 y <em>no permitido</em> tras 2035; además es un borrador. (b) Incorrecta: CNSA 2.0 no exige hibridar, pero admite híbridos cuando el protocolo lo requiera. (c) Incorrecta: 2030 es para casos de alto riesgo; el resto, 2035. (d) Incorrecta: TR-02102-1 solo recomienda ML-KEM-768 y ML-KEM-1024, y siempre en modo híbrido.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 5.3 <span class="level">Intermedio</span></span><p>Un servidor atiende 20 000 handshakes TLS por segundo. Calcula el tráfico adicional, en Mbit/s y en cada sentido, que supone pasar de x25519 a X25519MLKEM768 y a SecP384r1MLKEM1024. ¿Es significativo frente a una página web media de 2 MB?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>X25519MLKEM768: +1184 B de cliente a servidor y +1088 B de servidor a cliente. Por segundo: 1184 × 20 000 × 8 = 189,4 Mbit/s de entrada y 1088 × 20 000 × 8 = 174,1 Mbit/s de salida. SecP384r1MLKEM1024 frente a x25519: +1633 B en cada sentido, 261,3 Mbit/s. Frente a 2 MB por página, 1,1 kB es un 0,05 %: irrelevante en volumen. El coste real está en la latencia si el ClientHello pasa a dos paquetes y en equipos intermedios que no lo toleran.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 5.4 <span class="level">Intermedio</span></span><p>Demuestra que con el combinador <var>K</var> = ss<sub>1</sub> ⊕ ss<sub>2</sub> basta romper KEM<sub>1</sub> (y no KEM<sub>2</sub>) para ganar el juego IND-CCA del híbrido. ¿Cuántas consultas al oráculo necesitas? ¿Qué cambia si <var>K</var> = SHA3-256(ss<sub>1</sub> ‖ ss<sub>2</sub> ‖ ct<sub>1</sub> ‖ ct<sub>2</sub>)?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>Con KEM<sub>1</sub> roto, el atacante conoce ss<sub>1</sub>*. Encapsula él mismo con KEM<sub>1</sub> y obtiene (ct<sub>1</sub>′, ss<sub>1</sub>′), y pide Decaps(ct<sub>1</sub>′, ct<sub>2</sub>*), consulta legal porque el par difiere del reto. La respuesta es ss<sub>1</sub>′ ⊕ ss<sub>2</sub>*, de la que despeja ss<sub>2</sub>*; entonces <var>K</var>* = ss<sub>1</sub>* ⊕ ss<sub>2</sub>*. Una sola consulta. Con el hash de los textos cifrados, la consulta (ct<sub>1</sub>′, ct<sub>2</sub>*) devuelve SHA3(ss<sub>1</sub>′ ‖ ss<sub>2</sub>* ‖ ct<sub>1</sub>′ ‖ ct<sub>2</sub>*), que en el modelo de oráculo aleatorio no revela nada de ss<sub>2</sub>* ni de <var>K</var>*: para aprovecharla habría que invertir el hash. Es el ataque C del ejemplo E4.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 5.5 <span class="level">Intermedio</span></span><p>En KyberSlash, ¿por qué es explotable una división por la constante pública <var>q</var>? Comprueba que ⌊((2<var>t</var> + 1665) · 80635) / 2<sup>28</sup>⌋ mod 2 coincide con ⌊(2<var>t</var> + 1664)/3329⌋ mod 2 para <var>t</var> = 832 y <var>t</var> = 833, y explica por qué la versión con multiplicación y desplazamiento es de tiempo constante.</p>
+          <details><summary>Solución</summary><div class="details-body"><p>El divisor es público, pero el dividendo depende del secreto, y en muchas CPU (Cortex-A7, Cortex-M4, algunos x86) la latencia de la instrucción de división depende del valor del dividendo; midiendo tiempos de muchas desencapsulaciones se reconstruye información sobre los coeficientes y, con ella, la clave. Para <var>t</var> = 832: (1664 + 1664)/3329 = 0,9996 → 0; (1664 + 1665) · 80635 = 268 433 915 &lt; 2<sup>28</sup> = 268 435 456 → 0. Para <var>t</var> = 833: (1666 + 1664)/3329 = 1,0003 → 1; (1666 + 1665) · 80635 = 268 595 185 ≥ 2<sup>28</sup> → 1. Una multiplicación entera y un desplazamiento tienen latencia fija en esas CPU, de modo que el tiempo no depende de <var>t</var>. (Obsérvese que el parche suma 1665 en vez de 1664 para compensar el redondeo por defecto de 80635.)</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 5.6 <span class="level">Avanzado</span></span><p>Diseña el plan de migración de un fabricante de contadores eléctricos inteligentes: 2 millones de unidades con Cortex-M4 a 64 MHz, 128 kB de RAM, 15 años de vida útil, actualizaciones de firmware firmadas con ECDSA P-256 y comunicación con el concentrador por un enlace de 250 bytes por trama. Decide algoritmos para el firmware y para el establecimiento de claves, estima tiempos con la tabla de 5.7 y justifica qué calendario le aplica en España.</p>
+          <details><summary>Solución</summary><div class="details-body"><p><b>Firmware:</b> es lo más urgente (raíz de confianza de 15 años). El CCN y el BSI recomiendan firmas basadas en hash sin hibridar: LMS o XMSS (SP 800-208), cuya verificación es rápida (solo hashes) y cuya clave pública es de decenas de bytes; el estado de firma queda en el HSM del fabricante, que firma pocas imágenes al año. Alternativa sin estado: SLH-DSA-SHA2-128s (firma de 7856 B, verificación de pocos milisegundos). Hay que sustituir la clave raíz en el cargador de arranque en la próxima revisión de hardware y, en los equipos desplegados, añadir una segunda clave mediante una actualización firmada todavía con ECDSA mientras sea seguro. <b>Claves:</b> ML-KEM-768 a 64 MHz cuesta 658 754 / 64·10<sup>6</sup> ≈ 10,3 ms por encapsulado; el problema es la trama de 250 B: la clave de 1184 B y el texto cifrado de 1088 B requieren fragmentación (5 tramas cada uno) o preferir un esquema con claves precompartidas y KEM solo en la puesta en marcha. En modo híbrido con X25519 (exigido por el CCN y el BSI) se añaden 32 B. <b>Inventario y agilidad:</b> CBOM del firmware, identificadores de algoritmo en el formato de actualización y espacio de flash para una segunda implementación. <b>Calendario:</b> infraestructura crítica → caso de alto riesgo según la hoja de ruta europea y CCN-TEC 009: inventario y pilotos antes del 31/12/2026 y migración completa antes del 31/12/2030. Con 15 años de vida, los contadores que se instalen desde 2027 deben salir de fábrica con la raíz post-cuántica.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 5.7 <span class="level">Avanzado</span></span><p>X-Wing no incluye ct<sub>M</sub> ni ek<sub>M</sub> en su hash. (a) ¿Qué propiedad de ML-KEM lo permite y de qué parte del algoritmo procede? (b) ¿Por qué X-Wing sí necesita ct<sub>X</sub> y pk<sub>X</sub>? (c) Un compañero propone quitar también ct<sub>X</sub> «porque X25519 es seguro». Refútalo con un ataque concreto.</p>
+          <details><summary>Solución</summary><div class="details-body"><p>(a) La resistencia a segundas preimágenes de texto cifrado (C2PRI): encontrar ct′ ≠ ct con Decaps(ct′) = Decaps(ct) es inviable. Procede de la transformación FO con rechazo implícito: ML-KEM recalcula el cifrado y, si no coincide, devuelve J(z ‖ ct′), que depende de ct′; además, <var>K</var> se deriva de G(<var>m</var> ‖ H(ek)), que liga la clave pública. (b) X25519, visto como KEM, no es IND-CCA ni C2PRI: la clave pública efímera admite codificaciones distintas del mismo punto (bit 255 ignorado; puntos de orden pequeño que la multiplicación por el cofactor anula), y ss<sub>X</sub> no depende de pk<sub>X</sub>. Si no se hashean, dos textos cifrados distintos dan la misma clave. (c) Ataque: invertir el bit 255 de ct<sub>X</sub>* y consultar el oráculo con (ct<sub>M</sub>*, ct<sub>X</sub>′). Es un par distinto del reto, así que es legal, y el oráculo devuelve SHA3-256(ss<sub>M</sub>* ‖ ss<sub>X</sub>* ‖ …) = <var>K</var>*. No hace falta romper nada: es el ataque A del ejemplo E4.</p></div></details></div>
+
+        <aside class="key-points" id="ideas-clave"><span class="kp-title">Ideas clave</span><ul>
+          <li>La urgencia la marca <strong><var>x</var> + <var>y</var> &gt; <var>z</var></strong>: el tráfico que se graba hoy y los dispositivos que no se podrán actualizar exigen empezar ya.</li>
+          <li>Los calendarios convergen en <strong>2030</strong> (alto riesgo o establecimiento de claves) y <strong>2035</strong> (todo). En España rige CCN-TEC 009 alineada con la hoja de ruta europea: 2026 inventario y pilotos, 2030 alto riesgo, 2035 el resto.</li>
+          <li>NIST IR 8547 sigue en borrador; la EO 14412 y OMB M-26-15 (junio de 2026) fijan fechas obligatorias para la administración de EE. UU.</li>
+          <li>Una migración empieza por <strong>gobernanza e inventario (CBOM)</strong> y termina con la <strong>retirada</strong> de los algoritmos vulnerables; su resultado duradero es la <strong>agilidad criptográfica</strong>.</li>
+          <li>El intercambio híbrido <strong>X25519MLKEM768</strong> (RFC 10024) es seguro si lo es cualquiera de sus componentes, siempre que el combinador preserve IND-CCA; XOR no lo hace y concatenar sin contexto tampoco, fuera de protocolos como TLS que ligan el transcript.</li>
+          <li>NSA no exige hibridar; BSI, ANSSI y CCN sí, salvo las firmas basadas en hash. Los certificados <strong>compuestos</strong> ofrecen firmas híbridas con un solo OID.</li>
+          <li>La seguridad de implementación es el eslabón débil: KyberSlash, fugas en el muestreo por rechazo de ML-DSA y la coma flotante de FN-DSA. FIPS 140-3 y la verificación formal (libcrux, mlkem-native) son las respuestas.</li>
+          <li>En 2026 ya son mayoría los clientes web con intercambio PQ (≈ 67 % del tráfico humano en Cloudflare), pero los servidores de origen y, sobre todo, las firmas y la PKI siguen por migrar.</li>
+        </ul></aside>
+
+        <h2 id="referencias">Referencias</h2>
+        <ol class="refs">
+          <li>D. Moody y otros. <a href="https://csrc.nist.gov/pubs/ir/8547/ipd">NIST IR 8547 (ipd): Transition to Post-Quantum Cryptography Standards</a>. <span class="src">NIST, borrador inicial, 12 de noviembre de 2024.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/sp/800/227/final">SP 800-227: Recommendations for Key-Encapsulation Mechanisms</a>. <span class="src">Septiembre de 2025.</span></li>
+          <li>NSA. <a href="https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/1/CSI_CNSA_2.0_FAQ_.PDF">The Commercial National Security Algorithm Suite 2.0 and Quantum Computing FAQ</a>. <span class="src">Versión 2.1, diciembre de 2024.</span></li>
+          <li>The White House. <a href="https://www.whitehouse.gov/presidential-actions/2026/06/securing-the-nation-against-advanced-cryptographic-attacks/">Executive Order 14412: Securing the Nation Against Advanced Cryptographic Attacks</a>. <span class="src">22 de junio de 2026; <a href="https://www.federalregister.gov/d/2026-12909">Federal Register 2026-12909</a>.</span></li>
+          <li>OMB. <a href="https://www.whitehouse.gov/wp-content/uploads/2026/06/M-26-15-Execution-of-the-Migration-to-Post-Quantum-Cryptography.pdf">M-26-15: Execution of the Migration to Post-Quantum Cryptography</a>. <span class="src">24 de junio de 2026.</span></li>
+          <li>Comisión Europea. <a href="https://eur-lex.europa.eu/eli/reco/2024/1101/oj">Recomendación (UE) 2024/1101, sobre una hoja de ruta para la transición coordinada a la criptografía postcuántica</a>. <span class="src">DOUE, 11 de abril de 2024.</span></li>
+          <li>NIS Cooperation Group, PQC Workstream. <a href="https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography">A Coordinated Implementation Roadmap for the Transition to Post-Quantum Cryptography</a>. <span class="src">Parte 1, v1.1, junio de 2025.</span></li>
+          <li>Centro Criptológico Nacional. <a href="https://www.ccn.cni.es/eu/docman/documentos-publicos/boletines-pytec/495-ccn-tec-009-recomendaciones-transicion-postcuantica-segura/file">CCN-TEC 009 / BP-37: Recomendaciones para una transición postcuántica segura</a>. <span class="src">Julio de 2026.</span></li>
+          <li>BSI. <a href="https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.html">TR-02102-1: Cryptographic Mechanisms: Recommendations and Key Lengths</a>. <span class="src">Versión 2026-01, 23 de enero de 2026.</span></li>
+          <li>ANSSI. <a href="https://cyber.gouv.fr/enjeux-technologiques/cryptographie-post-quantique/faq-pqc/">FAQ sur la cryptographie post-quantique</a>; <a href="https://messervices.cyber.gouv.fr/documents-guides/follow_up_position_paper_on_post_quantum_cryptography.pdf">ANSSI views on the Post-Quantum Cryptography transition (2023 follow up)</a>. <span class="src">Consultados en septiembre de 2026.</span></li>
+          <li>NCSC. <a href="https://www.ncsc.gov.uk/guidance/pqc-migration-timelines">Timelines for migration to post-quantum cryptography</a>. <span class="src">20 de marzo de 2025.</span></li>
+          <li>Canadian Centre for Cyber Security. <a href="https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001">Roadmap for the migration to post-quantum cryptography for the Government of Canada (ITSM.40.001)</a>. <span class="src">23 de junio de 2025.</span></li>
+          <li>Australian Signals Directorate. <a href="https://www.cyber.gov.au/business-government/secure-design/quantum/planning-for-post-quantum-cryptography">Planning for post-quantum cryptography</a>. <span class="src">ACSC; véase también el ISM, <em>Guidelines for cryptography</em>.</span></li>
+          <li>National Cyber Command Office (Japón). <a href="https://www.cas.go.jp/jp/seisaku/pqc/pdf/report_202511.pdf">Informe intermedio sobre la migración a la criptografía post-cuántica</a> (en japonés). <span class="src">Noviembre de 2025.</span></li>
+          <li>CISA. <a href="https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards">Product Categories for Technologies That Use Post-Quantum Cryptography Standards</a>. <span class="src">Enero de 2026.</span></li>
+          <li>OWASP CycloneDX. <a href="https://cyclonedx.org/capabilities/cbom/">Cryptography Bill of Materials (CBOM)</a>. <span class="src">Especificación CycloneDX 1.6 y posteriores.</span></li>
+          <li>IBM. <a href="https://github.com/IBM/CBOM">CBOM y CBOMkit</a> (hyperion, theia). <span class="src">Repositorio de código abierto.</span></li>
+          <li>D. Stebila, S. Fluhrer, S. Gueron. <a href="https://www.rfc-editor.org/info/rfc9954">RFC 9954: Hybrid Key Exchange in TLS 1.3</a>. <span class="src">Informativo, julio de 2026.</span></li>
+          <li><a href="https://www.rfc-editor.org/info/rfc10024">RFC 10024: Post-Quantum Traditional Hybrid Key Agreement for TLS 1.3</a> (antes draft-ietf-tls-ecdhe-mlkem). <span class="src">Proposed Standard, agosto de 2026.</span></li>
+          <li><a href="https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/">ML-KEM Post-Quantum Key Agreement for TLS 1.3</a> (draft-ietf-tls-mlkem-11). <span class="src">Internet-Draft, septiembre de 2026.</span></li>
+          <li>F. Giacon, F. Heuer, B. Poettering. <a href="https://eprint.iacr.org/2018/024">KEM Combiners</a>. <span class="src">PKC 2018.</span></li>
+          <li>M. Barbosa y otros. <a href="https://eprint.iacr.org/2024/039">X-Wing: The Hybrid KEM You’ve Been Looking For</a>. <span class="src">IACR Communications in Cryptology, 2024; <a href="https://datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem/">draft-connolly-cfrg-xwing-kem</a>.</span></li>
+          <li>IRTF CFRG. <a href="https://datatracker.ietf.org/doc/draft-irtf-cfrg-hybrid-kems/">Hybrid PQ/T Key Encapsulation Mechanisms</a>. <span class="src">draft-irtf-cfrg-hybrid-kems-12, julio de 2026.</span></li>
+          <li>IETF LAMPS. <a href="https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/">Composite ML-DSA for use in X.509 PKI</a>. <span class="src">draft-ietf-lamps-pq-composite-sigs-19, abril de 2026. Véanse también <a href="https://www.rfc-editor.org/info/rfc9881/">RFC 9881</a> (ML-DSA en X.509) y <a href="https://datatracker.ietf.org/doc/rfc9935/">RFC 9935</a> (ML-KEM en X.509).</span></li>
+          <li>Google Security. <a href="https://blog.google/security/cultivating-a-robust-and-efficient-quantum-safe-https/">Cultivating a robust and efficient quantum-safe HTTPS</a>. <span class="src">27 de febrero de 2026.</span></li>
+          <li>D. J. Bernstein y otros. <a href="https://tches.iacr.org/index.php/TCHES/article/view/12046">KyberSlash: Exploiting secret-dependent division timings in Kyber implementations</a>. <span class="src">IACR TCHES 2025(2), 209–234; <a href="https://eprint.iacr.org/2024/1049">ePrint 2024/1049</a>.</span></li>
+          <li><a href="https://eprint.iacr.org/2025/582">Release the Power of Rejected Signatures: An Efficient Side-Channel Attack on the ML-DSA Cryptosystem</a>. <span class="src">IACR ePrint 2025/582.</span></li>
+          <li><a href="https://eprint.iacr.org/2025/009">Efficient CPA Attack on Hardware Implementation of ML-DSA in Post-Quantum Root of Trust</a>. <span class="src">IACR ePrint 2025/009.</span></li>
+          <li><a href="https://tches.iacr.org/index.php/TCHES/article/view/12905">When Masking Multiplication Isn’t Enough: Exploiting Floating-Point Leakage in Falcon’s Pre-Image Computation</a>. <span class="src">IACR TCHES.</span> E. Karabulut, A. Aysu. <a href="https://csrc.nist.gov/csrc/media/Events/2022/fourth-pqc-standardization-conference/documents/papers/falcon-down-pqc2022.pdf">Falcon Down: Breaking Falcon Post-Quantum Signature Scheme through Side-Channel Attacks</a>. <span class="src">DAC 2021.</span></li>
+          <li>AWS Security Blog. <a href="https://aws.amazon.com/blogs/security/aws-lc-fips-3-0-first-cryptographic-library-to-include-ml-kem-in-fips-140-3-validation">AWS-LC FIPS 3.0: First cryptographic library to include ML-KEM in FIPS 140-3 validation</a>. <span class="src">Diciembre de 2024.</span></li>
+          <li>Cryspen. <a href="https://cryspen.com/post/ml-kem-implementation/">Verified ML-KEM (Kyber) in Rust</a>; <a href="https://github.com/cryspen/libcrux/tree/main/libcrux-ml-kem">libcrux-ml-kem</a>. <span class="src">2024–2026.</span></li>
+          <li>PQ Code Package. <a href="https://github.com/pq-code-package/mlkem-native">mlkem-native</a>. <span class="src">Post-Quantum Cryptography Alliance, Linux Foundation.</span></li>
+          <li>M. J. Kannwischer y otros. <a href="https://github.com/mupq/pqm4/blob/master/benchmarks.md">pqm4: benchmarks</a>. <span class="src">Consultado en septiembre de 2026.</span></li>
+          <li>E. Kret, R. Schmidt. <a href="https://signal.org/blog/pqxdh/">Quantum Resistance and the Signal Protocol</a>. <span class="src">Signal, 19 de septiembre de 2023.</span></li>
+          <li>Apple Security Engineering and Architecture. <a href="https://security.apple.com/blog/imessage-pq3/">iMessage with PQ3</a>. <span class="src">21 de febrero de 2024.</span></li>
+          <li>D. Adrian, D. Benjamin, B. Beck, D. O’Brien. <a href="https://security.googleblog.com/2024/09/a-new-path-for-kyber-on-web.html">A new path for Kyber on the web</a>. <span class="src">Google Security Blog, septiembre de 2024.</span></li>
+          <li>OpenSSL. <a href="https://github.com/openssl/openssl/blob/openssl-3.5/NEWS.md">NEWS: OpenSSL 3.5.0</a>. <span class="src">8 de abril de 2025.</span></li>
+          <li>OpenSSH. <a href="https://www.openssh.org/releasenotes.html">Release notes</a> (9.0, 9.9, 10.0, 10.1). <span class="src">2022–2026.</span></li>
+          <li>AWS. <a href="https://aws.amazon.com/about-aws/whats-new/2025/06/aws-kms-post-quantum-ml-dsa-digital-signatures">AWS KMS adds support for post-quantum ML-DSA digital signatures</a>. <span class="src">Junio de 2025.</span> Google Cloud. <a href="https://cloud.google.com/blog/products/identity-security/future-proofing-data-integrity-quantum-safe-digital-signatures-in-cloud-kms">Quantum-safe digital signatures in Cloud KMS</a>. <span class="src">Febrero de 2025.</span></li>
+          <li>Apple. <a href="https://support.apple.com/en-us/122756">Prepare your network for quantum-secure encryption in TLS</a>. <span class="src">Apple Support, 2025.</span></li>
+          <li>Signal. <a href="https://signal.org/blog/spqr/">Signal Protocol and Post-Quantum Ratchets</a>. <span class="src">2 de octubre de 2025.</span></li>
+          <li>Cloudflare. <a href="https://blog.cloudflare.com/pq-2025/">State of the post-quantum Internet in 2025</a>. <span class="src">Octubre de 2025.</span></li>
+          <li>Cloudflare Radar. <a href="https://radar.cloudflare.com/post-quantum">Post-Quantum Encryption Adoption</a>. <span class="src">Datos de abril de 2026.</span></li>
+        </ol>
+      </article>
+
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../../index.html">Inicio</a></li>
-                    <li><a href="../../programa.html">Programa</a></li>
-                    <li><a href="../tema1/index.html">Temas</a></li>
-                    <li><a href="../../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="../../guias/index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Ejemplos</h3>
-                <ul>
-                    <li><a href="../../ejemplos/algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="../../ejemplos/ml_kem.html">ML-KEM</a></li>
-                    <li><a href="../../ejemplos/ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="../../ejemplos/criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="../../ejemplos/qkd_bb84.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../../js/script.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../../glosario.html">Glosario</a>
+        <a href="../../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

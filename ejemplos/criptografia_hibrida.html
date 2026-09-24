@@ -1,537 +1,289 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../" data-page="ej-hibrida">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criptografía Híbrida - Ejemplos Prácticos - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/prism.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ejemplo E4 · Intercambio de claves híbrido — Curso PQC</title>
+  <meta name="description" content="Demo en el navegador de X25519MLKEM768: X25519 real de WebCrypto, ML-KEM de FIPS 203 en JavaScript, key schedule de TLS 1.3, ataques a combinadores y calculadora de tamaños.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/course-data.js" defer></script>
+  <script src="../js/course.js" defer></script>
+  <script src="../js/criptografia_hibrida_interactive.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Inicio</a></li>
-                <li><a href="../programa.html">Programa</a></li>
-                <li><a href="../temas/tema1/index.html">Temas</a></li>
-                <li><a href="index.html">Ejemplos Prácticos</a></li>
-                <li><a href="../guias/index.html">Guías de Laboratorio</a></li>
-                <li><a href="../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../index.html">Inicio</a> &gt; <a href="index.html">Ejemplos Prácticos</a> &gt; Criptografía Híbrida
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../index.html">Inicio</a>
+        <a href="../programa.html">Programa</a>
+        <a href="../temas/index.html">Temas</a>
+        <a href="../ejemplos/index.html" aria-current="page">Ejemplos</a>
+        <a href="../guias/index.html">Laboratorios</a>
+        <a href="../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Criptografía Híbrida: Combinando Algoritmos Clásicos y Post-Cuánticos</h1>
-        
-        <section class="intro">
-            <p>La criptografía híbrida combina algoritmos criptográficos clásicos (como RSA o ECDH) con algoritmos post-cuánticos (como ML-KEM) para proporcionar seguridad tanto contra ataques clásicos como cuánticos durante el período de transición hacia la criptografía post-cuántica.</p>
-            <p>En este ejemplo, exploraremos diferentes enfoques para implementar criptografía híbrida y veremos una implementación simplificada que ilustra cómo se pueden combinar estos algoritmos en la práctica.</p>
-        </section>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../index.html">Inicio</a></li><li><a href="../ejemplos/index.html">Ejemplos</a></li><li aria-current="page">Intercambio híbrido</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Ejemplo E4 · Demo interactiva</p>
+        <h1>Intercambio de claves <em>híbrido</em></h1>
+        <p class="lede">Un handshake X25519MLKEM768 completo ejecutado en tu navegador, con criptografía real, para ver qué viaja por la red, cómo se combinan los dos secretos y por qué el combinador tiene que ser seguro frente a ataques de texto cifrado elegido.</p>
+        <dl class="page-meta">
+          <div><dt>Duración</dt><dd>45 min</dd></div>
+          <div><dt>Nivel</dt><dd>Intermedio</dd></div>
+          <div><dt>Requisitos</dt><dd>Tema 5, § 5.4</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
 
-        <section class="example-code">
-            <h2>Implementación Simplificada de Criptografía Híbrida</h2>
-            <p>El siguiente código es una implementación didáctica simplificada de criptografía híbrida que combina ECDH (curvas elípticas) con ML-KEM. No es criptográficamente segura y solo tiene fines educativos.</p>
-            
-            <pre><code class="language-python">"""
-Implementación didáctica simplificada de Criptografía Híbrida (ECDH + ML-KEM)
-NOTA: Esta implementación es solo para fines educativos y no es criptográficamente segura.
-"""
-import os
-import hashlib
-import numpy as np
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-
-# Simulación simplificada de ML-KEM (basada en el estándar FIPS 203)
-class SimplifiedMLKEM:
-    def __init__(self, security_level=128):
-        self.n = 256  # Grado del polinomio
-        self.q = 3329  # Módulo primo
-        self.security_level = security_level
-    
-    def keygen(self):
-        """Genera un par de claves ML-KEM"""
-        # Generar semilla aleatoria
-        seed = os.urandom(32)
-        
-        # Simular generación de matriz A y vector secreto s
-        np.random.seed(int.from_bytes(seed, byteorder='big'))
-        A = np.random.randint(0, self.q, (self.n, self.n))
-        s = np.random.randint(-2, 3, self.n)  # Coeficientes pequeños
-        e = np.random.randint(-2, 3, self.n)  # Error pequeño
-        
-        # Calcular clave pública t = A·s + e
-        t = (A.dot(s) + e) % self.q
-        
-        # Clave pública: (seed, t)
-        # Clave privada: s
-        return {
-            'public': {'seed': seed, 't': t},
-            'private': {'s': s}
-        }
-    
-    def encapsulate(self, public_key):
-        """Encapsula una clave compartida usando la clave pública"""
-        seed = public_key['seed']
-        t = public_key['t']
-        
-        # Reconstruir matriz A
-        np.random.seed(int.from_bytes(seed, byteorder='big'))
-        A = np.random.randint(0, self.q, (self.n, self.n))
-        
-        # Generar vector efímero r y errores
-        r = np.random.randint(-2, 3, self.n)
-        e1 = np.random.randint(-2, 3, self.n)
-        e2 = np.random.randint(-2, 3, self.n)
-        
-        # Calcular u = A^T·r + e1
-        u = (A.T.dot(r) + e1) % self.q
-        
-        # Calcular v = t^T·r + e2 + encode(m)
-        # Para simplificar, usamos un mensaje aleatorio m
-        m = os.urandom(32)
-        m_encoded = int.from_bytes(m, byteorder='big') % 2  # Solo usamos 1 bit
-        v = (np.dot(t, r) + e2 + m_encoded * (self.q // 2)) % self.q
-        
-        # Derivar clave compartida de m
-        shared_key = hashlib.sha256(m).digest()
-        
-        # Ciphertext: (u, v)
-        return {
-            'ciphertext': {'u': u, 'v': v},
-            'shared_key': shared_key
-        }
-    
-    def decapsulate(self, ciphertext, private_key):
-        """Decapsula una clave compartida usando la clave privada"""
-        u = ciphertext['u']
-        v = ciphertext['v']
-        s = private_key['s']
-        
-        # Calcular v - s^T·u
-        w = (v - np.dot(s, u)) % self.q
-        
-        # Decodificar mensaje
-        # Si w está cerca de q/2, m' = 1; si está cerca de 0, m' = 0
-        if abs(w - self.q // 2) < abs(w):
-            m_bit = 1
-        else:
-            m_bit = 0
-        
-        # Reconstruir m
-        m = m_bit.to_bytes(32, byteorder='big')
-        
-        # Derivar clave compartida de m
-        shared_key = hashlib.sha256(m).digest()
-        
-        return shared_key
-
-# Implementación de criptografía híbrida
-class HybridCryptography:
-    def __init__(self, mode="parallel"):
-        """
-        Inicializa el sistema de criptografía híbrida
-        
-        Modos:
-        - "parallel": ECDH y ML-KEM se ejecutan en paralelo, las claves se combinan
-        - "serial": La clave ECDH se usa para cifrar la clave ML-KEM
-        - "integrated": Se usa una KDF para combinar las claves ECDH y ML-KEM
-        """
-        self.mode = mode
-        self.ml_kem = SimplifiedMLKEM()
-    
-    def keygen(self):
-        """Genera pares de claves híbridas"""
-        # Generar par de claves ECDH
-        ecdh_private_key = ec.generate_private_key(ec.SECP256R1())
-        ecdh_public_key = ecdh_private_key.public_key()
-        
-        # Generar par de claves ML-KEM
-        ml_kem_keys = self.ml_kem.keygen()
-        
-        return {
-            'ecdh': {
-                'private': ecdh_private_key,
-                'public': ecdh_public_key
-            },
-            'ml_kem': ml_kem_keys
-        }
-    
-    def encapsulate(self, public_keys):
-        """Encapsula una clave compartida híbrida"""
-        ecdh_public_key = public_keys['ecdh']['public']
-        ml_kem_public_key = public_keys['ml_kem']['public']
-        
-        # Generar clave efímera ECDH
-        ecdh_ephemeral_private = ec.generate_private_key(ec.SECP256R1())
-        ecdh_ephemeral_public = ecdh_ephemeral_private.public_key()
-        
-        # Calcular secreto compartido ECDH
-        ecdh_shared_secret = ecdh_ephemeral_private.exchange(
-            ec.ECDH(), ecdh_public_key
-        )
-        
-        # Encapsular clave ML-KEM
-        ml_kem_result = self.ml_kem.encapsulate(ml_kem_public_key)
-        ml_kem_ciphertext = ml_kem_result['ciphertext']
-        ml_kem_shared_key = ml_kem_result['shared_key']
-        
-        # Combinar claves según el modo
-        if self.mode == "parallel":
-            # Modo paralelo: concatenar y derivar
-            combined_key = self._derive_combined_key(
-                ecdh_shared_secret + ml_kem_shared_key
-            )
-        elif self.mode == "serial":
-            # Modo serial: cifrar ML-KEM con ECDH
-            # (simplificado: XOR con hash de ECDH)
-            ecdh_key_hash = hashlib.sha256(ecdh_shared_secret).digest()
-            combined_key = bytes(a ^ b for a, b in zip(ml_kem_shared_key, ecdh_key_hash))
-        else:  # "integrated"
-            # Modo integrado: usar KDF con ambas entradas
-            combined_key = self._derive_integrated_key(
-                ecdh_shared_secret, ml_kem_shared_key
-            )
-        
-        return {
-            'ecdh_ephemeral_public': ecdh_ephemeral_public,
-            'ml_kem_ciphertext': ml_kem_ciphertext,
-            'shared_key': combined_key
-        }
-    
-    def decapsulate(self, encapsulation, private_keys):
-        """Decapsula una clave compartida híbrida"""
-        ecdh_private_key = private_keys['ecdh']['private']
-        ml_kem_private_key = private_keys['ml_kem']['private']
-        
-        ecdh_ephemeral_public = encapsulation['ecdh_ephemeral_public']
-        ml_kem_ciphertext = encapsulation['ml_kem_ciphertext']
-        
-        # Calcular secreto compartido ECDH
-        ecdh_shared_secret = ecdh_private_key.exchange(
-            ec.ECDH(), ecdh_ephemeral_public
-        )
-        
-        # Decapsular clave ML-KEM
-        ml_kem_shared_key = self.ml_kem.decapsulate(
-            ml_kem_ciphertext, ml_kem_private_key
-        )
-        
-        # Combinar claves según el modo
-        if self.mode == "parallel":
-            # Modo paralelo: concatenar y derivar
-            combined_key = self._derive_combined_key(
-                ecdh_shared_secret + ml_kem_shared_key
-            )
-        elif self.mode == "serial":
-            # Modo serial: descifrar ML-KEM con ECDH
-            # (simplificado: XOR con hash de ECDH)
-            ecdh_key_hash = hashlib.sha256(ecdh_shared_secret).digest()
-            combined_key = bytes(a ^ b for a, b in zip(ml_kem_shared_key, ecdh_key_hash))
-        else:  # "integrated"
-            # Modo integrado: usar KDF con ambas entradas
-            combined_key = self._derive_integrated_key(
-                ecdh_shared_secret, ml_kem_shared_key
-            )
-        
-        return combined_key
-    
-    def _derive_combined_key(self, key_material):
-        """Deriva una clave combinada a partir del material de clave"""
-        return HKDF(
-            algorithm=hashes.SHA256(),
-            length=32,
-            salt=None,
-            info=b'hybrid_key'
-        ).derive(key_material)
-    
-    def _derive_integrated_key(self, ecdh_key, ml_kem_key):
-        """Deriva una clave integrada a partir de ambas claves"""
-        # Usar HKDF con dos extractos
-        ecdh_extract = HKDF(
-            algorithm=hashes.SHA256(),
-            length=32,
-            salt=None,
-            info=b'ecdh_extract'
-        ).derive(ecdh_key)
-        
-        return HKDF(
-            algorithm=hashes.SHA256(),
-            length=32,
-            salt=ecdh_extract,  # Usar extracto ECDH como sal
-            info=b'hybrid_integrated_key'
-        ).derive(ml_kem_key)
-
-# Ejemplo de uso
-def simulate_quantum_attack(hybrid_crypto, encapsulation, alice_keys, bob_keys):
-    """Simula un ataque cuántico que compromete ECDH pero no ML-KEM"""
-    print("\nSimulando ataque cuántico...")
-    
-    # En un ataque real con computadora cuántica, el atacante podría:
-    # 1. Usar el algoritmo de Shor para romper ECDH
-    # 2. Recuperar la clave privada ECDH de Bob
-    # 3. Calcular el mismo secreto compartido ECDH
-    
-    # Simulamos que el atacante ha obtenido la clave privada ECDH
-    ecdh_private_key = bob_keys['ecdh']['private']
-    ecdh_ephemeral_public = encapsulation['ecdh_ephemeral_public']
-    
-    # El atacante calcula el mismo secreto compartido ECDH
-    ecdh_shared_secret = ecdh_private_key.exchange(
-        ec.ECDH(), ecdh_ephemeral_public
-    )
-    
-    print("El atacante ha comprometido la clave ECDH.")
-    
-    # Verificar si el atacante puede recuperar la clave final
-    if hybrid_crypto.mode == "parallel":
-        print("Modo paralelo: El atacante no puede recuperar la clave final sin la parte ML-KEM.")
-        return False
-    elif hybrid_crypto.mode == "serial":
-        print("Modo serial: El atacante no puede recuperar la clave final sin descifrar ML-KEM.")
-        return False
-    else:  # "integrated"
-        print("Modo integrado: El atacante no puede recuperar la clave final sin la parte ML-KEM.")
-        return False
-
-if __name__ == "__main__":
-    # Probar los tres modos de criptografía híbrida
-    modes = ["parallel", "serial", "integrated"]
-    
-    for mode in modes:
-        print(f"\n=== Modo {mode} ===")
-        
-        # Inicializar criptografía híbrida
-        hybrid_crypto = HybridCryptography(mode=mode)
-        
-        # Alice genera sus claves
-        alice_keys = hybrid_crypto.keygen()
-        print("Alice ha generado sus claves híbridas.")
-        
-        # Bob genera sus claves
-        bob_keys = hybrid_crypto.keygen()
-        print("Bob ha generado sus claves híbridas.")
-        
-        # Alice encapsula una clave para Bob
-        encapsulation = hybrid_crypto.encapsulate(bob_keys)
-        alice_shared_key = encapsulation['shared_key']
-        print("Alice ha encapsulado una clave compartida para Bob.")
-        
-        # Bob decapsula la clave
-        bob_shared_key = hybrid_crypto.decapsulate(encapsulation, bob_keys)
-        print("Bob ha decapsulado la clave compartida.")
-        
-        # Verificar que ambos tengan la misma clave
-        if alice_shared_key == bob_shared_key:
-            print("¡Éxito! Alice y Bob comparten la misma clave secreta.")
-        else:
-            print("Error: Las claves no coinciden.")
-        
-        # Simular ataque cuántico
-        attack_success = simulate_quantum_attack(
-            hybrid_crypto, encapsulation, alice_keys, bob_keys
-        )
-        
-        if attack_success:
-            print("¡Ataque exitoso! El atacante ha recuperado la clave compartida.")
-        else:
-            print("Ataque fallido. La criptografía híbrida ha protegido la clave compartida.")
-</code></pre>
-        </section>
-
-        <section class="explanation">
-            <h2>Explicación de la Criptografía Híbrida</h2>
-            
-            <h3>¿Por qué Criptografía Híbrida?</h3>
-            <p>La criptografía híbrida ofrece varias ventajas durante la transición hacia la criptografía post-cuántica:</p>
-            <ul>
-                <li><strong>Seguridad a prueba de futuro:</strong> Protección contra ataques clásicos y cuánticos.</li>
-                <li><strong>Compatibilidad:</strong> Permite una migración gradual sin comprometer la seguridad.</li>
-                <li><strong>Confianza:</strong> Los algoritmos clásicos tienen décadas de análisis, mientras que los post-cuánticos son relativamente nuevos.</li>
-                <li><strong>Rendimiento:</strong> Algunos algoritmos post-cuánticos tienen mayor sobrecarga, que puede compensarse con los clásicos.</li>
-            </ul>
-            
-            <h3>Enfoques para la Criptografía Híbrida</h3>
-            <p>Existen tres enfoques principales para implementar criptografía híbrida:</p>
-            
-            <div class="approach-container">
-                <div class="approach-card">
-                    <h4>1. Enfoque en Paralelo</h4>
-                    <img src="../images/hybrid_parallel.svg" alt="Diagrama de enfoque en paralelo" class="approach-diagram">
-                    <p><strong>Funcionamiento:</strong> Se ejecutan ambos algoritmos de forma independiente y se combinan las claves resultantes.</p>
-                    <p><strong>Ventajas:</strong> Simple de implementar, mantiene la seguridad del algoritmo más fuerte.</p>
-                    <p><strong>Desventajas:</strong> Mayor sobrecarga en comunicación (dos conjuntos de claves públicas y ciphertexts).</p>
-                </div>
-                
-                <div class="approach-card">
-                    <h4>2. Enfoque en Serie</h4>
-                    <img src="../images/hybrid_serial.svg" alt="Diagrama de enfoque en serie" class="approach-diagram">
-                    <p><strong>Funcionamiento:</strong> Un algoritmo protege la clave del otro (típicamente, RSA/ECDH cifra la clave ML-KEM).</p>
-                    <p><strong>Ventajas:</strong> Menor sobrecarga en comunicación que el enfoque paralelo.</p>
-                    <p><strong>Desventajas:</strong> Si el algoritmo exterior se rompe, la seguridad depende completamente del algoritmo interior.</p>
-                </div>
-                
-                <div class="approach-card">
-                    <h4>3. Enfoque Integrado</h4>
-                    <img src="../images/hybrid_integrated.svg" alt="Diagrama de enfoque integrado" class="approach-diagram">
-                    <p><strong>Funcionamiento:</strong> Se utiliza una función de derivación de claves (KDF) para combinar los secretos de ambos algoritmos.</p>
-                    <p><strong>Ventajas:</strong> Mayor flexibilidad y seguridad, permite personalizar cómo se combinan las claves.</p>
-                    <p><strong>Desventajas:</strong> Más complejo de implementar correctamente.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="comparison">
-            <h2>Comparación de Seguridad</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Escenario</th>
-                        <th>Algoritmo Clásico (ECDH)</th>
-                        <th>Algoritmo PQ (ML-KEM)</th>
-                        <th>Híbrido Paralelo</th>
-                        <th>Híbrido Serie</th>
-                        <th>Híbrido Integrado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Atacante Clásico</td>
-                        <td>Seguro</td>
-                        <td>Seguro</td>
-                        <td>Seguro</td>
-                        <td>Seguro</td>
-                        <td>Seguro</td>
-                    </tr>
-                    <tr>
-                        <td>Atacante Cuántico</td>
-                        <td>Vulnerable</td>
-                        <td>Seguro</td>
-                        <td>Seguro</td>
-                        <td>Seguro</td>
-                        <td>Seguro</td>
-                    </tr>
-                    <tr>
-                        <td>Vulnerabilidad en Clásico</td>
-                        <td>Comprometido</td>
-                        <td>No afectado</td>
-                        <td>Seguro</td>
-                        <td>Seguro</td>
-                        <td>Seguro</td>
-                    </tr>
-                    <tr>
-                        <td>Vulnerabilidad en PQ</td>
-                        <td>No afectado</td>
-                        <td>Comprometido</td>
-                        <td>Seguro</td>
-                        <td>Comprometido</td>
-                        <td>Seguro</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        <section class="applications">
-            <h2>Aplicaciones Prácticas</h2>
-            <p>La criptografía híbrida ya está siendo implementada en varios contextos:</p>
-            <ul>
-                <li><strong>TLS 1.3:</strong> Extensiones experimentales para soportar intercambio de claves híbrido.</li>
-                <li><strong>VPN:</strong> Soluciones como OpenVPN están implementando soporte para criptografía híbrida.</li>
-                <li><strong>SSH:</strong> Implementaciones experimentales de SSH con soporte para algoritmos híbridos.</li>
-                <li><strong>S/MIME y PGP:</strong> Extensiones para correo electrónico seguro con criptografía híbrida.</li>
-                <li><strong>Blockchain:</strong> Algunas criptomonedas están migrando a esquemas de firma híbridos.</li>
-            </ul>
-            
-            <p>El NIST y otras organizaciones de estandarización están trabajando en guías oficiales para la implementación de criptografía híbrida durante la transición a la criptografía post-cuántica.</p>
-        </section>
-
-        <div class="interactive-demo">
-            <h2>Demostración Interactiva: Criptografía Híbrida</h2>
-            <div class="demo-container">
-                <div class="demo-controls">
-                    <select id="hybrid-scheme-select">
-                        <option value="serial">Esquema en Serie (RSA + ML-KEM)</option>
-                        <option value="parallel">Esquema en Paralelo (ECDH + ML-KEM)</option>
-                        <option value="integrated">Esquema Integrado (ECDH + ML-KEM con KDF)</option>
-                    </select>
-                    <button id="generate-hybrid-keys-btn">Generar Claves Híbridas</button>
-                    <button id="encapsulate-btn" disabled>Encapsular Clave</button>
-                    <button id="decapsulate-btn" disabled>Decapsular Clave</button>
-                    <button id="attack-simulate-btn" disabled>Simular Ataque Cuántico</button>
-                </div>
-                <div class="demo-output">
-                    <div class="output-section">
-                        <h3>Estado</h3>
-                        <div id="hybrid-status-output" class="status-box">Esperando acción...</div>
-                    </div>
-                    <div class="output-section">
-                        <h3>Claves</h3>
-                        <div id="hybrid-keys-display" class="key-box"></div>
-                    </div>
-                    <div class="output-section">
-                        <h3>Encapsulamiento</h3>
-                        <div id="encapsulation-display" class="encapsulation-box"></div>
-                    </div>
-                    <div class="output-section">
-                        <h3>Clave Compartida</h3>
-                        <div id="shared-key-display" class="shared-key-box"></div>
-                    </div>
-                    <div class="output-section">
-                        <h3>Resultados del Ataque</h3>
-                        <div id="attack-results-display" class="attack-results-box"></div>
-                    </div>
-                </div>
-            </div>
+      <article class="prose">
+        <h2 id="que-se-ejecuta"><span class="sec">1</span>Qué se ejecuta en esta página</h2>
+        <p>Este ejemplo acompaña a la sección de intercambio híbrido del <a href="../temas/tema5/index.html">Tema 5</a>. Los detalles de TLS 1.3 y de la PKI están en el <a href="../temas/tema2/index.html">Tema 2</a>, y la configuración real con OpenSSL en el <a href="../guias/criptografia_hibrida.html">laboratorio L4</a>. Aquí nada se simula salvo el atacante: las claves, los cifrados y las derivaciones se calculan de verdad.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Componentes de la demo y cómo se han comprobado</caption>
+            <thead><tr><th>Pieza</th><th>Implementación</th><th>Comprobación</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">X25519, ECDH P-256 y P-384</th><td>WebCrypto del navegador (<code>crypto.subtle</code>)</td><td>Implementación nativa del navegador</td></tr>
+              <tr><th scope="row">ML-KEM-512/768/1024</th><td>JavaScript propio siguiendo FIPS 203 (NTT, CBD, compresión, transformación FO con rechazo implícito)</td><td>Coincide byte a byte con los vectores de <code>kyber-py</code> 1.2.0 para los tres niveles, incluido el rechazo implícito</td></tr>
+              <tr><th scope="row">SHA3-256/512, SHAKE128/256</th><td>JavaScript propio (Keccak-f[1600], FIPS 202)</td><td>Coincide con <code>hashlib</code> de Python</td></tr>
+              <tr><th scope="row">HKDF y key schedule TLS 1.3</th><td>HMAC-SHA-256 de WebCrypto</td><td>Caso de prueba 1 de RFC 5869 y secretos <em>early</em>, <em>derived</em> y <em>handshake</em> de RFC 8448</td></tr>
+              <tr><th scope="row">Atacante con CRQC o que rompe ML-KEM</th><td>Simulado: la demo le revela el secreto del componente «roto»</td><td>No es un ataque real a X25519 ni a ML-KEM</td></tr>
+            </tbody>
+          </table>
         </div>
+        <div class="callout warning"><span class="callout-title">Solo para aprender</span><p>El ML-KEM de esta página es correcto pero no es de tiempo constante ni ha sido auditado. Filtra información por tiempos (véase KyberSlash en el Tema 5) y no borra claves de memoria. Para usos reales emplea OpenSSL 3.5 o posterior, AWS-LC, BoringSSL o liboqs.</p></div>
+        <p class="callout note" id="hyb-support">Comprobando si tu navegador implementa X25519 en WebCrypto… (la demo necesita JavaScript).</p>
+
+        <h2 id="handshake"><span class="sec">2</span>Handshake híbrido tipo TLS 1.3</h2>
+        <p>En TLS 1.3 un grupo híbrido es un <code>NamedGroup</code> más (RFC 9954). El cliente envía en <code>key_share</code> la concatenación de su clave de encapsulado ML-KEM y su clave pública efímera clásica. El servidor responde con el texto cifrado ML-KEM concatenado con su clave pública efímera. Los dos secretos se concatenan y entran en el key schedule como si fueran un único secreto (EC)DHE:</p>
+        <div class="equation">ss = ss<sub>ML-KEM</sub> ‖ ss<sub>X25519</sub>   (orden de X25519MLKEM768, RFC 10024)<span class="eq-label">(E4.1)</span></div>
+        <div class="equation">handshake_secret = HKDF-Extract(derived, ss)   ;   c_hs_traffic = Derive-Secret(handshake_secret, "c hs traffic", ClientHello‖ServerHello)<span class="eq-label">(E4.2)</span></div>
+        <p>Observa el orden: en X25519MLKEM768 va primero ML-KEM, y en SecP256r1MLKEM768 y SecP384r1MLKEM1024 va primero la curva NIST. RFC 10024 lo justifica por FIPS: el secreto que va en primera posición debe proceder de una implementación certificada (el esquema «Z ‖ T» de NIST SP 800-56C Rev. 2). En X25519MLKEM768 ese papel lo cumple ML-KEM, porque X25519 no es un esquema aprobado de acuerdo de claves; en las variantes con curvas NIST lo cumple ECDH, cuyas implementaciones certificadas son hoy más comunes.</p>
+
+        <section class="demo" id="demo-handshake" aria-labelledby="demo-handshake-t">
+          <div class="demo-head"><p class="demo-title" id="demo-handshake-t">Handshake híbrido</p><button class="btn ghost" type="button" id="hs-reset">Reiniciar</button></div>
+          <div class="demo-body">
+            <div class="controls">
+              <label class="field">Grupo (NamedGroup)
+                <select id="hs-group">
+                  <option value="x25519-768">X25519MLKEM768 (0x11EC)</option>
+                  <option value="p256-768">SecP256r1MLKEM768 (0x11EB)</option>
+                  <option value="p384-1024">SecP384r1MLKEM1024 (0x11ED)</option>
+                  <option value="x25519">x25519, solo clásico (0x001D)</option>
+                  <option value="mlkem768">MLKEM768, solo PQC (0x0201)</option>
+                </select>
+              </label>
+              <button class="btn" type="button" id="hs-run">Ejecutar handshake</button>
+            </div>
+            <div class="stat-row">
+              <div class="stat"><b id="hs-st-client">—</b><small>key_share cliente</small></div>
+              <div class="stat"><b id="hs-st-server">—</b><small>key_share servidor</small></div>
+              <div class="stat"><b id="hs-st-ss">—</b><small>secreto combinado</small></div>
+              <div class="stat"><b id="hs-st-time">—</b><small>tiempo en tu equipo</small></div>
+            </div>
+            <div class="output" id="hs-out" aria-live="polite"></div>
+            <p><strong>¿Y si se rompe un componente?</strong> Un atacante pasivo ha grabado el handshake. Marca qué sabe:</p>
+            <div class="controls">
+              <label class="field">El atacante conoce el secreto clásico (CRQC)<input type="checkbox" id="hs-leak-t"></label>
+              <label class="field">El atacante conoce el secreto ML-KEM (criptoanálisis)<input type="checkbox" id="hs-leak-pq"></label>
+            </div>
+            <div class="output" id="hs-attack-out" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <h3>Qué observar</h3>
+        <ol>
+          <li>Con X25519MLKEM768 la share del cliente mide 1216 bytes (1184 de ML-KEM-768 + 32 de X25519) y la del servidor 1120 (1088 + 32). Con x25519 sola son 32 y 32.</li>
+          <li>Marca solo una casilla: la clave del atacante no coincide. La seguridad del grupo híbrido es la del componente que siga en pie. Marca las dos: la clave cae.</li>
+          <li>Con «MLKEM768, solo PQC» basta con que se rompa ML-KEM; con «x25519, solo clásico» basta un CRQC. Ese es el argumento de la hibridación durante la transición.</li>
+          <li>El transcript entra en <code>Derive-Secret</code>. Por eso en TLS la simple concatenación de secretos es segura: las shares (los «textos cifrados») ya están ligadas a la clave a través del hash del transcript, cosa que no ocurre en un KEM aislado (sección 3).</li>
+        </ol>
+
+        <h2 id="combinadores"><span class="sec">3</span>Por qué el combinador debe ser IND-CCA</h2>
+        <p>Fuera de TLS, un KEM híbrido se usa a menudo con una clave estática del receptor (HPKE, cifrado de ficheros, ECH). El juego IND-CCA da al atacante un <strong>oráculo de desencapsulado</strong>: puede pedir la clave de cualquier par (ct<sub>M</sub>, ct<sub>X</sub>) salvo el reto exacto (ct<sub>M</sub>*, ct<sub>X</sub>*). Un combinador es bueno si el KEM combinado es IND-CCA siempre que <em>uno</em> de los componentes lo sea.</p>
+        <div class="grid-2">
+          <div class="callout note"><span class="callout-title">Combinadores de la demo</span><ul>
+            <li><b>XOR</b>: K = ss<sub>M</sub> ⊕ ss<sub>X</sub>.</li>
+            <li><b>Concatenar sin contexto</b>: K = SHA3-256(ss<sub>M</sub> ‖ ss<sub>X</sub>).</li>
+            <li><b>X-Wing</b>: K = SHA3-256(ss<sub>M</sub> ‖ ss<sub>X</sub> ‖ ct<sub>X</sub> ‖ pk<sub>X</sub> ‖ etiqueta).</li>
+            <li><b>Universal</b>: K = SHA3-256(ss<sub>M</sub> ‖ ss<sub>X</sub> ‖ ct<sub>M</sub> ‖ ct<sub>X</sub> ‖ ek<sub>M</sub> ‖ pk<sub>X</sub> ‖ etiqueta).</li>
+          </ul></div>
+          <div class="callout note"><span class="callout-title">Ataques de la demo</span><ul>
+            <li><b>A</b>: invertir el bit 255 de ct<sub>X</sub>. X25519 lo ignora (RFC 7748 § 5): mismo ss<sub>X</sub>, texto cifrado distinto. No rompe nada.</li>
+            <li><b>B</b>: con un CRQC (ss<sub>X</sub>* conocido), pedir (ct<sub>M</sub>*, ct<sub>X</sub>′) con ct<sub>X</sub>′ propio.</li>
+            <li><b>C</b>: con ML-KEM roto (ss<sub>M</sub>* conocido), pedir (ct<sub>M</sub>′, ct<sub>X</sub>*) con ct<sub>M</sub>′ propio.</li>
+            <li><b>D</b>: invertir un bit de ct<sub>M</sub>. No rompe nada.</li>
+          </ul></div>
+        </div>
+
+        <section class="demo" id="demo-combinador" aria-labelledby="demo-combinador-t">
+          <div class="demo-head"><p class="demo-title" id="demo-combinador-t">Oráculo de desencapsulado</p><button class="btn ghost" type="button" id="cb-reset">Reiniciar</button></div>
+          <div class="demo-body">
+            <div class="controls">
+              <label class="field">Combinador
+                <select id="cb-comb">
+                  <option value="xor">XOR</option>
+                  <option value="cat">SHA3-256(ss_M ‖ ss_X)</option>
+                  <option value="xwing">X-Wing</option>
+                  <option value="univ">Universal</option>
+                </select>
+              </label>
+              <label class="field">Ataque
+                <select id="cb-attack">
+                  <option value="flip">A · Malear ct_X (bit 255)</option>
+                  <option value="mix">B · CRQC + ct_X propio</option>
+                  <option value="mixpq">C · ML-KEM roto + ct_M propio</option>
+                  <option value="flippq">D · Malear ct_M (1 bit)</option>
+                </select>
+              </label>
+              <button class="btn" type="button" id="cb-run">Lanzar ataque</button>
+              <button class="btn ghost" type="button" id="cb-matrix">Probar todas las combinaciones</button>
+            </div>
+            <div class="stat-row"><div class="stat"><b id="cb-st-result">—</b><small>resultado</small></div></div>
+            <div class="output" id="cb-out" aria-live="polite"></div>
+            <div class="table-wrap">
+              <table>
+                <caption>Resultados calculados en tu navegador (pulsa «Probar todas las combinaciones»)</caption>
+                <thead><tr><th>Combinador</th><th>A · bit 255</th><th>B · CRQC</th><th>C · ML-KEM roto</th><th>D · 1 bit ct_M</th></tr></thead>
+                <tbody id="cb-matrix-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <h3>Cómo leer los resultados</h3>
+        <div class="table-wrap">
+          <table>
+            <caption>Resultado esperado y motivo</caption>
+            <thead><tr><th>Combinador</th><th>A</th><th>B</th><th>C</th><th>D</th><th>Motivo</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">XOR</th><td><span class="badge broken">roto</span></td><td><span class="badge broken">roto</span></td><td><span class="badge broken">roto</span></td><td><span class="badge final">resiste</span></td><td>La respuesta del oráculo es lineal en cada secreto: basta romper <em>uno</em> para despejar el otro (Giacon, Heuer y Poettering [2]).</td></tr>
+              <tr><th scope="row">SHA3(ss_M ‖ ss_X)</th><td><span class="badge broken">roto</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td>X25519 visto como KEM no es IND-CCA (ct maleable). Sin ct<sub>X</sub> en el hash, dos textos cifrados distintos dan la misma clave.</td></tr>
+              <tr><th scope="row">X-Wing</th><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td>Hashea ct<sub>X</sub> y pk<sub>X</sub>. Omite ct<sub>M</sub> porque ML-KEM es resistente a segundas preimágenes de texto cifrado (C2PRI) [3].</td></tr>
+              <tr><th scope="row">Universal</th><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td>Liga todos los textos cifrados y claves públicas; solo exige IND-CCA de un componente, a costa de hashear ~2,3 kB más.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>El ataque D fracasa con todos: ML-KEM aplica <em>rechazo implícito</em> y, ante un texto cifrado alterado, devuelve J(z ‖ ct′), un valor pseudoaleatorio sin relación con K*. Ese es precisamente el trabajo de la transformación de Fujisaki–Okamoto de FIPS 203.</p>
+        <p>Con P-256 el ataque A no se aplica: WebCrypto valida el punto y no existe un bit ignorado. Eso no hace seguro al combinador sin contexto en general; solo elimina esta maleabilidad concreta.</p>
+
+        <h2 id="tamanos"><span class="sec">4</span>Calculadora de tamaños del handshake</h2>
+        <p>El coste de la PQC en TLS está en los bytes, no en los ciclos. La calculadora suma los <em>key shares</em> (valores de RFC 8446, RFC 10024 y draft-ietf-tls-mlkem) y un modelo sencillo de autenticación: certificado hoja + intermedio (2 claves públicas), 2 firmas de certificado, la firma de <code>CertificateVerify</code> y, opcionalmente, 2 SCT de Certificate Transparency, todas con el mismo algoritmo. Se cuentan solo bytes criptográficos brutos, sin codificación X.509.</p>
+
+        <section class="demo" id="demo-tamanos" aria-labelledby="demo-tamanos-t">
+          <div class="demo-head"><p class="demo-title" id="demo-tamanos-t">Bytes por handshake</p></div>
+          <div class="demo-body">
+            <div class="controls">
+              <label class="field">Intercambio de claves
+                <select id="sz-kex">
+                  <option value="x25519">x25519</option>
+                  <option value="p256">secp256r1</option>
+                  <option value="p384">secp384r1</option>
+                  <option value="mlkem512">MLKEM512</option>
+                  <option value="mlkem768">MLKEM768</option>
+                  <option value="mlkem1024">MLKEM1024</option>
+                  <option value="x25519mlkem768" selected>X25519MLKEM768</option>
+                  <option value="p256mlkem768">SecP256r1MLKEM768</option>
+                  <option value="p384mlkem1024">SecP384r1MLKEM1024</option>
+                </select>
+              </label>
+              <label class="field">Firma de la cadena
+                <select id="sz-sig">
+                  <option value="ecdsa256" selected>ECDSA P-256</option>
+                  <option value="ed25519">Ed25519</option>
+                  <option value="rsa2048">RSA-2048</option>
+                  <option value="mldsa44">ML-DSA-44</option>
+                  <option value="mldsa65">ML-DSA-65</option>
+                  <option value="mldsa87">ML-DSA-87</option>
+                  <option value="slh128s">SLH-DSA-SHA2-128s</option>
+                </select>
+              </label>
+              <label class="field">Incluir 2 SCT<input type="checkbox" id="sz-sct" checked></label>
+            </div>
+            <div class="stat-row">
+              <div class="stat"><b id="sz-st-c2s">—</b><small>share cliente</small></div>
+              <div class="stat"><b id="sz-st-s2c">—</b><small>share servidor</small></div>
+              <div class="stat"><b id="sz-st-auth">—</b><small>autenticación</small></div>
+              <div class="stat"><b id="sz-st-ch">—</b><small>ClientHello estimado</small></div>
+            </div>
+            <div id="sz-bars"></div>
+            <div class="output" id="sz-out" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <div class="table-wrap">
+          <table>
+            <caption>Tamaños de key_share en TLS 1.3 (bytes)</caption>
+            <thead><tr><th>Grupo</th><th>Codepoint</th><th class="num">Cliente</th><th class="num">Servidor</th><th class="num">Secreto</th><th>Fuente</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">x25519</th><td>0x001D</td><td class="num">32</td><td class="num">32</td><td class="num">32</td><td>RFC 8446</td></tr>
+              <tr><th scope="row">secp256r1</th><td>0x0017</td><td class="num">65</td><td class="num">65</td><td class="num">32</td><td>RFC 8446</td></tr>
+              <tr><th scope="row">MLKEM512</th><td>0x0200</td><td class="num">800</td><td class="num">768</td><td class="num">32</td><td>draft-ietf-tls-mlkem</td></tr>
+              <tr><th scope="row">MLKEM768</th><td>0x0201</td><td class="num">1184</td><td class="num">1088</td><td class="num">32</td><td>draft-ietf-tls-mlkem</td></tr>
+              <tr><th scope="row">MLKEM1024</th><td>0x0202</td><td class="num">1568</td><td class="num">1568</td><td class="num">32</td><td>draft-ietf-tls-mlkem</td></tr>
+              <tr><th scope="row">X25519MLKEM768</th><td>0x11EC</td><td class="num">1216</td><td class="num">1120</td><td class="num">64</td><td>RFC 10024</td></tr>
+              <tr><th scope="row">SecP256r1MLKEM768</th><td>0x11EB</td><td class="num">1249</td><td class="num">1153</td><td class="num">64</td><td>RFC 10024</td></tr>
+              <tr><th scope="row">SecP384r1MLKEM1024</th><td>0x11ED</td><td class="num">1665</td><td class="num">1665</td><td class="num">80</td><td>RFC 10024</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Con ML-DSA-44 en toda la cadena y 2 SCT el modelo da 2 × 1312 + 5 × 2420 = <b>14 724 bytes</b>, frente a 490 con ECDSA P-256. Cloudflare estima unos 15 kB adicionales por handshake si todas las firmas pasan a ML-DSA-44 [6]; por eso Chrome y Cloudflare ensayan los <em>Merkle Tree Certificates</em> [9]. El intercambio de claves híbrido añade poco más de 2 kB por handshake; las firmas post-cuánticas en la cadena, un orden de magnitud más.</p>
+
+        <h2 id="preguntas"><span class="sec">5</span>Preguntas</h2>
+        <div class="exercise"><span class="ex-title">Pregunta E4.1 <span class="level">Básico</span></span><p>Con SecP384r1MLKEM1024, ¿por qué el secreto combinado mide 80 bytes y no 64?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>ECDH sobre P-384 produce la coordenada x del punto compartido, de 48 bytes; ML-KEM-1024 produce 32. La concatenación mide 48 + 32 = 80 bytes. HKDF-Extract admite una entrada de cualquier longitud, así que no hace falta truncar.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Pregunta E4.2 <span class="level">Intermedio</span></span><p>En TLS 1.3 se concatenan los secretos sin hashear los textos cifrados junto a ellos. ¿Por qué eso no reproduce el fallo del combinador «SHA3(ss_M ‖ ss_X)» ante el ataque A?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>En TLS las claves de tráfico se derivan con <code>Derive-Secret(·, etiqueta, transcript)</code> y el transcript incluye ClientHello y ServerHello completos, es decir, ambas shares. Si el atacante invierte el bit 255 de la share X25519 del servidor, el transcript cambia y las claves derivadas son otras, aunque ss<sub>X</sub> sea el mismo. Además, la conexión se autentica con <code>CertificateVerify</code> y <code>Finished</code> sobre ese transcript. El análisis de RFC 9954 se apoya en esta ligadura.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Pregunta E4.3 <span class="level">Avanzado</span></span><p>X-Wing omite ct<sub>M</sub> del hash pero no ct<sub>X</sub>. Si se sustituyera ML-KEM por un KEM IND-CCA que no fuese C2PRI, ¿qué ataque de la demo habría que reconsiderar?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>El análogo de D: si fuera fácil encontrar ct<sub>M</sub>′ ≠ ct<sub>M</sub>* que desencapsule al mismo ss<sub>M</sub>*, la consulta (ct<sub>M</sub>′, ct<sub>X</sub>*) devolvería exactamente K*, porque ct<sub>M</sub> no entra en el hash. Ser IND-CCA no basta para excluir eso; hace falta C2PRI, que X-Wing asume para ML-KEM-768. Por eso el borrador de combinadores del CFRG distingue marcos que exigen C2PRI del componente PQ y marcos «universales» que no lo exigen [4].</p></div></details></div>
+
+        <h2 id="referencias">Referencias</h2>
+        <ol class="refs">
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/fips/203/final">FIPS 203: Module-Lattice-Based Key-Encapsulation Mechanism Standard</a>. <span class="src">Agosto de 2024.</span></li>
+          <li>F. Giacon, F. Heuer, B. Poettering. <a href="https://eprint.iacr.org/2018/024">KEM Combiners</a>. <span class="src">PKC 2018; IACR ePrint 2018/024.</span></li>
+          <li>M. Barbosa, D. Connolly, J. D. Duarte, A. Kaiser, P. Schwabe, K. Varner, B. Westerbaan. <a href="https://eprint.iacr.org/2024/039">X-Wing: The Hybrid KEM You’ve Been Looking For</a>. <span class="src">IACR Communications in Cryptology, 2024; y <a href="https://datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem/">draft-connolly-cfrg-xwing-kem</a> (Internet-Draft, sin estatus de RFC).</span></li>
+          <li>IRTF CFRG. <a href="https://datatracker.ietf.org/doc/draft-irtf-cfrg-hybrid-kems/">Hybrid PQ/T Key Encapsulation Mechanisms</a> (draft-irtf-cfrg-hybrid-kems). <span class="src">Internet-Draft, revisión 12, julio de 2026.</span></li>
+          <li>D. Stebila, S. Fluhrer, S. Gueron. <a href="https://www.rfc-editor.org/info/rfc9954">RFC 9954: Hybrid Key Exchange in TLS 1.3</a>. <span class="src">Informativo, julio de 2026.</span> <a href="https://www.rfc-editor.org/info/rfc10024">RFC 10024: Post-Quantum Traditional Hybrid Key Agreement for TLS 1.3</a>. <span class="src">Proposed Standard, agosto de 2026.</span></li>
+          <li>B. Westerbaan y otros (Cloudflare). <a href="https://blog.cloudflare.com/pq-2025/">State of the post-quantum Internet in 2025</a>. <span class="src">Cloudflare Blog, octubre de 2025.</span></li>
+          <li>A. Langley, M. Hamburg, S. Turner. <a href="https://www.rfc-editor.org/rfc/rfc7748">RFC 7748: Elliptic Curves for Security</a>. <span class="src">2016.</span> E. Rescorla. <a href="https://www.rfc-editor.org/rfc/rfc8446">RFC 8446: TLS 1.3</a>. <span class="src">2018.</span> M. Thomson. <a href="https://www.rfc-editor.org/rfc/rfc8448">RFC 8448: Example Handshake Traces for TLS 1.3</a>. <span class="src">2019.</span></li>
+          <li>G. Pope. <a href="https://github.com/GiacomoPope/kyber-py">kyber-py</a>, implementación de referencia en Python de ML-KEM usada para validar la de esta página. <span class="src">Versión 1.2.0.</span></li>
+          <li>Google Security. <a href="https://blog.google/security/cultivating-a-robust-and-efficient-quantum-safe-https/">Cultivating a robust and efficient quantum-safe HTTPS</a>. <span class="src">27 de febrero de 2026.</span></li>
+        </ol>
+      </article>
+
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../index.html">Inicio</a></li>
-                    <li><a href="../programa.html">Programa</a></li>
-                    <li><a href="../temas/tema1/index.html">Temas</a></li>
-                    <li><a href="index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="../guias/index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Ejemplos</h3>
-                <ul>
-                    <li><a href="algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="ml_kem.html">ML-KEM</a></li>
-                    <li><a href="ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="qkd_bb84.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../js/script.js"></script>
-    <script src="../js/examples.js"></script>
-    <script src="../js/criptografia_hibrida_interactive.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../glosario.html">Glosario</a>
+        <a href="../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

@@ -1,139 +1,83 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../" data-page="guias">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guías de Laboratorio - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="../css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laboratorios — Curso PQC</title>
+  <meta name="description" content="Cinco prácticas con herramientas reales. Cada guía incluye objetivos, preparación, pasos con salida esperada, preguntas, entregables y rúbrica.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/course-data.js" defer></script>
+  <script src="../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Inicio</a></li>
-                <li><a href="../programa.html">Programa</a></li>
-                <li><a href="../temas/tema1/index.html">Temas</a></li>
-                <li><a href="../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="index.html">Guías de Laboratorio</a></li>
-                <li><a href="../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../index.html">Inicio</a>
+        <a href="../programa.html">Programa</a>
+        <a href="../temas/index.html">Temas</a>
+        <a href="../ejemplos/index.html">Ejemplos</a>
+        <a href="../guias/index.html" aria-current="page">Laboratorios</a>
+        <a href="../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
+    </div>
+  </header>
 
-    <main>
-        <h1>Guías de Laboratorio</h1>
-
-        <p>Esta sección proporciona guías detalladas para realizar prácticas de laboratorio relacionadas con los conceptos estudiados en el curso. Cada guía incluye objetivos, requisitos, procedimientos paso a paso y preguntas de reflexión.</p>
-
-        <div class="lab-grid">
-            <div class="lab-card">
-                <h2>Simulación del Algoritmo de Shor</h2>
-                <p>Explora cómo el algoritmo cuántico de Shor puede factorizar números grandes y comprometer la seguridad de RSA.</p>
-                <p><strong>Duración estimada:</strong> 2 horas</p>
-                <p><strong>Dificultad:</strong> Media</p>
-                <a href="algoritmo_shor.html" class="btn">Ver guía</a>
-            </div>
-
-            <div class="lab-card">
-                <h2>Implementación de ML-KEM</h2>
-                <p>Implementa y analiza el funcionamiento del mecanismo de encapsulamiento de claves basado en retículos (FIPS 203).</p>
-                <p><strong>Duración estimada:</strong> 3 horas</p>
-                <p><strong>Dificultad:</strong> Alta</p>
-                <a href="ml_kem.html" class="btn">Ver guía</a>
-            </div>
-
-            <div class="lab-card">
-                <h2>Implementación de ML-DSA</h2>
-                <p>Implementa y analiza el funcionamiento del algoritmo de firma digital basado en retículos (FIPS 204).</p>
-                <p><strong>Duración estimada:</strong> 3 horas</p>
-                <p><strong>Dificultad:</strong> Alta</p>
-                <a href="ml_dsa.html" class="btn">Ver guía</a>
-            </div>
-
-            <div class="lab-card">
-                <h2>Configuración de Criptografía Híbrida</h2>
-                <p>Configura y evalúa un sistema que combina algoritmos clásicos y post-cuánticos para una transición segura.</p>
-                <p><strong>Duración estimada:</strong> 2 horas</p>
-                <p><strong>Dificultad:</strong> Media</p>
-                <a href="criptografia_hibrida.html" class="btn">Ver guía</a>
-            </div>
-
-            <div class="lab-card">
-                <h2>Simulación de QKD (BB84)</h2>
-                <p>Simula el protocolo BB84 para distribución cuántica de claves y analiza su seguridad frente a ataques.</p>
-                <p><strong>Duración estimada:</strong> 2 horas</p>
-                <p><strong>Dificultad:</strong> Media-Alta</p>
-                <a href="qkd.html" class="btn">Ver guía</a>
-            </div>
-        </div>
-
-        <section>
-            <h2>Preparación para las Prácticas</h2>
-            <p>Antes de comenzar cualquier práctica de laboratorio, asegúrate de:</p>
-            <ul>
-                <li>Revisar el material teórico relacionado en la sección de Temas</li>
-                <li>Tener instalado Python 3.8 o superior</li>
-                <li>Instalar las bibliotecas necesarias según se indique en cada guía</li>
-                <li>Descargar los archivos de código base proporcionados en cada guía</li>
-            </ul>
-            
-            <div class="alert alert-info">
-                <p><strong>Nota:</strong> Las implementaciones realizadas en estas prácticas son simplificadas con fines educativos y no deben utilizarse en entornos de producción.</p>
-            </div>
-        </section>
-
-        <section>
-            <h2>Evaluación</h2>
-            <p>Cada práctica de laboratorio incluye preguntas de reflexión y ejercicios adicionales que pueden ser utilizados para la evaluación del aprendizaje. Se recomienda:</p>
-            <ul>
-                <li>Documentar el proceso seguido durante la práctica</li>
-                <li>Responder a todas las preguntas de reflexión</li>
-                <li>Realizar los ejercicios adicionales propuestos</li>
-                <li>Analizar críticamente los resultados obtenidos</li>
-            </ul>
-        </section>
+  <div class="layout no-toc">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../index.html">Inicio</a></li><li aria-current="page">Laboratorios</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Laboratorios</p>
+        <h1>Guías de <em>laboratorio</em></h1>
+        <p class="lede">Cinco prácticas con herramientas reales. Cada guía incluye objetivos, preparación, pasos con salida esperada, preguntas, entregables y rúbrica.</p>
+      </header>
+      <div class="card-grid">
+        <a class="card" href="../guias/algoritmo_shor.html"><span class="card-kicker">L1</span><h3 class="card-title">Shor y el fin de RSA</h3><p>Partes clásicas de Shor en Python, búsqueda de orden con Qiskit para casos pequeños y ruptura de una clave RSA de juguete.</p><span class="card-foot"><span>Python · Qiskit</span><span>Tema 1</span></span></a>
+        <a class="card" href="../guias/ml_kem.html"><span class="card-kicker">L2</span><h3 class="card-title">ML-KEM en la práctica</h3><p>K-PKE de juguete en Python y, después, ML-KEM real con bibliotecas actuales: tamaños, rendimiento y vectores de prueba.</p><span class="card-foot"><span>Python · liboqs · OpenSSL</span><span>Temas 3 y 4</span></span></a>
+        <a class="card" href="../guias/ml_dsa.html"><span class="card-kicker">L3</span><h3 class="card-title">Firmas ML-DSA y SLH-DSA</h3><p>Tasa de rechazo, firmas reales con OpenSSL, Lamport y árboles de Merkle, y por qué reutilizar una clave de un solo uso es catastrófico.</p><span class="card-foot"><span>Python · OpenSSL</span><span>Temas 3 y 4</span></span></a>
+        <a class="card" href="../guias/criptografia_hibrida.html"><span class="card-kicker">L4</span><h3 class="card-title">TLS híbrido con OpenSSL</h3><p>Certificados ML-DSA, un servidor TLS 1.3 local con X25519MLKEM768 y medidas del tamaño y la latencia del handshake.</p><span class="card-foot"><span>OpenSSL 3.5+</span><span>Temas 2 y 5</span></span></a>
+        <a class="card" href="../guias/qkd.html"><span class="card-kicker">L5</span><h3 class="card-title">Simulación de QKD</h3><p>BB84 en Python, estadística del ataque de interceptación y reenvío, curva de tasa de clave y una API de entrega de claves al estilo ETSI.</p><span class="card-foot"><span>Python · NumPy</span><span>Tema 6</span></span></a>
+      </div>
+      <article class="prose">
+        <h2 id="preparacion">Preparación del entorno</h2>
+        <p>Todos los laboratorios comparten un entorno de Python aislado. Cada guía indica los paquetes y versiones concretos que necesita y cómo comprobar que funcionan.</p>
+        <pre class="terminal" data-lang="shell"><code>$ python3 --version          # 3.12 o posterior
+$ python3 -m venv ~/pqc-lab && source ~/pqc-lab/bin/activate
+$ python -m pip install --upgrade pip numpy
+$ openssl version            # 3.5 o posterior para ML-KEM, ML-DSA y SLH-DSA nativos</code></pre>
+        <p>Si tu sistema trae una versión de OpenSSL anterior a la 3.5, la <a href="criptografia_hibrida.html">guía L4</a> explica alternativas. Los laboratorios funcionan en Linux, macOS y Windows con WSL.</p>
+        <h2 id="evaluacion">Entregables y evaluación</h2>
+        <p>Cada laboratorio pide un informe breve (código, salidas y respuestas razonadas a las preguntas) y trae su propia rúbrica. En conjunto, los ejercicios prácticos suponen el 40 % de la nota del curso; consulta el <a href="../programa.html#evaluacion">programa</a>.</p>
+        <div class="callout note"><span class="callout-title">Buenas prácticas</span><ul><li>Anota las versiones exactas de las herramientas que uses; la salida cambia entre versiones.</li><li>No reutilices el código de juguete fuera del laboratorio.</li><li>Cuando un resultado no coincida con la salida esperada, explica por qué en el informe; también puntúa.</li></ul></div>
+      </article>
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../index.html">Inicio</a></li>
-                    <li><a href="../programa.html">Programa</a></li>
-                    <li><a href="../temas/tema1/index.html">Temas</a></li>
-                    <li><a href="../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Guías Disponibles</h3>
-                <ul>
-                    <li><a href="algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="ml_kem.html">ML-KEM</a></li>
-                    <li><a href="ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="qkd.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../js/script.js"></script>
-    <script src="../js/navigation.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../glosario.html">Glosario</a>
+        <a href="../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

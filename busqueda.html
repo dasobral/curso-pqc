@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es" data-root="" data-page="busqueda">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buscar — Curso PQC</title>
+  <meta name="description" content="Buscador del Curso de Criptografía Post-Cuántica.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/course-data.js" defer></script>
+  <script src="js/course.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="index.html">Inicio</a>
+        <a href="programa.html">Programa</a>
+        <a href="temas/index.html">Temas</a>
+        <a href="ejemplos/index.html">Ejemplos</a>
+        <a href="guias/index.html">Laboratorios</a>
+        <a href="recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
+    </div>
+  </header>
+
+  <div class="layout no-toc">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="index.html">Inicio</a></li><li aria-current="page">Buscar</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Búsqueda</p>
+        <h1>Buscar en el <em>curso</em></h1>
+        <p class="lede">Busca en todos los temas, ejemplos, laboratorios, el glosario y los recursos. Los resultados enlazan directamente a la sección.</p>
+      </header>
+      <section id="search-page" aria-label="Buscador">
+        <form class="search-box" role="search">
+          <label class="visually-hidden" for="search-input">Término de búsqueda</label>
+          <input id="search-input" type="search" name="q" placeholder="ML-KEM, retículo, QBER…" autocomplete="off">
+          <button class="btn" type="submit">Buscar</button>
+        </form>
+        <p class="search-status" aria-live="polite">La búsqueda necesita JavaScript.</p>
+        <ol class="search-results"></ol>
+      </section>
+      <nav class="pager" aria-label="Paginación"></nav>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="glosario.html">Glosario</a>
+        <a href="recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

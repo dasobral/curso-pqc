@@ -1,533 +1,487 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../" data-page="lab-shor">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algoritmo de Shor - Guía de Laboratorio</title>
-    <link rel="stylesheet" href="../css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laboratorio L1 · Shor y el fin de RSA — Curso PQC</title>
+  <meta name="description" content="Laboratorio: implementar en Python las partes clásicas de Shor, romper una clave RSA de juguete, construir con Qiskit 2.x el circuito de búsqueda de orden para N = 15 y N = 21 y analizar estimaciones de recursos.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/course-data.js" defer></script>
+  <script src="../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Inicio</a></li>
-                <li><a href="../programa.html">Programa</a></li>
-                <li><a href="../temas/tema1/index.html">Temas</a></li>
-                <li><a href="../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="index.html">Guías de Laboratorio</a></li>
-                <li><a href="../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../index.html">Inicio</a> &gt; <a href="index.html">Guías de Laboratorio</a> &gt; Algoritmo de Shor
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../index.html">Inicio</a>
+        <a href="../programa.html">Programa</a>
+        <a href="../temas/index.html">Temas</a>
+        <a href="../ejemplos/index.html">Ejemplos</a>
+        <a href="../guias/index.html" aria-current="page">Laboratorios</a>
+        <a href="../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Guía de Laboratorio: Simulación del Algoritmo de Shor</h1>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../index.html">Inicio</a></li><li><a href="../guias/index.html">Laboratorios</a></li><li aria-current="page">Shor y el fin de RSA</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Laboratorio L1 · Python y Qiskit</p>
+        <h1>Shor y el <em>fin de RSA</em></h1>
+        <p class="lede">Implementarás las partes clásicas del algoritmo de Shor, romperás una clave RSA de juguete, construirás con Qiskit el circuito cuántico de búsqueda de orden para <var>N</var> = 15 y <var>N</var> = 21 y, con esos números en la mano, analizarás qué separa estos juguetes de RSA-2048.</p>
+        <dl class="page-meta">
+          <div><dt>Duración</dt><dd>2–3 h</dd></div>
+          <div><dt>Nivel</dt><dd>Introductorio–intermedio</dd></div>
+          <div><dt>Requisitos</dt><dd><a href="../temas/tema1/index.html">Tema 1</a>, Python 3.10+</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
 
-        <section class="lab-section">
-            <h2>Objetivos de Aprendizaje</h2>
-            <ul>
-                <li>Comprender los fundamentos teóricos del algoritmo cuántico de Shor</li>
-                <li>Implementar una simulación simplificada del algoritmo</li>
-                <li>Analizar cómo este algoritmo compromete la seguridad de RSA</li>
-                <li>Evaluar las implicaciones para la criptografía actual</li>
-            </ul>
-        </section>
+      <article class="prose">
+        <h2 id="objetivos"><span class="sec">L1.0</span>Objetivos</h2>
+        <ol>
+          <li>Programar la reducción de factorización a búsqueda de orden, la recuperación del orden por fracciones continuas y el paso final con gcd.</li>
+          <li>Recuperar la clave privada de una clave RSA pequeña a partir de la pública.</li>
+          <li>Construir y simular con Qiskit 2.x un circuito de búsqueda de orden con una multiplicación modular controlada correcta, y reconocer qué atajos invalidan una «demostración» de Shor.</li>
+          <li>Relacionar el tamaño del circuito de juguete con las estimaciones de recursos publicadas para RSA-2048 y ECC-256.</li>
+        </ol>
+        <div class="callout note"><span class="callout-title">Qué se ha comprobado</span><p>Todo el código de esta guía se ha ejecutado en septiembre de 2026 con Python 3.12.7, <code>qiskit</code> 2.5.2, <code>qiskit-aer</code> 0.17.2, NumPy 2.5.3 y SciPy 1.18.1 en Linux x86-64. Las salidas mostradas son las obtenidas (con las semillas fijadas en el código).</p></div>
 
-        <section class="lab-section">
-            <h2>Requisitos Previos</h2>
-            <ul>
-                <li>Conocimientos básicos de criptografía de clave pública (RSA)</li>
-                <li>Familiaridad con conceptos matemáticos: teoría de números, aritmética modular</li>
-                <li>Python 3.8 o superior instalado</li>
-                <li>Bibliotecas requeridas: numpy, matplotlib, qiskit (opcional para la parte avanzada)</li>
-            </ul>
+        <h2 id="entorno"><span class="sec">L1.1</span>Preparación del entorno</h2>
+        <p>Crea un entorno virtual; no instales paquetes en el Python del sistema. Las partes A, B y D solo necesitan la biblioteca estándar; la parte C necesita Qiskit y el simulador Aer.</p>
+        <pre class="terminal" data-lang="shell"><code>$ python3 --version            # 3.10 o superior
+$ python3 -m venv .venv-shor
+$ source .venv-shor/bin/activate  # Windows: .venv-shor\Scripts\activate
+(.venv-shor) $ pip install "qiskit==2.5.*" "qiskit-aer==0.17.*"
+(.venv-shor) $ python -c "import qiskit, qiskit_aer; print(qiskit.__version__, qiskit_aer.__version__)"
+2.5.2 0.17.2</code></pre>
+        <p>Crea una carpeta <code>lab1/</code> y guarda en ella los cuatro ficheros de esta guía: <code>shor_clasico.py</code>, <code>rsa_toy.py</code>, <code>shor_qiskit.py</code> y <code>analisis_recursos.py</code>.</p>
+        <div class="callout warning"><span class="callout-title">Si usas otra versión de Qiskit</span><p>Qiskit 1.x y 2.x cambiaron varias API respecto a los tutoriales antiguos: ya no existen <code>execute()</code>, <code>qiskit.algorithms.Shor</code> ni el <em>textbook</em> de qiskit.org, y las implementaciones V1 de las primitivas (<code>Sampler</code>, <code>Estimator</code>) se eliminaron en Qiskit 2.0. Esta guía usa <code>generate_preset_pass_manager</code>, <code>QFTGate</code> y <code>qiskit_aer.primitives.SamplerV2</code>. Si un fragmento de Internet usa <code>execute</code> o <code>QuantumInstance</code>, está desactualizado.</p></div>
 
-            <div class="alert alert-info">
-                <p><strong>Nota:</strong> Esta práctica utiliza una simulación clásica del algoritmo de Shor. No se requiere un ordenador cuántico real.</p>
-            </div>
-        </section>
-
-        <section class="lab-section">
-            <h2>Introducción Teórica</h2>
-            <p>El algoritmo de Shor, desarrollado por Peter Shor en 1994, es un algoritmo cuántico que puede factorizar números enteros en tiempo polinómico. Su importancia radica en que puede romper eficientemente el cifrado RSA, que basa su seguridad en la dificultad de factorizar números grandes.</p>
-            
-            <p>El algoritmo consta de dos partes principales:</p>
-            <ol>
-                <li><strong>Reducción del problema de factorización a encontrar el período de una función</strong>: Transformar el problema de factorizar N en encontrar el período de la función f(x) = a^x mod N, donde a es un número coprimo con N.</li>
-                <li><strong>Encontrar el período utilizando la transformada cuántica de Fourier</strong>: Utilizar un algoritmo cuántico para encontrar el período de la función anterior de manera eficiente.</li>
-            </ol>
-
-            <p>Una vez encontrado el período r, podemos calcular factores de N con alta probabilidad utilizando el máximo común divisor (MCD) de N y a^(r/2) ± 1.</p>
-        </section>
-
-        <section class="lab-section">
-            <h2>Parte 1: Implementación Clásica Simplificada</h2>
-            
-            <h3>1.1 Configuración del Entorno</h3>
-            <p>Crea un nuevo archivo Python llamado <code>shor_simulation.py</code> e importa las bibliotecas necesarias:</p>
-            <pre><code class="language-python">import numpy as np
-import math
-import random
-import matplotlib.pyplot as plt
+        <h2 id="parte-a"><span class="sec">L1.2</span>Parte A · Las partes clásicas</h2>
+        <p>El fichero siguiente contiene todo lo que Shor hace en un ordenador clásico. La función <code>orden_bruto</code> sustituye a la parte cuántica: es correcta pero exponencial en el número de bits de <var>N</var>.</p>
+        <pre data-lang="python"><code>"""Partes clásicas del algoritmo de Shor (laboratorio L1)."""
 from fractions import Fraction
-</code></pre>
+from math import gcd
+import random
 
-            <h3>1.2 Implementación de Funciones Auxiliares</h3>
-            <p>Primero, implementaremos algunas funciones auxiliares necesarias:</p>
-            <pre><code class="language-python"># Calcular el máximo común divisor (MCD)
-def gcd(a, b):
-    while b:
-        a, b = b, a % b
-    return a
 
-# Exponenciación modular rápida
-def mod_exp(base, exponent, modulus):
-    if modulus == 1:
-        return 0
-    result = 1
-    base = base % modulus
-    while exponent > 0:
-        if exponent % 2 == 1:
-            result = (result * base) % modulus
-        exponent = exponent >> 1
-        base = (base * base) % modulus
-    return result
-
-# Encontrar un número aleatorio coprimo con n
-def find_coprime(n):
-    a = random.randint(2, n-1)
-    while gcd(a, n) != 1:
-        a = random.randint(2, n-1)
-    return a
-
-# Expansión de fracción continua para aproximar fracciones
-def continued_fraction_expansion(x, y, max_denominator):
-    fractions = []
-    a = Fraction(x, y).limit_denominator(max_denominator)
-    fractions.append(a)
-    
-    # Generar convergentes intermedios
-    n, d = a.numerator, a.denominator
-    for i in range(1, d):
-        if i * a.denominator <= max_denominator:
-            fractions.append(Fraction(round(i * a.numerator / a.denominator), i))
-    
-    return fractions
-</code></pre>
-
-            <h3>1.3 Implementación del Algoritmo de Shor Clásico</h3>
-            <p>Ahora implementaremos una versión simplificada del algoritmo de Shor:</p>
-            <pre><code class="language-python">def find_period_classically(a, N):
-    """
-    Encuentra el período de f(x) = a^x mod N de manera clásica (ineficiente).
-    En un ordenador cuántico real, esta parte sería mucho más eficiente.
-    """
-    x = 1
-    for r in range(1, N):
+def orden_bruto(a: int, N: int) -&gt; int:
+    """Menor r &gt; 0 con a^r ≡ 1 (mod N). Exponencial en log N: solo para N pequeños."""
+    if gcd(a, N) != 1:
+        raise ValueError("a y N deben ser coprimos")
+    x, r = a % N, 1
+    while x != 1:
         x = (x * a) % N
-        if x == 1:
-            return r
+        r += 1
+    return r
+
+
+def convergentes(num: int, den: int):
+    """Convergentes p/q de la fracción continua de num/den."""
+    a_list = []
+    while den:
+        q, rem = divmod(num, den)
+        a_list.append(q)
+        num, den = den, rem
+    p_prev, p = 1, a_list[0]
+    q_prev, q = 0, 1
+    yield Fraction(p, q)
+    for ai in a_list[1:]:
+        p_prev, p = p, ai * p + p_prev
+        q_prev, q = q, ai * q + q_prev
+        yield Fraction(p, q)
+
+
+def orden_desde_medida(y: int, t: int, a: int, N: int):
+    """Recupera r a partir de una medida y del registro de t qubits (Q = 2^t)."""
+    Q = 2 ** t
+    for c in convergentes(y, Q):
+        r = c.denominator
+        if r &gt;= N:
+            break
+        if c.numerator == 0:          # s = 0: la medida no informa sobre r
+            continue
+        # comprobar r y múltiplos pequeños (por si gcd(s, r) &gt; 1)
+        for k in range(1, 5):
+            R = k * r
+            if R &lt; N and pow(a, R, N) == 1:
+                return orden_minimo(a, R, N)
     return None
 
-def shor_algorithm_classical(N, max_attempts=5):
-    """
-    Implementación clásica simplificada del algoritmo de Shor
-    """
+
+def orden_minimo(a: int, R: int, N: int) -&gt; int:
+    """Si a^R ≡ 1, el orden divide a R: quita factores primos mientras a^(R/p) ≡ 1."""
+    m, p = R, 2
+    while p &lt;= m:
+        while m % p == 0 and pow(a, m // p, N) == 1:
+            m //= p
+        p += 1
+    return m
+
+
+def factores_desde_orden(a: int, r: int, N: int):
+    """Paso clásico final. Devuelve ((p, q), "ok") o (None, motivo del fallo)."""
+    if r % 2 == 1:
+        return None, "r impar"
+    x = pow(a, r // 2, N)
+    if x == N - 1:
+        return None, "a^(r/2) ≡ −1 (mod N)"
+    p, q = gcd(x - 1, N), gcd(x + 1, N)
+    return (p, q), "ok"
+
+
+def shor_clasico(N: int, rng=None, max_intentos=20, verbose=True):
+    """Reducción de Shor con el cálculo del orden hecho por fuerza bruta."""
+    rng = rng or random.Random()
     if N % 2 == 0:
         return 2, N // 2
-    
-    for _ in range(max_attempts):
-        # Paso 1: Elegir un número aleatorio a < N
-        a = find_coprime(N)
-        print(f"Intentando con a = {a}")
-        
-        # Paso 2: Encontrar el período r (en un ordenador cuántico, esto sería mucho más rápido)
-        r = find_period_classically(a, N)
-        
-        if r is None:
-            print("No se encontró período. Intentando con otro valor de a.")
-            continue
-            
-        print(f"Período encontrado: r = {r}")
-        
-        # Paso 3: Verificar condiciones
-        if r % 2 != 0:
-            print("El período es impar. Intentando con otro valor de a.")
-            continue
-            
-        x = mod_exp(a, r // 2, N)
-        if x == N - 1:
-            print("a^(r/2) ≡ -1 (mod N). Intentando con otro valor de a.")
-            continue
-        
-        # Paso 4: Calcular factores
-        factor1 = gcd(x - 1, N)
-        factor2 = gcd(x + 1, N)
-        
-        if factor1 > 1 and factor1 < N:
-            return factor1, N // factor1
-        if factor2 > 1 and factor2 < N:
-            return factor2, N // factor2
-    
-    return None, None
-</code></pre>
+    for intento in range(1, max_intentos + 1):
+        a = rng.randrange(2, N - 1)
+        g = gcd(a, N)
+        if g &gt; 1:
+            if verbose:
+                print(f"[{intento}] a={a}: gcd(a,N)={g} -&gt; factor por suerte")
+            return g, N // g
+        r = orden_bruto(a, N)
+        res, motivo = factores_desde_orden(a, r, N)
+        if verbose:
+            print(f"[{intento}] a={a}: r={r} -&gt; {motivo}")
+        if res and 1 &lt; res[0] &lt; N:
+            return res[0], N // res[0]
+    return None
 
-            <h3>1.4 Función Principal y Visualización</h3>
-            <p>Finalmente, implementaremos la función principal y algunas visualizaciones:</p>
-            <pre><code class="language-python">def main():
-    # Número a factorizar (pequeño para esta simulación)
-    N = 15  # = 3 × 5
-    
-    print(f"Intentando factorizar N = {N} usando el algoritmo de Shor (simulación clásica)")
-    
-    # Ejecutar el algoritmo
-    factor1, factor2 = shor_algorithm_classical(N)
-    
-    if factor1 is not None:
-        print(f"¡Factorización exitosa! {N} = {factor1} × {factor2}")
-        
-        # Visualización
-        plt.figure(figsize=(10, 6))
-        
-        # Gráfico de la función f(x) = a^x mod N
-        a = find_coprime(N)
-        x_values = list(range(20))
-        y_values = [mod_exp(a, x, N) for x in x_values]
-        
-        plt.subplot(1, 2, 1)
-        plt.plot(x_values, y_values, 'o-')
-        plt.title(f"Función f(x) = {a}^x mod {N}")
-        plt.xlabel("x")
-        plt.ylabel(f"{a}^x mod {N}")
-        plt.grid(True)
-        
-        # Histograma de valores
-        plt.subplot(1, 2, 2)
-        plt.hist(y_values, bins=range(min(y_values), max(y_values) + 2), alpha=0.7)
-        plt.title(f"Distribución de valores de {a}^x mod {N}")
-        plt.xlabel("Valor")
-        plt.ylabel("Frecuencia")
-        plt.grid(True)
-        
-        plt.tight_layout()
-        plt.savefig('shor_visualization.png')
-        plt.show()
-    else:
-        print("No se pudo factorizar N con los intentos realizados.")
 
 if __name__ == "__main__":
-    main()
-</code></pre>
-        </section>
+    for N in (15, 21, 35, 91, 143, 3233):
+        print(f"N={N}:", shor_clasico(N, rng=random.Random(N)))
+    # recuperación por fracciones continuas: N=15, a=7, r=4, t=8 (Q=256)
+    for y in (0, 64, 128, 192):
+        print("y =", y, "-&gt;", orden_desde_medida(y, 8, 7, 15))</code></pre>
+        <p class="code-caption">shor_clasico.py</p>
+        <p><strong>Tarea A1.</strong> Ejecuta el fichero. La salida debe ser esta (la semilla depende de <var>N</var>, así que es reproducible):</p>
+        <pre class="terminal" data-lang="salida"><code>[1] a=5: gcd(a,N)=5 -&gt; factor por suerte
+N=15: (5, 3)
+[1] a=7: gcd(a,N)=7 -&gt; factor por suerte
+N=21: (7, 3)
+[1] a=23: r=12 -&gt; ok
+N=35: (7, 5)
+[1] a=12: r=6 -&gt; a^(r/2) ≡ −1 (mod N)
+[2] a=77: gcd(a,N)=7 -&gt; factor por suerte
+N=91: (7, 13)
+[1] a=49: r=30 -&gt; ok
+N=143: (11, 13)
+[1] a=227: r=780 -&gt; ok
+N=3233: (53, 61)
+y = 0 -&gt; None
+y = 64 -&gt; 4
+y = 128 -&gt; 4
+y = 192 -&gt; 4</code></pre>
+        <p><strong>Tarea A2.</strong> Observa las tres formas de terminar: «por suerte» (gcd no trivial, frecuente en <var>N</var> pequeños y despreciable en RSA real), éxito con <var>r</var> par, y el fallo <span class="math"><var>a</var><sup><var>r</var>/2</sup> ≡ −1</span> con <span class="math"><var>N</var> = 91</span>, <span class="math"><var>a</var> = 12</span>. Modifica <code>shor_clasico</code> para que no acepte la «suerte» (descarta las <var>a</var> no coprimas) y mide, para <span class="math"><var>N</var> ∈ {21, 91, 143, 3233}</span>, la fracción de bases coprimas que factorizan. Compárala con la cota <span class="math">1 − 1/2<sup><var>m</var>−1</sup> = 1/2</span>.</p>
+        <p><strong>Tarea A3.</strong> Explica por qué <code>orden_desde_medida</code> descarta el convergente 0/1, prueba múltiplos <span class="math"><var>k</var>·<var>q</var></span> y llama a <code>orden_minimo</code>. Pista: calcula a mano <code>orden_desde_medida(128, 9, 2, 21)</code>.</p>
+        <div class="callout"><span class="callout-title">Punto de control A</span><p>Estas aserciones deben pasar sin error:</p>
+          <pre data-lang="python"><code>from shor_clasico import *
+assert orden_bruto(7, 15) == 4 and orden_bruto(2, 21) == 6 and orden_bruto(12, 91) == 6
+assert orden_desde_medida(128, 9, 2, 21) == 6     # 1/4 -&gt; 3·4 = 12 -&gt; se reduce a 6
+assert orden_desde_medida(853, 11, 3, 35) == 12   # convergente 5/12
+assert factores_desde_orden(12, 6, 91)[0] is None # 12^3 ≡ −1 (mod 91)
+print("checkpoints OK")</code></pre></div>
 
-        <section class="lab-section">
-            <h2>Parte 2: Análisis de Seguridad de RSA</h2>
-            
-            <h3>2.1 Implementación Simplificada de RSA</h3>
-            <p>Ahora implementaremos una versión simplificada de RSA para demostrar su vulnerabilidad:</p>
-            <pre><code class="language-python"># Crear un nuevo archivo rsa_simulation.py
+        <h2 id="parte-b"><span class="sec">L1.3</span>Parte B · Romper una clave RSA de juguete</h2>
+        <p>El atacante solo conoce la clave pública <span class="math">(<var>N</var>, <var>e</var>)</span> y un cifrado <var>c</var>. Factorizar <var>N</var> da <span class="math">φ(<var>N</var>)</span>, de ahí <var>d</var>, y con <var>d</var> todos los mensajes.</p>
+        <pre data-lang="python"><code>"""Romper una clave RSA de juguete con la reducción de Shor."""
 import random
-from math import gcd
+from shor_clasico import shor_clasico
 
-def is_prime(n, k=5):
-    """Test de primalidad de Miller-Rabin simplificado"""
-    if n <= 1 or n == 4:
-        return False
-    if n <= 3:
-        return True
-    
-    # Implementación simplificada para números pequeños
-    for i in range(2, int(n**0.5) + 1):
-        if n % i == 0:
-            return False
-    return True
+p, q, e = 61, 53, 17
+N = p * q                       # 3233
+phi = (p - 1) * (q - 1)         # 3120
+d = pow(e, -1, phi)             # 2753
+m = 1234
+c = pow(m, e, N)
+print(f"Clave pública (N, e) = ({N}, {e}); cifrado c = {c}")
 
-def generate_prime(bits):
-    """Genera un número primo de aproximadamente 'bits' bits"""
-    # Para esta simulación, usamos primos pequeños
-    primes = [p for p in range(10, 100) if is_prime(p)]
-    return random.choice(primes)
+# El atacante solo conoce (N, e, c)
+f1, f2 = shor_clasico(N, rng=random.Random(2026))
+d_rec = pow(e, -1, (f1 - 1) * (f2 - 1))
+print(f"Factores: {f1} x {f2}; d recuperado = {d_rec} (correcto: {d_rec == d})")
+print(f"Mensaje descifrado: {pow(c, d_rec, N)}")</code></pre>
+        <p class="code-caption">rsa_toy.py</p>
+        <pre class="terminal" data-lang="salida"><code>Clave pública (N, e) = (3233, 17); cifrado c = 2183
+[1] a=489: r=52 -&gt; ok
+Factores: 61 x 53; d recuperado = 2753 (correcto: True)
+Mensaje descifrado: 1234</code></pre>
+        <p><strong>Tarea B1.</strong> Genera tú una clave con primos de 16 bits (usa <code>sympy.randprime</code> o una criba propia) y rómpela. Mide el tiempo de <code>orden_bruto</code> para primos de 12, 16, 20 y 24 bits y representa el crecimiento. ¿Qué tamaño de <var>N</var> es inasumible para tu portátil con este método? ¿Qué complejidad tiene frente a la de Shor, <span class="math"><var>O</var>(<var>n</var><sup>3</sup>)</span>?</p>
+        <p><strong>Tarea B2.</strong> Variante sin factorizar: si el atacante conoce el orden <var>r</var> de <var>c</var> módulo <var>N</var>, entonces <span class="math"><var>d</var>′ = <var>e</var><sup>−1</sup> mod <var>r</var></span> cumple <span class="math"><var>c</var><sup><var>d</var>′</sup> ≡ <var>m</var></span> (cuando <span class="math">gcd(<var>e</var>, <var>r</var>) = 1</span>). Compruébalo con el ejemplo y explica por qué basta un buscador de orden para descifrar un mensaje concreto.</p>
 
-def mod_inverse(e, phi):
-    """Calcula el inverso modular de e módulo phi"""
-    def extended_gcd(a, b):
-        if a == 0:
-            return b, 0, 1
+        <h2 id="parte-c"><span class="sec">L1.4</span>Parte C · El circuito de búsqueda de orden en Qiskit</h2>
+        <p>El circuito tiene un registro de fase de <span class="math"><var>t</var> = 2<var>m</var></span> qubits y un registro de trabajo de <span class="math"><var>m</var> = ⌈log<sub>2</sub>(<var>N</var> + 1)⌉</span> qubits inicializado a |1⟩. El qubit de fase <var>k</var> controla una multiplicación por <span class="math"><var>a</var><sup>2<sup><var>k</var></sup></sup> mod <var>N</var></span>; tras la QFT inversa se mide el registro de fase.</p>
+        <h3 id="multiplicacion">Una multiplicación modular correcta</h3>
+        <p>La operación <span class="math">|<var>x</var>⟩ ↦ |<var>a</var><var>x</var> mod <var>N</var>⟩</span> es una <strong>permutación</strong> de los estados <span class="math">0 ≤ <var>x</var> &lt; <var>N</var></span> cuando <span class="math">gcd(<var>a</var>, <var>N</var>) = 1</span>; completándola con la identidad para <span class="math"><var>x</var> ≥ <var>N</var></span> se obtiene una matriz unitaria. La función <code>mult_mod_gate</code> construye esa matriz de permutación y Qiskit la sintetiza en puertas. Es correcta para cualquier <var>a</var> y <var>N</var>, pero su tamaño es <span class="math">2<sup><var>m</var></sup> × 2<sup><var>m</var></sup></span>: no escala. Un circuito escalable implementa la multiplicación con sumadores reversibles (por ejemplo, los de Beauregard [3] o las construcciones de [4]).</p>
+        <p>Para <span class="math"><var>N</var> = 15</span>, <span class="math"><var>a</var> = 7</span> existe una construcción compacta conocida: tres SWAP y cuatro X. El script <strong>comprueba</strong> con <code>Operator</code> que coincide con <span class="math"><var>x</var> ↦ 7<var>x</var> mod 15</span> en todos los estados <span class="math"><var>x</var> = 1…14</span> antes de usarla; no la aceptes sin esa verificación (el orden de los SWAP es fácil de invertir por error, y entonces el circuito implementa otra permutación).</p>
+        <pre data-lang="python"><code>"""Búsqueda de orden (parte cuántica de Shor) con Qiskit 2.x y Qiskit Aer.
+
+Uso:  python shor_qiskit.py [N] [a] [--swaps] [--ruido P]
+      (por defecto N=15, a=7; --swaps solo para N=15, a=7)
+"""
+import argparse
+from collections import Counter
+
+import numpy as np
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.circuit.library import QFTGate, UnitaryGate
+from qiskit.quantum_info import Operator
+from qiskit.transpiler import generate_preset_pass_manager
+from qiskit_aer.noise import NoiseModel, depolarizing_error
+from qiskit_aer.primitives import SamplerV2
+
+from shor_clasico import orden_desde_medida, factores_desde_orden
+
+
+def mult_mod_gate(a: int, N: int, m: int) -&gt; UnitaryGate:
+    """|x&gt; -&gt; |a·x mod N&gt; para x &lt; N; identidad para x &gt;= N (es una permutación)."""
+    dim = 2 ** m
+    U = np.zeros((dim, dim))
+    for x in range(dim):
+        U[(a * x) % N if x &lt; N else x, x] = 1
+    return UnitaryGate(U, label=f"×{a} mod {N}")
+
+
+def mult7_mod15_swaps() -&gt; QuantumCircuit:
+    """x -&gt; 7x mod 15 con 3 SWAP y 4 X (válido para x = 1..14)."""
+    qc = QuantumCircuit(4, name="×7 mod 15")
+    qc.swap(0, 1)
+    qc.swap(1, 2)
+    qc.swap(2, 3)
+    qc.x(range(4))
+    return qc
+
+
+def comprobar_swaps():
+    P = Operator(mult7_mod15_swaps()).data
+    for x in range(1, 15):
+        assert np.argmax(np.abs(P[:, x])) == (7 * x) % 15, x
+    print("Comprobación: SWAP+X implementa x -&gt; 7x mod 15 en x = 1..14")
+
+
+def circuito_orden(a: int, N: int, t: int, m: int, swaps: bool = False) -&gt; QuantumCircuit:
+    fase = QuantumRegister(t, "fase")
+    trabajo = QuantumRegister(m, "x")
+    c = ClassicalRegister(t, "c")
+    qc = QuantumCircuit(fase, trabajo, c)
+    qc.h(fase)
+    qc.x(trabajo[0])                            # registro de trabajo = |1&gt;
+    for k in range(t):
+        ak = pow(a, 2 ** k, N)                  # a^(2^k) mod N, precalculado clásicamente
+        if ak == 1:
+            continue                            # multiplicar por 1 es la identidad
+        if swaps:                               # a^(2^k) = 7^j: aplicar j veces ×7
+            j = next(j for j in range(1, 4) if pow(7, j, 15) == ak)
+            for _ in range(j):
+                qc.append(mult7_mod15_swaps().to_gate().control(1), [fase[k], *trabajo])
         else:
-            gcd, x, y = extended_gcd(b % a, a)
-            return gcd, y - (b // a) * x, x
-    
-    g, x, y = extended_gcd(e, phi)
-    if g != 1:
-        raise Exception('El inverso modular no existe')
+            qc.append(mult_mod_gate(ak, N, m).control(1), [fase[k], *trabajo])
+    qc.append(QFTGate(t).inverse(), fase)
+    qc.measure(fase, c)
+    return qc
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("N", nargs="?", type=int, default=15)
+    ap.add_argument("a", nargs="?", type=int, default=7)
+    ap.add_argument("--swaps", action="store_true")
+    ap.add_argument("--ruido", type=float, default=0.0, help="error despolarizante por CX")
+    ap.add_argument("--shots", type=int, default=2048)
+    args = ap.parse_args()
+    N, A = args.N, args.a
+    if args.swaps:
+        assert (N, A) == (15, 7), "--swaps solo está implementado para N=15, a=7"
+        comprobar_swaps()
+
+    m = N.bit_length()          # qubits de trabajo
+    t = 2 * m                   # qubits de fase: Q = 2^t &gt;= N^2
+    qc = circuito_orden(A, N, t, m, swaps=args.swaps)
+
+    noise = None
+    if args.ruido &gt; 0:
+        noise = NoiseModel()
+        noise.add_all_qubit_quantum_error(depolarizing_error(args.ruido, 2), ["cx"])
+    # Transpilar a un conjunto de puertas universal sencillo para poder contar CX
+    pm = generate_preset_pass_manager(optimization_level=1,
+                                      basis_gates=["cx", "rz", "sx", "x"], seed_transpiler=1)
+    isa = pm.run(qc)
+    print(f"N={N}, a={A}: {qc.num_qubits} qubits, profundidad {isa.depth()}, "
+          f"CX = {isa.count_ops().get('cx', 0)}")
+
+    opciones = {"backend_options": {"noise_model": noise}} if noise else {}
+    sampler = SamplerV2(default_shots=args.shots, seed=1234, options=opciones)
+    counts = sampler.run([isa]).result()[0].data.c.get_counts()
+
+    Q = 2 ** t
+    print(f"Medidas más frecuentes (Q = 2^{t} = {Q}):")
+    for bits, n in sorted(counts.items(), key=lambda kv: -kv[1])[:8]:
+        y = int(bits, 2)
+        print(f"  y={y:4d}  y/Q={y / Q:.4f}  n={n:4d}  r={orden_desde_medida(y, t, A, N)}")
+
+    votos = Counter()
+    for bits, n in counts.items():
+        votos[orden_desde_medida(int(bits, 2), t, A, N)] += n
+    print("Órdenes candidatos (votos):", dict(votos))
+    votos.pop(None, None)
+    r = votos.most_common(1)[0][0]
+    res, motivo = factores_desde_orden(A, r, N)
+    if res:
+        print(f"r={r}: {A}^{r // 2} mod {N} = {pow(A, r // 2, N)} -&gt; factores {res[0]} x {res[1]}")
     else:
-        return x % phi
+        print(f"r={r}: fallo ({motivo}); repetir con otra a")
 
-def generate_rsa_keys():
-    """Genera un par de claves RSA (simplificado)"""
-    # Generar dos primos distintos
-    p = generate_prime(8)
-    q = generate_prime(8)
-    while p == q:
-        q = generate_prime(8)
-    
-    n = p * q
-    phi = (p - 1) * (q - 1)
-    
-    # Elegir e coprimo con phi
-    e = random.randint(3, phi - 1)
-    while gcd(e, phi) != 1:
-        e = random.randint(3, phi - 1)
-    
-    # Calcular d (inverso modular de e módulo phi)
-    d = mod_inverse(e, phi)
-    
-    return (e, n), (d, n), p, q
-
-def rsa_encrypt(message, public_key):
-    """Cifra un mensaje usando RSA"""
-    e, n = public_key
-    return pow(message, e, n)
-
-def rsa_decrypt(ciphertext, private_key):
-    """Descifra un mensaje usando RSA"""
-    d, n = private_key
-    return pow(ciphertext, d, n)
-
-def main_rsa():
-    # Generar claves
-    public_key, private_key, p, q = generate_rsa_keys()
-    e, n = public_key
-    d, _ = private_key
-    
-    print(f"Generadas claves RSA con n = {n} = {p} × {q}")
-    print(f"Clave pública: (e={e}, n={n})")
-    print(f"Clave privada: (d={d}, n={n})")
-    
-    # Cifrar y descifrar un mensaje
-    message = random.randint(2, n-1)
-    print(f"Mensaje original: {message}")
-    
-    ciphertext = rsa_encrypt(message, public_key)
-    print(f"Mensaje cifrado: {ciphertext}")
-    
-    decrypted = rsa_decrypt(ciphertext, private_key)
-    print(f"Mensaje descifrado: {decrypted}")
-    
-    # Intentar romper RSA usando el algoritmo de Shor
-    print("\nIntentando romper RSA usando el algoritmo de Shor...")
-    from shor_simulation import shor_algorithm_classical
-    
-    factor1, factor2 = shor_algorithm_classical(n)
-    
-    if factor1 is not None:
-        print(f"¡RSA comprometido! Se han encontrado los factores: {factor1} y {factor2}")
-        
-        # Reconstruir la clave privada
-        phi_recovered = (factor1 - 1) * (factor2 - 1)
-        d_recovered = mod_inverse(e, phi_recovered)
-        print(f"Clave privada recuperada: (d={d_recovered}, n={n})")
-        
-        # Verificar descifrando el mensaje
-        decrypted_recovered = pow(ciphertext, d_recovered, n)
-        print(f"Mensaje descifrado con la clave recuperada: {decrypted_recovered}")
-        print(f"¿Coincide con el mensaje original? {'Sí' if decrypted_recovered == message else 'No'}")
-    else:
-        print("No se pudo factorizar n con los intentos realizados.")
 
 if __name__ == "__main__":
-    main_rsa()
-</code></pre>
-        </section>
+    main()</code></pre>
+        <p class="code-caption">shor_qiskit.py</p>
+        <p><strong>Tarea C1.</strong> Ejecuta <code>python shor_qiskit.py</code> (permutación genérica) y <code>python shor_qiskit.py --swaps</code>. Salida obtenida con la segunda:</p>
+        <pre class="terminal" data-lang="salida"><code>Comprobación: SWAP+X implementa x -&gt; 7x mod 15 en x = 1..14
+N=15, a=7: 12 qubits, profundidad 351, CX = 224
+Medidas más frecuentes (Q = 2^8 = 256):
+  y=  64  y/Q=0.2500  n= 544  r=4
+  y= 192  y/Q=0.7500  n= 527  r=4
+  y= 128  y/Q=0.5000  n= 504  r=4
+  y=   0  y/Q=0.0000  n= 473  r=None
+Órdenes candidatos (votos): {None: 473, 4: 1575}
+r=4: 7^2 mod 15 = 4 -&gt; factores 3 x 5</code></pre>
+        <p>Con la permutación genérica, las medidas son las mismas en distribución (0, 64, 128 y 192, ≈ 25 % cada una) pero el circuito transpilado tiene 539 CX y profundidad 1 936, frente a 224 CX y profundidad 351 con SWAP. Solo aparecen dos multiplicaciones controladas: <span class="math">7<sup>1</sup> = 7</span> y <span class="math">7<sup>2</sup> ≡ 4</span>; para <span class="math"><var>k</var> ≥ 2</span>, <span class="math">7<sup>2<sup><var>k</var></sup></sup> ≡ 1</span> y la puerta es la identidad.</p>
+        <p><strong>Tarea C2.</strong> Ejecuta <code>python shor_qiskit.py 21 2</code>. Aquí <span class="math"><var>r</var> = 6</span> no divide a <span class="math"><var>Q</var> = 1 024</span> y los picos se reparten entre enteros vecinos:</p>
+        <pre class="terminal" data-lang="salida"><code>N=21, a=2: 15 qubits, profundidad 40233, CX = 10145
+Medidas más frecuentes (Q = 2^10 = 1024):
+  y= 512  y/Q=0.5000  n= 335  r=6
+  y=   0  y/Q=0.0000  n= 333  r=None
+  y= 683  y/Q=0.6670  n= 242  r=6
+  y= 341  y/Q=0.3330  n= 242  r=6
+  y= 171  y/Q=0.1670  n= 234  r=6
+  y= 853  y/Q=0.8330  n= 200  r=6
+  y= 342  y/Q=0.3340  n=  75  r=6
+  y= 854  y/Q=0.8340  n=  75  r=6
+Órdenes candidatos (votos): {6: 1710, None: 338}
+r=6: 2^3 mod 21 = 8 -&gt; factores 7 x 3</code></pre>
+        <p>Compara las frecuencias con las del <a href="../ejemplos/algoritmo_shor.html">ejemplo E1</a> (que usa <span class="math"><var>Q</var> = 512</span> para <span class="math"><var>N</var> = 21</span>): ¿qué fracción de medidas no aporta información y por qué? Ejecuta también <code>python shor_qiskit.py 21 4</code> y explica el mensaje final.</p>
+        <p><strong>Tarea C3 (ruido).</strong> Ejecuta <code>python shor_qiskit.py --swaps --ruido 0.02</code> (error despolarizante del 2 % en cada CX). Los picos se ensanchan y aparecen valores como <var>y</var> = 65 o 200; muchos siguen dando <var>r</var> = 4 porque las fracciones continuas toleran pequeñas desviaciones. Sube el ruido a 0,05 y 0,1: ¿a partir de qué nivel deja de recuperarse <var>r</var> de forma fiable? Relaciona el resultado con la necesidad de corrección de errores (<a href="../temas/tema1/index.html#computacion-cuantica">tema 1, §1.5</a>).</p>
+        <div class="callout"><span class="callout-title">Punto de control C</span><p>Con <code>--swaps</code> debes ver la línea de comprobación, 12 qubits, <var>r</var> = 4 y los factores 3 × 5. Con <code>21 2</code>, 15 qubits, votos casi todos para <var>r</var> = 6 y los factores 7 × 3.</p></div>
+        <div class="callout danger"><span class="callout-title">Cómo no «demostrar» Shor</span><p>Las implementaciones que sustituyen la exponenciación modular por un circuito diseñado <em>sabiendo ya</em> el periodo, o que reducen el registro a lo que el resultado conocido necesita, pueden «factorizar» cualquier número con dos qubits [2]. Tu circuito de la tarea C1 genérica no usa el periodo: solo usa <span class="math"><var>a</var><sup>2<sup><var>k</var></sup></sup> mod <var>N</var></span>, que cualquier atacante calcula clásicamente. La versión con SWAP sí es específica de <span class="math">(15, 7)</span>, pero se deriva de la multiplicación, no del resultado.</p></div>
 
-        <section class="lab-section">
-            <h2>Parte 3: Ejercicios y Preguntas de Reflexión</h2>
-            
-            <h3>3.1 Ejercicios</h3>
-            <ol>
-                <li>Modifica el código para factorizar otros números compuestos pequeños (por ejemplo, 21, 33, 35).</li>
-                <li>Implementa una función que calcule el tiempo que tardaría un ordenador clásico en factorizar números de diferentes tamaños usando el algoritmo de fuerza bruta.</li>
-                <li>Compara la complejidad teórica del algoritmo de Shor (O(log³ N)) con la del mejor algoritmo clásico conocido (aproximadamente O(e^(log N)^(1/3) * (log log N)^(2/3))).</li>
-                <li>Modifica el código RSA para usar números primos más grandes (dentro de lo razonable para una simulación) y analiza cómo afecta esto al tiempo de ejecución del algoritmo de Shor clásico.</li>
-            </ol>
-            
-            <h3>3.2 Preguntas de Reflexión</h3>
-            <ol>
-                <li>¿Por qué el algoritmo de Shor representa una amenaza tan significativa para RSA?</li>
-                <li>¿Qué tamaño de clave RSA se considera seguro actualmente contra ordenadores clásicos? ¿Y contra ordenadores cuánticos potenciales?</li>
-                <li>¿Qué otros algoritmos criptográficos, además de RSA, son vulnerables al algoritmo de Shor?</li>
-                <li>¿Cuáles son las limitaciones actuales para implementar el algoritmo de Shor en ordenadores cuánticos reales?</li>
-                <li>¿Qué estrategias de migración recomendarías a una organización que actualmente utiliza RSA para proteger información sensible a largo plazo?</li>
-            </ol>
-        </section>
+        <h2 id="parte-d"><span class="sec">L1.5</span>Parte D · Del juguete a RSA-2048</h2>
+        <pre data-lang="python"><code>"""Análisis de estimaciones de recursos (parte D del laboratorio L1)."""
+from math import log2
 
-        <section class="lab-section">
-            <h2>Parte 4: Extensión (Opcional) - Simulación Cuántica</h2>
-            <p>Si tienes experiencia con bibliotecas de computación cuántica como Qiskit, puedes intentar implementar una simulación más realista del algoritmo de Shor:</p>
-            <pre><code class="language-python"># Requiere: pip install qiskit
-from qiskit import QuantumCircuit, Aer, execute
-from qiskit.visualization import plot_histogram
-import numpy as np
-import matplotlib.pyplot as plt
+print("Gidney–Ekerå 2019: fórmulas de coste lógico para RSA-n")
+print(f"{'n':&gt;6} {'qubits lógicos':&gt;15} {'Toffoli':&gt;10} {'prof. medida':&gt;13}")
+for n in (1024, 2048, 3072, 4096):
+    lg = log2(n)
+    qubits = 3 * n + 0.002 * n * lg
+    toffoli = 0.3 * n**3 + 0.0005 * n**3 * lg
+    depth = 500 * n**2 + n**2 * lg
+    print(f"{n:&gt;6} {qubits:&gt;15,.0f} {toffoli:&gt;10.2e} {depth:&gt;13.2e}")
 
-# Esta es una implementación muy simplificada y parcial
-# Para una implementación completa, consulta la documentación de Qiskit
+# Tasas de Toffoli implícitas (tiempo total / número de Toffoli)
+casos = {"Gidney–Ekerå 2019": (3e9, 8 * 3600), "Gidney 2025": (6.5e9, 4.96 * 86400)}
+for nombre, (tof, seg) in casos.items():
+    print(f"{nombre}: {tof / seg:,.0f} Toffoli/s")
 
-def qft_rotations(circuit, n):
-    """Rotaciones QFT sin swaps"""
-    if n == 0:
-        return circuit
-    n -= 1
-    circuit.h(n)
-    for qubit in range(n):
-        circuit.cp(np.pi/2**(n-qubit), qubit, n)
-    qft_rotations(circuit, n)
+# Desigualdad de Mosca
+def mosca(x, y, z):
+    margen = z - (x + y)
+    estado = "a tiempo" if margen &gt;= 0 else "EXPUESTO"
+    return f"x={x}, y={y}, z={z}: x+y={x + y} -&gt; {estado} (margen {margen:+d} años)"
 
-def qft(circuit, n):
-    """Transformada cuántica de Fourier"""
-    qft_rotations(circuit, n)
-    # Swaps
-    for qubit in range(n//2):
-        circuit.swap(qubit, n-qubit-1)
-    return circuit
+for x, y, z in [(5, 5, 15), (15, 7, 15), (25, 10, 10)]:
+    print(mosca(x, y, z))</code></pre>
+        <p class="code-caption">analisis_recursos.py</p>
+        <pre class="terminal" data-lang="salida"><code>Gidney–Ekerå 2019: fórmulas de coste lógico para RSA-n
+     n  qubits lógicos    Toffoli  prof. medida
+  1024           3,092   3.27e+08      5.35e+08
+  2048           6,189   2.62e+09      2.14e+09
+  3072           9,287   8.87e+09      4.83e+09
+  4096          12,386   2.10e+10      8.59e+09
+Gidney–Ekerå 2019: 104,167 Toffoli/s
+Gidney 2025: 15,168 Toffoli/s
+x=5, y=5, z=15: x+y=10 -&gt; a tiempo (margen +5 años)
+x=15, y=7, z=15: x+y=22 -&gt; EXPUESTO (margen -7 años)
+x=25, y=10, z=10: x+y=35 -&gt; EXPUESTO (margen -25 años)</code></pre>
+        <p>La fórmula de Gidney y Ekerå [5] da ≈ 2,6·10<sup>9</sup> Toffoli para <var>n</var> = 2 048 (el artículo de 2025 redondea a «3 000 millones» en su comparación). Responde razonadamente:</p>
+        <ol>
+          <li><strong>D1.</strong> ¿Cuántos qubits lógicos y Toffoli necesitaría RSA-4096 según la fórmula de 2019? ¿En qué factor crece el coste al doblar el tamaño de clave? ¿Protege doblar la clave RSA frente a Shor?</li>
+          <li><strong>D2.</strong> Gidney (2025) [6] usa 1 399 qubits lógicos y 897 864 físicos: ¿cuántos qubits físicos por qubit lógico hay en promedio? ¿En qué se gasta la diferencia además del almacenamiento (fábricas o cultivo de estados mágicos, enrutamiento)?</li>
+          <li><strong>D3.</strong> Tu circuito para <span class="math"><var>N</var> = 15</span> tiene 224 CX. Si una puerta de dos qubits tiene un error del 0,1 %, ¿qué probabilidad aproximada hay de que el circuito completo se ejecute sin ningún error? ¿Y un circuito de 10<sup>9</sup> puertas? Concluye por qué no hay Shor útil sin corrección de errores.</li>
+          <li><strong>D4.</strong> Las estimaciones de 2026 para ECDLP-256 (≤ 1 200 qubits lógicos, ≤ 9·10<sup>7</sup> Toffoli, menos de 500 000 físicos, minutos) [7] son más bajas que las de RSA-2048. ¿Qué implica para el orden de migración de ECDH/X25519, ECDSA y RSA en una organización?</li>
+          <li><strong>D5.</strong> Aplica la desigualdad de Mosca a un sistema real que conozcas (nómina, historia clínica, firmware de un dispositivo IoT). Justifica tus valores de <var>x</var> e <var>y</var> y usa como <var>z</var> los rangos de la encuesta del Global Risk Institute publicada en marzo de 2026 (<a href="../temas/tema1/index.html#cuando">tema 1, §1.9</a>).</li>
+        </ol>
+        <details><summary>Orientación para D1–D3 (consúltala después de intentarlo)</summary><div class="details-body"><p>D1: ≈ 12 400 qubits lógicos y ≈ 2,1·10<sup>10</sup> Toffoli; el coste crece ≈ 8 veces (cúbico) al doblar <var>n</var>, así que alargar claves solo compra un factor polinómico: no es una defensa. D2: ≈ 640 físicos por lógico de media. D3: <span class="math">0,999<sup>224</sup> ≈ 0,80</span>; para 10<sup>9</sup> puertas, <span class="math">0,999<sup>10<sup>9</sup></sup> ≈ <var>e</var><sup>−10<sup>6</sup></sup></span>, es decir, cero.</p></div></details>
 
-def inverse_qft(circuit, n):
-    """QFT inversa"""
-    # Swaps
-    for qubit in range(n//2):
-        circuit.swap(qubit, n-qubit-1)
-    # Rotaciones inversas
-    for j in range(n):
-        for m in range(j):
-            circuit.cp(-np.pi/2**(j-m), m, j)
-        circuit.h(j)
-    return circuit
+        <h2 id="entregables"><span class="sec">L1.6</span>Entregables</h2>
+        <ol>
+          <li>Los cuatro scripts, con tus modificaciones de A2, B1 y B2, y un <code>requirements.txt</code> con las versiones usadas.</li>
+          <li>Un informe de 3–5 páginas (PDF) con: salidas de las tareas A1–C3, la gráfica de tiempos de B1, un histograma de medidas de C2 y de C3 con dos niveles de ruido, y las respuestas D1–D5.</li>
+          <li>Una conclusión de media página: qué parte de Shor es cuántica, qué recursos haría falta para RSA-2048 hoy y qué recomendarías migrar primero.</li>
+        </ol>
 
-def shor_period_finding_circuit(a, N, n_count, n_target):
-    """Circuito para encontrar el período en el algoritmo de Shor"""
-    # Crear circuito
-    circuit = QuantumCircuit(n_count + n_target, n_count)
-    
-    # Inicializar registros
-    for q in range(n_count):
-        circuit.h(q)
-    circuit.x(n_count)
-    
-    # Aplicar operaciones U controladas
-    # (Esta es una simplificación extrema)
-    for q in range(n_count):
-        # Aplicar a^(2^q) mod N controlado por q
-        # En una implementación real, esto sería mucho más complejo
-        circuit.cp(2*np.pi*a**(2**q) % N / N, q, n_count)
-    
-    # Aplicar QFT inversa
-    inverse_qft(circuit, n_count)
-    
-    # Medir
-    circuit.measure(range(n_count), range(n_count))
-    
-    return circuit
+        <h2 id="rubrica"><span class="sec">L1.7</span>Rúbrica de evaluación</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>Evaluación sobre 10 puntos</caption>
+            <thead><tr><th>Criterio</th><th class="num">Peso</th><th>Excelente</th><th>Suficiente</th></tr></thead>
+            <tbody>
+              <tr><th>Parte A: código clásico</th><td class="num">2,0</td><td>Pasa los puntos de control, A2 medido y comparado con la cota, A3 bien razonado</td><td>Código funcional, análisis incompleto</td></tr>
+              <tr><th>Parte B: RSA de juguete</th><td class="num">1,5</td><td>B1 con gráfica y extrapolación, B2 demostrado y explicado</td><td>Clave rota, sin análisis de coste</td></tr>
+              <tr><th>Parte C: circuito Qiskit</th><td class="num">3,0</td><td>C1–C3 ejecutados, histogramas interpretados, umbral de ruido estimado, distingue construcción válida de «compilada»</td><td>Circuitos ejecutados y factores obtenidos</td></tr>
+              <tr><th>Parte D: recursos y Mosca</th><td class="num">2,5</td><td>Cifras correctas con fuentes, conclusiones sobre ECC frente a RSA y sobre corrección de errores, caso de Mosca realista</td><td>Cálculos correctos sin discusión</td></tr>
+              <tr><th>Calidad del informe</th><td class="num">1,0</td><td>Claro, reproducible (versiones, semillas), bien citado</td><td>Completo pero desordenado</td></tr>
+            </tbody>
+          </table>
+        </div>
 
-def simulate_shor_quantum(a, N):
-    """Simula la parte cuántica del algoritmo de Shor"""
-    # Parámetros
-    n_count = 8  # Número de qubits para el registro de conteo
-    n_target = 4  # Número de qubits para el registro objetivo
-    
-    # Crear circuito
-    circuit = shor_period_finding_circuit(a, N, n_count, n_target)
-    
-    # Simular
-    simulator = Aer.get_backend('qasm_simulator')
-    result = execute(circuit, simulator, shots=1024).result()
-    counts = result.get_counts()
-    
-    # Visualizar
-    plot_histogram(counts)
-    plt.title(f"Distribución de mediciones para a={a}, N={N}")
-    plt.savefig('shor_quantum_simulation.png')
-    plt.show()
-    
-    return counts
+        <h2 id="referencias">Referencias</h2>
+        <ol class="refs">
+          <li>P. W. Shor. <a href="https://arxiv.org/abs/quant-ph/9508027">Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer</a>. <span class="src">SIAM Journal on Computing 26(5), 1997.</span></li>
+          <li>J. A. Smolin, G. Smith, A. Vargo. <a href="https://arxiv.org/abs/1301.7007">Pretending to factor large numbers on a quantum computer</a>. <span class="src">Nature 499, 163–165, 2013.</span></li>
+          <li>S. Beauregard. <a href="https://arxiv.org/abs/quant-ph/0205095">Circuit for Shor's algorithm using 2n+3 qubits</a>. <span class="src">Quantum Information and Computation 3(2), 2003.</span></li>
+          <li>C. Gidney, M. Ekerå. <a href="https://arxiv.org/abs/1905.09749">How to factor 2048 bit RSA integers in 8 hours using 20 million noisy qubits</a>. <span class="src">Quantum 5, 433, 2021.</span></li>
+          <li>Ibid. [4]: fórmulas de coste <span class="math">3<var>n</var> + 0,002 <var>n</var> lg <var>n</var></span> qubits y <span class="math">0,3 <var>n</var><sup>3</sup> + 0,0005 <var>n</var><sup>3</sup> lg <var>n</var></span> Toffoli. <span class="src">Resumen del artículo.</span></li>
+          <li>C. Gidney. <a href="https://arxiv.org/abs/2505.15917">How to factor 2048 bit RSA integers with less than a million noisy qubits</a>. <span class="src">arXiv:2505.15917, mayo de 2025.</span></li>
+          <li>R. Babbush et al. <a href="https://eprint.iacr.org/2026/625">Securing Elliptic Curve Cryptocurrencies against Quantum Vulnerabilities: Resource Estimates and Mitigations</a>. <span class="src">IACR ePrint 2026/625 y arXiv:2603.28846, 2026.</span></li>
+          <li>IBM Quantum. <a href="https://quantum.cloud.ibm.com/docs/en/api/qiskit">Qiskit SDK API reference</a> y <a href="https://qiskit.github.io/qiskit-aer/">Qiskit Aer documentation</a>. <span class="src">Documentación en línea.</span></li>
+        </ol>
+      </article>
 
-# Ejemplo de uso
-# simulate_shor_quantum(7, 15)
-</code></pre>
-            <p>Esta implementación es muy simplificada y no funcionará correctamente para el algoritmo de Shor completo, pero proporciona una idea de cómo se podría abordar usando Qiskit.</p>
-        </section>
-
-        <section class="lab-section">
-            <h2>Entregables</h2>
-            <p>Al finalizar esta práctica, deberás entregar:</p>
-            <ol>
-                <li>Código fuente de las implementaciones (<code>shor_simulation.py</code> y <code>rsa_simulation.py</code>)</li>
-                <li>Capturas de pantalla o gráficos generados durante la ejecución</li>
-                <li>Un informe breve (máximo 2 páginas) que incluya:
-                    <ul>
-                        <li>Resultados obtenidos en las factorizaciones</li>
-                        <li>Respuestas a las preguntas de reflexión</li>
-                        <li>Análisis de la vulnerabilidad de RSA frente al algoritmo de Shor</li>
-                        <li>Conclusiones sobre las implicaciones para la seguridad criptográfica actual</li>
-                    </ul>
-                </li>
-            </ol>
-        </section>
-
-        <section class="lab-section">
-            <h2>Recursos Adicionales</h2>
-            <ul>
-                <li><a href="https://arxiv.org/abs/quant-ph/9508027" target="_blank">Artículo original de Peter Shor</a></li>
-                <li><a href="https://qiskit.org/textbook/ch-algorithms/shor.html" target="_blank">Tutorial de Qiskit sobre el algoritmo de Shor</a></li>
-                <li><a href="https://en.wikipedia.org/wiki/RSA_(cryptosystem)" target="_blank">Wikipedia: RSA Cryptosystem</a></li>
-                <li><a href="https://en.wikipedia.org/wiki/Shor%27s_algorithm" target="_blank">Wikipedia: Algoritmo de Shor</a></li>
-            </ul>
-        </section>
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../index.html">Inicio</a></li>
-                    <li><a href="../programa.html">Programa</a></li>
-                    <li><a href="../temas/tema1/index.html">Temas</a></li>
-                    <li><a href="../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Guías Disponibles</h3>
-                <ul>
-                    <li><a href="algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="ml_kem.html">ML-KEM</a></li>
-                    <li><a href="ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="qkd.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../js/script.js"></script>
-    <script src="../js/navigation.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../glosario.html">Glosario</a>
+        <a href="../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

@@ -1,810 +1,766 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../" data-page="lab-mldsa">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ML-DSA - Guía de Laboratorio</title>
-    <link rel="stylesheet" href="../css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>L3 · Firmas ML-DSA y SLH-DSA — Curso PQC</title>
+  <meta name="description" content="Laboratorio de firmas post-cuánticas: Fiat–Shamir con abortos en Python, ML-DSA y SLH-DSA con OpenSSL 3.5 y liboqs-python, firmas de Lamport y árboles de Merkle, falsificación por reutilización de claves de un solo uso y comparativa de tamaños y rendimiento.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/course-data.js" defer></script>
+  <script src="../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Inicio</a></li>
-                <li><a href="../programa.html">Programa</a></li>
-                <li><a href="../temas/tema1/index.html">Temas</a></li>
-                <li><a href="../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="index.html">Guías de Laboratorio</a></li>
-                <li><a href="../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../index.html">Inicio</a> &gt; <a href="index.html">Guías de Laboratorio</a> &gt; ML-DSA
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../index.html">Inicio</a>
+        <a href="../programa.html">Programa</a>
+        <a href="../temas/index.html">Temas</a>
+        <a href="../ejemplos/index.html">Ejemplos</a>
+        <a href="../guias/index.html" aria-current="page">Laboratorios</a>
+        <a href="../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Guía de Laboratorio: Implementación de ML-DSA</h1>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../index.html">Inicio</a></li><li><a href="../guias/index.html">Laboratorios</a></li><li aria-current="page">Firmas ML-DSA y SLH-DSA</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Laboratorio L3 · Firma digital post-cuántica</p>
+        <h1>Firmas <em>ML-DSA y SLH-DSA</em></h1>
+        <p class="lede">Del mecanismo a la herramienta: medirás la tasa de rechazo de Fiat–Shamir con abortos, firmarás con ML-DSA y SLH-DSA reales en OpenSSL y liboqs, construirás firmas de Lamport y un árbol de Merkle para entender las firmas basadas en hash, y falsificarás una firma reutilizando una clave de un solo uso.</p>
+        <dl class="page-meta">
+          <div><dt>Duración</dt><dd>3 h (+ memoria)</dd></div>
+          <div><dt>Nivel</dt><dd>Intermedio</dd></div>
+          <div><dt>Requisitos</dt><dd>Python 3.12+, OpenSSL ≥ 3.5, línea de órdenes</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
 
-        <section class="lab-section">
-            <h2>Objetivos de Aprendizaje</h2>
-            <ul>
-                <li>Comprender los fundamentos teóricos de ML-DSA (anteriormente Dilithium)</li>
-                <li>Implementar una versión simplificada del algoritmo de firma digital</li>
-                <li>Analizar las propiedades de seguridad y eficiencia de ML-DSA</li>
-                <li>Comparar ML-DSA con algoritmos de firma tradicionales como ECDSA</li>
-            </ul>
-        </section>
+      <article class="prose">
+        <h2 id="objetivos"><span class="sec">L3.0</span>Objetivos</h2>
+        <ul>
+          <li>Relacionar los parámetros de un esquema Fiat–Shamir con abortos (<var>γ</var><sub>1</sub>, <var>γ</var><sub>2</sub>, <var>β</var>) con su tasa de rechazo, midiéndola.</li>
+          <li>Generar claves, firmar y verificar con ML-DSA (FIPS 204) y SLH-DSA (FIPS 205) usando OpenSSL 3.5 y liboqs-python, incluidos contextos, firma determinista y claves en formato semilla.</li>
+          <li>Implementar firmas de Lamport y un árbol de Merkle, y demostrar por qué reutilizar una clave de un solo uso es catastrófico.</li>
+          <li>Comparar tamaños y tiempos de ML-DSA, SLH-DSA, Falcon/FN-DSA, Ed25519, ECDSA y RSA, y razonar sobre su impacto en certificados y protocolos.</li>
+          <li>Argumentar decisiones de uso: puro frente a <em>pre-hash</em>, cadenas de contexto, determinista frente a <em>hedged</em> y gestión del estado en LMS/XMSS.</li>
+        </ul>
+        <p>Antes del laboratorio conviene haber leído el <a href="../temas/tema4/index.html">Tema 4</a> (especificación de ML-DSA y SLH-DSA) y jugado con el ejemplo interactivo <a href="../ejemplos/ml_dsa.html">E3</a>. La base matemática (MLWE, MSIS, funciones hash) está en el <a href="../temas/tema3/index.html">Tema 3</a>.</p>
 
-        <section class="lab-section">
-            <h2>Requisitos Previos</h2>
-            <ul>
-                <li>Conocimientos básicos de criptografía de clave pública y firmas digitales</li>
-                <li>Familiaridad con conceptos matemáticos: álgebra lineal, retículos, distribuciones estadísticas</li>
-                <li>Python 3.8 o superior instalado</li>
-                <li>Bibliotecas requeridas: numpy, scipy, matplotlib</li>
-            </ul>
+        <div class="callout note"><span class="callout-title">Qué se ha verificado</span><p>Todas las órdenes y programas de esta guía se ejecutaron el 24 de septiembre de 2026 en Ubuntu 24.04.5 (AMD Ryzen 9 5900X) con Python 3.12.7, OpenSSL 3.5.8 compilado desde las fuentes oficiales, y liboqs-python 0.16.0.1 con liboqs 0.16.0. Las salidas que se muestran son las observadas; las tuyas diferirán en los valores aleatorios y en los tiempos.</p></div>
 
-            <div class="alert alert-info">
-                <p><strong>Nota:</strong> Esta práctica implementa una versión simplificada de ML-DSA con fines educativos. No debe utilizarse en entornos de producción.</p>
-            </div>
-        </section>
+        <h2 id="entorno"><span class="sec">L3.1</span>Preparación del entorno</h2>
+        <h3>OpenSSL 3.5 o posterior</h3>
+        <p>ML-DSA, SLH-DSA y ML-KEM están integrados en el proveedor por defecto de OpenSSL desde la versión 3.5.0 (abril de 2025), que es además versión de soporte extendido (LTS). En septiembre de 2026 las ramas mantenidas más recientes son 3.5.8 (LTS) y 4.0.2, ambas publicadas el 25 de agosto de 2026. Comprueba tu versión:</p>
+        <pre class="terminal" data-lang="shell"><code>$ openssl version
+$ openssl list -signature-algorithms | grep -i ml-dsa</code></pre>
+        <p>Si la segunda orden no muestra nada, tu OpenSSL es anterior (Ubuntu 24.04, por ejemplo, trae 3.0.13). Compila 3.5.8 en tu directorio personal, sin tocar el del sistema:</p>
+        <pre class="terminal" data-lang="shell"><code>$ curl -LO https://github.com/openssl/openssl/releases/download/openssl-3.5.8/openssl-3.5.8.tar.gz
+$ tar xzf openssl-3.5.8.tar.gz &amp;&amp; cd openssl-3.5.8
+$ ./Configure --prefix=$HOME/ossl35 --libdir=lib no-docs
+$ make -j"$(nproc)" &amp;&amp; make install_sw install_ssldirs
+$ export PATH=$HOME/ossl35/bin:$PATH LD_LIBRARY_PATH=$HOME/ossl35/lib</code></pre>
+        <p>La compilación tarda unos minutos. <code>install_ssldirs</code> instala el <code>openssl.cnf</code> que necesita <code>openssl req</code>; sin él, la creación de certificados falla con «Can't open … openssl.cnf».</p>
 
-        <section class="lab-section">
-            <h2>Introducción Teórica</h2>
-            <p>ML-DSA (Module-Lattice-Based Digital Signature Algorithm), anteriormente conocido como Dilithium, es un algoritmo de firma digital basado en retículos modulares. Fue seleccionado por el NIST como el estándar para firmas digitales post-cuánticas (FIPS 204).</p>
-            
-            <p>ML-DSA basa su seguridad en la dificultad del problema de Learning With Errors (LWE) en su variante modular, similar a ML-KEM. Este problema es considerado resistente a ataques cuánticos, incluyendo el algoritmo de Shor.</p>
-            
-            <p>El esquema consta de tres algoritmos principales:</p>
-            <ol>
-                <li><strong>KeyGen</strong>: Genera un par de claves pública/privada.</li>
-                <li><strong>Sign</strong>: Utiliza la clave privada para firmar un mensaje.</li>
-                <li><strong>Verify</strong>: Utiliza la clave pública para verificar la firma de un mensaje.</li>
-            </ol>
+        <h3>Python y liboqs-python</h3>
+        <pre class="terminal" data-lang="shell"><code>$ python3 -m venv ~/l3-venv &amp;&amp; . ~/l3-venv/bin/activate
+(l3-venv) $ pip install liboqs-python==0.16.0.1
+(l3-venv) $ python -c "import oqs; print(oqs.oqs_version(), oqs.oqs_python_version())"</code></pre>
+        <p>La primera importación de <code>oqs</code> descarga y compila liboqs 0.16.0 si no la encuentra instalada (hacen falta <code>git</code>, <code>cmake</code> y un compilador de C; tarda un par de minutos). Por defecto la instala en <code>~/_oqs</code>; la variable <code>OQS_INSTALL_PATH</code> permite elegir otro directorio. La parte A y el código de Lamport y Merkle de la parte D solo usan la biblioteca estándar de Python.</p>
 
-            <p>ML-DSA viene en tres variantes con diferentes niveles de seguridad:</p>
-            <ul>
-                <li><strong>ML-DSA-44</strong>: Seguridad aproximadamente equivalente a AES-128</li>
-                <li><strong>ML-DSA-65</strong>: Seguridad aproximadamente equivalente a AES-192</li>
-                <li><strong>ML-DSA-87</strong>: Seguridad aproximadamente equivalente a AES-256</li>
-            </ul>
-        </section>
+        <div class="callout"><span class="callout-title">Punto de control 0</span><p><code>openssl list -signature-algorithms</code> muestra <code>ML-DSA-44/65/87</code> y las doce variantes de SLH-DSA, y la importación de <code>oqs</code> imprime <code>0.16.0 0.16.0.1</code> (o versiones posteriores).</p></div>
 
-        <section class="lab-section">
-            <h2>Parte 1: Implementación Simplificada de ML-DSA</h2>
-            
-            <h3>1.1 Configuración del Entorno</h3>
-            <p>Crea un nuevo archivo Python llamado <code>ml_dsa_simplified.py</code> e importa las bibliotecas necesarias:</p>
-            <pre><code class="language-python">import numpy as np
+        <h2 id="parte-a"><span class="sec">L3.2</span>Parte A · Fiat–Shamir con abortos en miniatura</h2>
+        <p>El programa siguiente implementa el núcleo de ML-DSA sin compresión de <var>t</var> ni pistas: la clave pública es <var>t</var> = <b>A</b><var>s</var><sub>1</sub> + <var>s</var><sub>2</sub> completa y el verificador comprueba <span class="math">HighBits(<b>A</b><var>z</var> − <var>c</var><var>t</var>) = <var>w</var><sub>1</sub></span>, que es correcto gracias al segundo rechazo. Usa <var>q</var> real, <var>n</var> = 64 (para que Python puro sea rápido) y SHAKE-256 de <code>hashlib</code>. La versión con <code>Power2Round</code> y pistas está en el ejemplo <a href="../ejemplos/ml_dsa.html">E3</a>.</p>
+        <pre data-lang="python"><code>"""Fiat–Shamir con abortos en miniatura (estructura de ML-DSA sin compresión de t ni pistas).
+
+Mide cuántos intentos necesita la firma en función de γ1, γ2 y β = τ·η,
+y lo compara con la estimación de FIPS 204: E[intentos] ≈ exp(n·β·(ℓ/γ1 + k/γ2)).
+Solo docencia: sin tiempo constante, sin codificaciones, parámetros de juguete.
+"""
 import hashlib
-import os
-import matplotlib.pyplot as plt
-from scipy.stats import norm
-</code></pre>
+import math
+import secrets
+import sys
 
-            <h3>1.2 Implementación de Funciones Auxiliares</h3>
-            <p>Primero, implementaremos algunas funciones auxiliares necesarias:</p>
-            <pre><code class="language-python"># Parámetros para ML-DSA-44 simplificado
-PARAMS = {
-    'n': 256,       # Dimensión del polinomio
-    'k': 3,         # Dimensión del módulo (filas)
-    'l': 2,         # Dimensión del módulo (columnas)
-    'q': 8380417,   # Módulo
-    'eta': 2,       # Parámetro de ruido para la clave secreta
-    'gamma1': 2**17,# Parámetro para el desafío
-    'gamma2': 95232,# Parámetro para el vector de firma
-    'tau': 39,      # Número de coeficientes no nulos en c
-    'beta': 78,     # Límite de rechazo para z
-    'omega': 80,    # Límite de rechazo para el vector de pistas
-}
+Q = 8380417                      # módulo de ML-DSA
 
-# Función para generar una distribución centrada binomial
-def centered_binomial_distribution(eta, size):
-    """
-    Genera muestras de una distribución centrada binomial con parámetro eta.
-    Esta es una aproximación a la distribución normal discreta utilizada en ML-DSA.
-    """
-    a = np.random.randint(0, 2, size=(size, eta))
-    b = np.random.randint(0, 2, size=(size, eta))
-    return np.sum(a, axis=1) - np.sum(b, axis=1)
 
-# Función para generar una matriz A uniforme aleatoria
-def gen_matrix_A(k, l, n, q, seed=None):
-    """
-    Genera una matriz A uniforme aleatoria de dimensiones (k, l, n) con coeficientes en Z_q.
-    En la implementación real, esto se haría usando XOF (función de expansión de salida extendida).
-    """
-    if seed is not None:
-        np.random.seed(seed)
-    return np.random.randint(0, q, size=(k, l, n))
+def shake(data: bytes, n: int) -&gt; bytes:
+    return hashlib.shake_256(data).digest(n)
 
-# Función para multiplicar polinomios en el anillo R_q
-def poly_mul(a, b, q):
-    """
-    Multiplica dos polinomios en el anillo R_q = Z_q[X]/(X^n + 1).
-    Esta es una implementación simplificada que no utiliza NTT para eficiencia.
-    """
-    n = len(a)
-    c = np.zeros(n, dtype=int)
-    
-    for i in range(n):
-        for j in range(n):
-            idx = (i + j) % n
-            if i + j >= n:
-                c[idx] = (c[idx] - a[i] * b[j]) % q
+
+def mul(a, b, n):
+    """Producto en Z_q[X]/(X^n + 1), de libro."""
+    c = [0] * n
+    for i, ai in enumerate(a):
+        if ai == 0:
+            continue
+        for j, bj in enumerate(b):
+            k = i + j
+            if k &lt; n:
+                c[k] += ai * bj
             else:
-                c[idx] = (c[idx] + a[i] * b[j]) % q
-    
+                c[k - n] -= ai * bj
+    return [x % Q for x in c]
+
+
+def centered(x, m):
+    """Representante de x mod m en (−m/2, m/2]."""
+    r = x % m
+    return r - m if r &gt; m // 2 else r
+
+
+def decompose(r, g2):
+    r %= Q
+    r0 = centered(r, 2 * g2)
+    if r - r0 == Q - 1:
+        return 0, r0 - 1
+    return (r - r0) // (2 * g2), r0
+
+
+def sample_in_ball(seed, n, tau):
+    """Polinomio con exactamente tau coeficientes ±1 (como SampleInBall de FIPS 204)."""
+    length = 8 + 8 * n
+    stream = shake(seed, length)
+    signs = int.from_bytes(stream[:8], "little")
+    c, pos = [0] * n, 8
+    for i in range(n - tau, n):
+        while True:
+            if pos == length:                     # XOF: pedir más salida si hace falta
+                length *= 2
+                stream = shake(seed, length)
+            j = stream[pos] % n                   # n divide a 256: sin sesgo
+            pos += 1
+            if j &lt;= i:
+                break
+        c[i], c[j] = c[j], 1 - 2 * (signs &amp; 1)
+        signs &gt;&gt;= 1
     return c
 
-# Función para multiplicar matrices de polinomios
-def matrix_poly_mul(A, s, q):
-    """
-    Multiplica una matriz de polinomios A por un vector de polinomios s.
-    """
-    k = A.shape[0]
-    l = A.shape[1]
-    n = A.shape[2]
-    result = np.zeros((k, n), dtype=int)
-    
-    for i in range(k):
-        for j in range(l):
-            result[i] = (result[i] + poly_mul(A[i, j], s[j], q)) % q
-    
-    return result
 
-# Función para añadir vectores de polinomios
-def poly_add(a, b, q):
-    """
-    Suma dos vectores de polinomios módulo q.
-    """
-    return (a + b) % q
+class Toy:
+    def __init__(self, n=64, k=4, l=4, eta=2, tau=39, g1=2**17, g2=(Q - 1) // 88):
+        self.n, self.k, self.l, self.eta, self.tau = n, k, l, eta, tau
+        self.g1, self.g2, self.beta = g1, g2, tau * eta
+        rnd = secrets.SystemRandom()
+        self.A = [[[rnd.randrange(Q) for _ in range(n)] for _ in range(l)] for _ in range(k)]
+        self.s1 = [[rnd.randint(-eta, eta) for _ in range(n)] for _ in range(l)]
+        self.s2 = [[rnd.randint(-eta, eta) for _ in range(n)] for _ in range(k)]
+        self.t = [self._add(self._row(i, self.s1), self.s2[i]) for i in range(k)]
 
-# Función para restar vectores de polinomios
-def poly_sub(a, b, q):
-    """
-    Resta dos vectores de polinomios módulo q.
-    """
-    return (a - b) % q
+    def _row(self, i, v):
+        acc = [0] * self.n
+        for j in range(self.l):
+            acc = self._add(acc, mul(self.A[i][j], v[j], self.n))
+        return acc
 
-# Función para generar un hash
-def hash_function(data):
-    """
-    Función de hash utilizada en ML-DSA.
-    En la implementación real, se utilizarían funciones específicas como SHA3.
-    """
-    return hashlib.sha256(data).digest()
+    @staticmethod
+    def _add(a, b):
+        return [(x + y) % Q for x, y in zip(a, b)]
 
-# Función para generar un desafío c
-def challenge_generation(seed, n, tau):
-    """
-    Genera un polinomio de desafío c con tau coeficientes no nulos.
-    """
-    # Usar el seed para generar un hash
-    hash_bytes = hash_function(seed)
-    # Convertir el hash a un array de bytes
-    hash_array = np.frombuffer(hash_bytes, dtype=np.uint8)
-    
-    # Inicializar c con ceros
-    c = np.zeros(n, dtype=int)
-    
-    # Generar tau posiciones aleatorias
-    positions = np.random.choice(n, tau, replace=False)
-    
-    # Establecer esas posiciones a 1 o -1
-    for pos in positions:
-        c[pos] = 1 if np.random.random() < 0.5 else -1
-    
-    return c
+    def sign(self, msg: bytes):
+        n, rnd, attempts = self.n, secrets.SystemRandom(), 0
+        while True:
+            attempts += 1
+            y = [[rnd.randint(-self.g1 + 1, self.g1) for _ in range(n)] for _ in range(self.l)]
+            w = [self._row(i, y) for i in range(self.k)]
+            w1 = bytes(decompose(x, self.g2)[0] for poly in w for x in poly)
+            c_seed = shake(msg + w1, 32)
+            c = sample_in_ball(c_seed, n, self.tau)
+            z = [[centered(yi + ci, Q) for yi, ci in zip(y[j], mul(c, self.s1[j], n))] for j in range(self.l)]
+            if max(abs(x) for p in z for x in p) &gt;= self.g1 - self.beta:
+                continue                                  # rechazo 1: z revelaría c·s1
+            cs2 = [mul(c, self.s2[i], n) for i in range(self.k)]
+            r0 = [decompose(w[i][j] - cs2[i][j], self.g2)[1] for i in range(self.k) for j in range(n)]
+            if max(abs(x) for x in r0) &gt;= self.g2 - self.beta:
+                continue                                  # rechazo 2: HighBits(w − c·s2) ≠ w1
+            return (c_seed, z), attempts
 
-# Función para calcular la norma infinito de un vector de polinomios
-def infinity_norm(v):
-    """
-    Calcula la norma infinito de un vector de polinomios.
-    """
-    return np.max(np.abs(v))
+    def verify(self, msg, sig):
+        c_seed, z = sig
+        if max(abs(x) for p in z for x in p) &gt;= self.g1 - self.beta:
+            return False
+        c = sample_in_ball(c_seed, self.n, self.tau)
+        zq = [[x % Q for x in p] for p in z]
+        w1 = bytes(decompose(a - b, self.g2)[0]
+                   for i in range(self.k)
+                   for a, b in zip(self._row(i, zq), mul(c, self.t[i], self.n)))
+        return shake(msg + w1, 32) == c_seed
 
-# Función para calcular la norma L2 de un vector de polinomios
-def l2_norm(v):
-    """
-    Calcula la norma L2 de un vector de polinomios.
-    """
-    return np.sqrt(np.sum(v**2))
-</code></pre>
 
-            <h3>1.3 Implementación de los Algoritmos Principales</h3>
-            <p>Ahora implementaremos los tres algoritmos principales de ML-DSA:</p>
-            <pre><code class="language-python"># Algoritmo KeyGen
-def keygen(params=PARAMS):
-    """
-    Genera un par de claves pública/privada para ML-DSA.
-    """
-    n = params['n']
-    k = params['k']
-    l = params['l']
-    q = params['q']
-    eta = params['eta']
-    
-    # Generar matriz A aleatoria
-    A = gen_matrix_A(k, l, n, q)
-    
-    # Generar vector secreto s1 con ruido
-    s1 = np.zeros((l, n), dtype=int)
-    for i in range(l):
-        s1[i] = centered_binomial_distribution(eta, n)
-    
-    # Generar vector secreto s2 con ruido
-    s2 = np.zeros((k, n), dtype=int)
-    for i in range(k):
-        s2[i] = centered_binomial_distribution(eta, n)
-    
-    # Calcular t = A·s1 + s2
-    t = poly_add(matrix_poly_mul(A, s1, q), s2, q)
-    
-    # Clave pública: (A, t)
-    # Clave privada: (A, t, s1, s2)
-    return {'public': (A, t), 'private': (A, t, s1, s2)}
+def expected(n, k, l, beta, g1, g2):
+    return math.exp(n * beta * (l / g1 + k / g2))
 
-# Algoritmo Sign
-def sign(message, private_key, params=PARAMS):
-    """
-    Firma un mensaje utilizando la clave privada.
-    """
-    A, t, s1, s2 = private_key
-    n = params['n']
-    k = params['k']
-    l = params['l']
-    q = params['q']
-    gamma1 = params['gamma1']
-    gamma2 = params['gamma2']
-    tau = params['tau']
-    beta = params['beta']
-    omega = params['omega']
-    
-    # Convertir mensaje a bytes si es necesario
-    if isinstance(message, str):
-        message = message.encode()
-    
-    # Generar semilla aleatoria para el vector y
-    seed_y = os.urandom(32)
-    
-    while True:
-        # Generar vector y aleatorio
-        y = np.zeros((l, n), dtype=int)
-        for i in range(l):
-            y[i] = np.random.randint(-gamma1, gamma1 + 1, size=n)
-        
-        # Calcular w = A·y
-        w = matrix_poly_mul(A, y, q)
-        
-        # Generar desafío c
-        seed_c = hash_function(seed_y + message)
-        c = challenge_generation(seed_c, n, tau)
-        
-        # Calcular z = y + c·s1
-        z = np.zeros((l, n), dtype=int)
-        for i in range(l):
-            z[i] = (y[i] + poly_mul(c, s1[i], q)) % q
-        
-        # Verificar si z está dentro de los límites
-        if infinity_norm(z) >= gamma1 - beta:
-            continue
-        
-        # Calcular h = c·s2
-        h = np.zeros((k, n), dtype=int)
-        for i in range(k):
-            h[i] = poly_mul(c, s2[i], q)
-        
-        # Calcular w - h
-        w_minus_h = poly_sub(w, h, q)
-        
-        # Verificar si w - h está dentro de los límites
-        if infinity_norm(w_minus_h) >= gamma2 - beta:
-            continue
-        
-        # Calcular pistas (hints)
-        hints = []
-        for i in range(k):
-            for j in range(n):
-                if abs(w_minus_h[i, j]) > gamma2:
-                    hints.append((i, j))
-        
-        # Verificar si el número de pistas está dentro de los límites
-        if len(hints) > omega:
-            continue
-        
-        # Firma: (z, h, c)
-        return (z, hints, c)
-
-# Algoritmo Verify
-def verify(message, signature, public_key, params=PARAMS):
-    """
-    Verifica la firma de un mensaje utilizando la clave pública.
-    """
-    A, t = public_key
-    z, hints, c = signature
-    n = params['n']
-    k = params['k']
-    l = params['l']
-    q = params['q']
-    gamma1 = params['gamma1']
-    gamma2 = params['gamma2']
-    
-    # Convertir mensaje a bytes si es necesario
-    if isinstance(message, str):
-        message = message.encode()
-    
-    # Verificar si z está dentro de los límites
-    if infinity_norm(z) >= gamma1:
-        return False
-    
-    # Verificar si el número de pistas está dentro de los límites
-    if len(hints) > params['omega']:
-        return False
-    
-    # Calcular A·z
-    Az = matrix_poly_mul(A, z, q)
-    
-    # Calcular c·t
-    ct = np.zeros((k, n), dtype=int)
-    for i in range(k):
-        ct[i] = poly_mul(c, t[i], q)
-    
-    # Calcular w' = A·z - c·t
-    w_prime = poly_sub(Az, ct, q)
-    
-    # Aplicar pistas
-    for i, j in hints:
-        if w_prime[i, j] > 0:
-            w_prime[i, j] -= q
-        else:
-            w_prime[i, j] += q
-    
-    # Verificar si w' está dentro de los límites
-    if infinity_norm(w_prime) >= gamma2:
-        return False
-    
-    return True
-</code></pre>
-
-            <h3>1.4 Función Principal y Visualización</h3>
-            <p>Finalmente, implementaremos la función principal y algunas visualizaciones:</p>
-            <pre><code class="language-python">def main():
-    print("Implementación simplificada de ML-DSA (anteriormente Dilithium)")
-    print("Parámetros utilizados:", PARAMS)
-    
-    # Generar claves
-    print("\nGenerando par de claves...")
-    keys = keygen()
-    public_key = keys['public']
-    private_key = keys['private']
-    print("Claves generadas.")
-    
-    # Mensaje a firmar
-    message = "Este es un mensaje de prueba para ML-DSA."
-    print(f"\nMensaje a firmar: '{message}'")
-    
-    # Firmar mensaje
-    print("\nFirmando mensaje...")
-    signature = sign(message, private_key)
-    z, hints, c = signature
-    print("Mensaje firmado.")
-    print(f"Tamaño de la firma: {z.nbytes + len(hints) * 8 + c.nbytes} bytes aproximadamente")
-    print(f"Número de pistas (hints): {len(hints)}")
-    
-    # Verificar firma
-    print("\nVerificando firma...")
-    is_valid = verify(message, signature, public_key)
-    print(f"Resultado de la verificación: {'Válida' if is_valid else 'Inválida'}")
-    
-    # Intentar verificar con un mensaje modificado
-    modified_message = message + " (modificado)"
-    print(f"\nIntentando verificar con mensaje modificado: '{modified_message}'")
-    is_valid_modified = verify(modified_message, signature, public_key)
-    print(f"Resultado de la verificación: {'Válida' if is_valid_modified else 'Inválida'}")
-    
-    # Visualizaciones
-    plt.figure(figsize=(15, 10))
-    
-    # Distribución de la clave privada (s1)
-    plt.subplot(2, 2, 1)
-    s1_flat = private_key[2].flatten()
-    plt.hist(s1_flat, bins=range(min(s1_flat)-1, max(s1_flat)+2), alpha=0.7, rwidth=0.85)
-    plt.title('Distribución de la clave privada (s1)')
-    plt.xlabel('Valor')
-    plt.ylabel('Frecuencia')
-    plt.grid(True, alpha=0.3)
-    
-    # Distribución de la clave privada (s2)
-    plt.subplot(2, 2, 2)
-    s2_flat = private_key[3].flatten()
-    plt.hist(s2_flat, bins=range(min(s2_flat)-1, max(s2_flat)+2), alpha=0.7, rwidth=0.85)
-    plt.title('Distribución de la clave privada (s2)')
-    plt.xlabel('Valor')
-    plt.ylabel('Frecuencia')
-    plt.grid(True, alpha=0.3)
-    
-    # Distribución del vector z
-    plt.subplot(2, 2, 3)
-    z_flat = z.flatten()
-    plt.hist(z_flat, bins=30, alpha=0.7, rwidth=0.85)
-    plt.title('Distribución del vector z (firma)')
-    plt.xlabel('Valor')
-    plt.ylabel('Frecuencia')
-    plt.grid(True, alpha=0.3)
-    
-    # Distribución del polinomio de desafío c
-    plt.subplot(2, 2, 4)
-    plt.stem(range(len(c)), c)
-    plt.title('Polinomio de desafío c')
-    plt.xlabel('Índice')
-    plt.ylabel('Valor')
-    plt.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    plt.savefig('ml_dsa_visualization.png')
-    plt.show()
 
 if __name__ == "__main__":
-    main()
-</code></pre>
-        </section>
+    trials = int(sys.argv[1]) if len(sys.argv) &gt; 1 else 100
+    print(f"{'n':&gt;4} {'γ1':&gt;8} {'γ2':&gt;7} {'β':&gt;4} {'intentos/firma':&gt;15} {'predicho':&gt;9} {'verifica':&gt;9}")
+    for n, g1, g2, tau in [(64, 2**17, (Q - 1) // 88, 39), (64, 2**15, (Q - 1) // 88, 39),
+                           (64, 2**13, (Q - 1) // 88, 39), (64, 2**17, (Q - 1) // 32, 39),
+                           (64, 2**17, (Q - 1) // 88, 60), (128, 2**17, (Q - 1) // 88, 39)]:
+        toy = Toy(n=n, g1=g1, g2=g2, tau=tau)
+        total, ok = 0, 0
+        for i in range(trials):
+            sig, att = toy.sign(b"mensaje %d" % i)
+            total += att
+            ok += toy.verify(b"mensaje %d" % i, sig)
+        pred = expected(n, toy.k, toy.l, toy.beta, g1, g2)
+        print(f"{n:&gt;4} {g1:&gt;8} {g2:&gt;7} {toy.beta:&gt;4} {total / trials:&gt;15.2f} {pred:&gt;9.2f} {ok:&gt;5}/{trials}")
+    sig, _ = toy.sign(b"original")
+    print("¿Verifica un mensaje alterado?", toy.verify(b"alterado", sig))</code></pre>
+        <pre class="terminal" data-lang="shell"><code>$ python3 fs_aborts.py 100
+   n       γ1      γ2    β  intentos/firma  predicho  verifica
+  64   131072   95232   78            1.49      1.44   100/100
+  64    32768   95232   78            1.93      2.27   100/100
+  64     8192   95232   78           14.91     14.11   100/100
+  64   131072  261888   78            1.31      1.26   100/100
+  64   131072   95232  120            1.84      1.75   100/100
+ 128   131072   95232   78            2.15      2.06   100/100
+¿Verifica un mensaje alterado? False</code></pre>
+        <h3>Tareas</h3>
+        <ol>
+          <li>Ejecuta el programa y comprueba que todas las firmas verifican y que el mensaje alterado no.</li>
+          <li>Añade una fila con <span class="math"><var>γ</var><sub>1</sub> = 2<sup>11</sup></span>. Predice primero el número de intentos con <span class="math">exp(<var>n</var><var>β</var>(<var>ℓ</var>/<var>γ</var><sub>1</sub> + <var>k</var>/<var>γ</var><sub>2</sub>))</span>. ¿Qué pasa con el tiempo de ejecución?</li>
+          <li>Instrumenta <code>sign</code> para contar por separado los rechazos por <span class="math">‖<var>z</var>‖<sub>∞</sub></span> y por bits bajos. Compara cada tasa con <span class="math">1 − e<sup>−<var>n</var><var>β</var><var>ℓ</var>/<var>γ</var><sub>1</sub></sup></span> y <span class="math">1 − e<sup>−<var>n</var><var>β</var><var>k</var>/<var>γ</var><sub>2</sub></sup></span>.</li>
+          <li>Con 100 firmas, la media observada se desvía del modelo hasta un 15 %. Calcula el intervalo de confianza al 95 % de la media de una geométrica de parámetro <span class="math"><var>p</var> = 1/predicho</span> con 100 muestras y comprueba si las desviaciones son compatibles. Repite con 1 000 firmas en una fila.</li>
+          <li>Elimina el primer rechazo (publica siempre <var>z</var>) y guarda 2 000 firmas. Para un coeficiente fijo <var>i</var> de <var>z</var><sub>0</sub>, calcula el máximo de <span class="math">|<var>z<sub>i</sub></var>|</span> y compáralo con <var>γ</var><sub>1</sub>. Explica en la memoria qué información revela sobre <span class="math">(<var>c</var><var>s</var><sub>1</sub>)<sub><var>i</var></sub></span> (el experimento 1D de <a href="../ejemplos/ml_dsa.html">E3</a> es la versión simplificada).</li>
+        </ol>
+        <div class="callout"><span class="callout-title">Punto de control A</span><p>Tabla con al menos siete configuraciones (las seis dadas y <span class="math"><var>γ</var><sub>1</sub> = 2<sup>11</sup></span>), intentos observados frente a predichos, y una frase que explique por qué <span class="math"><var>γ</var><sub>2</sub> = (<var>q</var>−1)/32</span> rechaza menos que <span class="math">(<var>q</var>−1)/88</span> y qué se paga a cambio.</p></div>
 
-        <section class="lab-section">
-            <h2>Parte 2: Análisis de Seguridad y Rendimiento</h2>
-            
-            <h3>2.1 Comparación con ECDSA</h3>
-            <p>Implementaremos una versión simplificada de ECDSA para comparar con ML-DSA:</p>
-            <pre><code class="language-python"># Crear un nuevo archivo ecdsa_comparison.py
-import time
-import numpy as np
-import matplotlib.pyplot as plt
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import utils
+        <h2 id="parte-b"><span class="sec">L3.3</span>Parte B · ML-DSA y SLH-DSA con OpenSSL</h2>
+        <h3>B.1 Claves, firma y verificación</h3>
+        <p>Para ML-DSA y SLH-DSA, <code>pkeyutl</code> firma el mensaje completo (no un resumen), por eso se usa <code>-rawin</code>. El fichero de clave privada PEM contiene por defecto tanto la semilla de 32 bytes como la clave expandida.</p>
+        <pre class="terminal" data-lang="shell"><code>$ openssl version
+OpenSSL 3.5.8 25 Aug 2026 (Library: OpenSSL 3.5.8 25 Aug 2026)
+$ openssl list -signature-algorithms | grep -E 'ML-DSA|SLH-DSA-SHA2-128'
+  { 2.16.840.1.101.3.4.3.17, id-ml-dsa-44, ML-DSA-44, MLDSA44 } @ default
+  { 2.16.840.1.101.3.4.3.18, id-ml-dsa-65, ML-DSA-65, MLDSA65 } @ default
+  { 2.16.840.1.101.3.4.3.19, id-ml-dsa-87, ML-DSA-87, MLDSA87 } @ default
+  { 2.16.840.1.101.3.4.3.20, id-slh-dsa-sha2-128s, SLH-DSA-SHA2-128s } @ default
+  { 2.16.840.1.101.3.4.3.21, id-slh-dsa-sha2-128f, SLH-DSA-SHA2-128f } @ default
+$ openssl genpkey -algorithm ML-DSA-65 -out mldsa65.key
+$ openssl pkey -in mldsa65.key -pubout -out mldsa65.pub
+$ printf 'Transferir 100 EUR a Bob\n' &gt; msg.txt
+$ openssl pkeyutl -sign -rawin -inkey mldsa65.key -in msg.txt -out msg.sig
+$ wc -c msg.sig mldsa65.key mldsa65.pub
+ 3309 msg.sig
+ 5604 mldsa65.key
+ 2726 mldsa65.pub
+11639 total
+$ openssl pkeyutl -verify -rawin -pubin -inkey mldsa65.pub -in msg.txt -sigfile msg.sig
+Signature Verified Successfully
+$ printf 'Transferir 900 EUR a Bob\n' &gt; msg2.txt
+$ openssl pkeyutl -verify -rawin -pubin -inkey mldsa65.pub -in msg2.txt -sigfile msg.sig; echo "código de salida: $?"
+401C2D80617E0000:error:030000EA:digital envelope routines:EVP_DigestVerify:provider signature failure:crypto/evp/m_sigver.c:781:ML-DSA-65 digest_verify:
+Signature Verification Failure
+código de salida: 1
+$ openssl pkey -in mldsa65.key -text -noout | grep -E '^[a-zA-Z]'
+ML-DSA-65 Private-Key:
+seed:
+priv:
+pub:</code></pre>
+        <p>La firma ocupa exactamente 3 309 bytes, como indica FIPS 204 para ML-DSA-65. La clave pública PEM ocupa 2 726 bytes: son 1 952 de clave, 22 de cabecera ASN.1 (SubjectPublicKeyInfo) y la expansión Base64. Si la verificación falla, el código de salida es 1: úsalo en tus scripts, no el texto.</p>
 
-# Importar nuestra implementación de ML-DSA
-from ml_dsa_simplified import keygen, sign, verify, PARAMS
+        <h3>B.2 Contexto, firma determinista y claves como semilla</h3>
+        <pre class="terminal" data-lang="shell"><code>$ openssl pkeyutl -sign -rawin -inkey mldsa65.key -in msg.txt -out ctx.sig -pkeyopt context-string:pagos-v1
+$ openssl pkeyutl -verify -rawin -pubin -inkey mldsa65.pub -in msg.txt -sigfile ctx.sig -pkeyopt context-string:pagos-v1
+Signature Verified Successfully
+$ openssl pkeyutl -verify -rawin -pubin -inkey mldsa65.pub -in msg.txt -sigfile ctx.sig -pkeyopt context-string:actas-v1 2&gt;/dev/null
+Signature Verification Failure
+$ openssl pkeyutl -verify -rawin -pubin -inkey mldsa65.pub -in msg.txt -sigfile ctx.sig 2&gt;/dev/null
+Signature Verification Failure
+$ for i in 1 2; do openssl pkeyutl -sign -rawin -inkey mldsa65.key -in msg.txt -pkeyopt deterministic:1 | sha256sum; done
+2650292eb43f16b3c7d385677100687e601eac1b43a9dd4559c8489b14901ee5  -
+2650292eb43f16b3c7d385677100687e601eac1b43a9dd4559c8489b14901ee5  -
+$ for i in 1 2; do openssl pkeyutl -sign -rawin -inkey mldsa65.key -in msg.txt | sha256sum; done
+135a12ab65fc8d66ec7b470c742f50adbd2294fed5f5d99811617b75bd8bc661  -
+0ad3b9034e1f1e26b1652560c16957824487f0a3770e59afb3219bc121bda8a8  -
+$ openssl genpkey -algorithm ML-DSA-44 -pkeyopt hexseed:000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f -out semilla.key
+$ openssl pkey -in semilla.key -pubout | sha256sum
+e8c997db43b377029f99957c26a9eb4ddf628bf88f95603b9f8a5cb56ffb57c0  -
+$ openssl genpkey -algorithm ML-DSA-44 -provparam ml-dsa.output_formats=seed-only -out seedonly.key
+$ wc -c semilla.key seedonly.key
+3613 semilla.key
+ 128 seedonly.key
+3741 total</code></pre>
+        <ul>
+          <li><code>-pkeyopt context-string:…</code> fija la cadena de contexto (hasta 255 bytes) de FIPS 204; el verificador debe usar la misma.</li>
+          <li><code>-pkeyopt deterministic:1</code> activa la variante determinista (rnd = 32 bytes a cero): dos firmas del mismo mensaje son idénticas. Sin ella (por defecto, <em>hedged</em>), cada firma es distinta.</li>
+          <li><code>-pkeyopt hexseed:…</code> deriva la clave de una semilla <var>ξ</var> dada. Con la semilla del ejemplo, el SHA-256 de tu clave pública PEM debe empezar por <code>e8c997db</code>: es un vector de prueba reproducible.</li>
+          <li><code>-provparam ml-dsa.output_formats=seed-only</code> guarda solo la semilla (128 bytes de PEM frente a 3 613): la clave expandida se recalcula al cargarla. OpenSSL documenta además el parámetro <code>mu</code> (firmar un <var>μ</var> calculado fuera) y <code>message-encoding:0</code> (firmar <var>M</var>′ sin formatear, solo para pruebas) [4].</li>
+        </ul>
 
-def ecdsa_keygen():
-    """
-    Genera un par de claves para ECDSA.
-    """
-    private_key = ec.generate_private_key(ec.SECP256R1())
-    public_key = private_key.public_key()
-    return private_key, public_key
+        <h3>B.3 SLH-DSA y certificados</h3>
+        <pre class="terminal" data-lang="shell"><code>$ openssl genpkey -algorithm SLH-DSA-SHA2-128s -out slh128s.key
+$ openssl pkey -in slh128s.key -pubout -out slh128s.pub
+$ time openssl pkeyutl -sign -rawin -inkey slh128s.key -in msg.txt -out slh.sig
 
-def ecdsa_sign(message, private_key):
-    """
-    Firma un mensaje usando ECDSA.
-    """
-    if isinstance(message, str):
-        message = message.encode()
-    
-    signature = private_key.sign(
-        message,
-        ec.ECDSA(hashes.SHA256())
-    )
-    return signature
+real	0m0.212s
+user	0m0.211s
+sys	0m0.001s
+$ wc -c slh.sig
+7856 slh.sig
+$ openssl pkeyutl -verify -rawin -pubin -inkey slh128s.pub -in msg.txt -sigfile slh.sig
+Signature Verified Successfully
+$ openssl req -x509 -new -key mldsa65.key -subj /CN=curso-pqc-L3 -days 30 -out mldsa65.crt
+$ openssl x509 -in mldsa65.crt -noout -text | grep -E 'Signature Algorithm|Public Key Algorithm'
+        Signature Algorithm: ML-DSA-65
+            Public Key Algorithm: ML-DSA-65
+    Signature Algorithm: ML-DSA-65
+$ openssl verify -CAfile mldsa65.crt mldsa65.crt
+mldsa65.crt: OK
+$ openssl x509 -in mldsa65.crt -outform DER | wc -c
+5516</code></pre>
+        <p>Firmar con SLH-DSA-SHA2-128s cuesta unos 0,2 s por firma y produce 7 856 bytes; verificar es rápido. El certificado ML-DSA-65 autofirmado ocupa 5 516 bytes en DER: la clave pública y la firma se incluyen una vez cada una. Los identificadores de algoritmo de ML-DSA en X.509 están normalizados en el RFC 9881 [5].</p>
 
-def ecdsa_verify(message, signature, public_key):
-    """
-    Verifica una firma ECDSA.
-    """
-    if isinstance(message, str):
-        message = message.encode()
-    
-    try:
-        public_key.verify(
-            signature,
-            message,
-            ec.ECDSA(hashes.SHA256())
-        )
-        return True
-    except Exception:
-        return False
+        <h3>Tareas</h3>
+        <ol>
+          <li>Repite B.1 con ML-DSA-44 y ML-DSA-87 y con SLH-DSA-SHAKE-128f, y anota los tamaños de clave pública (DER), clave privada y firma.</li>
+          <li>Firma un fichero de 100 MB con ML-DSA-65 y con SLH-DSA-SHA2-128f y mide el tiempo con <code>time</code>. ¿Qué parte del tiempo es el hash del mensaje? Relaciónalo con la discusión puro/<em>pre-hash</em> de la parte E.</li>
+          <li>Modifica un solo byte de <code>msg.sig</code> (por ejemplo, con <code>printf '\x00' | dd of=msg.sig bs=1 seek=100 conv=notrunc</code>) y verifica. Repite modificando el byte 0 y el último. ¿Cambia algo según la zona de la firma (c̃, z, pistas)?</li>
+          <li>Crea una CA raíz ML-DSA-87 y un certificado de hoja ML-DSA-44 firmado por ella (<code>openssl req -new</code> + <code>openssl x509 -req -CA …</code>) y verifica la cadena con <code>openssl verify</code>.</li>
+        </ol>
+        <div class="callout"><span class="callout-title">Punto de control B</span><p>Transcripción con: verificación correcta, verificación fallida con código 1, prueba de contexto, dos firmas deterministas idénticas y dos <em>hedged</em> distintas, el hash <code>e8c997db…</code> de la clave derivada de la semilla y la cadena de certificados verificada.</p></div>
 
-def compare_performance(num_trials=10):
-    """
-    Compara el rendimiento de ML-DSA y ECDSA.
-    """
-    # Mensaje de prueba
-    message = "Este es un mensaje de prueba para comparar ML-DSA y ECDSA."
-    
-    # Tiempos para ML-DSA
-    ml_dsa_keygen_times = []
-    ml_dsa_sign_times = []
-    ml_dsa_verify_times = []
-    
-    # Tiempos para ECDSA
-    ecdsa_keygen_times = []
-    ecdsa_sign_times = []
-    ecdsa_verify_times = []
-    
-    # Tamaños de firma
-    ml_dsa_signature_sizes = []
-    ecdsa_signature_sizes = []
-    
-    for _ in range(num_trials):
-        # ML-DSA
-        start_time = time.time()
-        keys = keygen()
-        ml_dsa_keygen_times.append(time.time() - start_time)
-        
-        start_time = time.time()
-        signature = sign(message, keys['private'])
-        ml_dsa_sign_times.append(time.time() - start_time)
-        
-        z, hints, c = signature
-        ml_dsa_signature_sizes.append(z.nbytes + len(hints) * 8 + c.nbytes)
-        
-        start_time = time.time()
-        verify(message, signature, keys['public'])
-        ml_dsa_verify_times.append(time.time() - start_time)
-        
-        # ECDSA
-        start_time = time.time()
-        private_key, public_key = ecdsa_keygen()
-        ecdsa_keygen_times.append(time.time() - start_time)
-        
-        start_time = time.time()
-        ecdsa_signature = ecdsa_sign(message, private_key)
-        ecdsa_sign_times.append(time.time() - start_time)
-        
-        ecdsa_signature_sizes.append(len(ecdsa_signature))
-        
-        start_time = time.time()
-        ecdsa_verify(message, ecdsa_signature, public_key)
-        ecdsa_verify_times.append(time.time() - start_time)
-    
-    # Calcular promedios
-    ml_dsa_keygen_avg = np.mean(ml_dsa_keygen_times)
-    ml_dsa_sign_avg = np.mean(ml_dsa_sign_times)
-    ml_dsa_verify_avg = np.mean(ml_dsa_verify_times)
-    ml_dsa_signature_avg = np.mean(ml_dsa_signature_sizes)
-    
-    ecdsa_keygen_avg = np.mean(ecdsa_keygen_times)
-    ecdsa_sign_avg = np.mean(ecdsa_sign_times)
-    ecdsa_verify_avg = np.mean(ecdsa_verify_times)
-    ecdsa_signature_avg = np.mean(ecdsa_signature_sizes)
-    
-    # Visualizar resultados
-    plt.figure(figsize=(15, 10))
-    
-    # Tiempos de generación de claves
-    plt.subplot(2, 2, 1)
-    plt.bar(['ML-DSA', 'ECDSA'], [ml_dsa_keygen_avg, ecdsa_keygen_avg])
-    plt.title('Tiempo de Generación de Claves')
-    plt.ylabel('Tiempo (segundos)')
-    plt.grid(True, alpha=0.3)
-    
-    # Tiempos de firma
-    plt.subplot(2, 2, 2)
-    plt.bar(['ML-DSA', 'ECDSA'], [ml_dsa_sign_avg, ecdsa_sign_avg])
-    plt.title('Tiempo de Firma')
-    plt.ylabel('Tiempo (segundos)')
-    plt.grid(True, alpha=0.3)
-    
-    # Tiempos de verificación
-    plt.subplot(2, 2, 3)
-    plt.bar(['ML-DSA', 'ECDSA'], [ml_dsa_verify_avg, ecdsa_verify_avg])
-    plt.title('Tiempo de Verificación')
-    plt.ylabel('Tiempo (segundos)')
-    plt.grid(True, alpha=0.3)
-    
-    # Tamaños de firma
-    plt.subplot(2, 2, 4)
-    plt.bar(['ML-DSA', 'ECDSA'], [ml_dsa_signature_avg, ecdsa_signature_avg])
-    plt.title('Tamaño de Firma')
-    plt.ylabel('Tamaño (bytes)')
-    plt.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    plt.savefig('ml_dsa_vs_ecdsa.png')
-    plt.show()
-    
-    # Imprimir resultados
-    print("\nComparación de Rendimiento (promedio de", num_trials, "pruebas):")
-    print("\nML-DSA:")
-    print("  Generación de claves:", ml_dsa_keygen_avg, "segundos")
-    print("  Firma:", ml_dsa_sign_avg, "segundos")
-    print("  Verificación:", ml_dsa_verify_avg, "segundos")
-    print("  Tamaño de firma:", ml_dsa_signature_avg, "bytes")
-    
-    print("\nECDSA:")
-    print("  Generación de claves:", ecdsa_keygen_avg, "segundos")
-    print("  Firma:", ecdsa_sign_avg, "segundos")
-    print("  Verificación:", ecdsa_verify_avg, "segundos")
-    print("  Tamaño de firma:", ecdsa_signature_avg, "bytes")
-    
-    # Calcular ratios
-    print("\nRatios ML-DSA/ECDSA:")
-    print("  Generación de claves:", ml_dsa_keygen_avg / ecdsa_keygen_avg, "veces más lento")
-    print("  Firma:", ml_dsa_sign_avg / ecdsa_sign_avg, "veces más lento")
-    print("  Verificación:", ml_dsa_verify_avg / ecdsa_verify_avg, "veces más lento")
-    print("  Tamaño de firma:", ml_dsa_signature_avg / ecdsa_signature_avg, "veces más grande")
+        <h2 id="parte-c"><span class="sec">L3.4</span>Parte C · liboqs-python</h2>
+        <p>liboqs ofrece las mismas primitivas desde Python, C, Go, Java o Rust. Los nombres de SLH-DSA siguen el convenio de liboqs (<code>SLH_DSA_PURE_SHA2_128F</code> para la variante pura; también existen las variantes <em>pre-hash</em>, como <code>SLH_DSA_SHA2_256_PREHASH_SHA2_128F</code>).</p>
+        <pre data-lang="python"><code>"""ML-DSA y SLH-DSA con liboqs-python: firmar, verificar, contexto."""
+import oqs
 
-if __name__ == "__main__":
-    compare_performance()
-</code></pre>
-        </section>
+msg = b"Acta de la reunion, 24/09/2026"
+for alg in ["ML-DSA-65", "SLH_DSA_PURE_SHA2_128F"]:
+    with oqs.Signature(alg) as signer:
+        pk = signer.generate_keypair()
+        sig = signer.sign(msg)
+        print(f"{alg}: pk {len(pk)} B, firma {len(sig)} B")
+        print("  verifica:", signer.verify(msg, sig, pk))
+        print("  mensaje alterado:", signer.verify(msg + b"!", sig, pk))
+        if signer.details["sig_with_ctx_support"]:
+            s2 = signer.sign_with_ctx_str(msg, b"actas-v1")
+            print("  con contexto correcto:", signer.verify_with_ctx_str(msg, s2, b"actas-v1", pk))
+            print("  con otro contexto:   ", signer.verify_with_ctx_str(msg, s2, b"facturas-v1", pk))
+            print("  sin contexto:        ", signer.verify(msg, s2, pk))</code></pre>
+        <pre class="terminal" data-lang="shell"><code>(l3-venv) $ python oqs_basic.py
+ML-DSA-65: pk 1952 B, firma 3309 B
+  verifica: True
+  mensaje alterado: False
+  con contexto correcto: True
+  con otro contexto:    False
+  sin contexto:         False
+SLH_DSA_PURE_SHA2_128F: pk 32 B, firma 17088 B
+  verifica: True
+  mensaje alterado: False
+  con contexto correcto: True
+  con otro contexto:    False
+  sin contexto:         False</code></pre>
+        <h3>Tareas</h3>
+        <ol>
+          <li>Firma con OpenSSL (<code>-rawin</code>, sin contexto) y verifica con liboqs, y al revés. Necesitarás la clave pública en bruto: <code>openssl pkey -pubin -in mldsa65.pub -outform DER | tail -c 1952 &gt; pk.bin</code>. ¿Interoperan? ¿Y con contexto?</li>
+          <li>Lista con <code>oqs.get_enabled_sig_mechanisms()</code> los algoritmos disponibles y clasifícalos por familia (retículos, hash, códigos, multivariantes, isogenias).</li>
+        </ol>
 
-        <section class="lab-section">
-            <h2>Parte 3: Ejercicios y Preguntas de Reflexión</h2>
-            
-            <h3>3.1 Ejercicios</h3>
-            <ol>
-                <li>Modifica el código para implementar ML-DSA-65 ajustando los parámetros adecuadamente.</li>
-                <li>Implementa una función para medir el tiempo de ejecución de cada operación en ML-DSA y compara los resultados con diferentes tamaños de parámetros.</li>
-                <li>Modifica el código para simular un ataque de falsificación de firma y analiza su efectividad.</li>
-                <li>Implementa una versión híbrida que combine ML-DSA con ECDSA para una transición segura.</li>
-            </ol>
-            
-            <h3>3.2 Preguntas de Reflexión</h3>
-            <ol>
-                <li>¿Cuáles son las ventajas y desventajas de ML-DSA en comparación con ECDSA?</li>
-                <li>¿Por qué ML-DSA utiliza un proceso de rechazo en el algoritmo de firma? ¿Qué implicaciones tiene esto para la seguridad y el rendimiento?</li>
-                <li>¿Cómo afecta el tamaño de los parámetros (n, k, l, q) a la seguridad y eficiencia de ML-DSA?</li>
-                <li>¿Qué estrategias de implementación podrían mejorar el rendimiento de ML-DSA en dispositivos con recursos limitados?</li>
-                <li>¿Cuáles son los desafíos para la adopción generalizada de ML-DSA en sistemas existentes?</li>
-            </ol>
-        </section>
+        <h2 id="parte-d"><span class="sec">L3.5</span>Parte D · Lamport, Merkle y el peligro del estado</h2>
+        <p>SLH-DSA, LMS y XMSS se construyen a partir de firmas de un solo uso (Lamport, Winternitz/WOTS+) y árboles de Merkle [7][8]. Una firma de Lamport de un resumen de 256 bits revela, para cada bit, una de las dos preimágenes secretas de esa posición. Si la misma clave firma varios mensajes, el atacante acumula preimágenes de ambos valores en cada vez más posiciones y acaba pudiendo firmar mensajes nuevos.</p>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 250" role="img" aria-labelledby="fig-l3-1-t">
+            <title id="fig-l3-1-t">Árbol de Merkle de altura 2 con cuatro claves de un solo uso y el camino de autenticación de la hoja 1</title>
+            <rect x="300" y="12" width="120" height="36" rx="4" class="svg-box-ink"/>
+            <text x="360" y="35" text-anchor="middle" class="svg-on-ink">raíz = clave pública</text>
+            <rect x="140" y="88" width="120" height="36" rx="4" class="svg-box-signal"/>
+            <text x="200" y="111" text-anchor="middle" class="svg-text">H(n0 ‖ n1)</text>
+            <rect x="460" y="88" width="120" height="36" rx="4" class="svg-box-amber"/>
+            <text x="520" y="111" text-anchor="middle" class="svg-text">H(n2 ‖ n3)</text>
+            <line x1="200" y1="88" x2="340" y2="48" class="svg-line"/>
+            <line x1="520" y1="88" x2="380" y2="48" class="svg-line"/>
+            <rect x="40" y="164" width="120" height="36" rx="4" class="svg-box-amber"/>
+            <text x="100" y="187" text-anchor="middle" class="svg-text">n0 = H(pk0)</text>
+            <rect x="200" y="164" width="120" height="36" rx="4" class="svg-box-signal"/>
+            <text x="260" y="187" text-anchor="middle" class="svg-text">n1 = H(pk1)</text>
+            <rect x="400" y="164" width="120" height="36" rx="4" class="svg-box"/>
+            <text x="460" y="187" text-anchor="middle" class="svg-text">n2 = H(pk2)</text>
+            <rect x="560" y="164" width="120" height="36" rx="4" class="svg-box"/>
+            <text x="620" y="187" text-anchor="middle" class="svg-text">n3 = H(pk3)</text>
+            <line x1="100" y1="164" x2="180" y2="124" class="svg-line"/>
+            <line x1="260" y1="164" x2="220" y2="124" class="svg-line"/>
+            <line x1="460" y1="164" x2="500" y2="124" class="svg-line"/>
+            <line x1="620" y1="164" x2="540" y2="124" class="svg-line"/>
+            <text x="260" y="222" text-anchor="middle" class="svg-muted">hoja usada (índice 1)</text>
+            <text x="360" y="242" text-anchor="middle" class="svg-muted">firma = (1, firma de Lamport con sk1, pk1, camino [n0, H(n2 ‖ n3)]) · verde: recalculado · ámbar: camino enviado</text>
+          </svg>
+          <figcaption><b>Figura L3.1.</b> Esquema de Merkle con 2<sup><var>h</var></sup> = 4 claves de un solo uso. El verificador recalcula la hoja a partir de <var>pk</var><sub>1</sub>, sube con los hermanos del camino de autenticación y compara con la raíz. El firmante debe recordar qué índices ha usado: ese es el <em>estado</em>.</figcaption>
+        </figure>
+        <pre data-lang="python"><code>"""Firmas de un solo uso de Lamport, árbol de Merkle y falsificación por reutilización.
 
-        <section class="lab-section">
-            <h2>Parte 4: Extensión (Opcional) - Aplicaciones Prácticas</h2>
-            <p>Implementa una aplicación práctica que utilice ML-DSA para firmar y verificar documentos:</p>
-            <pre><code class="language-python"># Crear un nuevo archivo document_signing.py
-import os
-import time
+Idea de SLH-DSA/LMS/XMSS con la pieza más simple posible. Solo docencia.
+"""
 import hashlib
-from ml_dsa_simplified import keygen, sign, verify
+import secrets
+import time
 
-def hash_file(file_path):
-    """
-    Calcula el hash SHA-256 de un archivo.
-    """
-    sha256_hash = hashlib.sha256()
-    with open(file_path, "rb") as f:
-        for byte_block in iter(lambda: f.read(4096), b""):
-            sha256_hash.update(byte_block)
-    return sha256_hash.digest()
+H = lambda b: hashlib.sha256(b).digest()
+N = 256                                     # bits del resumen que se firma
 
-def sign_document(file_path, private_key):
-    """
-    Firma un documento utilizando ML-DSA.
-    """
-    # Calcular el hash del documento
-    document_hash = hash_file(file_path)
-    
-    # Firmar el hash
-    signature = sign(document_hash, private_key)
-    
-    return signature
 
-def verify_document(file_path, signature, public_key):
-    """
-    Verifica la firma de un documento utilizando ML-DSA.
-    """
-    # Calcular el hash del documento
-    document_hash = hash_file(file_path)
-    
-    # Verificar la firma
-    return verify(document_hash, signature, public_key)
+def bits(msg: bytes):
+    d = int.from_bytes(H(msg), "big")
+    return [(d &gt;&gt; (N - 1 - i)) &amp; 1 for i in range(N)]
 
-def main():
-    # Generar claves
-    print("Generando par de claves ML-DSA...")
-    keys = keygen()
-    
-    # Crear un documento de prueba
-    document_path = "documento_prueba.txt"
-    with open(document_path, "w") as f:
-        f.write("Este es un documento de prueba para firmar con ML-DSA.\n")
-        f.write("Contiene información importante que debe ser verificada.\n")
-    
-    print(f"Documento creado: {document_path}")
-    
-    # Firmar el documento
-    print("Firmando documento...")
-    start_time = time.time()
-    signature = sign_document(document_path, keys['private'])
-    sign_time = time.time() - start_time
-    print(f"Documento firmado en {sign_time:.4f} segundos")
-    
-    # Verificar la firma
-    print("Verificando firma...")
-    start_time = time.time()
-    is_valid = verify_document(document_path, signature, keys['public'])
-    verify_time = time.time() - start_time
-    print(f"Resultado de la verificación: {'Válida' if is_valid else 'Inválida'}")
-    print(f"Verificación completada en {verify_time:.4f} segundos")
-    
-    # Modificar el documento
-    print("\nModificando documento...")
-    with open(document_path, "a") as f:
-        f.write("Esta línea ha sido añadida después de firmar el documento.\n")
-    
-    # Verificar la firma del documento modificado
-    print("Verificando firma del documento modificado...")
-    is_valid = verify_document(document_path, signature, keys['public'])
-    print(f"Resultado de la verificación: {'Válida' if is_valid else 'Inválida'}")
+
+# ------------------------------------------------------------------ Lamport
+def lamport_keygen():
+    sk = [[secrets.token_bytes(32), secrets.token_bytes(32)] for _ in range(N)]
+    pk = [[H(a), H(b)] for a, b in sk]
+    return sk, pk
+
+
+def lamport_sign(sk, msg):
+    return [sk[i][b] for i, b in enumerate(bits(msg))]     # revela una preimagen por bit
+
+
+def lamport_verify(pk, msg, sig):
+    return all(H(s) == pk[i][b] for i, (s, b) in enumerate(zip(sig, bits(msg))))
+
+
+def pk_bytes(pk):
+    return b"".join(a + b for a, b in pk)
+
+
+# ------------------------------------------------------------------ Merkle
+def merkle_tree(leaves):
+    levels = [leaves]
+    while len(levels[-1]) &gt; 1:
+        lv = levels[-1]
+        levels.append([H(lv[i] + lv[i + 1]) for i in range(0, len(lv), 2)])
+    return levels                                            # levels[-1][0] es la raíz
+
+
+def auth_path(levels, idx):
+    path = []
+    for lv in levels[:-1]:
+        path.append(lv[idx ^ 1])                             # hermano en cada nivel
+        idx &gt;&gt;= 1
+    return path
+
+
+def root_from_path(leaf, idx, path):
+    node = leaf
+    for sib in path:
+        node = H(node + sib) if idx % 2 == 0 else H(sib + node)
+        idx &gt;&gt;= 1
+    return node
+
+
+class MerkleSigner:
+    """Esquema con estado: 2^h claves de Lamport bajo una única raíz pública."""
+
+    def __init__(self, h=4):
+        self.keys = [lamport_keygen() for _ in range(2 ** h)]
+        self.levels = merkle_tree([H(pk_bytes(pk)) for _, pk in self.keys])
+        self.root = self.levels[-1][0]
+        self.next = 0                                        # ESTADO: nunca debe repetirse
+
+    def sign(self, msg):
+        if self.next &gt;= len(self.keys):
+            raise RuntimeError("claves agotadas")
+        i, self.next = self.next, self.next + 1              # actualizar el estado ANTES de firmar
+        sk, pk = self.keys[i]
+        return i, lamport_sign(sk, msg), pk, auth_path(self.levels, i)
+
+
+def merkle_verify(root, msg, sig):
+    i, ots, pk, path = sig
+    return lamport_verify(pk, msg, ots) and root_from_path(H(pk_bytes(pk)), i, path) == root
+
+
+# ------------------------------------------------------------------ ataque por reutilización
+def forge(pk, signed, target_prefix, max_tries=10**7):
+    """Con varias firmas de la MISMA clave, busca un mensaje nuevo firmable."""
+    known = [dict() for _ in range(N)]
+    for msg, sig in signed:
+        for i, b in enumerate(bits(msg)):
+            known[i][b] = sig[i]
+    fixed = sum(1 for k in known if len(k) == 1)
+    for t in range(max_tries):
+        m = target_prefix + b" #" + str(t).encode()
+        bm = bits(m)
+        if all(bm[i] in known[i] for i in range(N)):
+            return m, [known[i][bm[i]] for i in range(N)], fixed, t + 1
+    return None, None, fixed, max_tries
+
 
 if __name__ == "__main__":
-    main()
-</code></pre>
-        </section>
+    sk, pk = lamport_keygen()
+    sig = lamport_sign(sk, b"hola")
+    print("Lamport: |pk| =", len(pk_bytes(pk)), "B, |sig| =", sum(map(len, sig)), "B")
+    print("  verifica 'hola':", lamport_verify(pk, b"hola", sig), "· verifica 'hola!':", lamport_verify(pk, b"hola!", sig))
 
-        <section class="lab-section">
-            <h2>Entregables</h2>
-            <p>Al finalizar esta práctica, deberás entregar:</p>
-            <ol>
-                <li>Código fuente de las implementaciones (<code>ml_dsa_simplified.py</code>, <code>ecdsa_comparison.py</code> y <code>document_signing.py</code>)</li>
-                <li>Capturas de pantalla o gráficos generados durante la ejecución</li>
-                <li>Un informe breve (máximo 3 páginas) que incluya:
-                    <ul>
-                        <li>Resultados obtenidos en las pruebas de rendimiento</li>
-                        <li>Análisis comparativo entre ML-DSA y ECDSA</li>
-                        <li>Respuestas a las preguntas de reflexión</li>
-                        <li>Conclusiones sobre la viabilidad de ML-DSA para aplicaciones prácticas</li>
-                    </ul>
-                </li>
-            </ol>
-        </section>
+    ms = MerkleSigner(h=4)
+    s = ms.sign(b"primer documento")
+    print("Merkle h=4: raíz", ms.root.hex()[:16] + "…", "· camino de autenticación:", len(s[3]), "nodos")
+    print("  verifica:", merkle_verify(ms.root, b"primer documento", s), "· índice usado:", s[0], "· siguiente:", ms.next)
 
-        <section class="lab-section">
-            <h2>Recursos Adicionales</h2>
-            <ul>
-                <li><a href="https://csrc.nist.gov/pubs/fips/204/ipd" target="_blank">FIPS 204: Module-Lattice-Based Digital Signature Standard</a></li>
-                <li><a href="https://pq-crystals.org/dilithium/" target="_blank">Sitio oficial de CRYSTALS-Dilithium (ahora ML-DSA)</a></li>
-                <li><a href="https://eprint.iacr.org/2017/633" target="_blank">Artículo original: CRYSTALS-Dilithium: A Lattice-Based Digital Signature Scheme</a></li>
-                <li><a href="https://github.com/pq-crystals/dilithium" target="_blank">Implementación de referencia de Dilithium</a></li>
-                <li><a href="https://en.wikipedia.org/wiki/Digital_Signature_Algorithm" target="_blank">Wikipedia: Digital Signature Algorithm</a></li>
-            </ul>
-        </section>
+    print("\nReutilizar UNA clave de Lamport k veces:")
+    for k in range(2, 7):
+        sk, pk = lamport_keygen()
+        signed = [(b"mensaje legitimo %d" % j, None) for j in range(k)]
+        signed = [(m, lamport_sign(sk, m)) for m, _ in signed]
+        t0 = time.time()
+        tries = 2 * 10**5 if k &gt;= 4 else 10**4
+        m, fsig, fixed, used = forge(pk, signed, b"Transferir 1000000 EUR a Mallory", max_tries=tries)
+        dt = time.time() - t0
+        if m:
+            print(f"  k={k}: {fixed:3d} bits fijados (esperado ≈ {256 / 2**(k-1):.0f}) → FALSIFICADA en {used} intentos "
+                  f"({dt:.2f} s): {m.decode()!r} · verifica: {lamport_verify(pk, m, fsig)}")
+        else:
+            print(f"  k={k}: {fixed:3d} bits fijados (esperado ≈ {256 / 2**(k-1):.0f}) → sin éxito en {used} intentos "
+                  f"(coste esperado ≈ 2^{fixed})")</code></pre>
+        <pre class="terminal" data-lang="shell"><code>$ python3 lamport_merkle.py
+Lamport: |pk| = 16384 B, |sig| = 8192 B
+  verifica 'hola': True · verifica 'hola!': False
+Merkle h=4: raíz 1fc6ca3d5437293a… · camino de autenticación: 4 nodos
+  verifica: True · índice usado: 0 · siguiente: 1
+
+Reutilizar UNA clave de Lamport k veces:
+  k=2: 126 bits fijados (esperado ≈ 128) → sin éxito en 10000 intentos (coste esperado ≈ 2^126)
+  k=3:  63 bits fijados (esperado ≈ 64) → sin éxito en 10000 intentos (coste esperado ≈ 2^63)
+  k=4:  32 bits fijados (esperado ≈ 32) → sin éxito en 200000 intentos (coste esperado ≈ 2^32)
+  k=5:  17 bits fijados (esperado ≈ 16) → FALSIFICADA en 79424 intentos (1.57 s): 'Transferir 1000000 EUR a Mallory #79423' · verifica: True
+  k=6:   8 bits fijados (esperado ≈ 8) → FALSIFICADA en 72 intentos (0.00 s): 'Transferir 1000000 EUR a Mallory #71' · verifica: True</code></pre>
+        <p>Tras <var>k</var> firmas con la misma clave, una posición queda «fijada» (solo se conoce una preimagen) si los <var>k</var> resúmenes coinciden en ese bit, lo que ocurre con probabilidad <span class="math">2<sup>1−<var>k</var></sup></span>; en media quedan <span class="math">256·2<sup>1−<var>k</var></sup></span> bits fijados y el coste de falsificar es <span class="math">≈ 2<sup>256·2<sup>1−<var>k</var></sup></sup></span> hashes. Con cinco firmas, 2<sup>17</sup>: segundos en un portátil. Los mensajes legítimos del programa son fijos, así que el número de bits fijados es reproducible; el mensaje falsificado verifica con la clave pública original.</p>
+
+        <h3>El estado en un esquema real: XMSS con liboqs</h3>
+        <pre data-lang="python"><code>"""XMSS (RFC 8391) con liboqs-python: el estado de la clave privada en acción."""
+import oqs
+
+ALG = "XMSS-SHA2_10_256"                     # RFC 8391, árbol de altura 10: 2^10 firmas
+with oqs.StatefulSignature(ALG) as signer:
+    pk = signer.generate_keypair()
+    print(ALG, "· pk", len(pk), "B · firma", signer.length_signature, "B · total", signer.sigs_total())
+    for i in range(3):
+        sig = signer.sign(b"firmware v%d" % i)
+        print(f"firma {i}: {len(sig)} B · verifica {signer.verify(b'firmware v%d' % i, sig, pk)}"
+              f" · restantes {signer.sigs_remaining()}")
+    snapshot = signer.export_secret_key()     # «copia de seguridad» de la clave CON su estado actual
+    print("clave privada exportada:", len(snapshot), "B")</code></pre>
+        <pre class="terminal" data-lang="shell"><code>(l3-venv) $ python xmss_state.py
+XMSS-SHA2_10_256 · pk 68 B · firma 2500 B · total 1023
+firma 0: 2500 B · verifica True · restantes 1022
+firma 1: 2500 B · verifica True · restantes 1021
+firma 2: 2500 B · verifica True · restantes 1020
+clave privada exportada: 1377 B</code></pre>
+        <p>Cada firma consume un índice y la clave privada cambia. En liboqs 0.16.0 las variantes XMSS permiten firmar; las LMS están habilitadas solo para verificar (<code>sign</code> lanza <code>NotImplementedError: LMS algorithms are verify-only supported</code>, comprobado). Observa que <code>sigs_total()</code> informa 1 023 para un árbol de altura 10.</p>
+
+        <h3>Tareas</h3>
+        <ol>
+          <li>Ejecuta <code>lamport_merkle.py</code> y explica en la memoria la columna «bits fijados» a partir del razonamiento anterior.</li>
+          <li>Modifica <code>MerkleSigner</code> para simular una restauración de copia de seguridad: guarda <code>self.next</code>, firma dos mensajes, restaura el valor guardado y firma otros dos. Demuestra con <code>forge</code> que las firmas repetidas sobre la misma hoja reducen la seguridad como en la tabla.</li>
+          <li>Sustituye Lamport por Winternitz con <var>w</var> = 16 (cadenas de hash de longitud 15 sobre dígitos hexadecimales, más una suma de control). Mide el tamaño de firma y explica por qué una sola reutilización ya permite falsificar dígitos mayores que los firmados si se omite la suma de control.</li>
+          <li>Calcula cuántas firmas por segundo durante cuántos años permite XMSS de altura 20, y por qué SLH-DSA, que no tiene estado, necesita firmas mucho mayores (hiperárbol de altura 63–68 y la firma de pocos usos FORS).</li>
+        </ol>
+        <div class="callout danger"><span class="callout-title">Firmas con estado en producción</span><p>En LMS y XMSS, firmar dos mensajes con el mismo índice rompe la seguridad del esquema. El estado se pierde de formas banales: restaurar una copia de seguridad o una instantánea de máquina virtual, clonar un contenedor con la clave, ejecutar dos firmantes en paralelo sin repartir los índices, o que el proceso caiga entre firmar y guardar el contador. Por eso NIST SP 800-208 [9] limita su uso a casos con pocas firmas y control estricto de la clave (típicamente, firma de firmware), y exige generar las claves y firmar dentro de módulos criptográficos hardware validados FIPS 140 de nivel 3 o superior, que no permitan exportar la clave privada ni siquiera cifrada. La regla de implementación es: actualizar el estado en almacenamiento no volátil <em>antes</em> de devolver la firma.</p></div>
+
+        <h2 id="parte-e"><span class="sec">L3.6</span>Parte E · Rendimiento y tamaños</h2>
+        <h3>E.1 <code>openssl speed</code></h3>
+        <pre class="terminal" data-lang="shell"><code>$ openssl speed -seconds 1 ML-DSA-44 ML-DSA-65 ML-DSA-87 SLH-DSA-SHA2-128s SLH-DSA-SHA2-128f ed25519 ecdsap256 rsa2048
+                   sign    verify    encrypt   decrypt   sign/s verify/s  encr./s  decr./s
+rsa  2048 bits 0.000443s 0.000013s 0.000014s 0.000454s   2259.0  79263.0  71404.0   2201.0
+                              sign    verify    sign/s verify/s
+ 256 bits ecdsa (nistp256)   0.0000s   0.0000s  65691.9  21553.0
+                              sign    verify    sign/s verify/s
+ 253 bits EdDSA (Ed25519)   0.0000s   0.0001s  42732.0  12888.0
+                               keygen    encaps    decaps keygens/s  encaps/s  decaps/s
+                    rsa2048 0.036071s 0.000014s 0.000452s      27.7   69437.4    2212.0
+                               keygen     signs    verify keygens/s    sign/s  verify/s
+                    rsa2048 0.038148s 0.000454s 0.000013s      26.2    2202.0   76874.0
+                  ML-DSA-44 0.000079s 0.000429s 0.000086s   12724.0    2329.0   11631.0
+                  ML-DSA-65 0.000134s 0.000722s 0.000130s    7452.0    1386.0    7664.0
+                  ML-DSA-87 0.000188s 0.000852s 0.000205s    5316.0    1174.0    4887.0
+          SLH-DSA-SHA2-128s 0.026842s 0.202000s 0.000201s      37.3       5.0    4985.0
+          SLH-DSA-SHA2-128f 0.000417s 0.009806s 0.000606s    2397.0     102.0    1649.0</code></pre>
+        <h3>E.2 liboqs</h3>
+        <pre data-lang="python"><code>"""Tamaños y tiempos de firmas post-cuánticas con liboqs-python."""
+import time
+import oqs
+
+ALGS = ["ML-DSA-44", "ML-DSA-65", "ML-DSA-87",
+        "SLH_DSA_PURE_SHA2_128S", "SLH_DSA_PURE_SHA2_128F", "Falcon-512"]
+MSG = b"x" * 1024
+
+
+def bench(fn, min_time=0.5):
+    n, t0 = 0, time.perf_counter()
+    while True:
+        fn()
+        n += 1
+        dt = time.perf_counter() - t0
+        if dt &gt;= min_time and n &gt;= 3:
+            return dt / n * 1e3            # ms por operación
+
+
+print(f"liboqs {oqs.oqs_version()} · liboqs-python {oqs.oqs_python_version()}")
+print(f"{'algoritmo':&lt;24}{'nivel':&gt;6}{'pk (B)':&gt;8}{'sk (B)':&gt;8}{'firma (B)':&gt;10}"
+      f"{'keygen ms':&gt;11}{'firma ms':&gt;10}{'verif. ms':&gt;10}")
+for alg in ALGS:
+    if alg not in oqs.get_enabled_sig_mechanisms():
+        print(f"{alg:&lt;24} (no habilitado en esta compilación)")
+        continue
+    with oqs.Signature(alg) as s:
+        pk = s.generate_keypair()
+        sig = s.sign(MSG)
+        assert s.verify(MSG, sig, pk) and not s.verify(MSG + b"!", sig, pk)
+        kg = bench(lambda: oqs.Signature(alg).generate_keypair())
+        sg = bench(lambda: s.sign(MSG))
+        vf = bench(lambda: s.verify(MSG, sig, pk))
+        d = s.details
+        print(f"{alg:&lt;24}{d['claimed_nist_level']:&gt;6}{d['length_public_key']:&gt;8}{d['length_secret_key']:&gt;8}"
+              f"{len(sig):&gt;10}{kg:&gt;11.3f}{sg:&gt;10.3f}{vf:&gt;10.3f}")</code></pre>
+        <pre class="terminal" data-lang="shell"><code>(l3-venv) $ python bench_oqs.py
+liboqs 0.16.0 · liboqs-python 0.16.0.1
+algoritmo                nivel  pk (B)  sk (B) firma (B)  keygen ms  firma ms verif. ms
+ML-DSA-44                    2    1312    2560      2420      0.029     0.064     0.026
+ML-DSA-65                    3    1952    4032      3309      0.044     0.097     0.040
+ML-DSA-87                    5    2592    4896      4627      0.067     0.121     0.062
+SLH_DSA_PURE_SHA2_128S       1      32      64      7856     45.441   348.757     0.373
+SLH_DSA_PURE_SHA2_128F       1      32      64     17088      0.709    16.675     0.998
+Falcon-512                   1     897    1281       656      4.752     0.160     0.034</code></pre>
+        <p>Falcon-512 aparece con su nombre de liboqs porque FN-DSA (FIPS 206) aún no está publicado; la firma es de longitud variable (656 bytes en esta ejecución, 655 de media en 300 firmas; el formato «padded» fija 666). Las cifras de liboqs y de OpenSSL no coinciden exactamente (implementaciones distintas y un mensaje de 1 KiB frente al de <code>openssl speed</code>), pero el orden de magnitud sí.</p>
+
+        <h3>E.3 Tamaños en certificados</h3>
+        <pre data-lang="shell"><code>#!/usr/bin/env bash
+# Tamaños reales: clave pública (SPKI DER), certificado autofirmado (DER) y firma de msg.txt
+set -e
+printf '%-20s %6s %6s %6s\n' algoritmo SPKI cert firma
+for spec in ED25519 "EC -pkeyopt ec_paramgen_curve:P-256" "RSA -pkeyopt rsa_keygen_bits:2048" \
+            ML-DSA-44 ML-DSA-65 ML-DSA-87 SLH-DSA-SHA2-128s SLH-DSA-SHA2-128f; do
+  n=${spec%% *}
+  openssl genpkey -algorithm $spec -out t_$n.key 2&gt;/dev/null
+  openssl req -x509 -new -key t_$n.key -subj /CN=curso-pqc-L3 -days 30 -out t_$n.crt
+  case $n in
+    EC|RSA) openssl dgst -sha256 -sign t_$n.key -out t_$n.sig msg.txt ;;
+    *)      openssl pkeyutl -sign -rawin -inkey t_$n.key -in msg.txt -out t_$n.sig ;;
+  esac
+  printf '%-20s %6d %6d %6d\n' $n \
+    $(openssl pkey -in t_$n.key -pubout -outform DER | wc -c) \
+    $(openssl x509 -in t_$n.crt -outform DER | wc -c) $(wc -c &lt; t_$n.sig)
+done</code></pre>
+        <pre class="terminal" data-lang="shell"><code>$ bash tamanos.sh
+algoritmo              SPKI   cert  firma
+ED25519                  44    326     64
+EC                       91    390     72
+RSA                     294    787    256
+ML-DSA-44              1334   3987   2420
+ML-DSA-65              1974   5516   3309
+ML-DSA-87              2614   7474   4627
+SLH-DSA-SHA2-128s        50   8139   7856
+SLH-DSA-SHA2-128f        50  17371  17088</code></pre>
+        <div class="table-wrap"><table>
+          <caption>Resumen de las medidas de este laboratorio (OpenSSL 3.5.8, un núcleo de Ryzen 9 5900X). Firmas y verificaciones por segundo de <code>openssl speed</code>; bytes medidos.</caption>
+          <thead><tr><th>Algoritmo</th><th class="num">Firmas/s</th><th class="num">Verif./s</th><th class="num">SPKI (B)</th><th class="num">Firma (B)</th><th class="num">Certificado (B)</th></tr></thead>
+          <tbody>
+            <tr><th>Ed25519</th><td class="num">42 732</td><td class="num">12 888</td><td class="num">44</td><td class="num">64</td><td class="num">326</td></tr>
+            <tr><th>ECDSA P-256</th><td class="num">65 692</td><td class="num">21 553</td><td class="num">91</td><td class="num">70–72</td><td class="num">392</td></tr>
+            <tr><th>RSA-2048</th><td class="num">2 202</td><td class="num">76 874</td><td class="num">294</td><td class="num">256</td><td class="num">787</td></tr>
+            <tr><th>ML-DSA-44</th><td class="num">2 329</td><td class="num">11 631</td><td class="num">1 334</td><td class="num">2 420</td><td class="num">3 987</td></tr>
+            <tr><th>ML-DSA-65</th><td class="num">1 386</td><td class="num">7 664</td><td class="num">1 974</td><td class="num">3 309</td><td class="num">5 516</td></tr>
+            <tr><th>ML-DSA-87</th><td class="num">1 174</td><td class="num">4 887</td><td class="num">2 614</td><td class="num">4 627</td><td class="num">7 474</td></tr>
+            <tr><th>SLH-DSA-SHA2-128s</th><td class="num">5,0</td><td class="num">4 985</td><td class="num">50</td><td class="num">7 856</td><td class="num">8 139</td></tr>
+            <tr><th>SLH-DSA-SHA2-128f</th><td class="num">102</td><td class="num">1 649</td><td class="num">50</td><td class="num">17 088</td><td class="num">17 371</td></tr>
+          </tbody>
+        </table></div>
+        <h3>Tareas</h3>
+        <ol>
+          <li>Repite E.1–E.3 en tu máquina y construye la misma tabla. Añade ML-DSA con <code>openssl speed -multi 4</code> y comenta la escalabilidad.</li>
+          <li>Estima el aumento de bytes en un <em>handshake</em> TLS 1.3 que envía certificado de hoja + intermedio y una firma CertificateVerify, al pasar de ECDSA P-256 a ML-DSA-44 y a ML-DSA-65. (Con las cifras de la tabla: <span class="math">2·3 987 + 2 420 − (2·392 + 72) ≈ 9,5</span> kB para ML-DSA-44; los certificados reales llevan extensiones y SCT que añaden más). ¿Cuántos segmentos TCP adicionales supone con MSS = 1 460 y una ventana inicial de 10 segmentos?</li>
+          <li>Un servidor TLS firma una vez por conexión. ¿Cuántas conexiones por segundo por núcleo soporta con ML-DSA-65 frente a Ed25519, contando solo la firma? ¿Y un sistema de actualizaciones de firmware que firma un fichero al día con SLH-DSA-SHA2-128s?</li>
+        </ol>
+
+        <h2 id="parte-f"><span class="sec">L3.7</span>Parte F · Preguntas de diseño</h2>
+        <p>Responde razonadamente (entre 100 y 250 palabras cada una), citando la sección de FIPS 204/205 o SP 800-208 que corresponda.</p>
+        <ol>
+          <li><strong>Puro frente a <em>pre-hash</em>.</strong> FIPS 204 define ML-DSA (firma <span class="math"><var>M</var>′ = 0 ‖ |ctx| ‖ ctx ‖ <var>M</var></span>) y HashML-DSA (firma <span class="math">1 ‖ |ctx| ‖ ctx ‖ OID ‖ PH(<var>M</var>)</span>), y dice que en general es preferible la versión pura (§5.4). ¿Qué propiedad de seguridad añade el hash de la clave pública <var>tr</var> dentro de <var>μ</var>, y cuál se pierde al pre-resumir con PH? ¿Para qué sirve el primer byte, 0 o 1? ¿Qué alternativa ofrece el cálculo externo de <var>μ</var> (algoritmo 7, línea 6; parámetro <code>mu</code> de OpenSSL) para un HSM que no puede recibir el mensaje entero?</li>
+          <li><strong>Cadenas de contexto.</strong> Propón un esquema de contextos para una organización que usa la misma clave ML-DSA para firmar documentos PDF y tokens de autenticación. ¿Qué ataque evita? ¿Por qué FIPS 204 recomienda, aun así, no usar una misma clave para ML-DSA y HashML-DSA?</li>
+          <li><strong>Determinista frente a <em>hedged</em>.</strong> Resume los argumentos de FIPS 204 §3.4. ¿En qué plataforma elegirías la variante determinista? ¿Por qué la variante <em>hedged</em> no depende de que el generador aleatorio sea bueno para ser segura?</li>
+          <li><strong>Estado en LMS/XMSS.</strong> Diseña el procedimiento de firma de firmware de un fabricante con LMS o XMSS: dónde se guarda la clave, cómo se reserva el índice, qué pasa con las copias de seguridad y cómo se recupera un fallo a mitad de firma. ¿Cuándo preferirías SLH-DSA pese a su tamaño?</li>
+          <li><strong>Elección de algoritmo.</strong> Para cada caso, elige esquema y conjunto de parámetros y justifícalo con las medidas de la parte E: (a) certificados de servidores web, (b) raíz de una PKI con 25 años de vida, (c) firma de paquetes de una distribución Linux, (d) tarjeta inteligente con 8 KiB de RAM.</li>
+        </ol>
+
+        <h2 id="entregables"><span class="sec">L3.8</span>Entregables</h2>
+        <ul>
+          <li>Memoria en PDF (8–12 páginas) con: tabla y análisis de la parte A (incluido el experimento sin rechazo), transcripciones de las partes B y C con los puntos de control, análisis de la falsificación de Lamport y de la restauración de estado (parte D), tabla de rendimiento y tamaños de tu máquina con el cálculo del <em>handshake</em> (parte E), y respuestas a la parte F.</li>
+          <li>Repositorio o ZIP con el código modificado (<code>fs_aborts.py</code>, <code>lamport_merkle.py</code> con la restauración de estado y, opcionalmente, Winternitz), los scripts de OpenSSL y un <code>README</code> con las versiones exactas (<code>openssl version</code>, <code>python --version</code>, <code>oqs.oqs_version()</code>).</li>
+          <li>Los ficheros <code>msg.txt</code>, <code>mldsa65.pub</code>, <code>msg.sig</code> y <code>ctx.sig</code> de la parte B, para que el profesor pueda verificarlos.</li>
+        </ul>
+
+        <h2 id="rubrica"><span class="sec">L3.9</span>Rúbrica de evaluación</h2>
+        <div class="table-wrap"><table>
+          <caption>Evaluación sobre 10 puntos</caption>
+          <thead><tr><th>Criterio</th><th class="num">Peso</th><th>Excelente</th><th>Suficiente</th><th>Insuficiente</th></tr></thead>
+          <tbody>
+            <tr><th>A · Rechazo</th><td class="num">2,0</td><td>Tabla completa, tasas separadas por causa, intervalo de confianza correcto y fuga sin rechazo explicada con datos</td><td>Tabla completa y comparación con el modelo</td><td>Faltan configuraciones o no se compara con el modelo</td></tr>
+            <tr><th>B/C · Herramientas</th><td class="num">2,0</td><td>Todos los puntos de control, cadena de certificados e interoperabilidad OpenSSL–liboqs comprobada</td><td>Firma, verificación, contexto y firma determinista correctos</td><td>Transcripciones incompletas o sin comprobar fallos</td></tr>
+            <tr><th>D · Hash y estado</th><td class="num">2,5</td><td>Falsificación reproducida y explicada, restauración de estado demostrada, Winternitz implementado</td><td>Falsificación reproducida y bits fijados explicados</td><td>Solo se ejecuta el código dado</td></tr>
+            <tr><th>E · Medidas</th><td class="num">1,5</td><td>Tabla propia, cálculo del <em>handshake</em> con segmentos TCP y discusión de escalabilidad</td><td>Tabla propia y cálculo de bytes</td><td>Se copian las cifras de la guía</td></tr>
+            <tr><th>F · Diseño</th><td class="num">1,5</td><td>Respuestas precisas, con referencias a secciones concretas de los estándares</td><td>Respuestas correctas sin referencias</td><td>Respuestas vagas o erróneas</td></tr>
+            <tr><th>Presentación</th><td class="num">0,5</td><td>Memoria clara, versiones documentadas, código reproducible</td><td>Memoria legible</td><td>Desordenada o sin versiones</td></tr>
+          </tbody>
+        </table></div>
+
+        <aside class="key-points"><span class="kp-title">Ideas clave</span><ul>
+          <li>La tasa de rechazo de ML-DSA sigue el modelo <span class="math">exp(<var>n</var><var>β</var>(<var>ℓ</var>/<var>γ</var><sub>1</sub> + <var>k</var>/<var>γ</var><sub>2</sub>))</span>: agrandar <var>γ</var> reduce intentos pero agranda la firma o reduce la seguridad.</li>
+          <li>OpenSSL 3.5 LTS firma y verifica ML-DSA y SLH-DSA con <code>pkeyutl -rawin</code>, y admite contexto, firma determinista, claves en formato semilla y certificados X.509.</li>
+          <li>ML-DSA firma y verifica a velocidades comparables a RSA/ECDSA, pero sus firmas son unas 40 veces mayores que las de Ed25519; SLH-DSA es mucho más lento al firmar y aún mayor, con la ventaja de depender solo de funciones hash.</li>
+          <li>Reutilizar una clave de un solo uso es catastrófico: cada firma adicional reduce a la mitad el exponente del coste de falsificación. En LMS/XMSS eso convierte la gestión del estado en un requisito de seguridad.</li>
+        </ul></aside>
+
+        <h2 id="referencias"><span class="sec">L3.10</span>Referencias</h2>
+        <ol class="refs">
+          <li>NIST. <a href="https://doi.org/10.6028/NIST.FIPS.204">FIPS 204: Module-Lattice-Based Digital Signature Standard</a>. <span class="src">13 de agosto de 2024.</span></li>
+          <li>NIST. <a href="https://doi.org/10.6028/NIST.FIPS.205">FIPS 205: Stateless Hash-Based Digital Signature Standard</a>. <span class="src">13 de agosto de 2024.</span></li>
+          <li>V. Lyubashevsky. <a href="https://doi.org/10.1007/978-3-642-10366-7_35">Fiat-Shamir with Aborts: Applications to Lattice and Factoring-Based Signatures</a>. <span class="src">ASIACRYPT 2009, LNCS 5912, pp. 598–616.</span></li>
+          <li>OpenSSL. <a href="https://docs.openssl.org/3.5/man7/EVP_SIGNATURE-ML-DSA/">EVP_SIGNATURE-ML-DSA(7)</a>. <span class="src">Documentación de OpenSSL 3.5.</span></li>
+          <li>J. Massimo, P. Kampanakis, S. Turner, B. E. Westerbaan. <a href="https://www.rfc-editor.org/rfc/rfc9881">RFC 9881: Algorithm Identifiers for the Module-Lattice-Based Digital Signature Algorithm (ML-DSA)</a>. <span class="src">IETF, octubre de 2025.</span></li>
+          <li>Open Quantum Safe. <a href="https://github.com/open-quantum-safe/liboqs-python">liboqs-python</a> y <a href="https://github.com/open-quantum-safe/liboqs">liboqs</a>. <span class="src">Versiones 0.16.0.1 y 0.16.0 (julio de 2026).</span></li>
+          <li>L. Lamport. <a href="https://lamport.azurewebsites.net/pubs/dig-sig.pdf">Constructing Digital Signatures from a One Way Function</a>. <span class="src">SRI International, informe técnico CSL-98, 1979.</span></li>
+          <li>R. C. Merkle. <a href="https://doi.org/10.1007/0-387-34805-0_21">A Certified Digital Signature</a>. <span class="src">CRYPTO '89, LNCS 435, pp. 218–238.</span></li>
+          <li>D. A. Cooper et al. <a href="https://doi.org/10.6028/NIST.SP.800-208">NIST SP 800-208: Recommendation for Stateful Hash-Based Signature Schemes</a>. <span class="src">Octubre de 2020.</span></li>
+          <li>D. McGrew, M. Curcio, S. Fluhrer. <a href="https://www.rfc-editor.org/rfc/rfc8554">RFC 8554: Leighton-Micali Hash-Based Signatures</a>. <span class="src">IRTF, abril de 2019.</span></li>
+          <li>A. Huelsing, D. Butin, S. Gazdag, J. Rijneveld, A. Mohaisen. <a href="https://www.rfc-editor.org/rfc/rfc8391">RFC 8391: XMSS: eXtended Merkle Signature Scheme</a>. <span class="src">IRTF, mayo de 2018.</span></li>
+          <li>OpenSSL Project. <a href="https://github.com/openssl/openssl/releases">Publicaciones de OpenSSL</a>. <span class="src">3.5.8 y 4.0.2, 25 de agosto de 2026.</span></li>
+        </ol>
+      </article>
+
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../index.html">Inicio</a></li>
-                    <li><a href="../programa.html">Programa</a></li>
-                    <li><a href="../temas/tema1/index.html">Temas</a></li>
-                    <li><a href="../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Guías Disponibles</h3>
-                <ul>
-                    <li><a href="algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="ml_kem.html">ML-KEM</a></li>
-                    <li><a href="ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="qkd.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../js/script.js"></script>
-    <script src="../js/navigation.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../glosario.html">Glosario</a>
+        <a href="../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

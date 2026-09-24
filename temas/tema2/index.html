@@ -1,420 +1,520 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../../" data-page="tema2">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tema 2: Infraestructura de Seguridad en Internet - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="../../css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tema 2 · PKI, TLS y la infraestructura de Internet — Curso PQC</title>
+  <meta name="description" content="PKI X.509, revocación, Certificate Transparency y TLS 1.3 en detalle; qué primitiva es vulnerable en SSH, IPsec, DNSSEC, mensajería, firma de código y WebAuthn; y por qué los certificados post-cuánticos pesan tanto en el handshake.">
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../css/styles.css">
+  <script src="../../js/course-data.js" defer></script>
+  <script src="../../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../../index.html">Inicio</a></li>
-                <li><a href="../../programa.html">Programa</a></li>
-                <li><a href="../tema1/index.html">Temas</a></li>
-                <li><a href="../../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="../../guias/index.html">Guías de Laboratorio</a></li>
-                <li><a href="../../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../../index.html">Inicio</a> &gt; <a href="../tema1/index.html">Temas</a> &gt; Tema 2: Infraestructura de Seguridad en Internet
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../../index.html">Inicio</a>
+        <a href="../../programa.html">Programa</a>
+        <a href="../../temas/index.html" aria-current="page">Temas</a>
+        <a href="../../ejemplos/index.html">Ejemplos</a>
+        <a href="../../guias/index.html">Laboratorios</a>
+        <a href="../../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Tema 2: Infraestructura de Seguridad en Internet</h1>
-        
-        <div class="tema-navegacion">
-            <div class="tema-nav-item">
-                <a href="../tema1/index.html">
-                    <span>Tema 1</span>
-                    <p>Fundamentos de Criptografía Moderna</p>
-                </a>
-            </div>
-            <div class="tema-nav-item actual">
-                <span>Tema 2</span>
-                <p>Infraestructura de Seguridad en Internet</p>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema3/index.html">
-                    <span>Tema 3</span>
-                    <p>Fundamentos de Criptografía Post-Cuántica</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema4/index.html">
-                    <span>Tema 4</span>
-                    <p>Estandarización de Criptografía Post-Cuántica</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema5/index.html">
-                    <span>Tema 5</span>
-                    <p>Implementaciones, Consideraciones y Desafíos</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema6/index.html">
-                    <span>Tema 6</span>
-                    <p>Distribución Cuántica de Claves (QKD)</p>
-                </a>
-            </div>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../../index.html">Inicio</a></li><li><a href="../../temas/index.html">Temas</a></li><li aria-current="page">Tema 2</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Tema 02 · 2 horas</p>
+        <h1>PKI, TLS y la <em>infraestructura de Internet</em></h1>
+        <p class="lede">Dónde vive realmente la criptografía asimétrica de Internet: en las cadenas de certificados X.509, en el handshake de TLS 1.3 y en SSH, IPsec, DNSSEC, la mensajería y el arranque seguro. Veremos qué pieza rompe un ordenador cuántico, cuándo importa cada una y por qué migrar las firmas cuesta mucho más que migrar el intercambio de claves.</p>
+        <dl class="page-meta">
+          <div><dt>Duración</dt><dd>2 h</dd></div>
+          <div><dt>Nivel</dt><dd>Introductorio–intermedio</dd></div>
+          <div><dt>Requisitos</dt><dd>Tema 1; nociones de TCP/IP</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
+
+      <article class="prose">
+        <h2 id="objetivos"><span class="sec">2.0</span>Objetivos</h2>
+        <p>Al terminar este tema deberías ser capaz de:</p>
+        <ol>
+          <li>Describir la estructura de un certificado X.509 v3 y el algoritmo de validación de una cadena, señalando cada clave pública y cada firma que interviene.</li>
+          <li>Explicar por qué OCSP está desapareciendo, qué lo sustituye y cómo el calendario del CA/Browser Forum hacia certificados de 47 días se relaciona con la agilidad criptográfica.</li>
+          <li>Recorrer el handshake de TLS 1.3 mensaje a mensaje, localizar el intercambio de claves y la autenticación y derivar el <em>key schedule</em> a partir de un secreto híbrido.</li>
+          <li>Argumentar por qué «almacenar ahora, descifrar después» (<em>harvest now, decrypt later</em>, HNDL) amenaza hoy la confidencialidad pero la autenticación solo cuando exista un ordenador cuántico criptográficamente relevante (CRQC), y cuáles son las excepciones.</li>
+          <li>Para SSH, IPsec/IKEv2, DNSSEC, Signal, iMessage, firma de código, arranque seguro y WebAuthn: identificar la primitiva vulnerable y el estado de su migración en septiembre de 2026.</li>
+          <li>Calcular el sobrecoste en bytes de una cadena ML-DSA frente a ECDSA y relacionarlo con la ventana inicial de TCP y el límite antiamplificación de QUIC; conocer las propuestas para reducirlo (KEMTLS, Merkle Tree Certificates, negociación de anclas de confianza).</li>
+        </ol>
+        <p>Este tema es el puente entre la amenaza (<a href="../tema1/index.html">Tema 1</a>) y los algoritmos (<a href="../tema3/index.html">Tema 3</a> y <a href="../tema4/index.html">Tema 4</a>). La teoría de los combinadores híbridos se desarrolla en el <a href="../tema5/index.html">Tema 5</a> y en el ejemplo interactivo <a href="../../ejemplos/criptografia_hibrida.html">Intercambio híbrido</a>; aquí solo usamos el resultado. Todo lo que se mide en este tema se reproduce en el laboratorio <a href="../../guias/criptografia_hibrida.html">L4 · TLS híbrido con OpenSSL</a>.</p>
+
+        <h2 id="pki-x509"><span class="sec">2.1</span>La PKI X.509: certificados, cadenas y anclas de confianza</h2>
+        <p>Una infraestructura de clave pública (PKI) resuelve un problema concreto: ligar una clave pública a una identidad (un nombre DNS, una persona, un dispositivo) de forma verificable por terceros que no conocen de antemano esa clave. En la Web la solución es jerárquica: unas pocas decenas de organizaciones (autoridades de certificación, CA) operan claves raíz que los navegadores y sistemas operativos incluyen en su <strong>almacén de confianza</strong> (<em>root store</em>), y esas raíces delegan en CA intermedias que emiten los certificados de servidor.</p>
+
+        <div class="definition"><span class="def-title"><b>Definición</b>Certificado X.509 v3 (RFC 5280)</span>
+          <p>Estructura ASN.1 <code>Certificate ::= SEQUENCE { tbsCertificate, signatureAlgorithm, signatureValue }</code>. El <code>tbsCertificate</code> (<em>to be signed</em>) contiene número de serie, emisor, sujeto, periodo de validez, la clave pública del sujeto (<code>SubjectPublicKeyInfo</code>, SPKI: identificador de algoritmo + clave) y extensiones (<code>basicConstraints</code>, <code>keyUsage</code>, <code>subjectAltName</code>, puntos de distribución de CRL, SCT de Certificate Transparency…). La CA emisora firma la codificación DER del <code>tbsCertificate</code> con su clave privada.</p>
         </div>
 
-        <section class="tema-intro">
-            <h2>Introducción</h2>
-            <p>Este tema examina la infraestructura de seguridad que sustenta Internet y los sistemas digitales modernos. Analizaremos cómo la criptografía se implementa en protocolos y sistemas reales, y evaluaremos el impacto que la computación cuántica tendrá en esta infraestructura crítica.</p>
-            
-            <div class="tema-info">
-                <div class="info-item">
-                    <h3>Duración</h3>
-                    <p>2 horas</p>
-                </div>
-                <div class="info-item">
-                    <h3>Objetivos</h3>
-                    <ul>
-                        <li>Comprender la infraestructura de clave pública (PKI) y su importancia</li>
-                        <li>Analizar los protocolos de seguridad actuales como TLS/SSL</li>
-                        <li>Examinar el papel de los certificados digitales y las autoridades de certificación</li>
-                        <li>Evaluar el impacto de la computación cuántica en la infraestructura actual</li>
-                        <li>Identificar los desafíos de la transición a la criptografía post-cuántica</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+        <p>De ahí se deduce lo que importa para la criptografía post-cuántica: <strong>cada certificado transporta exactamente una clave pública (la del sujeto) y al menos una firma (la del emisor)</strong>. Si pasamos de ECDSA P-256 a ML-DSA-44, la clave crece de 65 a 1 312 bytes y la firma de ≈ 72 a 2 420 bytes (FIPS 204, identificadores de RFC 9881 [6]). En el laboratorio L4 un certificado hoja con ML-DSA-44 ocupa 4 066 bytes en DER, frente a 462 con ECDSA.</p>
 
-        <section class="tema-contenido">
-            <h2>Contenido del Tema</h2>
-            
-            <div class="subtema">
-                <h3>2.1 Infraestructura de Clave Pública (PKI)</h3>
-                <p>La Infraestructura de Clave Pública (PKI) es un conjunto de roles, políticas, hardware, software y procedimientos necesarios para crear, gestionar, distribuir, usar, almacenar y revocar certificados digitales y gestionar el cifrado de clave pública.</p>
-                
-                <h4>Componentes Principales de PKI</h4>
-                <ul>
-                    <li><strong>Autoridades de Certificación (CA):</strong> Entidades de confianza que emiten certificados digitales.</li>
-                    <li><strong>Autoridades de Registro (RA):</strong> Verifican la identidad de los solicitantes de certificados.</li>
-                    <li><strong>Certificados Digitales:</strong> Documentos electrónicos que vinculan una clave pública con una identidad.</li>
-                    <li><strong>Listas de Revocación de Certificados (CRL):</strong> Listas de certificados que ya no son válidos.</li>
-                    <li><strong>Protocolo de Estado de Certificados en Línea (OCSP):</strong> Alternativa a las CRL para verificar el estado de un certificado.</li>
-                    <li><strong>Almacenes de Certificados:</strong> Repositorios donde se almacenan los certificados y las CRL.</li>
-                </ul>
-                
-                <h4>Jerarquía de Confianza</h4>
-                <p>La PKI se basa en una jerarquía de confianza:</p>
-                <ul>
-                    <li><strong>CA Raíz:</strong> El punto de confianza más alto en la jerarquía.</li>
-                    <li><strong>CA Intermedias:</strong> Emiten certificados en nombre de la CA raíz.</li>
-                    <li><strong>Certificados de Entidad Final:</strong> Emitidos para servidores, clientes o individuos.</li>
-                </ul>
-                
-                <h4>Modelos de Confianza</h4>
-                <ul>
-                    <li><strong>Jerárquico:</strong> Estructura en árbol con una CA raíz.</li>
-                    <li><strong>Malla:</strong> Múltiples CAs que se reconocen mutuamente.</li>
-                    <li><strong>Web of Trust:</strong> Modelo descentralizado donde los usuarios certifican la identidad de otros (usado en PGP).</li>
-                    <li><strong>Bridge CA:</strong> Modelo que conecta múltiples dominios de PKI.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>2.2 TLS/SSL y Protocolos de Seguridad</h3>
-                <p>Transport Layer Security (TLS) y su predecesor, Secure Sockets Layer (SSL), son protocolos criptográficos diseñados para proporcionar comunicaciones seguras a través de una red informática.</p>
-                
-                <h4>Evolución de TLS/SSL</h4>
-                <ul>
-                    <li><strong>SSL 2.0 y 3.0:</strong> Versiones originales, ahora consideradas inseguras.</li>
-                    <li><strong>TLS 1.0 y 1.1:</strong> Mejoras incrementales, también consideradas obsoletas.</li>
-                    <li><strong>TLS 1.2:</strong> Ampliamente utilizado, con mejoras significativas en seguridad.</li>
-                    <li><strong>TLS 1.3:</strong> Versión más reciente, con rediseño importante para mejorar seguridad y rendimiento.</li>
-                </ul>
-                
-                <h4>Funcionamiento de TLS</h4>
-                <p>El protocolo TLS consta de dos capas principales:</p>
-                <ol>
-                    <li><strong>Protocolo de Handshake:</strong> Establece una conexión segura mediante:
-                        <ul>
-                            <li>Negociación de versión del protocolo</li>
-                            <li>Selección de algoritmos criptográficos (cipher suite)</li>
-                            <li>Autenticación mediante certificados</li>
-                            <li>Establecimiento de claves de sesión</li>
-                        </ul>
-                    </li>
-                    <li><strong>Protocolo de Registro:</strong> Protege los datos de la aplicación mediante:
-                        <ul>
-                            <li>Fragmentación de datos</li>
-                            <li>Compresión (opcional)</li>
-                            <li>Aplicación de MAC para integridad</li>
-                            <li>Cifrado para confidencialidad</li>
-                        </ul>
-                    </li>
-                </ol>
-                
-                <h4>Cipher Suites</h4>
-                <p>Las cipher suites son combinaciones de algoritmos que definen cómo se protege una conexión TLS:</p>
-                <ul>
-                    <li><strong>Algoritmo de intercambio de claves:</strong> RSA, ECDHE, DHE</li>
-                    <li><strong>Algoritmo de autenticación:</strong> RSA, ECDSA</li>
-                    <li><strong>Algoritmo de cifrado simétrico:</strong> AES, ChaCha20</li>
-                    <li><strong>Modo de operación:</strong> GCM, CBC</li>
-                    <li><strong>Algoritmo de hash:</strong> SHA-256, SHA-384</li>
-                </ul>
-                <p>Ejemplo: TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384</p>
-                
-                <h4>Otros Protocolos de Seguridad</h4>
-                <ul>
-                    <li><strong>SSH (Secure Shell):</strong> Protocolo para acceso remoto seguro a sistemas.</li>
-                    <li><strong>IPsec:</strong> Conjunto de protocolos para asegurar las comunicaciones IP.</li>
-                    <li><strong>HTTPS:</strong> HTTP sobre TLS, para navegación web segura.</li>
-                    <li><strong>S/MIME:</strong> Estándar para correo electrónico cifrado y firmado.</li>
-                    <li><strong>PGP/OpenPGP:</strong> Estándar para cifrado y firma de correos y archivos.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>2.3 Certificados Digitales y Autoridades de Certificación</h3>
-                <p>Los certificados digitales son documentos electrónicos que vinculan una clave pública con una identidad, verificados por una tercera parte de confianza (la Autoridad de Certificación).</p>
-                
-                <h4>Estructura de un Certificado X.509</h4>
-                <p>El estándar X.509 define la estructura de los certificados digitales:</p>
-                <ul>
-                    <li><strong>Versión:</strong> Versión del formato X.509 (v1, v2, v3).</li>
-                    <li><strong>Número de Serie:</strong> Identificador único asignado por la CA.</li>
-                    <li><strong>Algoritmo de Firma:</strong> Algoritmo utilizado por la CA para firmar el certificado.</li>
-                    <li><strong>Emisor:</strong> Nombre distinguido (DN) de la CA emisora.</li>
-                    <li><strong>Validez:</strong> Período durante el cual el certificado es válido (fecha de inicio y fin).</li>
-                    <li><strong>Sujeto:</strong> Nombre distinguido de la entidad a la que pertenece la clave pública.</li>
-                    <li><strong>Información de Clave Pública:</strong> La clave pública y el algoritmo asociado.</li>
-                    <li><strong>Extensiones:</strong> Información adicional como usos de clave, políticas, etc.</li>
-                    <li><strong>Firma Digital:</strong> Firma de la CA que verifica la autenticidad del certificado.</li>
-                </ul>
-                
-                <h4>Tipos de Certificados</h4>
-                <ul>
-                    <li><strong>Certificados de Servidor SSL/TLS:</strong> Para autenticar servidores web y establecer conexiones seguras.</li>
-                    <li><strong>Certificados de Cliente:</strong> Para autenticar usuarios o dispositivos cliente.</li>
-                    <li><strong>Certificados de Firma de Código:</strong> Para verificar la autenticidad del software.</li>
-                    <li><strong>Certificados de Correo Electrónico (S/MIME):</strong> Para cifrar y firmar correos electrónicos.</li>
-                    <li><strong>Certificados de CA:</strong> Para identificar y autenticar autoridades de certificación.</li>
-                </ul>
-                
-                <h4>Autoridades de Certificación</h4>
-                <p>Las Autoridades de Certificación (CA) son entidades de confianza responsables de emitir certificados digitales. Sus responsabilidades incluyen:</p>
-                <ul>
-                    <li><strong>Verificación de Identidad:</strong> Confirmar que el solicitante es quien dice ser.</li>
-                    <li><strong>Emisión de Certificados:</strong> Crear y firmar certificados digitales.</li>
-                    <li><strong>Mantenimiento de CRLs:</strong> Publicar y actualizar listas de certificados revocados.</li>
-                    <li><strong>Servicios OCSP:</strong> Proporcionar verificación en tiempo real del estado de los certificados.</li>
-                    <li><strong>Protección de Claves Privadas:</strong> Salvaguardar sus propias claves privadas.</li>
-                </ul>
-                
-                <h4>Problemas y Desafíos</h4>
-                <ul>
-                    <li><strong>Compromiso de CA:</strong> Si una CA es comprometida, todos los certificados emitidos por ella son potencialmente inseguros.</li>
-                    <li><strong>Verificación de Identidad:</strong> Diferentes CAs tienen diferentes estándares de verificación.</li>
-                    <li><strong>Revocación:</strong> Los mecanismos de revocación (CRL, OCSP) tienen limitaciones.</li>
-                    <li><strong>Confianza Implícita:</strong> Los navegadores y sistemas operativos confían en cientos de CAs por defecto.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>2.4 Impacto de la Computación Cuántica en la Infraestructura Actual</h3>
-                <p>La computación cuántica representa una amenaza significativa para la infraestructura de seguridad actual, que depende en gran medida de la criptografía asimétrica vulnerable a ataques cuánticos.</p>
-                
-                <h4>Componentes Vulnerables</h4>
-                <ul>
-                    <li><strong>Certificados Digitales:</strong> Basados principalmente en RSA o ECDSA, vulnerables al algoritmo de Shor.</li>
-                    <li><strong>Handshake TLS:</strong> El intercambio de claves (RSA, ECDHE, DHE) es vulnerable a ataques cuánticos.</li>
-                    <li><strong>Firmas Digitales:</strong> Utilizadas para autenticar actualizaciones de software, documentos legales, etc.</li>
-                    <li><strong>VPNs:</strong> Muchas implementaciones dependen de IKE con Diffie-Hellman para establecer claves.</li>
-                    <li><strong>SSH:</strong> Utiliza algoritmos asimétricos para autenticación e intercambio de claves.</li>
-                </ul>
-                
-                <h4>Escenarios de Amenaza</h4>
-                <ul>
-                    <li><strong>"Harvest Now, Decrypt Later":</strong> Los adversarios pueden recopilar tráfico cifrado ahora para descifrarlo cuando dispongan de computadoras cuánticas.</li>
-                    <li><strong>Suplantación de Identidad:</strong> La capacidad de falsificar firmas digitales permitiría suplantar identidades y comprometer la autenticidad.</li>
-                    <li><strong>Compromiso de Sesiones:</strong> El descifrado de intercambios de claves permitiría acceder a comunicaciones supuestamente seguras.</li>
-                    <li><strong>Falsificación de Certificados:</strong> La capacidad de factorizar claves RSA permitiría crear certificados falsos que parecerían legítimos.</li>
-                </ul>
-                
-                <h4>Análisis de Riesgo</h4>
-                <p>El riesgo para una organización depende de varios factores:</p>
-                <ul>
-                    <li><strong>Vida Útil de los Datos:</strong> ¿Durante cuánto tiempo deben permanecer seguros los datos?</li>
-                    <li><strong>Sensibilidad de la Información:</strong> ¿Cuál sería el impacto si los datos fueran comprometidos?</li>
-                    <li><strong>Amenazas Específicas:</strong> ¿Quiénes podrían estar interesados en atacar la organización?</li>
-                    <li><strong>Complejidad de la Infraestructura:</strong> ¿Cuán difícil será migrar a soluciones post-cuánticas?</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>2.5 Desafíos de la Transición a PQC</h3>
-                <p>La transición a la criptografía post-cuántica presenta numerosos desafíos técnicos, logísticos y organizativos.</p>
-                
-                <h4>Desafíos Técnicos</h4>
-                <ul>
-                    <li><strong>Tamaño de Claves y Firmas:</strong> Muchos algoritmos post-cuánticos tienen claves o firmas significativamente más grandes.</li>
-                    <li><strong>Rendimiento:</strong> Algunos algoritmos post-cuánticos son más lentos que sus contrapartes clásicas.</li>
-                    <li><strong>Limitaciones de Ancho de Banda:</strong> El aumento de tamaño puede afectar protocolos con restricciones de tamaño de mensaje.</li>
-                    <li><strong>Dispositivos con Recursos Limitados:</strong> IoT y sistemas embebidos pueden no tener recursos para algoritmos post-cuánticos.</li>
-                    <li><strong>Compatibilidad:</strong> Asegurar que los sistemas nuevos y antiguos puedan interoperar durante la transición.</li>
-                </ul>
-                
-                <h4>Desafíos Organizativos</h4>
-                <ul>
-                    <li><strong>Inventario Criptográfico:</strong> Identificar todos los sistemas que utilizan criptografía vulnerable.</li>
-                    <li><strong>Priorización:</strong> Determinar qué sistemas deben actualizarse primero.</li>
-                    <li><strong>Planificación:</strong> Desarrollar un plan de migración que minimice la interrupción.</li>
-                    <li><strong>Formación:</strong> Capacitar al personal técnico en nuevas tecnologías.</li>
-                    <li><strong>Presupuesto:</strong> Asegurar recursos financieros para la transición.</li>
-                </ul>
-                
-                <h4>Estrategias de Migración</h4>
-                <ul>
-                    <li><strong>Criptografía Híbrida:</strong> Implementar tanto algoritmos clásicos como post-cuánticos en paralelo.</li>
-                    <li><strong>Enfoque por Fases:</strong> Migrar sistemas críticos primero, seguidos por sistemas menos críticos.</li>
-                    <li><strong>Actualización de Protocolos:</strong> Adoptar versiones de protocolos que soporten algoritmos post-cuánticos (ej. TLS con soporte PQC).</li>
-                    <li><strong>Crypto-Agilidad:</strong> Diseñar sistemas que puedan cambiar fácilmente entre diferentes algoritmos criptográficos.</li>
-                </ul>
-                
-                <h4>Iniciativas y Estándares</h4>
-                <ul>
-                    <li><strong>NIST PQC:</strong> Proceso de estandarización de algoritmos post-cuánticos.</li>
-                    <li><strong>IETF:</strong> Desarrollo de extensiones post-cuánticas para TLS, IKE, etc.</li>
-                    <li><strong>ETSI:</strong> Grupo de trabajo sobre criptografía cuántica y post-cuántica.</li>
-                    <li><strong>ISO/IEC:</strong> Desarrollo de estándares internacionales para PQC.</li>
-                    <li><strong>Iniciativas Gubernamentales:</strong> Directivas y guías para la migración a PQC en sectores críticos.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>2.6 Casos de Estudio y Ejemplos Prácticos</h3>
-                <p>Examinaremos algunos casos de estudio y ejemplos prácticos de organizaciones que están abordando la transición a la criptografía post-cuántica.</p>
-                
-                <h4>Caso de Estudio 1: Sector Financiero</h4>
-                <p>Un banco internacional está implementando una estrategia de migración a PQC:</p>
-                <ul>
-                    <li><strong>Fase 1:</strong> Inventario de todos los sistemas criptográficos y evaluación de riesgos.</li>
-                    <li><strong>Fase 2:</strong> Implementación de criptografía híbrida en sistemas críticos (banca en línea, procesamiento de pagos).</li>
-                    <li><strong>Fase 3:</strong> Actualización de infraestructura PKI para soportar certificados post-cuánticos.</li>
-                    <li><strong>Fase 4:</strong> Migración completa a algoritmos post-cuánticos en todos los sistemas.</li>
-                </ul>
-                <p>Desafíos específicos: compatibilidad con sistemas de terceros, cumplimiento normativo, gestión de claves a largo plazo.</p>
-                
-                <h4>Caso de Estudio 2: Infraestructura Crítica</h4>
-                <p>Una empresa de energía está protegiendo sus sistemas de control industrial:</p>
-                <ul>
-                    <li><strong>Evaluación:</strong> Identificación de sistemas SCADA y otros sistemas de control vulnerables.</li>
-                    <li><strong>Segmentación:</strong> Aislamiento de sistemas críticos en redes separadas.</li>
-                    <li><strong>Actualización:</strong> Implementación de VPNs con soporte para algoritmos post-cuánticos.</li>
-                    <li><strong>Monitorización:</strong> Sistemas de detección de intrusiones mejorados para identificar posibles ataques.</li>
-                </ul>
-                <p>Desafíos específicos: sistemas heredados con larga vida útil, restricciones de recursos en dispositivos embebidos.</p>
-                
-                <h4>Ejemplo Práctico: Actualización de TLS</h4>
-                <p>Implementación de TLS con soporte para algoritmos post-cuánticos:</p>
-                <ol>
-                    <li>Actualización de bibliotecas criptográficas para soportar algoritmos PQC.</li>
-                    <li>Configuración de cipher suites híbridas que combinan algoritmos clásicos y post-cuánticos.</li>
-                    <li>Pruebas de interoperabilidad con diferentes clientes y servidores.</li>
-                    <li>Monitorización del rendimiento y ajuste de parámetros.</li>
-                    <li>Despliegue gradual, comenzando con servidores no críticos.</li>
-                </ol>
-                <p>Resultados: aumento moderado en el tamaño de los handshakes, ligero impacto en la latencia, pero seguridad mejorada contra amenazas cuánticas.</p>
-            </div>
-        </section>
+        <figure class="diagram">
+          <svg viewBox="0 0 760 270" role="img" aria-labelledby="f21t f21d">
+            <title id="f21t">Cadena de certificados X.509 en TLS</title>
+            <desc id="f21d">Tres cajas: certificado hoja, intermedio y raíz. Cada uno contiene sujeto, clave pública y firma del emisor. La hoja la firma la intermedia y la intermedia la raíz. La hoja y la intermedia se envían en el mensaje Certificate; la raíz está preinstalada.</desc>
+            <defs>
+              <marker id="f21a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-amber"/></marker>
+            </defs>
+            <rect x="20" y="20" width="220" height="160" rx="4" class="svg-box"/>
+            <text x="130" y="44" text-anchor="middle" class="svg-text"><tspan font-weight="700">Hoja</tspan> (servidor)</text>
+            <text x="34" y="70" class="svg-muted">Sujeto: CN/SAN = ejemplo.es</text>
+            <text x="34" y="92" class="svg-muted">Emisor: CA intermedia</text>
+            <rect x="30" y="102" width="200" height="22" rx="3" class="svg-box-signal"/>
+            <text x="38" y="117" class="svg-muted">Clave pública del servidor</text>
+            <rect x="30" y="128" width="200" height="22" rx="3" class="svg-box-amber"/>
+            <text x="38" y="143" class="svg-muted">2–3 SCT (firmas de logs CT)</text>
+            <rect x="30" y="154" width="200" height="22" rx="3" class="svg-box-amber"/>
+            <text x="38" y="169" class="svg-muted">Firma de la intermedia</text>
 
-        <section class="tema-recursos">
-            <h2>Recursos Adicionales</h2>
-            
-            <div class="recursos-grid">
-                <div class="recurso-item">
-                    <h3>Lecturas Recomendadas</h3>
-                    <ul>
-                        <li>Mosca, M. (2018). Cybersecurity in an era with quantum computers: will we be ready? IEEE Security & Privacy, 16(5), 38-41.</li>
-                        <li>NIST. (2020). Migration to Post-Quantum Cryptography. NISTIR 8336 (Draft).</li>
-                        <li>Barker, E. (2020). Recommendation for Key Management: Part 1 – General. NIST Special Publication 800-57 Part 1 Rev. 5.</li>
-                    </ul>
-                </div>
-                
-                <div class="recurso-item">
-                    <h3>Recursos en Línea</h3>
-                    <ul>
-                        <li><a href="https://csrc.nist.gov/Projects/post-quantum-cryptography/migration-to-post-quantum-cryptography">NIST: Migración a Criptografía Post-Cuántica</a></li>
-                        <li><a href="https://www.ietf.org/archive/id/draft-ietf-tls-hybrid-design-01.html">IETF: Hybrid Key Exchange in TLS 1.3</a></li>
-                        <li><a href="https://www.etsi.org/technologies/quantum-safe-cryptography">ETSI: Quantum-Safe Cryptography</a></li>
-                    </ul>
-                </div>
-                
-                <div class="recurso-item">
-                    <h3>Ejemplos Prácticos</h3>
-                    <ul>
-                        <li><a href="../../ejemplos/criptografia_hibrida.html">Implementación de Criptografía Híbrida</a></li>
-                        <li><a href="../../guias/criptografia_hibrida.html">Guía de Laboratorio: Criptografía Híbrida</a></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+            <rect x="270" y="20" width="220" height="160" rx="4" class="svg-box"/>
+            <text x="380" y="44" text-anchor="middle" class="svg-text" font-weight="700">Intermedia</text>
+            <text x="284" y="70" class="svg-muted">Sujeto: CA intermedia</text>
+            <text x="284" y="92" class="svg-muted">Emisor: CA raíz · CA:TRUE</text>
+            <rect x="280" y="102" width="200" height="22" rx="3" class="svg-box-signal"/>
+            <text x="288" y="117" class="svg-muted">Clave pública de la intermedia</text>
+            <rect x="280" y="154" width="200" height="22" rx="3" class="svg-box-amber"/>
+            <text x="288" y="169" class="svg-muted">Firma de la raíz</text>
 
-        <div class="tema-navegacion-inferior">
-            <div class="nav-anterior">
-                <a href="../tema1/index.html">
-                    <span class="flecha">←</span>
-                    Anterior: Tema 1 - Fundamentos de Criptografía Moderna
-                </a>
-            </div>
-            <div class="nav-siguiente">
-                <a href="../tema3/index.html">
-                    Siguiente: Tema 3 - Fundamentos de Criptografía Post-Cuántica
-                    <span class="flecha">→</span>
-                </a>
-            </div>
+            <rect x="520" y="20" width="220" height="160" rx="4" class="svg-box"/>
+            <text x="630" y="44" text-anchor="middle" class="svg-text" font-weight="700">Raíz (ancla)</text>
+            <text x="534" y="70" class="svg-muted">Sujeto = Emisor (autofirmada)</text>
+            <text x="534" y="92" class="svg-muted">Validez típica: 15–25 años</text>
+            <rect x="530" y="102" width="200" height="22" rx="3" class="svg-box-signal"/>
+            <text x="538" y="117" class="svg-muted">Clave pública de la raíz</text>
+            <text x="534" y="143" class="svg-muted">Su autofirma no se verifica:</text>
+            <text x="534" y="160" class="svg-muted">se confía por estar en el almacén</text>
+
+            <path d="M230,165 C255,165 255,113 280,113" class="svg-stroke-amber" stroke-width="1.5" marker-end="url(#f21a)"/>
+            <path d="M480,165 C505,165 505,113 530,113" class="svg-stroke-amber" stroke-width="1.5" marker-end="url(#f21a)"/>
+
+            <path d="M20,196 L20,206 L490,206 L490,196" class="svg-line" stroke-width="1.5"/>
+            <text x="255" y="226" text-anchor="middle" class="svg-text">Enviadas por el servidor en el mensaje Certificate</text>
+            <text x="630" y="206" text-anchor="middle" class="svg-muted">Preinstalada en el almacén</text>
+            <text x="630" y="222" text-anchor="middle" class="svg-muted">de confianza: no viaja</text>
+            <text x="20" y="252" class="svg-muted">+ CertificateVerify: firma del transcript con la clave privada de la hoja</text>
+          </svg>
+          <figcaption><b>Figura 2.1.</b> Qué claves (teal) y qué firmas (ámbar) atraviesan la red en un handshake TLS típico de la Web. Las flechas indican «esta firma se verifica con esta clave». Recuento habitual: 2 claves públicas y 5 firmas (firma de la hoja, firma de la intermedia, 2 SCT y CertificateVerify) [14].</figcaption>
+        </figure>
+
+        <h3>Validación de la cadena</h3>
+        <p>El cliente construye un camino desde la hoja hasta una raíz de su almacén y comprueba, para cada eslabón: la firma del certificado con la clave del siguiente, la validez temporal, que el emisor tenga <code>basicConstraints CA:TRUE</code> y <code>keyUsage keyCertSign</code>, las restricciones de longitud de camino y de nombres, la política de Certificate Transparency del navegador y el estado de revocación (§2.2). Después verifica que el nombre solicitado aparece en el <code>subjectAltName</code> de la hoja. Solo entonces sabe que la clave pública de la hoja «pertenece» a <code>ejemplo.es</code>; que el servidor posee la clave privada correspondiente lo demuestra otro mensaje, <code>CertificateVerify</code> (§2.4).</p>
+
+        <div class="callout note"><span class="callout-title">Quién decide</span>
+          <p>Las reglas de emisión de certificados públicos TLS las fijan los <em>Baseline Requirements</em> del CA/Browser Forum, votados por las CA y los «consumidores» de certificados (Apple, Google, Microsoft, Mozilla). Pero la última palabra la tiene cada programa raíz: Chrome, por ejemplo, ha anunciado que su almacén post-cuántico solo admitirá Merkle Tree Certificates (§2.8) [12]. En la migración post-cuántica de la Web, los navegadores son los que marcan el paso.</p>
         </div>
+
+        <h3>Qué rompe un CRQC en la PKI</h3>
+        <p>Con el algoritmo de Shor un adversario obtiene la clave privada a partir de la pública. En una PKI eso tiene tres escalas de daño: (i) clave de una hoja → suplantación de ese servidor; (ii) clave de una intermedia → emisión de certificados válidos para cualquier nombre; (iii) clave de una raíz → lo mismo, y además la raíz no se puede «revocar»: hay que retirarla del almacén de cada cliente. Como las claves públicas de las raíces son públicas por definición, un CRQC las atacaría primero. Y aquí aparece la asimetría temporal que recorre todo el tema: una raíz nueva tarda años en estar presente en todos los clientes, así que las raíces post-cuánticas deben distribuirse mucho antes de que exista el CRQC.</p>
+
+        <h2 id="revocacion"><span class="sec">2.2</span>Revocación y certificados de vida corta</h2>
+        <p>Si la clave de un certificado se compromete antes de su caducidad, la CA lo <strong>revoca</strong>. Durante dos décadas hubo dos mecanismos:</p>
+        <ul>
+          <li><strong>CRL</strong> (RFC 5280): lista firmada de números de serie revocados, publicada periódicamente. Problema histórico: tamaño y latencia de descarga.</li>
+          <li><strong>OCSP</strong> (RFC 6960): el cliente pregunta a la CA por un certificado concreto y recibe una respuesta firmada. Problemas: añade un viaje de red a cada conexión, filtra a la CA qué sitios visita cada usuario (normalmente por HTTP en claro) y, si el respondedor no contesta, los navegadores «fallan en abierto» y aceptan el certificado, lo que anula su valor frente a un atacante que bloquee la consulta. El <em>OCSP stapling</em> (el servidor adjunta la respuesta) corrige la privacidad, pero se desplegó poco.</li>
+        </ul>
+
+        <div class="callout update"><span class="callout-title">Novedad · 2024–2026: el declive de OCSP</span>
+          <ul>
+            <li><b>15 mar 2024.</b> Entra en vigor la votación SC-063v4 del CA/Browser Forum: OCSP pasa a ser opcional para las CA públicas y las CRL, obligatorias [7].</li>
+            <li><b>20 feb 2025.</b> Let's Encrypt emite su primer certificado de 6 días, sin URL de OCSP ni de CRL: su vida es comparable al tiempo que tardaría en propagarse una revocación [8].</li>
+            <li><b>1 abr 2025.</b> Firefox 137 activa CRLite para todos los usuarios de escritorio: un filtro comprimido, descargado periódicamente, que codifica el estado de revocación de los certificados registrados en CT y sustituye a la consulta OCSP en línea para la mayoría de certificados [9].</li>
+            <li><b>6 ago 2025.</b> Let's Encrypt, la mayor CA por volumen, apaga su servicio OCSP y publica la revocación solo por CRL [8].</li>
+          </ul>
+        </div>
+
+        <h3>El calendario hacia los 47 días</h3>
+        <p>La consecuencia lógica de una revocación poco fiable es acortar la vida de los certificados. La votación SC-081v3 del CA/Browser Forum (cerrada el 11 de abril de 2025 sin votos en contra, con el apoyo de Apple, Google, Microsoft y Mozilla) fija este calendario [7]:</p>
+        <div class="table-wrap"><table>
+          <caption>Validez máxima de un certificado TLS público (SC-081v3)</caption>
+          <thead><tr><th>Emitido a partir de</th><th class="num">Validez máxima</th><th class="num">Reutilización de la validación de dominio</th></tr></thead>
+          <tbody>
+            <tr><td>antes del 15 mar 2026</td><td class="num">398 días</td><td class="num">398 días</td></tr>
+            <tr><td>15 mar 2026 (en vigor)</td><td class="num">200 días</td><td class="num">200 días</td></tr>
+            <tr><td>15 mar 2027</td><td class="num">100 días</td><td class="num">100 días</td></tr>
+            <tr><td>15 mar 2029</td><td class="num">47 días</td><td class="num">10 días</td></tr>
+          </tbody>
+        </table></div>
+        <p><strong>Por qué importa para la PQC.</strong> Con certificados de 47 días, renovar es un proceso automático (ACME) que ocurre cada mes. Cambiar el algoritmo de firma de una hoja pasa a ser un cambio de configuración que se propaga solo en semanas, no un proyecto de años. Es agilidad criptográfica impuesta por la política. Además, la vida corta abarata diseños como los Merkle Tree Certificates (§2.8), que asumen emisión frecuente. Lo que <em>no</em> resuelve es el problema de las raíces: estas siguen viviendo décadas.</p>
+
+        <h2 id="ct"><span class="sec">2.3</span>Certificate Transparency</h2>
+        <p>Tras los incidentes de CA comprometidas de 2011, Google impulsó Certificate Transparency (RFC 6962 [10]): toda emisión se registra en <strong>logs</strong> públicos de solo adición, estructurados como árboles de Merkle, que cualquiera puede auditar. Al aceptar un precertificado, el log devuelve un <strong>SCT</strong> (<em>Signed Certificate Timestamp</em>), una promesa firmada de incluirlo. Chrome y Safari exigen varios SCT de logs independientes en cada certificado público; por eso la hoja de la Figura 2.1 lleva 2–3 firmas adicionales, hoy ECDSA P-256.</p>
+        <p>CT es clave para la transición por dos razones. Primero, sus firmas también son vulnerables a Shor y también crecerían con ML-DSA. Segundo, CT ya es un sistema de árboles de Merkle a escala de Internet: la idea de los Merkle Tree Certificates es precisamente convertir la inclusión en el log en la prueba de validez, en lugar de añadir firmas a posteriori (§2.8).</p>
+
+        <h2 id="tls13"><span class="sec">2.4</span>El handshake de TLS 1.3 en detalle</h2>
+        <p>TLS 1.3 (RFC 8446, sustituido en 2026 por RFC 9846, una revisión compatible con el mismo número de versión [1]) completa un handshake completo en un viaje de ida y vuelta (1-RTT). La Figura 2.2 muestra el flujo con el grupo híbrido X25519MLKEM768, que es lo que negocia hoy un navegador moderno con la mayoría de grandes sitios.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 760 560" role="img" aria-labelledby="f22t f22d">
+            <title id="f22t">Handshake de TLS 1.3 con intercambio de claves híbrido X25519MLKEM768</title>
+            <desc id="f22d">Diagrama de secuencia cliente-servidor. ClientHello con key_share de 1216 bytes; ServerHello con key_share de 1120 bytes; ambos derivan el Handshake Secret del secreto concatenado de 64 bytes; el servidor envía cifrados EncryptedExtensions, Certificate, CertificateVerify y Finished; el cliente responde con Finished y empiezan los datos de aplicación.</desc>
+            <defs>
+              <marker id="f22s" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-signal"/></marker>
+              <marker id="f22m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-amber"/></marker>
+              <marker id="f22k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-ink"/></marker>
+            </defs>
+            <rect x="40" y="16" width="160" height="36" rx="4" class="svg-box-ink"/>
+            <text x="120" y="39" text-anchor="middle" class="svg-on-ink">Cliente</text>
+            <rect x="560" y="16" width="160" height="36" rx="4" class="svg-box-ink"/>
+            <text x="640" y="39" text-anchor="middle" class="svg-on-ink">Servidor</text>
+            <line x1="120" y1="52" x2="120" y2="495" class="svg-line" stroke-dasharray="4 4"/>
+            <line x1="640" y1="52" x2="640" y2="495" class="svg-line" stroke-dasharray="4 4"/>
+
+            <text x="380" y="88" text-anchor="middle" class="svg-text" font-weight="700">ClientHello</text>
+            <line x1="120" y1="96" x2="638" y2="96" class="svg-stroke-signal" stroke-width="2" marker-end="url(#f22s)"/>
+            <text x="380" y="114" text-anchor="middle" class="svg-muted">key_share X25519MLKEM768 = ek ML-KEM-768 (1 184 B) ‖ X25519 (32 B) = 1 216 B</text>
+            <text x="380" y="129" text-anchor="middle" class="svg-muted">+ supported_groups, signature_algorithms (p. ej. mldsa44, ecdsa_secp256r1_sha256)</text>
+
+            <text x="380" y="160" text-anchor="middle" class="svg-text" font-weight="700">ServerHello</text>
+            <line x1="640" y1="168" x2="122" y2="168" class="svg-stroke-signal" stroke-width="2" marker-end="url(#f22s)"/>
+            <text x="380" y="186" text-anchor="middle" class="svg-muted">key_share = ct ML-KEM-768 (1 088 B) ‖ X25519 (32 B) = 1 120 B</text>
+
+            <rect x="150" y="198" width="460" height="46" rx="4" class="svg-box-signal"/>
+            <text x="380" y="217" text-anchor="middle" class="svg-text">Ambos: ss = ss<tspan baseline-shift="sub" font-size="9">ML-KEM</tspan> ‖ ss<tspan baseline-shift="sub" font-size="9">X25519</tspan> (64 B)</text>
+            <text x="380" y="236" text-anchor="middle" class="svg-muted">HKDF-Extract → Handshake Secret → claves de tráfico de handshake</text>
+
+            <text x="380" y="270" text-anchor="middle" class="svg-text">{EncryptedExtensions}</text>
+            <line x1="640" y1="278" x2="122" y2="278" class="svg-stroke-ink" stroke-width="1.5" marker-end="url(#f22k)"/>
+
+            <text x="380" y="304" text-anchor="middle" class="svg-text" font-weight="700">{Certificate}</text>
+            <line x1="640" y1="312" x2="122" y2="312" class="svg-stroke-amber" stroke-width="2" marker-end="url(#f22m)"/>
+            <text x="380" y="329" text-anchor="middle" class="svg-muted">cadena X.509: claves públicas + firmas de CA + SCT</text>
+
+            <text x="380" y="354" text-anchor="middle" class="svg-text" font-weight="700">{CertificateVerify}</text>
+            <line x1="640" y1="362" x2="122" y2="362" class="svg-stroke-amber" stroke-width="2" marker-end="url(#f22m)"/>
+            <text x="380" y="379" text-anchor="middle" class="svg-muted">firma del servidor sobre el hash del transcript</text>
+
+            <text x="380" y="404" text-anchor="middle" class="svg-text">{Finished}</text>
+            <line x1="640" y1="412" x2="122" y2="412" class="svg-stroke-ink" stroke-width="1.5" marker-end="url(#f22k)"/>
+            <text x="380" y="428" text-anchor="middle" class="svg-muted">HMAC del transcript</text>
+
+            <text x="380" y="452" text-anchor="middle" class="svg-text">{Finished}</text>
+            <line x1="120" y1="460" x2="638" y2="460" class="svg-stroke-ink" stroke-width="1.5" marker-end="url(#f22k)"/>
+
+            <text x="380" y="484" text-anchor="middle" class="svg-text">[Datos de aplicación]</text>
+            <line x1="124" y1="492" x2="636" y2="492" class="svg-stroke-ink" stroke-width="1.5" marker-start="url(#f22k)" marker-end="url(#f22k)"/>
+
+            <rect x="40" y="512" width="14" height="10" class="svg-box-signal"/>
+            <text x="60" y="521" class="svg-muted">Intercambio de claves: confidencialidad (amenazada por HNDL desde hoy)</text>
+            <rect x="40" y="530" width="14" height="10" class="svg-box-amber"/>
+            <text x="60" y="539" class="svg-muted">Autenticación: solo explotable con un CRQC en tiempo real</text>
+            <text x="540" y="521" class="svg-muted">{ } claves de handshake</text>
+            <text x="540" y="539" class="svg-muted">[ ] claves de aplicación</text>
+          </svg>
+          <figcaption><b>Figura 2.2.</b> Handshake TLS 1.3 (1-RTT) con X25519MLKEM768 (RFC 10024 [3]). Los tamaños de los <code>key_share</code> son exactos y coinciden con los medidos en el laboratorio L4. Todo lo que sigue al ServerHello va cifrado, incluido el certificado.</figcaption>
+        </figure>
+
+        <h3>Mensaje a mensaje</h3>
+        <ol>
+          <li><strong>ClientHello.</strong> El cliente anuncia versiones, suites de cifrado AEAD, <code>supported_groups</code> (grupos de intercambio en orden de preferencia) y <code>signature_algorithms</code> (qué firmas acepta), y envía de forma especulativa uno o varios <code>key_share</code>: claves públicas efímeras para los grupos que cree que el servidor elegirá. OpenSSL 3.5 envía por defecto dos: X25519MLKEM768 y X25519.</li>
+          <li><strong>ServerHello.</strong> El servidor elige un grupo del que tenga <code>key_share</code> y responde con el suyo. Con un KEM el «key_share» del servidor no es una clave pública, sino un <strong>texto cifrado</strong>: el servidor encapsula contra la clave de encapsulado del cliente. Si el cliente no envió <code>key_share</code> para ningún grupo aceptable, el servidor responde con <code>HelloRetryRequest</code> y se pierde un viaje de ida y vuelta.</li>
+          <li><strong>EncryptedExtensions, Certificate, CertificateVerify, Finished</strong>, ya cifrados con las claves de handshake. <code>CertificateVerify</code> contiene la firma del servidor sobre el hash del <em>transcript</em> (todos los mensajes anteriores): demuestra posesión de la clave privada de la hoja y liga la autenticación a <em>este</em> intercambio de claves.</li>
+          <li><strong>Finished</strong> del cliente y datos de aplicación con claves derivadas del <em>Master Secret</em>.</li>
+        </ol>
+
+        <h3>El key schedule</h3>
+        <p>TLS 1.3 deriva todas las claves con HKDF (RFC 5869) a partir de una cadena de secretos. Sin PSK y con SHA-256:</p>
+        <div class="equation">ES = HKDF-Extract(0<sup>32</sup>, 0<sup>32</sup>)<span class="eq-label">(2.1)</span></div>
+        <div class="equation">HS = HKDF-Extract(Derive-Secret(ES, "derived", ""), <var>ss</var>)<span class="eq-label">(2.2)</span></div>
+        <div class="equation">s_hs_traffic = Derive-Secret(HS, "s hs traffic", CH‖SH)<span class="eq-label">(2.3)</span></div>
+        <div class="equation">MS = HKDF-Extract(Derive-Secret(HS, "derived", ""), 0<sup>32</sup>)<span class="eq-label">(2.4)</span></div>
+        <p>ES, HS y MS son el <em>Early</em>, <em>Handshake</em> y <em>Master Secret</em>; CH‖SH son los mensajes de ClientHello a ServerHello, cuyo hash (el <em>transcript hash</em>) usa Derive-Secret. Las claves de tráfico de aplicación salen de MS con el transcript hasta el Finished del servidor.</p>
+        <p>En un handshake clásico, <var>ss</var> es el secreto ECDHE. En X25519MLKEM768, <var>ss</var> = <var>ss</var><sub>ML-KEM</sub> ‖ <var>ss</var><sub>X25519</sub>: 64 bytes, con el secreto de ML-KEM primero para que la derivación sea aprobable bajo FIPS [3]. Nada más cambia en el protocolo: el híbrido es «un grupo más» con un <code>key_share</code> grande. Ese es el marco general de RFC 9954 (<em>Hybrid Key Exchange in TLS 1.3</em>, julio de 2026): cada combinación se negocia como un único <code>NamedGroup</code>, las claves y textos cifrados se concatenan y los secretos, de longitud fija, se concatenan antes de entrar en el key schedule [3]. Que la simple concatenación sea segura se apoya en que HKDF-Extract actúa como combinador y en que ambos <code>key_share</code> entran en el transcript; el análisis está en el <a href="../tema5/index.html">Tema 5</a>. El laboratorio L4 reproduce en Python este cálculo y comprueba los valores intermedios con los vectores de prueba de RFC 8448.</p>
+
+        <div class="table-wrap"><table>
+          <caption>Grupos de TLS 1.3 relevantes y tamaño de sus key_share (bytes)</caption>
+          <thead><tr><th>Grupo</th><th class="num">Código</th><th class="num">Cliente</th><th class="num">Servidor</th><th>Estado (sept. 2026)</th></tr></thead>
+          <tbody>
+            <tr><td>x25519</td><td class="num">0x001D</td><td class="num">32</td><td class="num">32</td><td>RFC 8446; vulnerable a Shor</td></tr>
+            <tr><td>secp256r1</td><td class="num">0x0017</td><td class="num">65</td><td class="num">65</td><td>RFC 8446; vulnerable a Shor</td></tr>
+            <tr><td><strong>X25519MLKEM768</strong></td><td class="num">0x11EC</td><td class="num">1 216</td><td class="num">1 120</td><td><span class="badge final">RFC 10024</span> agosto 2026, «Recommended: Y» [3]</td></tr>
+            <tr><td>SecP256r1MLKEM768</td><td class="num">0x11EB</td><td class="num">1 249</td><td class="num">1 153</td><td><span class="badge final">RFC 10024</span></td></tr>
+            <tr><td>SecP384r1MLKEM1024</td><td class="num">0x11ED</td><td class="num">1 665</td><td class="num">1 665</td><td><span class="badge final">RFC 10024</span></td></tr>
+            <tr><td>MLKEM768 (solo PQ)</td><td class="num">0x0201</td><td class="num">1 184</td><td class="num">1 088</td><td><span class="badge draft">Borrador</span> draft-ietf-tls-mlkem-11, en cola del RFC Editor, informativo [4]</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="callout update"><span class="callout-title">Novedad · despliegue del intercambio híbrido</span>
+          <p>Chrome 131 (noviembre de 2024) sustituyó el grupo provisional X25519Kyber768Draft00 (0x6399) por X25519MLKEM768 (0x11EC), activado por defecto [18]. OpenSSL 3.5 LTS (abril de 2025) lo envía por defecto; iOS 26 y macOS Tahoe 26 lo activan por defecto en URLSession y Network.framework [22]. Cloudflare informa de que «más de dos tercios» del tráfico de navegadores hacia su red ya usa intercambio de claves post-cuántico (junio de 2026) [15]. El intercambio de claves de la Web está, en la práctica, migrado; la autenticación no.</p>
+        </div>
+
+        <h2 id="hndl"><span class="sec">2.5</span>HNDL: confidencialidad hoy, autenticación mañana</h2>
+        <p>Supongamos un adversario que graba hoy el tráfico cifrado y obtiene un CRQC en el año <var>T</var>. ¿Qué puede hacer con la grabación?</p>
+        <ul>
+          <li><strong>Con ECDHE clásico:</strong> los dos <code>key_share</code> van en claro en la grabación. Con Shor calcula el logaritmo discreto de uno de ellos, recupera <var>ss</var>, reconstruye el key schedule completo (2.1–2.4), porque todo lo demás es público o está en el transcript, y descifra la sesión. La «confidencialidad directa» (<em>forward secrecy</em>) no ayuda: protege frente al robo futuro de claves de largo plazo, no frente a la rotura del problema matemático.</li>
+          <li><strong>Con intercambio RSA de TLS 1.2</strong> (sin confidencialidad directa) es peor: factorizar <em>una</em> clave RSA del servidor descifra <em>todas</em> las sesiones grabadas con ella.</li>
+          <li><strong>Con X25519MLKEM768:</strong> tras romper X25519 le falta <var>ss</var><sub>ML-KEM</sub>. Mientras ML-KEM-768 resista, la grabación no sirve.</li>
+          <li><strong>La autenticación grabada no sirve de nada.</strong> Falsificar hoy una firma ECDSA de una sesión de 2026 no cambia lo que ocurrió en 2026. Una firma rota solo es útil para suplantar en una conexión <em>en curso</em> (ataque de intermediario activo), y eso exige tener el CRQC en ese momento.</li>
+        </ul>
+        <p>De ahí la prioridad que siguen navegadores, NIST y agencias: <strong>primero el intercambio de claves (ya), después las firmas</strong>. Pero «después» no significa «tarde», por cuatro razones:</p>
+        <ol>
+          <li><strong>Anclas de confianza de larga vida.</strong> Una raíz nueva tarda años en llegar a todos los almacenes de confianza, y los dispositivos embebidos (arranque seguro, contadores, automóviles) graban la clave raíz en ROM o fusibles OTP durante 10–20 años. Un dispositivo fabricado en 2027 con una raíz ECDSA seguirá verificando ECDSA en 2040.</li>
+          <li><strong>Firmas que deben seguir siendo válidas años después:</strong> firmware, documentos electrónicos con valor legal, sellos de tiempo, KSK de DNSSEC. Si el verificador de 2036 no puede distinguir una firma legítima de 2026 de una falsificada en 2036, la firma pierde su valor.</li>
+          <li><strong>Degradación.</strong> Mientras un cliente acepte certificados ECDSA, un atacante con CRQC puede presentarle uno falsificado aunque el servidor real use ML-DSA. La migración de la autenticación termina cuando los clientes <em>dejan de aceptar</em> lo clásico, no cuando los servidores añaden lo post-cuántico. Por eso la fase 3 del plan de Chrome contempla que los sitios opten por protección frente a degradación [12].</li>
+          <li><strong>El horizonte se ha acortado.</strong> En marzo de 2026 Google Quantum AI publicó estimaciones para resolver el logaritmo discreto en curvas de 256 bits con menos de 1 200–1 450 cúbits lógicos y menos de 500 000 cúbits físicos superconductores en «unos minutos», y reafirmó 2029 como su plazo de migración [26]; Cloudflare adelantó a 2029 su objetivo de ser completamente post-cuántica, incluida la autenticación [15]. La orden ejecutiva 14412 de EE. UU. (22 de junio de 2026) pide a las agencias federales cifrado post-cuántico en sus sistemas más sensibles para finales de 2030 y autenticación para finales de 2031 [15]. Las estimaciones de recursos se tratan en el <a href="../tema1/index.html">Tema 1</a>.</li>
+        </ol>
+
+        <h2 id="protocolos"><span class="sec">2.6</span>El resto de la infraestructura: qué es vulnerable y cómo va la migración</h2>
+        <p>La misma pregunta, «¿dónde está el intercambio de claves y dónde la autenticación?», ordena el resto de protocolos. La tabla resume el estado en septiembre de 2026; los párrafos siguientes dan el detalle.</p>
+        <div class="table-wrap"><table>
+          <caption>Primitivas vulnerables a Shor y estado de la migración (septiembre de 2026)</caption>
+          <thead><tr><th>Sistema</th><th>Intercambio de claves</th><th>Autenticación</th><th>¿HNDL?</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td>TLS 1.3 (Web)</td><td>ECDHE → X25519MLKEM768</td><td>ECDSA/RSA en X.509</td><td>Sí</td><td>Intercambio: RFC 10024, desplegado. Firmas: ML-DSA en TLS en cola del RFC Editor [5]; la Web pública espera a MTC [11][12]</td></tr>
+            <tr><td>SSH</td><td>curve25519 → mlkem768x25519-sha256</td><td>Ed25519/ECDSA/RSA (host y usuario)</td><td>Sí</td><td>Intercambio: RFC 10042 (ago. 2026), por defecto en OpenSSH ≥ 10.0 [19]. Firmas: compuesta ML-DSA-44 + Ed25519 experimental en OpenSSH 10.5</td></tr>
+            <tr><td>IPsec / IKEv2</td><td>(EC)DH → + ML-KEM (RFC 9370)</td><td>Firmas RSA/ECDSA o PSK</td><td>Sí</td><td>Intercambio: RFC 9370 + draft-ietf-ipsecme-ikev2-mlkem en cola del RFC Editor [20]. Firmas: draft-ietf-ipsecme-ikev2-pqc-auth</td></tr>
+            <tr><td>DNSSEC</td><td>—</td><td>RSA/ECDSA (algoritmos 8 y 13)</td><td>No</td><td>Investigación y borradores; sin algoritmo PQ estandarizado [21]</td></tr>
+            <tr><td>Signal</td><td>X3DH → PQXDH; ratchet → Triple Ratchet (SPQR)</td><td>Claves de identidad XEdDSA</td><td>Sí</td><td>Intercambio PQ desplegado (2023 y oct. 2025) [23]; identidad clásica</td></tr>
+            <tr><td>iMessage</td><td>ECDH P-256 → PQ3 (Kyber-1024/768 + P-256)</td><td>ECDSA P-256</td><td>Sí</td><td>PQ3 desde iOS 17.4 (2024) [24]; autenticación clásica</td></tr>
+            <tr><td>Firma de código / paquetes</td><td>—</td><td>RSA/ECDSA, OpenPGP</td><td>No*</td><td>Inicial; LMS/XMSS (RFC 8554/8391, SP 800-208) para firmware; ML-DSA en X.509 (RFC 9881)</td></tr>
+            <tr><td>Arranque seguro (UEFI)</td><td>—</td><td>RSA-2048 (claves PK/KEK/db)</td><td>No*</td><td>Especificación UEFI preparando PQC; firmas múltiples clásica + ML-DSA [25]</td></tr>
+            <tr><td>WebAuthn / FIDO2</td><td>—</td><td>ECDSA P-256 (COSE −7), Ed25519</td><td>No</td><td>ML-DSA registrado en COSE (−48, −49, −50; RFC 9964) [27]; autenticadores PQ en prototipo</td></tr>
+          </tbody>
+        </table></div>
+        <p class="small">* Sin riesgo HNDL de confidencialidad, pero con anclas de confianza y firmas de vida muy larga (§2.5): la urgencia práctica es alta.</p>
+
+        <h3>SSH</h3>
+        <p>SSH fue el primer protocolo de uso masivo que activó por defecto un intercambio post-cuántico: OpenSSH 9.0 (abril de 2022) pasó a usar <code>sntrup761x25519-sha512</code>, y OpenSSH 10.0 (abril de 2025) cambió el valor por defecto a <code>mlkem768x25519-sha256</code>, que el IETF publicó como RFC 10042 en agosto de 2026 (informativo). El secreto se combina como <var>K</var> = HASH(<var>K</var><sub>PQ</sub> ‖ <var>K</var><sub>CL</sub>) [19]. Desde OpenSSH 10.1 el cliente avisa cuando la conexión negocia un intercambio no post-cuántico. La autenticación (claves de host y de usuario) sigue siendo Ed25519, ECDSA o RSA; OpenSSH 10.5 (agosto de 2026) añadió de forma experimental una firma compuesta ML-DSA-44 + Ed25519. Las claves SSH no tienen caducidad ni revocación centralizada, así que la migración de claves de host se parece más a la de raíces que a la de certificados TLS.</p>
+
+        <h3>IPsec / IKEv2</h3>
+        <p>IKEv2 negocia el intercambio Diffie-Hellman en <code>IKE_SA_INIT</code>, que viaja sobre UDP sin cifrar y no puede usar la fragmentación de IKE (RFC 7383), porque esta requiere claves ya establecidas. Una clave de encapsulado ML-KEM-768 de 1 184 bytes, más cabeceras y propuestas, empuja el datagrama por encima de la MTU y provoca fragmentación IP, que muchos cortafuegos descartan. RFC 9370 (mayo de 2023) lo resuelve así: el <code>IKE_SA_INIT</code> lleva el (EC)DH clásico, y hasta siete intercambios adicionales (<em>Additional Key Exchange</em> 1–7) se ejecutan en mensajes <code>IKE_INTERMEDIATE</code> (RFC 9242), ya protegidos y fragmentables. Tras cada uno las claves se actualizan en cadena:</p>
+        <div class="equation">SKEYSEED(<var>n</var>) = prf(SK_d(<var>n</var>−1), SK(<var>n</var>) | Ni | Nr)<span class="eq-label">(2.5)</span></div>
+        <p>donde SK(<var>n</var>) es el secreto del <var>n</var>-ésimo intercambio. El borrador draft-ietf-ipsecme-ikev2-mlkem-09 asigna a ML-KEM-512/768/1024 los identificadores de transformación 35/36/37 y está en la cola del RFC Editor [20]. La autenticación con ML-DSA y SLH-DSA se define en draft-ietf-ipsecme-ikev2-pqc-auth. Muchas VPN corporativas usan además PSK, que no es vulnerable a Shor si la clave tiene entropía suficiente: RFC 8784 ya permitía mezclar una PSK post-cuántica como medida provisional.</p>
+
+        <h3>DNSSEC</h3>
+        <p>DNSSEC solo aporta autenticidad e integridad; no hay nada que descifrar después, así que no hay HNDL. El problema es de tamaño: las respuestas DNS van por UDP con un búfer EDNS recomendado de 1 232 bytes, y una respuesta con registros RRSIG de 2 420 bytes (ML-DSA-44) o 7 856 bytes (SLH-DSA-SHA2-128s) obliga a pasar a TCP. Los análisis de 2026 concluyen que, entre los algoritmos estandarizados o en vías de estandarización, solo FN-DSA-512 (firma de ≈ 666 bytes y clave de 897 bytes) encaja casi sin cambios de protocolo, e incluso así fuerza más respuestas por TCP [21]. Se investigan modos como <em>Merkle Tree Ladder</em> (MTL), que amortiza una firma grande sobre muchos registros, y el uso de algoritmos distintos para ZSK y KSK. En septiembre de 2026 no hay ningún algoritmo DNSSEC post-cuántico estandarizado.</p>
+
+        <h3>Mensajería: Signal e iMessage</h3>
+        <p>Signal añadió en 2023 PQXDH, que inserta un encapsulado KEM en el acuerdo inicial X3DH, y en octubre de 2025 el <em>Sparse Post-Quantum Ratchet</em> (SPQR): un tercer trinquete que, en paralelo al Double Ratchet, envía en cada mensaje un fragmento de material KEM y mezcla ambos resultados con una KDF («Triple Ratchet»). Así se recupera la seguridad post-compromiso también frente a un adversario cuántico [23]. Apple desplegó PQ3 en iMessage con iOS 17.4 (2024): registro con una clave Kyber-1024 y otra P-256, y reencapsulados periódicos con Kyber-768 para limitar el tráfico [24]. En ambos casos la autenticación de identidad sigue siendo clásica. Es coherente con §2.5: un atacante que no pueda suplantar hoy no gana nada rompiendo mañana esas firmas.</p>
+
+        <h3>Firma de código y arranque seguro</h3>
+        <p>La firma de actualizaciones es el caso en que «la autenticación puede esperar» falla con más claridad: la clave pública del verificador está grabada en el dispositivo y la firma debe seguir siendo creíble durante toda su vida. Para firmware, la NSA (CNSA 2.0) y NIST SP 800-208 recomiendan firmas basadas en hash con estado, LMS y XMSS (RFC 8554, RFC 8391): claves públicas diminutas, verificación sencilla y seguridad reducida a la de la función hash, a cambio de gestionar el estado del firmante con extremo cuidado (reutilizar un índice rompe la seguridad). El Foro UEFI trabaja en la especificación para PQC y contempla imágenes con varias firmas (una RSA y otra ML-DSA) durante la transición [25]. Para firma de paquetes y software de gran volumen, ML-DSA (RFC 9881 para X.509) es la opción general. Los detalles de LMS/XMSS y SLH-DSA están en el <a href="../tema4/index.html">Tema 4</a>.</p>
+
+        <h3>WebAuthn / FIDO2 (passkeys)</h3>
+        <p>Una passkey es un par de claves por sitio que el autenticador genera y guarda; el servidor almacena la clave pública (casi siempre ECDSA P-256, identificador COSE −7) y verifica una firma sobre un reto en cada inicio de sesión. Un CRQC que obtenga la clave pública (el servidor la guarda y puede filtrarse) podría calcular la privada y autenticarse. No hay HNDL, pero sí una base instalada de llaves hardware que no se pueden actualizar. El registro IANA de COSE ya incluye ML-DSA-44/65/87 con los valores −48/−49/−50 (RFC 9964) [27]; los autenticadores con ML-DSA están en fase de prototipo y el tamaño (firma de 2 420 bytes frente a 64) importa en NFC y BLE.</p>
+
+        <h2 id="tamano"><span class="sec">2.7</span>El problema del tamaño: bytes en la red</h2>
+        <p>El intercambio híbrido añade unos 2,3 kB a un handshake (1 216 + 1 120 bytes frente a 32 + 32). Es un coste asumible: se pagó en 2024 sin problemas relevantes, salvo algunos middleboxes defectuosos que no toleraban un ClientHello repartido en dos segmentos TCP. Las firmas son otra historia.</p>
+
+        <h3>Ejemplo resuelto: recuento de una cadena</h3>
+        <p>Siguiendo el modelo de la Figura 2.1 (2 claves públicas y 5 firmas por handshake), y usando los tamaños de FIPS 204, FIPS 205 y de las curvas clásicas:</p>
+        <div class="table-wrap"><table>
+          <caption>Material criptográfico de autenticación en un handshake TLS típico (bytes, sin codificación ASN.1; firma ECDSA en DER)</caption>
+          <thead><tr><th>Algoritmo (toda la cadena)</th><th class="num">Clave</th><th class="num">Firma</th><th class="num">2 × clave + 5 × firma</th><th class="num">× ECDSA</th></tr></thead>
+          <tbody>
+            <tr><td>ECDSA P-256</td><td class="num">65</td><td class="num">≈ 72</td><td class="num">≈ 490</td><td class="num">1</td></tr>
+            <tr><td>RSA-2048</td><td class="num">256</td><td class="num">256</td><td class="num">1 792</td><td class="num">3,7</td></tr>
+            <tr><td>FN-DSA-512 (Falcon)</td><td class="num">897</td><td class="num">≈ 666</td><td class="num">≈ 5 124</td><td class="num">10</td></tr>
+            <tr><td><strong>ML-DSA-44</strong></td><td class="num">1 312</td><td class="num">2 420</td><td class="num"><strong>14 724</strong></td><td class="num">30</td></tr>
+            <tr><td>ML-DSA-65</td><td class="num">1 952</td><td class="num">3 309</td><td class="num">20 449</td><td class="num">42</td></tr>
+            <tr><td>SLH-DSA-SHA2-128s</td><td class="num">32</td><td class="num">7 856</td><td class="num">39 344</td><td class="num">80</td></tr>
+          </tbody>
+        </table></div>
+        <p>Cálculo para ML-DSA-44: 2 × 1 312 + 5 × 2 420 = 2 624 + 12 100 = 14 724 bytes, frente a 2 × 65 + 5 × 72 ≈ 490. Es decir, unos <strong>14 kB adicionales</strong> en cada handshake completo, más que todo lo que envía hoy un servidor típico en su primer vuelo. FN-DSA aparece solo como referencia: en septiembre de 2026 FIPS 206 no tiene todavía ni borrador público y su firma exige aritmética en coma flotante muy difícil de implementar en tiempo constante (<a href="../tema4/index.html">Tema 4</a>).</p>
+
+        <h3>Por qué 14 kB son un problema: TCP y QUIC</h3>
+        <ul>
+          <li><strong>Ventana inicial de TCP.</strong> Un servidor TCP puede enviar sin esperar ACK como máximo su ventana de congestión inicial, típicamente 10 segmentos (RFC 6928): 10 × 1 460 ≈ 14 600 bytes. Si el primer vuelo del servidor (ServerHello + EncryptedExtensions + Certificate + CertificateVerify + Finished) supera ese límite, el resto espera a un ACK: <strong>un viaje de ida y vuelta más</strong>. Con ECDSA el primer vuelo ocupa 2–5 kB; con ML-DSA-44 y SCT también post-cuánticos se pasa del umbral.</li>
+          <li><strong>Límite antiamplificación de QUIC.</strong> Antes de validar la dirección del cliente, un servidor QUIC no puede enviar más de 3 veces los bytes recibidos (RFC 9000, §8.1). El cliente rellena sus datagramas Initial hasta al menos 1 200 bytes; con un ClientHello híbrido de ≈ 1,5 kB envía dos (≈ 2 400 bytes), así que el servidor dispone de ≈ 7 200 bytes. Una cadena ML-DSA no cabe: RTT adicional o recurso a tokens de validación.</li>
+          <li><strong>Mediciones.</strong> Cloudflare estima que añadir unos 9 kB supone una regresión de ≈ 15 % en el tiempo de handshake, mientras que Chrome se ha fijado como máximo tolerable un 10 % [14]. La compresión de certificados (RFC 8879) no ayuda: claves y firmas post-cuánticas son indistinguibles de datos aleatorios.</li>
+        </ul>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 760 270" role="img" aria-labelledby="f23t f23d">
+            <title id="f23t">Bytes recibidos por el cliente en el handshake según la cadena de certificados</title>
+            <desc id="f23d">Barras horizontales: ECDSA con X25519, 1264 bytes; ECDSA con X25519MLKEM768, 2352; ML-DSA-44 con X25519MLKEM768, 11915; ML-DSA-65 con X25519MLKEM768, 15862. Líneas verticales en 7200 bytes (límite QUIC) y 14600 bytes (ventana inicial TCP).</desc>
+            <text x="190" y="53" text-anchor="end" class="svg-text">ECDSA · X25519</text>
+            <rect x="200" y="36" width="37" height="26" class="svg-box-signal"/>
+            <text x="243" y="54" class="svg-muted">1 264</text>
+            <text x="190" y="98" text-anchor="end" class="svg-text">ECDSA · X25519MLKEM768</text>
+            <rect x="200" y="81" width="68" height="26" class="svg-box-signal"/>
+            <text x="274" y="99" class="svg-muted">2 352</text>
+            <text x="190" y="143" text-anchor="end" class="svg-text">ML-DSA-44 · híbrido</text>
+            <rect x="200" y="126" width="344" height="26" class="svg-box-amber"/>
+            <text x="550" y="144" class="svg-muted">11 915</text>
+            <text x="190" y="188" text-anchor="end" class="svg-text">ML-DSA-65 · híbrido</text>
+            <rect x="200" y="171" width="458" height="26" class="svg-box-amber"/>
+            <text x="664" y="189" class="svg-muted">15 862</text>
+            <line x1="408" y1="26" x2="408" y2="210" class="svg-stroke-amber" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="412" y="20" class="svg-muted">QUIC ≈ 7 200</text>
+            <line x1="622" y1="26" x2="622" y2="210" class="svg-stroke-ink" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="626" y="20" class="svg-muted">initcwnd ≈ 14 600</text>
+            <line x1="200" y1="212" x2="720" y2="212" class="svg-line"/>
+            <line x1="200" y1="212" x2="200" y2="218" class="svg-line"/><text x="200" y="232" text-anchor="middle" class="svg-muted">0</text>
+            <line x1="344" y1="212" x2="344" y2="218" class="svg-line"/><text x="344" y="232" text-anchor="middle" class="svg-muted">5 000</text>
+            <line x1="489" y1="212" x2="489" y2="218" class="svg-line"/><text x="489" y="232" text-anchor="middle" class="svg-muted">10 000</text>
+            <line x1="633" y1="212" x2="633" y2="218" class="svg-line"/><text x="633" y="232" text-anchor="middle" class="svg-muted">15 000</text>
+            <text x="460" y="256" text-anchor="middle" class="svg-muted">bytes recibidos por el cliente durante el handshake (cadena hoja + intermedia, sin SCT)</text>
+          </svg>
+          <figcaption><b>Figura 2.3.</b> Medidas reales del laboratorio L4 (OpenSSL 3.5.8, septiembre de 2026) con una cadena de juguete sin SCT ni nombres largos; una cadena real añade 1–3 kB. Con ML-DSA-65 el primer vuelo ya no cabe en la ventana inicial de TCP (10 × 1 460 bytes); con cualquier ML-DSA se supera el límite de QUIC.</figcaption>
+        </figure>
+
+        <h2 id="propuestas"><span class="sec">2.8</span>Propuestas para aligerar la autenticación</h2>
+        <h3>KEMTLS y AuthKEM</h3>
+        <p>Schwabe, Stebila y Wiggers (ACM CCS 2020) observaron que un KEM es mucho más barato que una firma post-cuántica: una clave ML-KEM-768 más su texto cifrado suman 2 272 bytes, frente a los 3 732 de clave y firma ML-DSA-44. En <strong>KEMTLS</strong> el certificado de la hoja contiene una clave pública de KEM; el cliente encapsula contra ella y solo el servidor legítimo puede derivar las claves que producen su <code>Finished</code>. Desaparece <code>CertificateVerify</code> (la autenticación es implícita) y el servidor no necesita código de firma [16]. El borrador AuthKEM (draft-celi-wiggers-tls-authkem) lo adapta a TLS 1.3. Coste: cambia la máquina de estados del protocolo y el cliente no recibe la confirmación explícita del servidor hasta medio viaje más tarde. Las firmas de las CA en la cadena siguen siendo necesarias.</p>
+
+        <h3>Merkle Tree Certificates (MTC)</h3>
+        <p>La propuesta con más impulso en 2026. La CA no firma cada certificado: los añade como entradas a un log de Merkle y firma (con cofirmantes independientes, al estilo de CT) solo la raíz de subárboles que cubren lotes de emisiones. Un certificado MTC contiene la clave pública del sujeto y una <strong>prueba de inclusión</strong> (una lista de hashes) hasta un subárbol «hito» (<em>landmark</em>). Si el navegador ya conoce ese hito, recibido por un canal de actualización, el certificado no lleva <em>ninguna</em> firma. Para clientes desactualizados existe la forma autónoma con cofirmas [11].</p>
+        <ul>
+          <li><strong>Estado IETF:</strong> draft-ietf-plants-merkle-tree-certs-06 (21 de septiembre de 2026), grupo de trabajo PLANTS (<em>PKI, Logs, And Tree Signatures</em>), intención de estándar. Todavía no es RFC [11].</li>
+          <li><strong>Chrome</strong> (febrero de 2026): no añadirá certificados X.509 post-cuánticos «tradicionales» a su almacén raíz; los admitirá solo en PKI privadas. Experimento con Cloudflare en curso (fase 1), incorporación de operadores de logs CT en el primer trimestre de 2027 (fase 2) y requisitos del nuevo <em>Chrome Quantum-resistant Root Store</em>, solo para MTC, en el tercer trimestre de 2027 (fase 3) [12].</li>
+          <li><strong>Let's Encrypt</strong> (junio de 2026): adoptará MTC como vía post-cuántica; entorno de pruebas a finales de 2026 y producción en 2027 [13].</li>
+          <li><strong>Tamaño:</strong> con un hito conocido, la autenticación se reduce a clave de la hoja + <code>CertificateVerify</code> + una prueba de unos cientos de bytes. Con ML-DSA-44, 1 312 + 2 420 + ≈ 800 ≈ 4,5 kB, por debajo de muchas cadenas RSA actuales [14].</li>
+        </ul>
+        <p>El precio es un cambio de modelo: la emisión deja de ser inmediata (hay que esperar al siguiente lote y a que el hito se propague) y el navegador necesita un canal de actualización. Encaja con certificados de vida corta y emisión automática (§2.2), no con sistemas desconectados.</p>
+
+        <h3>Negociación de anclas de confianza</h3>
+        <p>Hoy un servidor suele tener un solo certificado y no sabe en qué raíces confía el cliente. <em>TLS Trust Anchor Identifiers</em> (draft-ietf-tls-trust-anchor-ids-05, septiembre de 2026, intención de estándar) permite que el cliente anuncie de forma compacta qué anclas conoce y que el servidor elija entre varias cadenas [17]. Es el mecanismo que permite servir a la vez un certificado ECDSA a clientes antiguos, uno ML-DSA a clientes de PKI privadas y un MTC a navegadores actualizados, sin cadenas cruzadas que añadan bytes. OpenSSL ya permite algo parecido a pequeña escala: un servidor con dos certificados que elige según <code>signature_algorithms</code> (lo verás en el laboratorio L4).</p>
+
+        <h3>Otras medidas</h3>
+        <ul>
+          <li><strong>Omitir intermedios</strong> que el cliente ya conoce (Firefox precarga los intermedios de las CA públicas).</li>
+          <li><strong>Mezclar algoritmos</strong>: firmas rápidas y pequeñas donde se generan en cada handshake (<code>CertificateVerify</code>) y firmas grandes pero conservadoras (SLH-DSA) en raíces que se verifican una vez y rara vez viajan.</li>
+          <li><strong>Certificados compuestos o duales</strong> (ML-DSA + ECDSA) para la transición en PKI privadas: suman los tamaños de ambos. Se discuten en el <a href="../tema5/index.html">Tema 5</a>.</li>
+        </ul>
+
+        <h2 id="ejercicios"><span class="sec">2.9</span>Ejercicios</h2>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 2.1 <span class="level">Básico</span></span>
+          <p>Un adversario graba hoy (2026) tres cosas: (a) una sesión HTTPS negociada con X25519 y certificado ECDSA; (b) una sesión con X25519MLKEM768 y certificado ECDSA; (c) una imagen de firmware firmada con ECDSA P-256 que los dispositivos verificarán hasta 2040. En 2035 dispone de un CRQC. ¿Qué puede hacer con cada grabación?</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>(a) Descifra la sesión: de un <code>key_share</code> X25519 grabado obtiene el escalar privado, recalcula el secreto ECDHE y el key schedule completo. (b) No puede descifrarla mientras ML-KEM-768 resista; que el certificado sea ECDSA es irrelevante para el pasado, porque solo le permitiría suplantar al servidor en conexiones nuevas. (c) La firma grabada no le sirve, pero la clave pública del fabricante sí: calcula la clave privada y firma un firmware malicioso que los dispositivos aún en servicio aceptarán hasta 2040. Es el caso de «autenticación con ancla de larga vida» de §2.5: requiere migrar antes de que exista el CRQC.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 2.2 <span class="level">Básico</span></span>
+          <p>Calcula el tamaño de los <code>key_share</code> de cliente y servidor para SecP256r1MLKEM768 sabiendo que un punto P-256 sin comprimir ocupa 65 bytes. ¿Cabe un ClientHello de 300 bytes más ese <code>key_share</code> y otro de X25519 en un único segmento TCP de 1 460 bytes?</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>Cliente: 65 + 1 184 = 1 249 bytes. Servidor: 65 + 1 088 = 1 153 bytes (coinciden con RFC 10024). El ClientHello ocuparía unos 300 + (4 + 1 249) + (4 + 32) ≈ 1 589 bytes, más 5 de cabecera de registro: no cabe en un segmento de 1 460 bytes y viaja en dos. Por eso hubo middleboxes que fallaron cuando Chrome activó el híbrido: asumían que el ClientHello llega completo en el primer paquete.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 2.3 <span class="level">Intermedio</span></span>
+          <p>Un operador propone una cadena «mixta»: raíz SLH-DSA-SHA2-128s (no viaja), intermedia ML-DSA-65 firmada por la raíz, hoja ML-DSA-44 firmada por la intermedia, 2 SCT ML-DSA-44 y <code>CertificateVerify</code> ML-DSA-44. Calcula los bytes de claves y firmas que envía el servidor y compáralos con la ventana inicial de TCP.</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>Viajan la hoja y la intermedia. Claves: hoja ML-DSA-44 (1 312) + intermedia ML-DSA-65 (1 952) = 3 264. Firmas: hoja firmada por la intermedia (ML-DSA-65, 3 309) + intermedia firmada por la raíz (SLH-DSA-128s, 7 856) + 2 SCT (2 × 2 420 = 4 840) + CertificateVerify (2 420) = 18 425. Total: 21 689 bytes, sin contar ASN.1, nombres ni el resto del handshake. Supera los ≈ 14 600 bytes de la ventana inicial: al menos un RTT adicional. La firma SLH-DSA de la raíz está <em>dentro de la intermedia</em> y sí viaja; usar SLH-DSA en la raíz solo sale gratis si el cliente tiene la intermedia en caché.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 2.4 <span class="level">Intermedio</span></span>
+          <p>Un cliente QUIC envía un ClientHello híbrido de 1 480 bytes. Los datagramas Initial deben tener al menos 1 200 bytes y cada uno admite unos 1 150 bytes de datos CRYPTO. ¿Cuántos bytes puede enviar el servidor antes de validar la dirección? ¿Cabe la cadena ECDSA de L4 (2 352 bytes recibidos)? ¿Y la ML-DSA-44 (11 915)?</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>El ClientHello necesita 2 datagramas, cada uno de al menos 1 200 bytes: ≈ 2 400 bytes recibidos. Límite: 3 × 2 400 ≈ 7 200 bytes (RFC 9000, §8.1). La cadena ECDSA cabe con holgura. La ML-DSA-44 no: el servidor envía ≈ 7 200 bytes y espera a que el cliente responda, lo que valida la dirección, antes de mandar el resto. Paradoja curiosa: el ClientHello híbrido, más grande, <em>aumenta</em> el crédito del servidor.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 2.5 <span class="level">Intermedio</span></span>
+          <p>Con certificados de 47 días (a partir de marzo de 2029) y renovación automática al alcanzar dos tercios de la vida útil, ¿cuántas emisiones al año necesita cada nombre? ¿Por qué este régimen favorece a los MTC frente a firmar cada certificado con ML-DSA?</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>2/3 × 47 ≈ 31 días, así que unas 365 / 31 ≈ 12 emisiones al año, frente a ≈ 1 con 398 días. Con firma individual, cada emisión añade una firma ML-DSA en el certificado y varias en los SCT, además de 4–5 kB de almacenamiento en cada log CT. Con MTC, la CA firma una vez por lote, las entradas del log guardan solo hashes de claves y el coste por certificado es una prueba de inclusión. La emisión frecuente amortiza precisamente lo que MTC hace barato, y la espera hasta el siguiente lote es tolerable si se renueva con semanas de margen.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 2.6 <span class="level">Avanzado</span></span>
+          <p>En X25519MLKEM768 el secreto es <var>ss</var><sub>ML-KEM</sub> ‖ <var>ss</var><sub>X25519</sub> y entra directamente como IKM en HKDF-Extract (ecuación 2.2). (a) Un combinador KEM genérico como X-Wing mete además en su hash el texto cifrado y la clave pública de X25519. ¿Por qué TLS no lo necesita? (b) ¿Por qué RFC 10024 pone el secreto de ML-KEM primero en X25519MLKEM768 y el de ECDH primero en SecP256r1MLKEM768?</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>(a) Un combinador genérico debe producir un KEM IND-CCA por sí solo, sin ayuda del protocolo, y para ello tiene que ligar el secreto Diffie-Hellman a los valores públicos que lo generaron. En TLS 1.3 esa ligadura ya la aporta el protocolo: todas las claves de tráfico se derivan con Derive-Secret sobre el hash del transcript, que contiene ambos <code>key_share</code> completos, y el transcript se autentica con <code>CertificateVerify</code> y <code>Finished</code>. El análisis formal está en el <a href="../tema5/index.html">Tema 5</a>. (b) Por la validación FIPS: NIST SP 800-56C permite derivar claves de un secreto <var>Z</var> ‖ <var>T</var> en el que <var>Z</var> procede de un esquema aprobado y va delante. En X25519MLKEM768 el único componente aprobado es ML-KEM, así que debe ir primero. En SecP256r1MLKEM768 ambos están aprobados, y el RFC coloca primero el ECDH por la trayectoria de certificación más larga de las implementaciones de curvas NIST [3].</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 2.7 <span class="level">Avanzado</span></span>
+          <p>En un MTC con hitos, el certificado no lleva firma. (a) ¿Qué objeto firmado garantiza entonces que la CA emitió ese certificado? (b) ¿Qué ocurre con un cliente que lleva tres semanas sin actualizar su lista de hitos? (c) ¿Por qué el diseño ofrece de serie la propiedad de Certificate Transparency?</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>(a) La raíz del subárbol hito, firmada por la CA y cofirmada por testigos independientes. El cliente la recibió antes por un canal de actualización, y la prueba de inclusión liga el certificado a ella. (b) No conoce los hitos recientes: no puede validar la forma sin firmas y necesita la forma autónoma (con cofirmas, más grande), que el servidor debe poder elegir; esa elección se negocia con mecanismos como Trust Anchor IDs. (c) Porque emitir <em>es</em> añadir al log: un certificado válido demuestra su inclusión en un árbol públicamente auditable. No existe un certificado válido fuera del log, cosa que CT solo conseguía exigiendo SCT a posteriori.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 2.8 <span class="level">Avanzado</span></span>
+          <p>Explica por qué RFC 9370 no transporta la clave ML-KEM en <code>IKE_SA_INIT</code>. Estima el tamaño de un <code>IKE_SA_INIT</code> del iniciador con un KE X25519 más una clave ML-KEM-768, suponiendo 400 bytes de cabecera, SA, nonces y notificaciones, y compáralo con una MTU de 1 500 bytes y con los 1 280 bytes mínimos de IPv6.</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>≈ 400 + (8 + 32) + (8 + 1 184) ≈ 1 632 bytes, más 28 de UDP/IPv4: supera 1 500 y, con más razón, 1 280. Habría fragmentación IP, que muchos equipos descartan, y además <code>IKE_SA_INIT</code> no está protegido, así que no puede usar la fragmentación de IKE (RFC 7383), que requiere claves. RFC 9370 mantiene el <code>IKE_SA_INIT</code> pequeño (solo ECDH) y hace el intercambio ML-KEM en <code>IKE_INTERMEDIATE</code>, ya cifrado y fragmentable. Coste: un viaje de ida y vuelta adicional por cada intercambio extra.</p>
+          </div></details>
+        </div>
+
+        <aside class="key-points"><span class="kp-title">Ideas clave</span>
+          <ul>
+            <li>Cada certificado X.509 transporta una clave pública y una firma; un handshake Web típico mueve 2 claves y 5 firmas. Con ML-DSA-44 eso pasa de ≈ 0,5 kB a ≈ 14,7 kB.</li>
+            <li>El intercambio de claves de la Web ya es híbrido: X25519MLKEM768 es RFC 10024 (agosto de 2026), va por defecto en Chrome, OpenSSL 3.5+ y los sistemas de Apple, y protege más de dos tercios del tráfico de navegadores de Cloudflare.</li>
+            <li>HNDL amenaza la confidencialidad desde hoy; la autenticación, solo con un CRQC operativo. Pero las anclas de larga vida, las firmas duraderas y la degradación obligan a migrar las firmas antes de que exista el CRQC.</li>
+            <li>OCSP está desapareciendo (SC-063, Let's Encrypt, CRLite); la vida de los certificados baja a 200 días (2026), 100 (2027) y 47 (2029). La renovación automática es agilidad criptográfica.</li>
+            <li>SSH (RFC 10042, OpenSSH ≥ 10.0) e IKEv2 (RFC 9370 + ML-KEM) tienen el intercambio resuelto; DNSSEC, firma de código, arranque seguro y WebAuthn son problemas de firmas y están en fases tempranas.</li>
+            <li>Las firmas post-cuánticas rompen supuestos de red: la ventana inicial de TCP, el límite ×3 de QUIC y el transporte UDP de DNS e IKE. La Web pública apuesta por Merkle Tree Certificates (Chrome, Cloudflare y Let's Encrypt, 2027) en lugar de meter ML-DSA en X.509.</li>
+          </ul>
+        </aside>
+
+        <h2 id="referencias"><span class="sec">2.10</span>Referencias</h2>
+        <ol class="refs">
+          <li>E. Rescorla. <a href="https://www.rfc-editor.org/rfc/rfc8446">RFC 8446: The Transport Layer Security (TLS) Protocol Version 1.3</a>. <span class="src">IETF, 2018.</span> Sustituido por <a href="https://www.rfc-editor.org/info/rfc9846">RFC 9846</a> (2026).</li>
+          <li>D. Cooper et al. <a href="https://www.rfc-editor.org/rfc/rfc5280">RFC 5280: Internet X.509 Public Key Infrastructure Certificate and CRL Profile</a>. <span class="src">IETF, 2008.</span></li>
+          <li><a href="https://www.rfc-editor.org/info/rfc10024">RFC 10024: Post-Quantum Hybrid Key Agreement for TLS 1.3 (ECDHE-MLKEM)</a>. <span class="src">IETF, Standards Track, agosto 2026.</span> D. Stebila, S. Fluhrer, S. Gueron. <a href="https://www.rfc-editor.org/info/rfc9954">RFC 9954: Hybrid Key Exchange in TLS 1.3</a>. <span class="src">IETF, informativo, julio 2026.</span></li>
+          <li><a href="https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/">draft-ietf-tls-mlkem: ML-KEM Post-Quantum Key Agreement for TLS 1.3</a>. <span class="src">IETF TLS WG, versión 11, septiembre 2026.</span></li>
+          <li><a href="https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/">draft-ietf-tls-mldsa: Use of ML-DSA in TLS 1.3</a>. <span class="src">IETF TLS WG, versión 06, septiembre 2026 (en cola del RFC Editor).</span></li>
+          <li><a href="https://www.rfc-editor.org/info/rfc9881/">RFC 9881: Algorithm Identifiers for ML-DSA in X.509</a> y <a href="https://datatracker.ietf.org/doc/rfc9935/">RFC 9935: Algorithm Identifiers for ML-KEM in X.509</a>. <span class="src">IETF LAMPS.</span></li>
+          <li>CA/Browser Forum. <a href="https://cabforum.org/2025/04/11/ballot-sc081v3-introduce-schedule-of-reducing-validity-and-data-reuse-periods/">Ballot SC081v3: Introduce Schedule of Reducing Validity and Data Reuse Periods</a> (2025) y <a href="https://cabforum.org/2023/07/14/ballot-sc-063-v4make-ocsp-optional-require-crls-and-incentivize-automation/">Ballot SC063v4: Make OCSP Optional, Require CRLs, and Incentivize Automation</a> (2023).</li>
+          <li>Let's Encrypt. <a href="https://letsencrypt.org/2025/08/06/ocsp-service-has-reached-end-of-life">OCSP Service Has Reached End of Life</a> (agosto 2025) y <a href="https://letsencrypt.org/2025/02/20/first-short-lived-cert-issued">We Issued Our First Six Day Cert</a> (febrero 2025).</li>
+          <li>Mozilla. <a href="https://hacks.mozilla.org/2025/08/crlite-fast-private-and-comprehensive-certificate-revocation-checking-in-firefox/">CRLite: Fast, private, and comprehensive certificate revocation checking in Firefox</a>. <span class="src">Mozilla Hacks, agosto 2025.</span></li>
+          <li>B. Laurie, A. Langley, E. Kasper. <a href="https://www.rfc-editor.org/rfc/rfc6962">RFC 6962: Certificate Transparency</a>. <span class="src">IETF, 2013.</span></li>
+          <li><a href="https://datatracker.ietf.org/doc/draft-ietf-plants-merkle-tree-certs/">draft-ietf-plants-merkle-tree-certs: Merkle Tree Certificates</a>. <span class="src">IETF PLANTS WG, versión 06, septiembre 2026.</span></li>
+          <li>Google. <a href="https://blog.google/security/cultivating-a-robust-and-efficient-quantum-safe-https/">Cultivating a robust and efficient quantum-safe HTTPS</a>. <span class="src">27 de febrero de 2026.</span></li>
+          <li>Let's Encrypt. <a href="https://letsencrypt.org/2026/06/03/pq-certs">A Post-Quantum Future for Let's Encrypt</a>. <span class="src">3 de junio de 2026.</span></li>
+          <li>Cloudflare. <a href="https://blog.cloudflare.com/pq-2025/">State of the post-quantum Internet in 2025</a>. <span class="src">28 de octubre de 2025.</span></li>
+          <li>Cloudflare. <a href="https://blog.cloudflare.com/post-quantum-eo-2026/">The White House's post-quantum executive order is an important milestone</a>. <span class="src">Junio 2026.</span></li>
+          <li>P. Schwabe, D. Stebila, T. Wiggers. <a href="https://eprint.iacr.org/2020/534">Post-Quantum TLS Without Handshake Signatures</a>. <span class="src">ACM CCS 2020; IACR ePrint 2020/534.</span> Véase también <a href="https://datatracker.ietf.org/doc/draft-celi-wiggers-tls-authkem/">draft-celi-wiggers-tls-authkem</a>.</li>
+          <li><a href="https://datatracker.ietf.org/doc/draft-ietf-tls-trust-anchor-ids/">draft-ietf-tls-trust-anchor-ids: TLS Trust Anchor Identifiers</a>. <span class="src">IETF TLS WG, versión 05, septiembre 2026.</span></li>
+          <li>Google Security Blog. <a href="https://security.googleblog.com/2024/09/a-new-path-for-kyber-on-web.html">A new path for Kyber on the web</a>. <span class="src">13 de septiembre de 2024.</span></li>
+          <li>P. Kampanakis, D. Stebila, T. Hansen. <a href="https://www.rfc-editor.org/info/rfc10042">RFC 10042: Post-Quantum/Traditional Hybrid Key Exchange for SSH</a>. <span class="src">IETF, agosto 2026.</span> <a href="https://www.openssh.org/releasenotes.html">OpenSSH Release Notes</a> (10.0–10.5).</li>
+          <li><a href="https://www.rfc-editor.org/rfc/rfc9370.html">RFC 9370: Multiple Key Exchanges in the Internet Key Exchange Protocol Version 2 (IKEv2)</a>. <span class="src">IETF, mayo 2023.</span> <a href="https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/">draft-ietf-ipsecme-ikev2-mlkem</a> y <a href="https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-pqc-auth/">draft-ietf-ipsecme-ikev2-pqc-auth</a>.</li>
+          <li><a href="https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/">draft-sheth-pqc-dnssec-strategy: Post-Quantum Cryptography Strategy for DNSSEC</a>. <span class="src">IETF, borrador individual.</span> <a href="https://eprint.iacr.org/2026/1332.pdf">A Differentiated Approach for Post-Quantum DNSSEC</a>. <span class="src">IACR ePrint 2026/1332.</span></li>
+          <li>Apple. <a href="https://support.apple.com/en-us/122756">Prepare your network for quantum-secure encryption in TLS</a>. <span class="src">Apple Support.</span></li>
+          <li>Signal. <a href="https://signal.org/blog/spqr/">Signal Protocol and Post-Quantum Ratchets</a>. <span class="src">Octubre 2025.</span></li>
+          <li>Apple Security Engineering and Architecture. <a href="https://security.apple.com/blog/imessage-pq3/">iMessage with PQ3: The new state of the art in quantum-secure messaging at scale</a>. <span class="src">Febrero 2024.</span></li>
+          <li>UEFI Forum. <a href="https://uefi.org/sites/default/files/resources/UEFI_PQC_Update_Whitepaper_Final.pdf">Post-Quantum Cryptography: UEFI Specification Updates</a>. <span class="src">Libro blanco.</span></li>
+          <li>Google Research. <a href="https://research.google/blog/safeguarding-cryptocurrency-by-disclosing-quantum-vulnerabilities-responsibly/">Safeguarding cryptocurrency by disclosing quantum vulnerabilities responsibly</a>. <span class="src">31 de marzo de 2026.</span></li>
+          <li>IANA. <a href="https://www.iana.org/assignments/cose/cose.xhtml">CBOR Object Signing and Encryption (COSE) registry</a>: ML-DSA-44/65/87 = −48/−49/−50 (RFC 9964).</li>
+          <li>J. Iyengar, M. Thomson. <a href="https://www.rfc-editor.org/rfc/rfc9000">RFC 9000: QUIC</a> (§8.1, antiamplificación); J. Chu et al. <a href="https://www.rfc-editor.org/rfc/rfc6928">RFC 6928: Increasing TCP's Initial Window</a>.</li>
+        </ol>
+      </article>
+
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../../index.html">Inicio</a></li>
-                    <li><a href="../../programa.html">Programa</a></li>
-                    <li><a href="../tema1/index.html">Temas</a></li>
-                    <li><a href="../../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="../../guias/index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Ejemplos</h3>
-                <ul>
-                    <li><a href="../../ejemplos/algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="../../ejemplos/ml_kem.html">ML-KEM</a></li>
-                    <li><a href="../../ejemplos/ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="../../ejemplos/criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="../../ejemplos/qkd_bb84.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../../js/script.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../../glosario.html">Glosario</a>
+        <a href="../../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

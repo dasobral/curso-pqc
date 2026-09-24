@@ -1,559 +1,765 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../../" data-page="tema3">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tema 3: Fundamentos de Criptografía Post-Cuántica - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="../../css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tema 3 · Fundamentos matemáticos de la PQC — Curso PQC</title>
+  <meta name="description" content="Retículos, LWE, Ring/Module-LWE, SIS, NTRU, códigos correctores, firmas basadas en hash, sistemas multivariantes e isogenias: los problemas difíciles en los que se apoya la criptografía post-cuántica, con ejemplos numéricos y ejercicios resueltos.">
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../css/styles.css">
+  <script src="../../js/course-data.js" defer></script>
+  <script src="../../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../../index.html">Inicio</a></li>
-                <li><a href="../../programa.html">Programa</a></li>
-                <li><a href="../tema1/index.html">Temas</a></li>
-                <li><a href="../../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="../../guias/index.html">Guías de Laboratorio</a></li>
-                <li><a href="../../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../../index.html">Inicio</a> &gt; <a href="../tema1/index.html">Temas</a> &gt; Tema 3: Fundamentos de Criptografía Post-Cuántica
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../../index.html">Inicio</a>
+        <a href="../../programa.html">Programa</a>
+        <a href="../../temas/index.html" aria-current="page">Temas</a>
+        <a href="../../ejemplos/index.html">Ejemplos</a>
+        <a href="../../guias/index.html">Laboratorios</a>
+        <a href="../../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Tema 3: Fundamentos de Criptografía Post-Cuántica</h1>
-        
-        <div class="tema-navegacion">
-            <div class="tema-nav-item">
-                <a href="../tema1/index.html">
-                    <span>Tema 1</span>
-                    <p>Fundamentos de Criptografía Moderna</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema2/index.html">
-                    <span>Tema 2</span>
-                    <p>Infraestructura de Seguridad en Internet</p>
-                </a>
-            </div>
-            <div class="tema-nav-item actual">
-                <span>Tema 3</span>
-                <p>Fundamentos de Criptografía Post-Cuántica</p>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema4/index.html">
-                    <span>Tema 4</span>
-                    <p>Estandarización de Criptografía Post-Cuántica</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema5/index.html">
-                    <span>Tema 5</span>
-                    <p>Implementaciones, Consideraciones y Desafíos</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema6/index.html">
-                    <span>Tema 6</span>
-                    <p>Distribución Cuántica de Claves (QKD)</p>
-                </a>
-            </div>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../../index.html">Inicio</a></li><li><a href="../../temas/index.html">Temas</a></li><li aria-current="page">Tema 3</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Tema 03 · 4 horas</p>
+        <h1>Fundamentos matemáticos de la <em>PQC</em></h1>
+        <p class="lede">Qué problemas matemáticos sostienen la criptografía post-cuántica, por qué el algoritmo de Shor no los resuelve y cómo se traduce su dificultad en parámetros concretos. Retículos y LWE en profundidad; códigos, hash, sistemas multivariantes e isogenias con el detalle suficiente para leer sus especificaciones.</p>
+        <dl class="page-meta">
+          <div><dt>Duración</dt><dd>4 h</dd></div>
+          <div><dt>Nivel</dt><dd>Intermedio</dd></div>
+          <div><dt>Requisitos</dt><dd>Álgebra lineal, aritmética modular, Temas 1–2</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
+
+      <article class="prose">
+        <h2 id="objetivos"><span class="sec">3.0</span>Objetivos</h2>
+        <p>Al terminar este tema deberías ser capaz de:</p>
+        <ul>
+          <li>Explicar qué significa que un problema sea «difícil post-cuántico» y por qué el marco del <strong>problema del subgrupo oculto</strong> separa los problemas que Shor rompe de los que no.</li>
+          <li>Trabajar con retículos: bases, determinante, mínimos sucesivos, SVP/CVP/SIVP, y reducir a mano una base de dimensión 2 con el algoritmo de Gauss–Lagrange.</li>
+          <li>Definir LWE, Ring-LWE y Module-LWE, cifrar y descifrar a mano con el esquema de Regev y justificar la elección del anillo <span class="math"><var>R</var><sub><var>q</var></sub> = ℤ<sub><var>q</var></sub>[<var>X</var>]/(<var>X</var><sup><var>n</var></sup> + 1)</span> y de los módulos <var>q</var> = 3329 (ML-KEM) y <var>q</var> = 8 380 417 (ML-DSA).</li>
+          <li>Entender cómo se obtiene la <strong>seguridad concreta</strong> de un esquema de retículos (BKZ, <em>core-SVP</em>, <em>lattice-estimator</em>).</li>
+          <li>Describir los mecanismos de las otras familias —códigos (McEliece, BIKE, HQC), hash (Lamport, Winternitz, Merkle, SPHINCS+), multivariantes (UOV, MAYO) e isogenias (SIDH, CSIDH, SQIsign)— y los ataques que han marcado su historia.</li>
+          <li>Comparar familias por problema, madurez, tamaños y rendimiento.</li>
+        </ul>
+        <div class="callout note">
+          <span class="callout-title">Cómo usar este tema</span>
+          <p>Es el tema más denso del curso. Las secciones 3.1–3.7 (retículos) ocupan aproximadamente la mitad del tiempo, porque ML-KEM, ML-DSA y FN-DSA se basan en ellas. Los algoritmos estandarizados, con sus parámetros y codificaciones exactas, se tratan en el <a href="../tema4/index.html">Tema 4</a>; aquí nos centramos en las matemáticas. Para ver los mecanismos en funcionamiento, consulta los ejemplos <a href="../../ejemplos/ml_kem.html">ML-KEM paso a paso</a> y <a href="../../ejemplos/ml_dsa.html">ML-DSA paso a paso</a>.</p>
         </div>
 
-        <section class="tema-intro">
-            <h2>Introducción</h2>
-            <p>Este tema explora los fundamentos matemáticos y conceptuales de la criptografía post-cuántica. Examinaremos los diferentes enfoques y familias de algoritmos que se han desarrollado para resistir ataques de computadoras cuánticas, con especial énfasis en los problemas matemáticos subyacentes que proporcionan seguridad contra adversarios cuánticos.</p>
-            
-            <div class="tema-info">
-                <div class="info-item">
-                    <h3>Duración</h3>
-                    <p>4 horas</p>
-                </div>
-                <div class="info-item">
-                    <h3>Objetivos</h3>
-                    <ul>
-                        <li>Comprender los problemas matemáticos resistentes a ataques cuánticos</li>
-                        <li>Explorar las principales familias de algoritmos post-cuánticos</li>
-                        <li>Analizar las ventajas y desventajas de cada enfoque</li>
-                        <li>Familiarizarse con los conceptos matemáticos fundamentales de la criptografía basada en retículos</li>
-                        <li>Implementar algoritmos básicos para ilustrar los principios post-cuánticos</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+        <h2 id="dificultad-postcuantica"><span class="sec">3.1</span>Qué significa «difícil post-cuántico»</h2>
+        <p>Un esquema de clave pública es seguro si romperlo exige resolver un problema computacional para el que no se conoce algoritmo eficiente. Tras el <a href="../tema1/index.html">Tema 1</a> sabemos que factorizar enteros y calcular logaritmos discretos (en <span class="math">ℤ<sub><var>p</var></sub><sup>*</sup></span> o en curvas elípticas) es fácil para un ordenador cuántico: el algoritmo de Shor lo hace en tiempo polinómico. La pregunta de este tema es qué problemas <em>no</em> caen, y por qué confiamos en ellos.</p>
 
-        <section class="tema-contenido">
-            <h2>Contenido del Tema</h2>
-            
-            <div class="subtema">
-                <h3>3.1 Introducción a Problemas Matemáticos Resistentes a Ataques Cuánticos</h3>
-                <p>La criptografía post-cuántica se basa en problemas matemáticos que se consideran difíciles incluso para computadoras cuánticas. Estos problemas tienen características específicas que los hacen resistentes al algoritmo de Shor y otros algoritmos cuánticos conocidos.</p>
-                
-                <h4>Características de Problemas Resistentes a Ataques Cuánticos</h4>
-                <ul>
-                    <li><strong>No Reducibles a Factorización o Logaritmos Discretos:</strong> Deben ser fundamentalmente diferentes de los problemas que el algoritmo de Shor puede resolver eficientemente.</li>
-                    <li><strong>Resistencia a Transformadas Cuánticas de Fourier:</strong> No deben tener una estructura periódica que pueda ser explotada por transformadas cuánticas.</li>
-                    <li><strong>Complejidad Demostrable:</strong> Idealmente, deben tener pruebas formales de su dificultad o reducciones a problemas bien estudiados.</li>
-                    <li><strong>Historia de Análisis Criptográfico:</strong> Preferiblemente, problemas que han sido estudiados durante años y han resistido intentos de solución.</li>
-                </ul>
-                
-                <h4>Principales Categorías de Problemas</h4>
-                <p>Los problemas matemáticos utilizados en criptografía post-cuántica se pueden clasificar en varias categorías principales:</p>
-                <ul>
-                    <li><strong>Problemas de Retículos:</strong> Encontrar vectores cortos o cercanos en estructuras matemáticas llamadas retículos.</li>
-                    <li><strong>Problemas de Códigos:</strong> Decodificar códigos aleatorios sin conocer una estructura especial.</li>
-                    <li><strong>Problemas Multivariables:</strong> Resolver sistemas de ecuaciones polinómicas multivariables.</li>
-                    <li><strong>Problemas de Isogenias:</strong> Encontrar mapeos específicos entre curvas elípticas.</li>
-                    <li><strong>Problemas Basados en Hash:</strong> Explotar propiedades de funciones hash para construir esquemas de firma.</li>
-                </ul>
-                
-                <h4>Comparación con Problemas Clásicos</h4>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Problema Clásico</th>
-                            <th>Problema Post-Cuántico</th>
-                            <th>Diferencia Clave</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Factorización de Enteros (RSA)</td>
-                            <td>Problema del Vector más Corto (SIS)</td>
-                            <td>No tiene estructura periódica explotable por QFT</td>
-                        </tr>
-                        <tr>
-                            <td>Logaritmo Discreto (ECC)</td>
-                            <td>Learning With Errors (LWE)</td>
-                            <td>Incluye ruido aleatorio que dificulta ataques cuánticos</td>
-                        </tr>
-                        <tr>
-                            <td>Problema del Logaritmo Discreto en Curvas Elípticas</td>
-                            <td>Problema de Isogenias Supersingulares</td>
-                            <td>Basado en mapeos entre curvas, no en operaciones dentro de una curva</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="subtema">
-                <h3>3.2 Criptografía Basada en Retículos</h3>
-                <p>La criptografía basada en retículos es una de las aproximaciones más prometedoras para la criptografía post-cuántica, con algoritmos como ML-KEM (anteriormente Kyber) y ML-DSA (anteriormente Dilithium) seleccionados por el NIST para estandarización.</p>
-                
-                <h4>Fundamentos de Retículos</h4>
-                <p>Un retículo es un conjunto de puntos en un espacio n-dimensional con una estructura regular y repetitiva.</p>
-                <ul>
-                    <li><strong>Definición Formal:</strong> Un retículo L es el conjunto de todas las combinaciones lineales enteras de un conjunto de vectores base linealmente independientes: L = {a₁v₁ + a₂v₂ + ... + aₙvₙ | aᵢ ∈ ℤ}.</li>
-                    <li><strong>Base del Retículo:</strong> Conjunto de vectores linealmente independientes que generan el retículo. Un mismo retículo puede tener múltiples bases.</li>
-                    <li><strong>Determinante:</strong> Volumen del paralelotopo fundamental, mide la "densidad" del retículo.</li>
-                </ul>
-                
-                <h4>Problemas Computacionales en Retículos</h4>
-                <ul>
-                    <li><strong>Problema del Vector más Corto (SVP):</strong> Encontrar el vector no nulo más corto en un retículo.</li>
-                    <li><strong>Problema del Vector más Cercano (CVP):</strong> Dado un punto arbitrario, encontrar el punto del retículo más cercano.</li>
-                    <li><strong>Short Integer Solution (SIS):</strong> Encontrar una combinación lineal corta de vectores que sume cero módulo q.</li>
-                    <li><strong>Learning With Errors (LWE):</strong> Distinguir entre muestras aleatorias y muestras con una estructura lineal oculta perturbada por pequeños errores.</li>
-                    <li><strong>Ring-LWE y Module-LWE:</strong> Variantes más eficientes de LWE que operan en estructuras algebraicas específicas.</li>
-                </ul>
-                
-                <h4>Algoritmos Basados en Retículos</h4>
-                <ul>
-                    <li><strong>ML-KEM (Kyber):</strong> Mecanismo de encapsulamiento de claves basado en Module-LWE, seleccionado por el NIST para estandarización (FIPS 203).</li>
-                    <li><strong>ML-DSA (Dilithium):</strong> Esquema de firma digital basado en Module-LWE, seleccionado por el NIST para estandarización (FIPS 204).</li>
-                    <li><strong>NTRU:</strong> Uno de los primeros sistemas criptográficos basados en retículos, basado en el problema de encontrar divisores cortos de polinomios.</li>
-                    <li><strong>Falcon:</strong> Esquema de firma que utiliza técnicas de muestreo gaussiano para generar firmas cortas.</li>
-                </ul>
-                
-                <h4>Ventajas y Desventajas</h4>
-                <p><strong>Ventajas:</strong></p>
-                <ul>
-                    <li>Basados en problemas bien estudiados con reducciones de seguridad.</li>
-                    <li>Relativamente eficientes en comparación con otras familias post-cuánticas.</li>
-                    <li>Versátiles, permitiendo cifrado, firmas y otras primitivas criptográficas.</li>
-                    <li>Parámetros ajustables para diferentes niveles de seguridad.</li>
-                </ul>
-                <p><strong>Desventajas:</strong></p>
-                <ul>
-                    <li>Claves y firmas más grandes que en criptografía clásica.</li>
-                    <li>Complejidad matemática que puede dificultar implementaciones correctas.</li>
-                    <li>Algunos esquemas requieren generación de números aleatorios de alta calidad.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>3.3 Criptografía Basada en Códigos</h3>
-                <p>La criptografía basada en códigos utiliza la teoría de códigos correctores de errores para construir sistemas criptográficos resistentes a ataques cuánticos. Es una de las aproximaciones más antiguas a la criptografía post-cuántica.</p>
-                
-                <h4>Fundamentos de Códigos Correctores de Errores</h4>
-                <ul>
-                    <li><strong>Código Lineal:</strong> Subespacio vectorial de Fⁿq donde Fq es un campo finito.</li>
-                    <li><strong>Matriz Generadora (G):</strong> Define cómo codificar mensajes.</li>
-                    <li><strong>Matriz de Paridad (H):</strong> Define cómo verificar si un vector pertenece al código.</li>
-                    <li><strong>Distancia Mínima:</strong> Mínimo número de posiciones en que difieren dos palabras código distintas.</li>
-                    <li><strong>Capacidad de Corrección:</strong> Número máximo de errores que el código puede corregir.</li>
-                </ul>
-                
-                <h4>Problemas Computacionales en Códigos</h4>
-                <ul>
-                    <li><strong>Problema de Decodificación de Síndrome (SDP):</strong> Dado un síndrome, encontrar un vector de error de peso mínimo que lo produzca.</li>
-                    <li><strong>Problema de Decodificación por Distancia Mínima:</strong> Encontrar la palabra código más cercana a un vector dado.</li>
-                    <li><strong>Problema de Decodificación General:</strong> Decodificar un código aleatorio sin conocer una estructura especial.</li>
-                </ul>
-                
-                <h4>Algoritmos Basados en Códigos</h4>
-                <ul>
-                    <li><strong>McEliece:</strong> Uno de los primeros sistemas post-cuánticos, propuesto en 1978, basado en códigos de Goppa.</li>
-                    <li><strong>Classic McEliece:</strong> Versión moderna del sistema McEliece, finalista en el proceso de estandarización del NIST.</li>
-                    <li><strong>BIKE (Bit Flipping Key Encapsulation):</strong> Basado en códigos QC-MDPC (Quasi-Cyclic Moderate Density Parity-Check).</li>
-                    <li><strong>HQC (Hamming Quasi-Cyclic):</strong> Combina códigos BCH con el problema de decodificación de códigos aleatorios.</li>
-                </ul>
-                
-                <h4>Ventajas y Desventajas</h4>
-                <p><strong>Ventajas:</strong></p>
-                <ul>
-                    <li>Larga historia de análisis criptográfico (McEliece ha resistido ataques durante más de 40 años).</li>
-                    <li>Operaciones de cifrado rápidas.</li>
-                    <li>Basados en problemas bien estudiados en teoría de códigos.</li>
-                </ul>
-                <p><strong>Desventajas:</strong></p>
-                <ul>
-                    <li>Claves públicas muy grandes (especialmente en Classic McEliece).</li>
-                    <li>Menos versátiles que los sistemas basados en retículos.</li>
-                    <li>Algunos esquemas tienen tasas de decodificación fallida no nulas.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>3.4 Criptografía Basada en Isogenias</h3>
-                <p>La criptografía basada en isogenias utiliza mapeos especiales entre curvas elípticas llamados isogenias. Aunque es un área relativamente nueva, ofrece algunas de las claves más compactas entre los sistemas post-cuánticos.</p>
-                
-                <h4>Fundamentos de Curvas Elípticas e Isogenias</h4>
-                <ul>
-                    <li><strong>Curva Elíptica:</strong> Conjunto de puntos que satisfacen una ecuación de la forma y² = x³ + ax + b.</li>
-                    <li><strong>Isogenia:</strong> Mapeo racional entre curvas elípticas que preserva la estructura de grupo.</li>
-                    <li><strong>Curvas Supersingulares:</strong> Clase especial de curvas elípticas con propiedades matemáticas particulares.</li>
-                    <li><strong>Grafo de Isogenias:</strong> Grafo cuyos vértices son curvas elípticas y las aristas son isogenias entre ellas.</li>
-                </ul>
-                
-                <h4>Problemas Computacionales en Isogenias</h4>
-                <ul>
-                    <li><strong>Problema de Camino de Isogenias Supersingulares (SSIP):</strong> Encontrar un camino de isogenias entre dos curvas supersingulares.</li>
-                    <li><strong>Problema de Acción de Isogenias Conmutativas (CSIA):</strong> Recuperar una acción de grupo a partir de su resultado.</li>
-                </ul>
-                
-                <h4>Algoritmos Basados en Isogenias</h4>
-                <ul>
-                    <li><strong>SIKE (Supersingular Isogeny Key Encapsulation):</strong> Basado en isogenias entre curvas elípticas supersingulares. Fue un candidato en el proceso del NIST pero se rompió en 2022.</li>
-                    <li><strong>CSIDH (Commutative Supersingular Isogeny Diffie-Hellman):</strong> Utiliza la acción de un grupo de clase en curvas supersingulares.</li>
-                    <li><strong>SQISign (Short Quantum-resistant Isogeny-based Signatures):</strong> Esquema de firma basado en isogenias con firmas compactas.</li>
-                </ul>
-                
-                <h4>Ventajas y Desventajas</h4>
-                <p><strong>Ventajas:</strong></p>
-                <ul>
-                    <li>Claves muy compactas en comparación con otros sistemas post-cuánticos.</li>
-                    <li>Estructura matemática elegante y bien fundamentada.</li>
-                    <li>Potencial para esquemas con propiedades especiales (como homomorfismo).</li>
-                </ul>
-                <p><strong>Desventajas:</strong></p>
-                <ul>
-                    <li>Área relativamente nueva con menos análisis criptográfico.</li>
-                    <li>Operaciones computacionalmente intensivas.</li>
-                    <li>Algunos esquemas (como SIKE) han sido vulnerables a ataques inesperados.</li>
-                </ul>
-                
-                <h4>Estado Actual</h4>
-                <p>La criptografía basada en isogenias sufrió un revés significativo cuando SIKE fue roto en 2022 mediante un ataque inesperado basado en torsión. Sin embargo, este ataque no afecta a todos los sistemas basados en isogenias, y la investigación continúa en esquemas alternativos como CSIDH y SQISign.</p>
-            </div>
-            
-            <div class="subtema">
-                <h3>3.5 Criptografía Multivariable</h3>
-                <p>La criptografía multivariable se basa en la dificultad de resolver sistemas de ecuaciones polinómicas multivariables sobre campos finitos, un problema que se considera difícil incluso para computadoras cuánticas.</p>
-                
-                <h4>Fundamentos de Sistemas Polinómicos Multivariables</h4>
-                <ul>
-                    <li><strong>Sistema Polinómico Multivariable:</strong> Conjunto de ecuaciones polinómicas con múltiples variables.</li>
-                    <li><strong>Grado:</strong> El grado máximo de los polinomios en el sistema.</li>
-                    <li><strong>Campo Base:</strong> Campo finito sobre el que se definen los polinomios (típicamente F₂ o campos pequeños).</li>
-                </ul>
-                
-                <h4>Problemas Computacionales Multivariables</h4>
-                <ul>
-                    <li><strong>Problema MQ (Multivariate Quadratic):</strong> Resolver un sistema de ecuaciones cuadráticas multivariables sobre un campo finito.</li>
-                    <li><strong>Problema de Isomorfismo de Polinomios (IP):</strong> Determinar si dos conjuntos de polinomios son equivalentes bajo transformaciones lineales.</li>
-                    <li><strong>Problema MinRank:</strong> Encontrar una combinación lineal de matrices con rango mínimo.</li>
-                </ul>
-                
-                <h4>Algoritmos Basados en Sistemas Multivariables</h4>
-                <ul>
-                    <li><strong>Rainbow:</strong> Esquema de firma basado en el principio de "aceite y vinagre", fue un finalista en el proceso del NIST pero se rompió en 2022.</li>
-                    <li><strong>HFE (Hidden Field Equations):</strong> Utiliza polinomios simples en una extensión de campo que se vuelven complejos cuando se expresan sobre el campo base.</li>
-                    <li><strong>UOV (Unbalanced Oil and Vinegar):</strong> Divide las variables en dos conjuntos ("aceite" y "vinagre") con interacciones específicas.</li>
-                    <li><strong>MQDSS (Multivariate Quadratic Digital Signature Scheme):</strong> Esquema de firma basado directamente en el problema MQ.</li>
-                </ul>
-                
-                <h4>Ventajas y Desventajas</h4>
-                <p><strong>Ventajas:</strong></p>
-                <ul>
-                    <li>Operaciones de verificación muy rápidas (especialmente útil para firmas).</li>
-                    <li>Basados en problemas bien estudiados en matemáticas computacionales.</li>
-                    <li>Estructura matemática diferente a otras familias post-cuánticas (diversificación).</li>
-                </ul>
-                <p><strong>Desventajas:</strong></p>
-                <ul>
-                    <li>Claves públicas grandes.</li>
-                    <li>Historial de esquemas rotos debido a estructura oculta.</li>
-                    <li>Complejidad en el diseño e implementación.</li>
-                </ul>
-                
-                <h4>Estado Actual</h4>
-                <p>La criptografía multivariable ha enfrentado desafíos significativos en los últimos años. Rainbow, que era un finalista en el proceso del NIST, fue roto en 2022. Sin embargo, la investigación continúa en nuevos diseños y variantes que podrían superar las vulnerabilidades identificadas.</p>
-            </div>
-            
-            <div class="subtema">
-                <h3>3.6 Criptografía Basada en Hash</h3>
-                <p>La criptografía basada en hash utiliza las propiedades de las funciones hash criptográficas para construir esquemas de firma digital resistentes a ataques cuánticos. Es una aproximación conceptualmente simple pero con implementaciones sofisticadas.</p>
-                
-                <h4>Fundamentos de Funciones Hash Criptográficas</h4>
-                <ul>
-                    <li><strong>Función Hash:</strong> Mapea datos de tamaño arbitrario a valores de tamaño fijo.</li>
-                    <li><strong>Propiedades Criptográficas:</strong> Resistencia a preimagen, a segunda preimagen y a colisiones.</li>
-                    <li><strong>Funciones Hash Comunes:</strong> SHA-2, SHA-3, BLAKE2, BLAKE3.</li>
-                </ul>
-                
-                <h4>Esquemas de Firma Basados en Hash</h4>
-                <ul>
-                    <li><strong>Firmas de Un Solo Uso (OTS):</strong> Esquemas que solo pueden firmar un mensaje de forma segura.
-                        <ul>
-                            <li><strong>Lamport-Diffie:</strong> Esquema básico de firma de un solo uso.</li>
-                            <li><strong>Winternitz OTS (WOTS):</strong> Mejora de Lamport-Diffie con firmas más compactas.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Árboles de Merkle:</strong> Estructura que permite convertir esquemas de un solo uso en esquemas de múltiples usos.
-                        <ul>
-                            <li><strong>XMSS (eXtended Merkle Signature Scheme):</strong> Esquema estandarizado por el IETF (RFC 8391).</li>
-                            <li><strong>SPHINCS:</strong> Esquema sin estado basado en árboles de hash hiperarbóreos.</li>
-                        </ul>
-                    </li>
-                    <li><strong>SLH-DSA (SPHINCS+):</strong> Versión mejorada de SPHINCS, seleccionada por el NIST para estandarización (FIPS 205).</li>
-                </ul>
-                
-                <h4>Ventajas y Desventajas</h4>
-                <p><strong>Ventajas:</strong></p>
-                <ul>
-                    <li>Seguridad basada en propiedades fundamentales de funciones hash.</li>
-                    <li>Mínimas suposiciones criptográficas (solo requiere funciones hash seguras).</li>
-                    <li>Resistencia a avances en criptoanálisis cuántico y clásico.</li>
-                </ul>
-                <p><strong>Desventajas:</strong></p>
-                <ul>
-                    <li>Firmas relativamente grandes.</li>
-                    <li>Operaciones de firma y verificación más lentas que en otros esquemas.</li>
-                    <li>Complejidad en la implementación de árboles de Merkle eficientes.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>3.7 Comparación de Enfoques Post-Cuánticos</h3>
-                <p>Cada familia de algoritmos post-cuánticos tiene sus propias ventajas y desventajas en términos de seguridad, rendimiento y características prácticas.</p>
-                
-                <h4>Comparación de Rendimiento</h4>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Familia</th>
-                            <th>Tamaño de Clave Pública</th>
-                            <th>Tamaño de Firma/Cifrado</th>
-                            <th>Velocidad de Operación</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Retículos (ML-KEM)</td>
-                            <td>Medio (~1-2 KB)</td>
-                            <td>Pequeño-Medio (~1 KB)</td>
-                            <td>Rápida</td>
-                        </tr>
-                        <tr>
-                            <td>Retículos (ML-DSA)</td>
-                            <td>Medio (~1-2 KB)</td>
-                            <td>Medio (~2-3 KB)</td>
-                            <td>Rápida</td>
-                        </tr>
-                        <tr>
-                            <td>Códigos (Classic McEliece)</td>
-                            <td>Muy grande (~1 MB)</td>
-                            <td>Pequeño</td>
-                            <td>Rápida (cifrado), Lenta (descifrado)</td>
-                        </tr>
-                        <tr>
-                            <td>Isogenias (CSIDH)</td>
-                            <td>Muy pequeño (~100 bytes)</td>
-                            <td>Pequeño</td>
-                            <td>Muy lenta</td>
-                        </tr>
-                        <tr>
-                            <td>Multivariable</td>
-                            <td>Grande (~100 KB)</td>
-                            <td>Muy pequeño</td>
-                            <td>Muy rápida (verificación), Media (firma)</td>
-                        </tr>
-                        <tr>
-                            <td>Hash (SLH-DSA)</td>
-                            <td>Pequeño (~32 bytes)</td>
-                            <td>Grande (~8-30 KB)</td>
-                            <td>Lenta</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h4>Comparación de Seguridad</h4>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Familia</th>
-                            <th>Madurez del Análisis</th>
-                            <th>Confianza en Suposiciones</th>
-                            <th>Resistencia a Avances Criptanalíticos</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Retículos</td>
-                            <td>Alta</td>
-                            <td>Media-Alta</td>
-                            <td>Media-Alta</td>
-                        </tr>
-                        <tr>
-                            <td>Códigos</td>
-                            <td>Muy Alta</td>
-                            <td>Alta</td>
-                            <td>Alta</td>
-                        </tr>
-                        <tr>
-                            <td>Isogenias</td>
-                            <td>Baja-Media</td>
-                            <td>Media</td>
-                            <td>Media (algunos esquemas rotos)</td>
-                        </tr>
-                        <tr>
-                            <td>Multivariable</td>
-                            <td>Alta</td>
-                            <td>Media-Baja</td>
-                            <td>Baja (varios esquemas rotos)</td>
-                        </tr>
-                        <tr>
-                            <td>Hash</td>
-                            <td>Alta</td>
-                            <td>Muy Alta</td>
-                            <td>Muy Alta</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h4>Aplicaciones Recomendadas</h4>
-                <ul>
-                    <li><strong>Retículos (ML-KEM, ML-DSA):</strong> Uso general para cifrado y firmas, buen equilibrio entre rendimiento y seguridad.</li>
-                    <li><strong>Códigos (Classic McEliece):</strong> Aplicaciones de alta seguridad donde el tamaño de clave no es crítico.</li>
-                    <li><strong>Hash (SLH-DSA):</strong> Aplicaciones que requieren garantías de seguridad máximas y pueden tolerar firmas grandes.</li>
-                    <li><strong>Enfoque Híbrido:</strong> Combinar múltiples familias para diversificar las suposiciones de seguridad.</li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="tema-recursos">
-            <h2>Recursos Adicionales</h2>
-            
-            <div class="recursos-grid">
-                <div class="recurso-item">
-                    <h3>Lecturas Recomendadas</h3>
-                    <ul>
-                        <li>Bernstein, D. J., & Lange, T. (2017). Post-quantum cryptography. Nature, 549(7671), 188-194.</li>
-                        <li>Micciancio, D., & Regev, O. (2009). Lattice-based cryptography. In Post-quantum cryptography (pp. 147-191). Springer.</li>
-                        <li>Galbraith, S. D. (2012). Mathematics of public key cryptography. Cambridge University Press.</li>
-                    </ul>
-                </div>
-                
-                <div class="recurso-item">
-                    <h3>Recursos en Línea</h3>
-                    <ul>
-                        <li><a href="https://csrc.nist.gov/Projects/post-quantum-cryptography">Proyecto de Criptografía Post-Cuántica del NIST</a></li>
-                        <li><a href="https://pq-crystals.org/">Proyecto CRYSTALS (ML-KEM y ML-DSA)</a></li>
-                        <li><a href="https://sphincs.org/">Proyecto SPHINCS+ (SLH-DSA)</a></li>
-                    </ul>
-                </div>
-                
-                <div class="recurso-item">
-                    <h3>Ejemplos Prácticos</h3>
-                    <ul>
-                        <li><a href="../../ejemplos/ml_kem.html">Implementación de ML-KEM</a></li>
-                        <li><a href="../../ejemplos/ml_dsa.html">Implementación de ML-DSA</a></li>
-                        <li><a href="../../guias/ml_kem.html">Guía de Laboratorio: ML-KEM</a></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <div class="tema-navegacion-inferior">
-            <div class="nav-anterior">
-                <a href="../tema2/index.html">
-                    <span class="flecha">←</span>
-                    Anterior: Tema 2 - Infraestructura de Seguridad en Internet
-                </a>
-            </div>
-            <div class="nav-siguiente">
-                <a href="../tema4/index.html">
-                    Siguiente: Tema 4 - Estandarización de Criptografía Post-Cuántica
-                    <span class="flecha">→</span>
-                </a>
-            </div>
+        <h3>El problema del subgrupo oculto</h3>
+        <div class="definition"><span class="def-title"><b>Definición</b>Problema del subgrupo oculto (HSP)</span>
+          <p>Sea <var>G</var> un grupo y <span class="math"><var>f</var> : <var>G</var> → <var>X</var></span> una función que es constante sobre las clases laterales de un subgrupo desconocido <span class="math"><var>H</var> ≤ <var>G</var></span> y toma valores distintos en clases distintas. Dado acceso (cuántico) a <var>f</var>, encontrar un conjunto generador de <var>H</var>.</p>
         </div>
+        <p>El algoritmo de Shor es un caso particular: para factorizar <var>N</var> se busca el periodo <var>r</var> de <span class="math"><var>f</var>(<var>x</var>) = <var>a</var><sup><var>x</var></sup> mod <var>N</var></span>, que es el HSP en <var>G</var> = ℤ con <var>H</var> = <var>r</var>ℤ; para el logaritmo discreto <span class="math"><var>y</var> = <var>g</var><sup><var>x</var></sup></span> se usa <span class="math"><var>f</var>(<var>a</var>, <var>b</var>) = <var>g</var><sup><var>a</var></sup><var>y</var><sup>−<var>b</var></sup></span> sobre <span class="math">ℤ<sub><var>n</var></sub> × ℤ<sub><var>n</var></sub></span>, cuyo subgrupo oculto es <span class="math">{(<var>a</var>, <var>b</var>) : <var>a</var> ≡ <var>b</var><var>x</var>}</span>. La transformada cuántica de Fourier resuelve el HSP en <strong>cualquier grupo abeliano finito</strong> con un número polinómico de consultas y operaciones. Esa es la raíz de la vulnerabilidad de RSA, DH y ECC: su estructura es un periodo oculto en un grupo abeliano.</p>
+        <p>Los problemas post-cuánticos, cuando admiten una formulación como HSP, llevan a grupos <strong>no abelianos</strong>, para los que no se conoce algoritmo cuántico eficiente:</p>
+        <div class="table-wrap"><table>
+          <caption>Problemas criptográficos y su relación con el HSP</caption>
+          <thead><tr><th>Problema</th><th>Formulación como HSP</th><th>Mejor algoritmo cuántico conocido</th></tr></thead>
+          <tbody>
+            <tr><td>Factorización, logaritmo discreto (RSA, DH, ECC)</td><td>HSP abeliano (ℤ, ℤ<sub><var>n</var></sub>²)</td><td>Polinómico (Shor)</td></tr>
+            <tr><td>Vectores cortos en retículos (SVP único)</td><td>Se reduce al HSP diédrico con un modelo de muestreo concreto (Regev, 2002) [3]</td><td>Exponencial; el algoritmo subexponencial de Kuperberg para el HSP diédrico [4] no da un ataque útil a través de esa reducción</td></tr>
+            <tr><td>Acción de grupo en isogenias (CSIDH)</td><td>Desplazamiento oculto abeliano (≈ HSP diédrico)</td><td>Subexponencial (Kuperberg, Childs–Jao–Soukharev [5]); obliga a parámetros grandes</td></tr>
+            <tr><td>Equivalencia de códigos (estructura de McEliece)</td><td>HSP en grupos simétricos</td><td>No se conoce ventaja: el muestreo de Fourier no distingue el subgrupo (Dinh, Moore y Russell, CRYPTO 2011)</td></tr>
+            <tr><td>Preimágenes y colisiones de funciones hash</td><td>Sin estructura de grupo</td><td>Genérico: Grover (<span class="math">2<sup><var>n</var>/2</sup></span> para preimágenes); para colisiones BHT da <span class="math">2<sup><var>n</var>/3</sup></span> en teoría, sin ventaja práctica frente a la búsqueda clásica de colisiones de coste <span class="math">2<sup><var>n</var>/2</sup></span> cuando se cuenta la memoria</td></tr>
+          </tbody>
+        </table></div>
+        <p>La ausencia de algoritmo cuántico eficiente no es una demostración: es la conclusión de décadas de criptoanálisis. Por eso NIST ha buscado <strong>diversidad de supuestos</strong> (retículos, códigos, hash) y mantiene abierto un proceso adicional de firmas para ampliarla (§3.10–3.11).</p>
+        <div class="callout update"><span class="callout-title">Novedad · abril 2024</span>
+          <p>Yilei Chen publicó un algoritmo cuántico que, de ser correcto, habría resuelto LWE con ciertos parámetros en tiempo polinómico [6]. El 18 de abril, ocho días después, se encontró un error en el paso 9 del algoritmo y el propio autor añadió una nota al artículo: no sabe cómo corregirlo, así que el resultado principal no se sostiene. El episodio ilustra dos cosas: la seguridad de los retículos es una conjetura y no un teorema, y el escrutinio público funciona con rapidez.</p>
+        </div>
+
+        <h3>Reducciones y peor caso frente a caso medio</h3>
+        <p>Una <strong>reducción</strong> de un problema A a un problema B es un algoritmo que resuelve A usando un resolutor de B como subrutina. Si la reducción es eficiente y A es difícil, B también lo es. En criptografía se demuestra «romper el esquema ⇒ resolver el problema P»; la contrapositiva da la seguridad.</p>
+        <p>La criptografía necesita problemas difíciles <strong>en caso medio</strong>: la clave se genera al azar, así que casi todas las instancias deben ser difíciles, no solo algunas. Muchos problemas NP-completos son fáciles en instancias aleatorias. Los retículos tienen una propiedad excepcional: <strong>reducciones del peor caso al caso medio</strong>. Ajtai (1996) demostró que resolver instancias aleatorias de SIS permite resolver problemas de retículos aproximados en <em>cualquier</em> retículo; Regev (2005) hizo lo mismo para LWE mediante una reducción cuántica [1]; Peikert (2009) y Brakerski, Langlois, Peikert, Regev y Stehlé (2013) obtuvieron versiones clásicas (véase el panorama de Peikert [2]).</p>
+        <div class="callout warning"><span class="callout-title">Matiz importante</span>
+          <p>Las reducciones son asintóticas y pierden factores polinómicos. Los parámetros de ML-KEM o ML-DSA <strong>no</strong> se eligen para que la reducción se aplique con garantías numéricas, sino estimando el coste de los mejores ataques conocidos (§3.7). La reducción sirve como evidencia de que el problema no tiene «puntos débiles» estructurales en el caso medio; la seguridad concreta la dan los estimadores de ataques.</p>
+        </div>
+
+        <h2 id="reticulos"><span class="sec">3.2</span>Retículos: definiciones y problemas</h2>
+        <div class="definition"><span class="def-title"><b>Definición</b>Retículo</span>
+          <p>Dados <var>n</var> vectores linealmente independientes <span class="math"><b>b</b><sub>1</sub>, …, <b>b</b><sub><var>n</var></sub> ∈ ℝ<sup><var>m</var></sup></span>, el retículo que generan es el conjunto de sus combinaciones lineales <strong>enteras</strong>:</p>
+          <div class="equation">ℒ(<b>B</b>) = { <var>x</var><sub>1</sub><b>b</b><sub>1</sub> + ⋯ + <var>x</var><sub><var>n</var></sub><b>b</b><sub><var>n</var></sub> : <var>x</var><sub><var>i</var></sub> ∈ ℤ } = { <b>B</b><b>x</b> : <b>x</b> ∈ ℤ<sup><var>n</var></sup> }<span class="eq-label">(3.1)</span></div>
+          <p>La matriz <b>B</b> (con los <b>b</b><sub><var>i</var></sub> como columnas) es una <strong>base</strong>; <var>n</var> es el <strong>rango</strong> o dimensión.</p>
+        </div>
+        <p>Un mismo retículo tiene infinitas bases: <b>B</b> y <b>B</b>′ generan el mismo retículo si y solo si <span class="math"><b>B</b>′ = <b>B</b><b>U</b></span> con <b>U</b> una matriz entera de determinante ±1 (<strong>unimodular</strong>). El <strong>determinante</strong> (o covolumen) <span class="math">det ℒ = √det(<b>B</b><sup>T</sup><b>B</b>)</span> —simplemente |det <b>B</b>| si la base es cuadrada— es el volumen del paralelepípedo fundamental y no depende de la base elegida: mide la «densidad» de puntos.</p>
+        <p>El <var>i</var>-ésimo <strong>mínimo sucesivo</strong> <span class="math">λ<sub><var>i</var></sub>(ℒ)</span> es el menor radio <var>r</var> tal que la bola de radio <var>r</var> contiene <var>i</var> vectores linealmente independientes del retículo; <span class="math">λ<sub>1</sub></span> es la longitud del vector no nulo más corto. Dos resultados acotan λ<sub>1</sub>:</p>
+        <ul>
+          <li><strong>Minkowski:</strong> <span class="math">λ<sub>1</sub>(ℒ) ≤ √<var>n</var> · (det ℒ)<sup>1/<var>n</var></sup></span>.</li>
+          <li><strong>Heurística gaussiana</strong> (para retículos «aleatorios» y <var>n</var> grande): <span class="math">λ<sub>1</sub> ≈ √(<var>n</var>/(2π<var>e</var>)) · (det ℒ)<sup>1/<var>n</var></sup></span>. Es la referencia para decidir si un vector es «anormalmente corto», que es exactamente lo que explotan los ataques a LWE.</li>
+        </ul>
+
+        <figure class="diagram">
+<svg viewBox="0 0 740 358" role="img" aria-labelledby="f33t"><title id="f33t">El mismo retículo de determinante 5 con una base buena, (2, 1) y (−1, 2), y una base mala, (5, 5) y (8, 9)</title>
+<defs><marker id="arr-signal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-signal"/></marker><marker id="arr-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-amber"/></marker></defs>
+<clipPath id="clip-signal"><rect x="10.400000000000006" y="20.399999999999977" width="307.20000000000005" height="307.20000000000005"/></clipPath>
+<line class="svg-line" x1="20" y1="270" x2="308" y2="270" stroke-dasharray="3 3"/>
+<line class="svg-line" x1="92" y1="318" x2="92" y2="30" stroke-dasharray="3 3"/>
+<polygon points="92,270 140,246 116,198 68,222" class="svg-box-signal" fill-opacity="0.55" clip-path="url(#clip-signal)"/>
+<circle cx="20" cy="246" r="3" class="svg-ink"/>
+<circle cx="20" cy="126" r="3" class="svg-ink"/>
+<circle cx="44" cy="294" r="3" class="svg-ink"/>
+<circle cx="44" cy="174" r="3" class="svg-ink"/>
+<circle cx="44" cy="54" r="3" class="svg-ink"/>
+<circle cx="68" cy="222" r="3" class="svg-ink"/>
+<circle cx="68" cy="102" r="3" class="svg-ink"/>
+<circle cx="92" cy="270" r="3" class="svg-ink"/>
+<circle cx="92" cy="150" r="3" class="svg-ink"/>
+<circle cx="92" cy="30" r="3" class="svg-ink"/>
+<circle cx="116" cy="318" r="3" class="svg-ink"/>
+<circle cx="116" cy="198" r="3" class="svg-ink"/>
+<circle cx="116" cy="78" r="3" class="svg-ink"/>
+<circle cx="140" cy="246" r="3" class="svg-ink"/>
+<circle cx="140" cy="126" r="3" class="svg-ink"/>
+<circle cx="164" cy="294" r="3" class="svg-ink"/>
+<circle cx="164" cy="174" r="3" class="svg-ink"/>
+<circle cx="164" cy="54" r="3" class="svg-ink"/>
+<circle cx="188" cy="222" r="3" class="svg-ink"/>
+<circle cx="188" cy="102" r="3" class="svg-ink"/>
+<circle cx="212" cy="270" r="3" class="svg-ink"/>
+<circle cx="212" cy="150" r="3" class="svg-ink"/>
+<circle cx="212" cy="30" r="3" class="svg-ink"/>
+<circle cx="236" cy="318" r="3" class="svg-ink"/>
+<circle cx="236" cy="198" r="3" class="svg-ink"/>
+<circle cx="236" cy="78" r="3" class="svg-ink"/>
+<circle cx="260" cy="246" r="3" class="svg-ink"/>
+<circle cx="260" cy="126" r="3" class="svg-ink"/>
+<circle cx="284" cy="294" r="3" class="svg-ink"/>
+<circle cx="284" cy="174" r="3" class="svg-ink"/>
+<circle cx="284" cy="54" r="3" class="svg-ink"/>
+<circle cx="308" cy="222" r="3" class="svg-ink"/>
+<circle cx="308" cy="102" r="3" class="svg-ink"/>
+<line x1="92" y1="270" x2="140" y2="246" class="svg-stroke-signal" stroke-width="2.5" marker-end="url(#arr-signal)"/>
+<text x="146" y="240" text-anchor="start" class="svg-text">b₁ = (2, 1)</text>
+<line x1="92" y1="270" x2="68" y2="222" class="svg-stroke-signal" stroke-width="2.5" marker-end="url(#arr-signal)"/>
+<text x="62" y="216" text-anchor="end" class="svg-text">b₂ = (-1, 2)</text>
+<text x="20" y="20" class="svg-text" font-weight="600">Base buena (casi ortogonal)</text>
+<text x="20" y="340" class="svg-muted">Paralelogramo fundamental: área = |det B| = 5</text>
+<text x="78" y="284" class="svg-muted">0</text>
+<clipPath id="clip-amber"><rect x="358.4" y="20.399999999999977" width="307.20000000000005" height="307.20000000000005"/></clipPath>
+<line class="svg-line" x1="368" y1="270" x2="656" y2="270" stroke-dasharray="3 3"/>
+<line class="svg-line" x1="440" y1="318" x2="440" y2="30" stroke-dasharray="3 3"/>
+<polygon points="440,270 560,150 752,-66 632,54" class="svg-box-amber" fill-opacity="0.55" clip-path="url(#clip-amber)"/>
+<circle cx="368" cy="246" r="3" class="svg-ink"/>
+<circle cx="368" cy="126" r="3" class="svg-ink"/>
+<circle cx="392" cy="294" r="3" class="svg-ink"/>
+<circle cx="392" cy="174" r="3" class="svg-ink"/>
+<circle cx="392" cy="54" r="3" class="svg-ink"/>
+<circle cx="416" cy="222" r="3" class="svg-ink"/>
+<circle cx="416" cy="102" r="3" class="svg-ink"/>
+<circle cx="440" cy="270" r="3" class="svg-ink"/>
+<circle cx="440" cy="150" r="3" class="svg-ink"/>
+<circle cx="440" cy="30" r="3" class="svg-ink"/>
+<circle cx="464" cy="318" r="3" class="svg-ink"/>
+<circle cx="464" cy="198" r="3" class="svg-ink"/>
+<circle cx="464" cy="78" r="3" class="svg-ink"/>
+<circle cx="488" cy="246" r="3" class="svg-ink"/>
+<circle cx="488" cy="126" r="3" class="svg-ink"/>
+<circle cx="512" cy="294" r="3" class="svg-ink"/>
+<circle cx="512" cy="174" r="3" class="svg-ink"/>
+<circle cx="512" cy="54" r="3" class="svg-ink"/>
+<circle cx="536" cy="222" r="3" class="svg-ink"/>
+<circle cx="536" cy="102" r="3" class="svg-ink"/>
+<circle cx="560" cy="270" r="3" class="svg-ink"/>
+<circle cx="560" cy="150" r="3" class="svg-ink"/>
+<circle cx="560" cy="30" r="3" class="svg-ink"/>
+<circle cx="584" cy="318" r="3" class="svg-ink"/>
+<circle cx="584" cy="198" r="3" class="svg-ink"/>
+<circle cx="584" cy="78" r="3" class="svg-ink"/>
+<circle cx="608" cy="246" r="3" class="svg-ink"/>
+<circle cx="608" cy="126" r="3" class="svg-ink"/>
+<circle cx="632" cy="294" r="3" class="svg-ink"/>
+<circle cx="632" cy="174" r="3" class="svg-ink"/>
+<circle cx="632" cy="54" r="3" class="svg-ink"/>
+<circle cx="656" cy="222" r="3" class="svg-ink"/>
+<circle cx="656" cy="102" r="3" class="svg-ink"/>
+<line x1="440" y1="270" x2="560" y2="150" class="svg-stroke-amber" stroke-width="2.5" marker-end="url(#arr-amber)"/>
+<text x="566" y="144" text-anchor="start" class="svg-text">b₁ = (5, 5)</text>
+<line x1="440" y1="270" x2="632" y2="54" class="svg-stroke-amber" stroke-width="2.5" marker-end="url(#arr-amber)"/>
+<text x="638" y="48" text-anchor="start" class="svg-text">b₂ = (8, 9)</text>
+<text x="368" y="20" class="svg-text" font-weight="600">Base mala (vectores largos y casi paralelos)</text>
+<text x="368" y="340" class="svg-muted">Mismo área = 5, pero no revela vectores cortos</text>
+<text x="426" y="284" class="svg-muted">0</text>
+</svg>
+          <figcaption><b>Figura 3.1.</b> El retículo <span class="math">ℒ = {(<var>x</var>, <var>y</var>) ∈ ℤ² : <var>x</var> + 3<var>y</var> ≡ 0 (mod 5)}</span>, de determinante 5, con dos bases. Ambas generan exactamente los mismos puntos (la matriz de cambio <span class="math"><b>U</b> = [[3, 5], [1, 2]]</span> tiene determinante 1). Con la base buena, el vector más corto (λ<sub>1</sub> = √5) está a la vista y resolver CVP por redondeo funciona; con la mala, redondear coordenadas da puntos lejanos. En los esquemas de retículos la base mala es pública y la buena es la trampa (o no existe).</figcaption>
+        </figure>
+
+        <h3>Los problemas computacionales</h3>
+        <dl>
+          <dt>SVP<sub>γ</sub> (Shortest Vector Problem)</dt>
+          <dd>Dada una base, encontrar <b>v</b> ∈ ℒ no nulo con <span class="math">‖<b>v</b>‖ ≤ γ · λ<sub>1</sub>(ℒ)</span>. Con γ = 1 es SVP exacto.</dd>
+          <dt>CVP<sub>γ</sub> (Closest Vector Problem)</dt>
+          <dd>Dados una base y un punto <b>t</b>, encontrar <b>v</b> ∈ ℒ con <span class="math">‖<b>t</b> − <b>v</b>‖ ≤ γ · dist(<b>t</b>, ℒ)</span>. Su variante con promesa, <strong>BDD</strong> (<em>Bounded Distance Decoding</em>), garantiza que <b>t</b> está muy cerca del retículo; LWE es un BDD.</dd>
+          <dt>SIVP<sub>γ</sub></dt>
+          <dd>Encontrar <var>n</var> vectores linealmente independientes de longitud ≤ γ · λ<sub><var>n</var></sub>(ℒ). Es el problema de peor caso en las reducciones de Ajtai y Regev.</dd>
+          <dt>GapSVP<sub>γ</sub></dt>
+          <dd>Versión de decisión: distinguir si λ<sub>1</sub> ≤ 1 o λ<sub>1</sub> &gt; γ.</dd>
+        </dl>
+        <p>SVP exacto es NP-difícil bajo reducciones aleatorizadas; para factores γ = poly(<var>n</var>), que son los relevantes en criptografía, no se sabe que sea NP-difícil, pero el mejor algoritmo conocido, clásico o cuántico, sigue siendo exponencial en <var>n</var>.</p>
+
+        <h3>Reducción de bases: de Gauss a BKZ</h3>
+        <p>Reducir una base es buscar, dentro del mismo retículo, una base de vectores cortos y casi ortogonales. En dimensión 2 existe un algoritmo exacto y sencillo, debido a Lagrange y Gauss, que es un «algoritmo de Euclides para vectores»:</p>
+        <pre data-lang="pseudocódigo"><code><span class="tok-k">entrada</span>: base (b1, b2)
+<span class="tok-k">repetir</span>:
+    <span class="tok-k">si</span> ‖b2‖ &lt; ‖b1‖: intercambiar b1, b2
+    μ ← redondear(⟨b2, b1⟩ / ⟨b1, b1⟩)
+    <span class="tok-k">si</span> μ = 0: <span class="tok-k">devolver</span> (b1, b2)     <span class="tok-c"># b1 es el vector más corto</span>
+    b2 ← b2 − μ·b1</code></pre>
+        <p><strong>Ejemplo resuelto.</strong> Reducimos la base mala de la figura 3.1, <span class="math"><b>b</b><sub>1</sub> = (5, 5)</span>, <span class="math"><b>b</b><sub>2</sub> = (8, 9)</span>.</p>
+        <ol>
+          <li><span class="math">‖<b>b</b><sub>1</sub>‖² = 50</span>, <span class="math">‖<b>b</b><sub>2</sub>‖² = 145</span>. <span class="math">⟨<b>b</b><sub>2</sub>, <b>b</b><sub>1</sub>⟩ = 85</span>, μ = redondear(85/50 = 1,7) = 2. <span class="math"><b>b</b><sub>2</sub> ← (8, 9) − 2(5, 5) = (−2, −1)</span>, con norma² 5.</li>
+          <li>Intercambio: <span class="math"><b>b</b><sub>1</sub> = (−2, −1)</span>, <span class="math"><b>b</b><sub>2</sub> = (5, 5)</span>. <span class="math">⟨<b>b</b><sub>2</sub>, <b>b</b><sub>1</sub>⟩ = −15</span>, μ = redondear(−15/5) = −3. <span class="math"><b>b</b><sub>2</sub> ← (5, 5) + 3(−2, −1) = (−1, 2)</span>, norma² 5.</li>
+          <li>Ya no hay que intercambiar (5 ≥ 5) y μ = redondear(0/5) = 0. Fin: <span class="math">{(−2, −1), (−1, 2)}</span>, que es (salvo signos) la base buena. λ<sub>1</sub> = √5, compatible con Minkowski: √2 · √5 ≈ 3,16.</li>
+        </ol>
+        <p>Una forma de medir la calidad de una base es el <strong>cociente de Hadamard</strong> <span class="math">ℋ(<b>B</b>) = (det ℒ / ∏‖<b>b</b><sub><var>i</var></sub>‖)<sup>1/<var>n</var></sup> ∈ (0, 1]</span>: vale 1 para una base ortogonal. Aquí, la base buena da ℋ = (5/(√5·√5))<sup>1/2</sup> = 1 y la mala ℋ = (5/(√50·√145))<sup>1/2</sup> ≈ 0,24.</p>
+        <p>En dimensión alta no hay algoritmo eficiente exacto. Los dos algoritmos de referencia son:</p>
+        <ul>
+          <li><strong>LLL</strong> (Lenstra, Lenstra y Lovász, 1982): generaliza Gauss–Lagrange con una condición de intercambio relajada. Tiempo polinómico, pero solo garantiza <span class="math">‖<b>b</b><sub>1</sub>‖ ≤ (2/√3)<sup><var>n</var></sup> λ<sub>1</sub></span>; en la práctica obtiene un <strong>factor de Hermite</strong> <span class="math">δ<sup><var>n</var></sup></span> con δ ≈ 1,02. Basta para romper criptosistemas de mochila y RSA con exponentes pequeños (Coppersmith), pero no retículos de dimensión ~1000.</li>
+          <li><strong>BKZ-β</strong> (Schnorr–Euchner): recorre la base resolviendo SVP exacto en bloques proyectados de tamaño β. Cuanto mayor β, mejor base: el factor de Hermite raíz se aproxima por
+            <div class="equation">δ(β) ≈ ( (β / 2π<var>e</var>) · (πβ)<sup>1/β</sup> )<sup>1/(2(β−1))</sup><span class="eq-label">(3.2)</span></div>
+            y el coste está dominado por el oráculo SVP en dimensión β: con cribado (<em>sieving</em>) se estima en <span class="math">2<sup>0,292β + <var>o</var>(β)</sup></span> operaciones clásicas y <span class="math">2<sup>0,265β + <var>o</var>(β)</sup></span> cuánticas (acelerando con Grover la búsqueda de vecinos).</li>
+        </ul>
+        <p>Toda la seguridad concreta de ML-KEM y ML-DSA se reduce a una pregunta: <strong>¿qué tamaño de bloque β necesita BKZ para romper el esquema?</strong> Lo retomamos en §3.7.</p>
+
+        <h2 id="lwe"><span class="sec">3.3</span>Learning With Errors (LWE)</h2>
+        <p>Resolver un sistema lineal <span class="math"><b>A</b><b>s</b> = <b>b</b> (mod <var>q</var>)</span> es fácil con eliminación gaussiana. Regev (2005) observó que basta añadir un error pequeño a cada ecuación para que el problema pase a ser, conjeturalmente, difícil incluso para ordenadores cuánticos [1]. La eliminación gaussiana amplifica el error: al combinar ecuaciones los errores se suman y multiplican hasta cubrir todo ℤ<sub><var>q</var></sub>.</p>
+        <div class="definition"><span class="def-title"><b>Definición</b>LWE<sub><var>n</var>, <var>q</var>, χ</sub></span>
+          <p>Sea <span class="math"><b>s</b> ∈ ℤ<sub><var>q</var></sub><sup><var>n</var></sup></span> un secreto y χ una distribución de error concentrada en valores pequeños (gaussiana discreta o binomial centrada). Una <strong>muestra LWE</strong> es un par</p>
+          <div class="equation">(<b>a</b>, <var>b</var> = ⟨<b>a</b>, <b>s</b>⟩ + <var>e</var> mod <var>q</var>),   <b>a</b> ← ℤ<sub><var>q</var></sub><sup><var>n</var></sup> uniforme,   <var>e</var> ← χ<span class="eq-label">(3.3)</span></div>
+          <p><strong>Search-LWE:</strong> dadas <var>m</var> muestras, recuperar <b>s</b>. <strong>Decision-LWE:</strong> distinguir <var>m</var> muestras LWE de <var>m</var> pares uniformes <span class="math">(<b>a</b>, <var>u</var>)</span>. En forma matricial: distinguir <span class="math">(<b>A</b>, <b>A</b><b>s</b> + <b>e</b>)</span> de <span class="math">(<b>A</b>, <b>u</b>)</span>.</p>
+        </div>
+        <p>Para <var>q</var> primo de tamaño polinómico, <strong>decisión y búsqueda son equivalentes</strong>. La dirección difícil (decisión ⇒ búsqueda) se ve así: para adivinar la primera coordenada <var>s</var><sub>1</sub>, se prueba cada candidato <var>g</var> ∈ ℤ<sub><var>q</var></sub> transformando cada muestra en <span class="math">(<b>a</b> + <var>r</var><b>e</b><sub>1</sub>, <var>b</var> + <var>r</var><var>g</var>)</span> con <var>r</var> aleatorio. Si <var>g</var> = <var>s</var><sub>1</sub>, las nuevas muestras siguen siendo LWE; si no, son uniformes. El distinguidor lo detecta, y repetimos para cada coordenada con <span class="math"><var>n</var>·<var>q</var></span> llamadas. Esta equivalencia permite demostrar la seguridad de los cifrados (que necesitan pseudoaleatoriedad, es decir, la versión de decisión) a partir de la versión de búsqueda.</p>
+        <p>Dos observaciones prácticas: (i) el secreto puede tomarse de la misma distribución pequeña que el error (<strong>forma normal</strong>, sin pérdida de seguridad), que es lo que hacen ML-KEM y ML-DSA; (ii) LWE es un problema de retículos: los vectores <span class="math"><b>A</b><b>s</b> mod <var>q</var></span> forman el retículo <var>q</var>-ario <span class="math">Λ<sub><var>q</var></sub>(<b>A</b>)</span>, y <span class="math"><b>b</b> = <b>A</b><b>s</b> + <b>e</b></span> es un punto muy cercano a él. Recuperar <b>s</b> es resolver BDD.</p>
+
+        <h3 id="regev">Cifrado de Regev: ejemplo completo</h3>
+        <p>El esquema original cifra un bit. La clave pública son <var>m</var> muestras LWE; cifrar es sumar un subconjunto aleatorio de ellas y codificar el bit en el «bit alto» de ℤ<sub><var>q</var></sub>:</p>
+        <ul>
+          <li><strong>Generación de claves:</strong> <span class="math"><b>s</b> ← ℤ<sub><var>q</var></sub><sup><var>n</var></sup></span>; clave pública <span class="math">(<b>A</b>, <b>b</b> = <b>A</b><b>s</b> + <b>e</b>)</span>.</li>
+          <li><strong>Cifrado de μ ∈ {0, 1}:</strong> se elige un subconjunto aleatorio <var>S</var> de filas; <span class="math"><b>u</b> = ∑<sub><var>i</var>∈<var>S</var></sub> <b>a</b><sub><var>i</var></sub></span>, <span class="math"><var>v</var> = ∑<sub><var>i</var>∈<var>S</var></sub> <var>b</var><sub><var>i</var></sub> + μ·⌊<var>q</var>/2⌋</span>.</li>
+          <li><strong>Descifrado:</strong> <span class="math"><var>d</var> = <var>v</var> − ⟨<b>u</b>, <b>s</b>⟩ = ∑<sub><var>i</var>∈<var>S</var></sub> <var>e</var><sub><var>i</var></sub> + μ·⌊<var>q</var>/2⌋</span>. Si <var>d</var> está más cerca de ⌊<var>q</var>/2⌋ que de 0, μ = 1.</li>
+        </ul>
+        <p>Tomamos <var>q</var> = 97, <var>n</var> = 2, <var>m</var> = 6, <span class="math"><b>s</b> = (3, 7)</span> y errores en {−1, 0, 1}. Así, ⌊<var>q</var>/2⌋ = 48.</p>
+        <div class="table-wrap"><table>
+          <caption>Clave pública del ejemplo (q = 97, s = (3, 7))</caption>
+          <thead><tr><th class="num">Muestra</th><th>Vector a</th><th class="num">Producto con s (mod 97)</th><th class="num">Error</th><th class="num">b = producto + error</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>(12, 45)</td><td class="num">60</td><td class="num">+1</td><td class="num">61</td></tr>
+            <tr><td class="num">2</td><td>(71, 8)</td><td class="num">75</td><td class="num">−1</td><td class="num">74</td></tr>
+            <tr><td class="num">3</td><td>(33, 90)</td><td class="num">50</td><td class="num">0</td><td class="num">50</td></tr>
+            <tr><td class="num">4</td><td>(5, 61)</td><td class="num">54</td><td class="num">+1</td><td class="num">55</td></tr>
+            <tr><td class="num">5</td><td>(88, 19)</td><td class="num">9</td><td class="num">0</td><td class="num">9</td></tr>
+            <tr><td class="num">6</td><td>(27, 54)</td><td class="num">71</td><td class="num">−1</td><td class="num">70</td></tr>
+          </tbody>
+        </table></div>
+        <p><strong>Cifrar μ = 1 con S = {1, 3, 4}.</strong> <span class="math"><b>u</b> = (12 + 33 + 5, 45 + 90 + 61) = (50, 196) ≡ (50, 2)</span>; <span class="math"><var>v</var> = 61 + 50 + 55 + 48 = 214 ≡ 20</span>. Texto cifrado: ((50, 2), 20).</p>
+        <p><strong>Descifrar.</strong> <span class="math">⟨<b>u</b>, <b>s</b>⟩ = 150 + 14 = 164 ≡ 67</span>; <span class="math"><var>d</var> = 20 − 67 ≡ 50</span>. 50 está a distancia 2 de 48 y a 47 de 0, luego μ = 1. En efecto, <span class="math">∑<var>e</var><sub><var>i</var></sub> = 1 + 0 + 1 = 2</span>.</p>
+        <p><strong>Cifrar μ = 0 con S = {2, 5, 6}.</strong> <span class="math"><b>u</b> = (186, 81) ≡ (89, 81)</span>, <span class="math"><var>v</var> = 74 + 9 + 70 = 153 ≡ 56</span>. Descifrado: <span class="math">⟨<b>u</b>, <b>s</b>⟩ = 267 + 567 = 834 ≡ 58</span>, <span class="math"><var>d</var> = 56 − 58 ≡ 95 ≡ −2</span>, cercano a 0: μ = 0.</p>
+        <p>El descifrado es correcto mientras <span class="math">|∑<var>e</var><sub><var>i</var></sub>| &lt; <var>q</var>/4</span>. Esta tensión entre <strong>ruido suficiente para la seguridad</strong> y <strong>ruido acotado para la corrección</strong> gobierna todos los esquemas de retículos: ML-KEM tiene una probabilidad de fallo de descifrado no nula pero despreciable (del orden de <span class="math">2<sup>−139</sup></span> para ML-KEM-512, según FIPS 203 [8]). La seguridad del cifrado de Regev se prueba en dos pasos: por Decision-LWE la clave pública es indistinguible de uniforme, y con clave uniforme el lema del sobrante (<em>leftover hash lemma</em>) hace que (<b>u</b>, <var>v</var>) sea casi uniforme.</p>
+
+        <h2 id="ring-module-lwe"><span class="sec">3.4</span>Retículos estructurados: Ring-LWE, Module-LWE y la NTT</h2>
+        <p>LWE «plano» tiene un problema de eficiencia: la matriz <b>A</b> tiene <span class="math"><var>m</var> × <var>n</var></span> elementos y, con <var>n</var> ≈ 700, la clave pública ocupa cientos de kilobytes. La solución es dar estructura algebraica a <b>A</b> para describirla con pocos elementos y multiplicarla rápido.</p>
+        <h3>El anillo ciclotómico <var>R</var><sub><var>q</var></sub></h3>
+        <div class="definition"><span class="def-title"><b>Definición</b>Anillo de polinomios negacíclico</span>
+          <p>Para <var>n</var> potencia de 2, <span class="math"><var>R</var> = ℤ[<var>X</var>]/(<var>X</var><sup><var>n</var></sup> + 1)</span> y <span class="math"><var>R</var><sub><var>q</var></sub> = ℤ<sub><var>q</var></sub>[<var>X</var>]/(<var>X</var><sup><var>n</var></sup> + 1)</span>. Sus elementos son polinomios de grado &lt; <var>n</var> con coeficientes en ℤ<sub><var>q</var></sub>; se multiplican como polinomios y se reduce con la regla <span class="math"><var>X</var><sup><var>n</var></sup> = −1</span>. <span class="math"><var>X</var><sup><var>n</var></sup> + 1</span> es el 2<var>n</var>-ésimo polinomio ciclotómico, irreducible sobre ℚ.</p>
+        </div>
+        <p>Multiplicar por un elemento fijo <span class="math"><var>a</var> ∈ <var>R</var><sub><var>q</var></sub></span> es una aplicación lineal cuya matriz es <strong>negacíclica</strong>: cada columna es la anterior desplazada una posición, con el coeficiente que «da la vuelta» cambiado de signo. Un único polinomio (<var>n</var> coeficientes) describe así una matriz <span class="math"><var>n</var> × <var>n</var></span>.</p>
+        <p><strong>Ejemplo en <span class="math">ℤ<sub>17</sub>[<var>X</var>]/(<var>X</var><sup>4</sup> + 1)</span>.</strong> Sean <span class="math"><var>a</var> = 1 + 2<var>X</var> + 3<var>X</var><sup>3</sup></span> y <span class="math"><var>b</var> = 2 + <var>X</var><sup>2</sup> + <var>X</var><sup>3</sup></span>.</p>
+        <div class="equation"><var>a</var>·<var>b</var> = (2 + <var>X</var><sup>2</sup> + <var>X</var><sup>3</sup>) + (4<var>X</var> + 2<var>X</var><sup>3</sup> + 2<var>X</var><sup>4</sup>) + (6<var>X</var><sup>3</sup> + 3<var>X</var><sup>5</sup> + 3<var>X</var><sup>6</sup>)<span class="eq-label">(3.4)</span></div>
+        <p>Con <span class="math"><var>X</var><sup>4</sup> = −1</span>, <span class="math"><var>X</var><sup>5</sup> = −<var>X</var></span>, <span class="math"><var>X</var><sup>6</sup> = −<var>X</var><sup>2</sup></span>: <span class="math"><var>a</var>·<var>b</var> = (2 − 2) + (4 − 3)<var>X</var> + (1 − 3)<var>X</var><sup>2</sup> + (1 + 2 + 6)<var>X</var><sup>3</sup> = <var>X</var> + 15<var>X</var><sup>2</sup> + 9<var>X</var><sup>3</sup></span> (mod 17).</p>
+
+        <h3>Ring-LWE y Module-LWE</h3>
+        <p><strong>Ring-LWE</strong> (Lyubashevsky, Peikert y Regev, 2010 [9]): las muestras son <span class="math">(<var>a</var>, <var>b</var> = <var>a</var>·<var>s</var> + <var>e</var>) ∈ <var>R</var><sub><var>q</var></sub>²</span>, con <var>s</var>, <var>e</var> de coeficientes pequeños. Una muestra Ring-LWE equivale a <var>n</var> muestras LWE correlacionadas. Tiene reducción desde problemas de peor caso en <strong>retículos ideales</strong>, una clase más restringida que los retículos generales.</p>
+        <p><strong>Module-LWE</strong> (Langlois y Stehlé [10]): se trabaja con vectores y matrices de pequeña dimensión <var>k</var> sobre <var>R</var><sub><var>q</var></sub>:</p>
+        <div class="equation"><b>t</b> = <b>A</b><b>s</b> + <b>e</b>,   <b>A</b> ∈ <var>R</var><sub><var>q</var></sub><sup><var>k</var>×ℓ</sup>,   <b>s</b> ∈ <var>R</var><sub><var>q</var></sub><sup>ℓ</sup>,   <b>e</b> ∈ <var>R</var><sub><var>q</var></sub><sup><var>k</var></sup> pequeños<span class="eq-label">(3.5)</span></div>
+        <p>Module-LWE interpola entre LWE (<var>n</var> = 1, <var>k</var> grande) y Ring-LWE (<var>k</var> = 1). Su ventaja de ingeniería es decisiva: el anillo se fija una vez (<var>n</var> = 256) y el nivel de seguridad se ajusta cambiando <var>k</var>, reutilizando el mismo código de aritmética. ML-KEM usa <var>k</var> = 2, 3, 4 (dimensión efectiva del retículo <span class="math">256<var>k</var></span> = 512, 768, 1024); ML-DSA usa matrices <span class="math">(<var>k</var>, ℓ)</span> = (4, 4), (6, 5), (8, 7). Además, al tener menos estructura que Ring-LWE, reduce la superficie para ataques algebraicos específicos.</p>
+
+        <h3>La transformada teórico-numérica (NTT)</h3>
+        <p>Multiplicar en <var>R</var><sub><var>q</var></sub> ingenuamente cuesta <span class="math"><var>n</var>²</span> multiplicaciones. La NTT es la transformada de Fourier discreta sobre ℤ<sub><var>q</var></sub>: si ℤ<sub><var>q</var></sub> contiene una raíz primitiva 2<var>n</var>-ésima de la unidad ζ, entonces</p>
+        <div class="equation"><var>X</var><sup><var>n</var></sup> + 1 = ∏<sub><var>i</var> impar, 0 &lt; <var>i</var> &lt; 2<var>n</var></sub> (<var>X</var> − ζ<sup><var>i</var></sup>)  (mod <var>q</var>)<span class="eq-label">(3.6)</span></div>
+        <p>y, por el teorema chino de los restos, <span class="math"><var>R</var><sub><var>q</var></sub> ≅ ℤ<sub><var>q</var></sub><sup><var>n</var></sup></span>: un polinomio se representa por sus evaluaciones en las <var>n</var> raíces, y el producto de polinomios pasa a ser producto <strong>coordenada a coordenada</strong>. Con el esquema mariposa de Cooley–Tukey la transformada cuesta <span class="math"><var>O</var>(<var>n</var> log <var>n</var>)</span>.</p>
+        <p><strong>Ejemplo.</strong> En ℤ<sub>17</sub>, ζ = 2 es raíz primitiva 8-ésima (2<sup>4</sup> = 16 ≡ −1). Las raíces de <span class="math"><var>X</var><sup>4</sup> + 1</span> son ζ, ζ<sup>3</sup>, ζ<sup>5</sup>, ζ<sup>7</sup> = 2, 8, 15, 9. Evaluando los polinomios del ejemplo anterior:</p>
+        <div class="table-wrap"><table>
+          <caption>Multiplicación por NTT en ℤ<sub>17</sub>[X]/(X<sup>4</sup>+1)</caption>
+          <thead><tr><th>Raíz</th><th class="num">Eval. a</th><th class="num">Eval. b</th><th class="num">Producto</th><th class="num">Eval. a·b</th></tr></thead>
+          <tbody>
+            <tr><td>2</td><td class="num">12</td><td class="num">14</td><td class="num">15</td><td class="num">15</td></tr>
+            <tr><td>8</td><td class="num">6</td><td class="num">0</td><td class="num">0</td><td class="num">0</td></tr>
+            <tr><td>15</td><td class="num">7</td><td class="num">15</td><td class="num">3</td><td class="num">3</td></tr>
+            <tr><td>9</td><td class="num">13</td><td class="num">13</td><td class="num">16</td><td class="num">16</td></tr>
+          </tbody>
+        </table></div>
+        <p>El producto punto a punto coincide con la evaluación del producto <span class="math"><var>X</var> + 15<var>X</var><sup>2</sup> + 9<var>X</var><sup>3</sup></span>; una NTT inversa recupera sus coeficientes.</p>
+
+        <h3 id="eleccion-q">Por qué <var>q</var> = 3329 en ML-KEM y <var>q</var> = 8 380 417 en ML-DSA</h3>
+        <p>Una raíz primitiva 2<var>n</var>-ésima existe en ℤ<sub><var>q</var></sub> (primo) si y solo si <span class="math">2<var>n</var> | <var>q</var> − 1</span>. Con <var>n</var> = 256:</p>
+        <ul>
+          <li><strong>ML-KEM:</strong> <span class="math">3328 = 2<sup>8</sup> · 13</span>. Es divisible por 256 pero no por 512, así que hay raíces 256-ésimas (ζ = 17, con <span class="math">17<sup>128</sup> ≡ −1</span>) pero no 512-ésimas. <span class="math"><var>X</var><sup>256</sup> + 1</span> se factoriza en 128 polinomios de grado 2, <span class="math"><var>X</var><sup>2</sup> − ζ<sup>2<var>i</var>+1</sup></span>: es una NTT <strong>incompleta</strong>, y el «producto punto a punto» es un producto de 128 polinomios de grado 1 módulo esos factores (FIPS 203 lo llama <code>BaseCaseMultiply</code>) [8]. ¿Por qué no un primo mayor? Porque <var>q</var> pequeño (12 bits) hace claves y textos cifrados compactos, y el esquema tolera el ruido gracias a errores binomiales pequeños y a la compresión. Los primos con <span class="math"><var>q</var> ≡ 1 (mod 256)</span> son 257, 769, 3329, …; los dos primeros dejan demasiado poco margen para el ruido, y 3329 es el siguiente.</li>
+          <li><strong>ML-DSA:</strong> <span class="math"><var>q</var> = 2<sup>23</sup> − 2<sup>13</sup> + 1 = 8 380 417</span>, con <span class="math"><var>q</var> − 1 = 2<sup>13</sup> · 1023</span>. Es divisible por 512: existe ζ = 1753 raíz primitiva 512-ésima y la NTT es <strong>completa</strong> (256 factores lineales) [11]. El módulo es mayor porque la firma contiene vectores con coeficientes hasta <span class="math">γ<sub>1</sub> = 2<sup>17</sup></span> o <span class="math">2<sup>19</sup></span> y el problema SIS subyacente necesita que esa cota sea pequeña en relación con <var>q</var>; la forma <span class="math">2<sup>23</sup> − 2<sup>13</sup> + 1</span> permite además reducciones modulares rápidas.</li>
+        </ul>
+        <div class="table-wrap"><table>
+          <caption>Parámetros algebraicos de los esquemas de retículos estandarizados (FIPS 203, FIPS 204)</caption>
+          <thead><tr><th>Esquema</th><th>Anillo</th><th class="num">Módulo</th><th>Problema</th><th>Rango del módulo</th><th>NTT</th></tr></thead>
+          <tbody>
+            <tr><td>ML-KEM-512/768/1024</td><td>ℤ<sub>q</sub>[X]/(X<sup>256</sup>+1)</td><td class="num">3329</td><td>Module-LWE</td><td><var>k</var> = 2, 3, 4</td><td>Incompleta (128 factores de grado 2), ζ = 17</td></tr>
+            <tr><td>ML-DSA-44/65/87</td><td>ℤ<sub>q</sub>[X]/(X<sup>256</sup>+1)</td><td class="num">8 380 417</td><td>Module-LWE + Module-SIS</td><td>(<var>k</var>, ℓ) = (4,4), (6,5), (8,7)</td><td>Completa, ζ = 1753</td></tr>
+            <tr><td>FN-DSA-512/1024 (Falcon)</td><td>ℤ<sub>q</sub>[X]/(X<sup><var>n</var></sup>+1), <var>n</var> = 512, 1024</td><td class="num">12 289</td><td>NTRU + SIS</td><td>—</td><td>Completa (12 288 = 2<sup>12</sup>·3)</td></tr>
+          </tbody>
+        </table></div>
+        <p>Los detalles de codificación, compresión y muestreo de estos esquemas se estudian en el <a href="../tema4/index.html">Tema 4</a> y se pueden seguir paso a paso en el ejemplo <a href="../../ejemplos/ml_kem.html">ML-KEM paso a paso</a>.</p>
+
+        <h2 id="sis-firmas"><span class="sec">3.5</span>SIS y firmas Fiat–Shamir con abortos</h2>
+        <div class="definition"><span class="def-title"><b>Definición</b>Short Integer Solution (SIS<sub><var>n</var>, <var>m</var>, <var>q</var>, β</sub>)</span>
+          <p>Dada <span class="math"><b>A</b> ∈ ℤ<sub><var>q</var></sub><sup><var>n</var>×<var>m</var></sup></span> uniforme, encontrar <span class="math"><b>z</b> ∈ ℤ<sup><var>m</var></sup></span> no nulo con <span class="math"><b>A</b><b>z</b> ≡ <b>0</b> (mod <var>q</var>)</span> y <span class="math">‖<b>z</b>‖ ≤ β</span>.</p>
+        </div>
+        <p>SIS es el «dual» de LWE: pide un vector corto en el retículo <span class="math">Λ<sub><var>q</var></sub><sup>⊥</sup>(<b>A</b>) = {<b>z</b> : <b>A</b><b>z</b> ≡ 0}</span>. Si <span class="math"><var>m</var> log β &gt; <var>n</var> log <var>q</var></span> la solución existe por el principio del palomar, pero encontrarla es difícil (Ajtai, 1996). Consecuencia inmediata: <span class="math"><var>f</var><sub><b>A</b></sub>(<b>z</b>) = <b>A</b><b>z</b></span> sobre entradas cortas es una <strong>función hash resistente a colisiones</strong>, porque una colisión <span class="math"><b>A</b><b>z</b> = <b>A</b><b>z</b>′</span> da la solución SIS <span class="math"><b>z</b> − <b>z</b>′</span>. <strong>Module-SIS</strong> es la versión sobre <var>R</var><sub><var>q</var></sub>, como Module-LWE.</p>
+        <h3>De la identificación a la firma</h3>
+        <p>ML-DSA (Dilithium) sigue el patrón de Schnorr trasladado a retículos (Lyubashevsky [12]). Con clave secreta <span class="math"><b>s</b><sub>1</sub>, <b>s</b><sub>2</sub></span> pequeñas y pública <span class="math"><b>t</b> = <b>A</b><b>s</b><sub>1</sub> + <b>s</b><sub>2</sub></span>:</p>
+        <ol>
+          <li><strong>Compromiso:</strong> el firmante elige <b>y</b> con coeficientes en <span class="math">(−γ<sub>1</sub>, γ<sub>1</sub>]</span> y calcula <span class="math"><b>w</b> = <b>A</b><b>y</b></span> (sus bits altos).</li>
+          <li><strong>Reto:</strong> <span class="math"><var>c</var> = <var>H</var>(<var>M</var> ‖ <b>w</b><sub>alto</sub>)</span>, un polinomio con τ coeficientes ±1 (Fiat–Shamir: el hash sustituye al verificador).</li>
+          <li><strong>Respuesta:</strong> <span class="math"><b>z</b> = <b>y</b> + <var>c</var><b>s</b><sub>1</sub></span>.</li>
+          <li><strong>Verificación:</strong> <span class="math"><b>A</b><b>z</b> − <var>c</var><b>t</b> = <b>A</b><b>y</b> − <var>c</var><b>s</b><sub>2</sub></span>, que tiene los mismos bits altos que <b>w</b> porque <span class="math"><var>c</var><b>s</b><sub>2</sub></span> es pequeño; y <b>z</b> debe ser corto.</li>
+        </ol>
+        <p>El problema es que <b>z</b> filtra información: su distribución está centrada en <span class="math"><var>c</var><b>s</b><sub>1</sub></span>, y promediando muchas firmas se recuperaría el secreto. La solución es el <strong>muestreo por rechazo</strong>: si algún coeficiente de <b>z</b> sale de <span class="math">(−(γ<sub>1</sub> − β), γ<sub>1</sub> − β)</span>, con <span class="math">β ≥ ‖<var>c</var><b>s</b><sub>1</sub>‖<sub>∞</sub></span>, se <em>aborta</em> y se vuelve a empezar. Las firmas que se publican tienen entonces distribución uniforme en ese intervalo, <strong>independiente</strong> del secreto.</p>
+        <p><strong>Ejemplo unidimensional.</strong> Sea <var>y</var> uniforme en {−5, …, 5} (11 valores) y <span class="math"><var>c</var><var>s</var> ∈ {−1, 0, 1}</span>. Si <var>c</var><var>s</var> = 1, <span class="math"><var>z</var> = <var>y</var> + 1</span> es uniforme en {−4, …, 6}; si <var>c</var><var>s</var> = −1, en {−6, …, 4}. Un observador distingue ambos casos al ver un 6 o un −6. Si solo publicamos <var>z</var> cuando <span class="math">|<var>z</var>| ≤ 4</span>, en los tres casos <var>z</var> es uniforme en {−4, …, 4}: 9 de los 11 valores de <var>y</var> son aceptados, con probabilidad 9/11 ≈ 0,82, sea cual sea el secreto.</p>
+        <p>En ML-DSA hay 256·ℓ coeficientes y otras comprobaciones (sobre los bits bajos de <span class="math"><b>w</b> − <var>c</var><b>s</b><sub>2</sub></span> y el tamaño de la pista); FIPS 204 da un número esperado de iteraciones de 4,25, 5,1 y 3,85 para ML-DSA-44, -65 y -87 [11]. Por eso el tiempo de firma de ML-DSA es variable, aunque no depende del secreto. Puedes ver el bucle en acción en <a href="../../ejemplos/ml_dsa.html">ML-DSA paso a paso</a>.</p>
+
+        <h2 id="ntru"><span class="sec">3.6</span>NTRU, retículos NTRU y firmas <em>hash-and-sign</em></h2>
+        <p>NTRU (Hoffstein, Pipher y Silverman, 1996–1998) es el esquema de retículos práctico más antiguo. La clave secreta son dos polinomios pequeños <span class="math"><var>f</var>, <var>g</var> ∈ <var>R</var></span> con <var>f</var> invertible módulo <var>q</var>; la pública es</p>
+        <div class="equation"><var>h</var> = <var>g</var> · <var>f</var><sup>−1</sup>  (mod <var>q</var>)<span class="eq-label">(3.7)</span></div>
+        <p>El problema NTRU es recuperar <var>f</var>, <var>g</var> (o cualquier par corto equivalente) a partir de <var>h</var>, que parece uniforme. Geométricamente, el <strong>retículo NTRU</strong></p>
+        <div class="equation">Λ<sub><var>h</var></sub> = { (<var>u</var>, <var>v</var>) ∈ <var>R</var>² : <var>u</var>·<var>h</var> ≡ <var>v</var> (mod <var>q</var>) },   base pública <b>B</b><sub>pub</sub> = [[1, <var>h</var>], [0, <var>q</var>]]<span class="eq-label">(3.8)</span></div>
+        <p>(con cada entrada vista como matriz negacíclica <span class="math"><var>n</var> × <var>n</var></span>) contiene el vector anormalmente corto <span class="math">(<var>f</var>, <var>g</var>)</span>. La base pública es «mala» como la de la figura 3.1; conocer (<var>f</var>, <var>g</var>) permite construir una base «buena».</p>
+        <h3>Firmas GPV y Falcon (FN-DSA)</h3>
+        <p>El paradigma <em>hash-and-sign</em> de Gentry, Peikert y Vaikuntanathan (GPV, 2008) [13] funciona así: el mensaje se transforma en un punto objetivo <span class="math"><var>c</var> = <var>H</var>(<var>r</var> ‖ <var>M</var>)</span>; el firmante, que tiene la base buena, encuentra un punto del retículo cercano, es decir, un par corto <span class="math">(<var>s</var><sub>1</sub>, <var>s</var><sub>2</sub>)</span> con <span class="math"><var>s</var><sub>1</sub> + <var>s</var><sub>2</sub><var>h</var> ≡ <var>c</var> (mod <var>q</var>)</span>. El verificador comprueba la ecuación y que el par es corto; encontrar un par así sin la trampa es un problema SIS en el retículo NTRU.</p>
+        <p>La sutileza: si el punto cercano se calcula con un redondeo determinista (como en GGH o NTRUSign), la diferencia <span class="math"><var>c</var> − <b>v</b></span> es uniforme en el paralelepípedo de la base secreta, y con suficientes firmas se reconstruye esa base («aprender un paralelepípedo», Nguyen y Regev, 2006). GPV lo resuelve con <strong>muestreo gaussiano discreto</strong>: la firma sigue una gaussiana esférica que no depende de la base usada. Falcon implementa este muestreo con el algoritmo <em>fast Fourier sampling</em> sobre un árbol de descomposiciones LDL (el «árbol Falcon»), y necesita que la base secreta sea completa: se resuelve la ecuación NTRU <span class="math"><var>f</var><var>G</var> − <var>g</var><var>F</var> = <var>q</var></span> para obtener</p>
+        <div class="equation"><b>B</b><sub>sec</sub> = [[<var>g</var>, −<var>f</var>], [<var>G</var>, −<var>F</var>]]<span class="eq-label">(3.9)</span></div>
+        <p>El resultado son las firmas más compactas de retículos (666 bytes para Falcon-512, clave pública de 897 bytes [14]), a cambio de una implementación delicada: el muestreo usa aritmética de coma flotante que debe ser de tiempo constante. NIST estandariza Falcon como FN-DSA (FIPS 206); su estado se detalla en el <a href="../tema4/index.html">Tema 4</a>.</p>
+
+        <h2 id="seguridad-concreta"><span class="sec">3.7</span>Seguridad concreta: BKZ, <em>core-SVP</em> y el <em>lattice-estimator</em></h2>
+        <p>¿Cómo se decide que ML-KEM-512 tiene seguridad de nivel 1? No hay demostración: se enumeran los mejores ataques conocidos y se estima su coste. El más estudiado es el <strong>ataque primal</strong>:</p>
+        <ol>
+          <li>Se construye, a partir de <span class="math">(<b>A</b>, <b>b</b> = <b>A</b><b>s</b> + <b>e</b>)</span>, un retículo de dimensión <span class="math"><var>d</var> ≈ <var>m</var> + <var>n</var> + 1</span> que contiene el vector corto <span class="math">(<b>e</b>, <b>s</b>, 1)</span> (<em>embedding</em> de Kannan). Es una instancia de SVP «único» (uSVP): hay un vector mucho más corto de lo que predice la heurística gaussiana.</li>
+          <li>BKZ-β encuentra ese vector cuando su proyección sobre los últimos β vectores de Gram–Schmidt es más corta que el vector de Gram–Schmidt correspondiente. Con la heurística de la serie geométrica (GSA), la condición es aproximadamente <span class="math">σ√β ≤ δ(β)<sup>2β−<var>d</var></sup> · (det ℒ)<sup>1/<var>d</var></sup></span>, donde σ es la desviación típica del error y δ(β) la de la ecuación (3.2).</li>
+          <li>Se elige el menor β que cumple la condición (optimizando <var>m</var>) y se toma como coste <strong>una sola llamada</strong> al oráculo SVP en dimensión β: <span class="math">2<sup>0,292β</sup></span> clásico, <span class="math">2<sup>0,265β</sup></span> cuántico.</li>
+        </ol>
+        <p>Esa última simplificación es la metodología <strong>core-SVP</strong>, introducida en el artículo de NewHope [15]. Es deliberadamente conservadora (ignora los factores subexponenciales y las numerosas llamadas que hace BKZ) y sirve como unidad común para comparar esquemas. La especificación de Kyber (ronda 3), cuyos parámetros adopta ML-KEM, da estos valores [16]:</p>
+        <div class="table-wrap"><table>
+          <caption>Estimaciones core-SVP del ataque primal para Kyber / ML-KEM (especificación ronda 3, tabla 4)</caption>
+          <thead><tr><th></th><th class="num">ML-KEM-512</th><th class="num">ML-KEM-768</th><th class="num">ML-KEM-1024</th></tr></thead>
+          <tbody>
+            <tr><td>Nivel de seguridad NIST</td><td class="num">1</td><td class="num">3</td><td class="num">5</td></tr>
+            <tr><td>Dimensión del ataque <var>d</var></td><td class="num">999</td><td class="num">1419</td><td class="num">1885</td></tr>
+            <tr><td>Tamaño de bloque β</td><td class="num">406</td><td class="num">626</td><td class="num">878</td></tr>
+            <tr><td>Core-SVP clásico (bits)</td><td class="num">118</td><td class="num">183</td><td class="num">256</td></tr>
+            <tr><td>Core-SVP cuántico (bits)</td><td class="num">107</td><td class="num">166</td><td class="num">232</td></tr>
+            <tr><td>Estimación refinada (log<sub>2</sub> puertas)</td><td class="num">151,5</td><td class="num">215,1</td><td class="num">287,3</td></tr>
+          </tbody>
+        </table></div>
+        <p>Comprueba la coherencia: 0,292 · 406 ≈ 118,6 y 0,265 · 406 ≈ 107,6. Los 118 bits core-SVP quedan por debajo de 128, pero NIST define el nivel 1 como «al menos tan difícil como una búsqueda exhaustiva de clave de AES-128», medido en puertas (≈ 2<sup>143</sup>); la estimación refinada, que cuenta el coste real de la criba, da ≈ 2<sup>151,5</sup> puertas. El margen entre ambas cifras es precisamente el objeto de debate en las estimaciones de seguridad de retículos.</p>
+        <h3>El <em>lattice-estimator</em></h3>
+        <p>El estándar de facto para estas cuentas es el <a href="https://github.com/malb/lattice-estimator"><em>lattice-estimator</em></a> de Albrecht y colaboradores [17], sucesor del «LWE estimator» de 2015 [18]. Es un módulo de SageMath que implementa los ataques primal (uSVP y BDD), dual, dual híbrido, BKW, Arora–Gröbner, y ataques a NTRU y SIS. Su README (septiembre de 2026) muestra, por ejemplo:</p>
+        <pre data-lang="sage"><code>&gt;&gt;&gt; <span class="tok-k">from</span> estimator <span class="tok-k">import</span> *
+&gt;&gt;&gt; schemes.Kyber512
+LWEParameters(n=512, q=3329, Xs=D(σ=1.22), Xe=D(σ=1.22), m=512, tag='Kyber 512')
+&gt;&gt;&gt; r = LWE.estimate.rough(schemes.Kyber512)
+usvp        :: rop: ≈2^118.6, red: ≈2^118.6, δ: 1.003941, β: 406, d: 998, tag: usvp
+dual_hybrid :: rop: ≈2^115.5, red: ≈2^115.3, guess: ≈2^112.3, β: 395, ...</code></pre>
+        <p><code>estimate.rough</code> aplica el modelo core-SVP (0,292β) a los ataques más eficientes; <code>estimate</code> usa modelos de coste más detallados y da cifras mayores (≈ 2<sup>143,8</sup> para uSVP). Observa que δ = 1,003941 coincide con la ecuación (3.2) para β = 406, y que el ataque dual híbrido queda ligeramente por debajo del primal en este modelo: por eso los diseñadores deben considerar varios ataques, no solo uno.</p>
+        <div class="callout note"><span class="callout-title">Para practicar</span>
+          <p>Calcula tú mismo δ(β) con la ecuación (3.2) para β = 406, 626, 878 y comprueba que obtienes 1,00394, 1,00290 y 1,00225. Si tienes SageMath, clona el repositorio y ejecuta <code>LWE.estimate.rough(schemes.Kyber768)</code>.</p>
+        </div>
+
+        <h2 id="codigos"><span class="sec">3.8</span>Criptografía basada en códigos</h2>
+        <p>Un <strong>código lineal</strong> binario <span class="math">[<var>n</var>, <var>k</var>]</span> es un subespacio <span class="math"><var>C</var> ⊆ 𝔽<sub>2</sub><sup><var>n</var></sup></span> de dimensión <var>k</var>. Se describe por una <strong>matriz generadora</strong> <span class="math"><b>G</b> ∈ 𝔽<sub>2</sub><sup><var>k</var>×<var>n</var></sup></span> (las palabras son <span class="math"><b>m</b><b>G</b></span>) o por una <strong>matriz de paridad</strong> <span class="math"><b>H</b> ∈ 𝔽<sub>2</sub><sup>(<var>n</var>−<var>k</var>)×<var>n</var></sup></span> (las palabras cumplen <span class="math"><b>H</b><b>c</b><sup>T</sup> = 0</span>). Si la distancia mínima es <var>d</var>, el código corrige <span class="math"><var>t</var> = ⌊(<var>d</var> − 1)/2⌋</span> errores. El <strong>síndrome</strong> de un vector recibido <span class="math"><b>y</b> = <b>c</b> + <b>e</b></span> es <span class="math"><b>s</b> = <b>H</b><b>y</b><sup>T</sup> = <b>H</b><b>e</b><sup>T</sup></span>: depende solo del error.</p>
+        <div class="definition"><span class="def-title"><b>Problema</b>Decodificación por síndrome (SDP)</span>
+          <p>Dados <span class="math"><b>H</b> ∈ 𝔽<sub>2</sub><sup>(<var>n</var>−<var>k</var>)×<var>n</var></sup></span> aleatoria, <span class="math"><b>s</b> ∈ 𝔽<sub>2</sub><sup><var>n</var>−<var>k</var></sup></span> y <var>t</var>, encontrar <b>e</b> de peso de Hamming <span class="math">wt(<b>e</b>) ≤ <var>t</var></span> con <span class="math"><b>H</b><b>e</b><sup>T</sup> = <b>s</b></span>. Es NP-completo (Berlekamp, McEliece y van Tilborg, 1978).</p>
+        </div>
+        <p>El mejor ataque genérico es la <strong>decodificación por conjuntos de información</strong> (ISD), iniciada por Prange (1962): elegir <var>n</var> − <var>k</var> columnas al azar, esperar que contengan todo el error y resolver un sistema lineal. Las mejoras posteriores (Stern, Dumer, MMT, BJMM…) reducen el exponente, pero el coste sigue siendo <span class="math">2<sup><var>c</var>·<var>t</var>(1+<var>o</var>(1))</sup></span>. Cuánticamente, Grover acelera la búsqueda de conjuntos buenos con una ganancia cuadrática como máximo en el exponente; no hay ataque estructural cuántico conocido.</p>
+        <h3>Ejemplo: el código de Hamming [7, 4]</h3>
+        <p>Su matriz de paridad tiene como columnas los números 1…7 en binario:</p>
+        <div class="equation"><b>H</b> = [ 0 0 0 1 1 1 1 ; 0 1 1 0 0 1 1 ; 1 0 1 0 1 0 1 ]<span class="eq-label">(3.10)</span></div>
+        <p>Si se transmite una palabra y se altera el bit 5, el síndrome es la columna 5 de <b>H</b>: <span class="math">(1, 0, 1)</span>, es decir, 5 en binario. El decodificador lee la posición del error directamente. Es un código con estructura: <var>t</var> = 1 y la decodificación es trivial. Con una <b>H</b> aleatoria de tamaño criptográfico no hay forma conocida de hacerlo.</p>
+        <h3>McEliece y Niederreiter</h3>
+        <p>La idea de McEliece (1978) es <strong>esconder</strong> un código con decodificador eficiente tras una transformación que lo hace parecer aleatorio:</p>
+        <ul>
+          <li><strong>McEliece:</strong> <span class="math"><b>G</b><sub>pub</sub> = <b>S</b><b>G</b><b>P</b></span> (con <b>S</b> invertible y <b>P</b> permutación). Cifrar: <span class="math"><b>c</b> = <b>m</b><b>G</b><sub>pub</sub> + <b>e</b></span> con wt(<b>e</b>) = <var>t</var>. Descifrar: <span class="math"><b>c</b><b>P</b><sup>−1</sup> = (<b>m</b><b>S</b>)<b>G</b> + <b>e</b><b>P</b><sup>−1</sup></span>, se decodifica con el algoritmo secreto y se deshace <b>S</b>.</li>
+          <li><strong>Niederreiter</strong> (1986), versión dual: la clave pública es una matriz de paridad disfrazada, el mensaje se codifica en un error <b>e</b> de peso <var>t</var> y el texto cifrado es su síndrome <span class="math"><b>s</b> = <b>H</b><sub>pub</sub><b>e</b><sup>T</sup></span>. Textos cifrados mucho más cortos.</li>
+        </ul>
+        <p>La elección del código es crítica. Con códigos de Reed–Solomon generalizados el esquema se rompió (Sidelnikov y Shestakov, 1992), porque su estructura algebraica se detecta a partir de la clave pública. Los <strong>códigos de Goppa binarios</strong> originales, en cambio, resisten desde 1978. Un código de Goppa se define por un polinomio irreducible <span class="math"><var>g</var>(<var>x</var>)</span> de grado <var>t</var> sobre <span class="math">𝔽<sub>2<sup><var>m</var></sup></sub></span> y un soporte de <var>n</var> elementos distintos; tiene dimensión <span class="math"><var>k</var> ≥ <var>n</var> − <var>m</var><var>t</var></span> y corrige <var>t</var> errores con el algoritmo de Patterson o Berlekamp–Massey.</p>
+        <p><strong>Classic McEliece</strong> [19] es un KEM tipo Niederreiter sobre códigos de Goppa con <b>H</b> en forma sistemática <span class="math">(<b>I</b><sub><var>n</var>−<var>k</var></sub> | <b>T</b>)</span>; la clave pública es solo <b>T</b>. Para <code>mceliece348864</code> (<var>n</var> = 3488, <var>m</var> = 12, <var>t</var> = 64): <span class="math"><var>n</var> − <var>k</var> = 768</span>, <span class="math"><var>k</var> = 2720</span>, clave pública <span class="math">768 · 2720 / 8 = 261 120</span> bytes y texto cifrado <span class="math">768/8 = 96</span> bytes. Tiene los textos cifrados más cortos de toda la PQC y las claves más grandes.</p>
+        <h3>Códigos cuasi-cíclicos: BIKE y HQC</h3>
+        <p>Para reducir la clave se usan códigos <strong>cuasi-cíclicos</strong>: la matriz está formada por bloques circulantes, cada uno descrito por su primera fila, igual que <var>R</var><sub><var>q</var></sub> reduce el tamaño de LWE. Se trabaja en <span class="math">𝔽<sub>2</sub>[<var>X</var>]/(<var>X</var><sup><var>r</var></sup> − 1)</span> con <var>r</var> primo.</p>
+        <ul>
+          <li><strong>BIKE</strong> usa códigos QC-MDPC (matriz de paridad de densidad moderada, <span class="math">(<var>h</var><sub>0</sub>, <var>h</var><sub>1</sub>)</span> dispersos) y decodificación por inversión de bits (<em>bit flipping</em>). Con <var>r</var> = 12 323, la clave pública ocupa ⌈12 323/8⌉ = 1541 bytes y el texto cifrado 1573 bytes [20]. El decodificador es probabilístico: los fallos de descifrado dependen de la clave secreta y permitieron ataques de reacción (Guo, Johansson y Stankovski, 2016), por lo que la tasa de fallo debe ser inferior a <span class="math">2<sup>−128</sup></span> para lograr seguridad IND-CCA.</li>
+          <li><strong>HQC</strong> (<em>Hamming Quasi-Cyclic</em>) no esconde ningún código: la clave pública es <span class="math">(<var>h</var>, <var>s</var> = <var>x</var> + <var>h</var>·<var>y</var>)</span> con <var>x</var>, <var>y</var> dispersos, un análogo exacto de Ring-LWE con métrica de Hamming. El mensaje se codifica con un código público concatenado (Reed–Muller y Reed–Solomon) que corrige el «ruido» <span class="math"><var>x</var>·<var>r</var><sub>2</sub> − <var>y</var>·<var>r</var><sub>1</sub> + <var>e</var></span>. HQC-1 tiene clave pública de 2241 bytes y texto cifrado de 4433 bytes [21]. NIST lo seleccionó en marzo de 2025 como segundo KEM, de respaldo frente a ML-KEM, por basarse en un problema distinto [22]; su estandarización se trata en el <a href="../tema4/index.html">Tema 4</a>.</li>
+        </ul>
+        <div class="table-wrap"><table>
+          <caption>KEM basados en códigos, nivel de seguridad 1 (bytes)</caption>
+          <thead><tr><th>Esquema</th><th>Código</th><th class="num">Clave pública</th><th class="num">Texto cifrado</th><th>Estado (sept. 2026)</th></tr></thead>
+          <tbody>
+            <tr><td>Classic McEliece <code>mceliece348864</code></td><td>Goppa binario</td><td class="num">261 120</td><td class="num">96</td><td>No seleccionado por NIST; estandarizado por ISO en junio de 2026 [37]</td></tr>
+            <tr><td>BIKE-L1</td><td>QC-MDPC</td><td class="num">1 541</td><td class="num">1 573</td><td>No seleccionado (ronda 4)</td></tr>
+            <tr><td>HQC-1</td><td>QC + RM/RS público</td><td class="num">2 241</td><td class="num">4 433</td><td>Seleccionado (marzo 2025)</td></tr>
+            <tr><td><em>Comparación:</em> ML-KEM-512</td><td>Module-LWE</td><td class="num">800</td><td class="num">768</td><td>FIPS 203</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="hash"><span class="sec">3.9</span>Firmas basadas en funciones hash</h2>
+        <p>Las firmas basadas en hash solo necesitan una función hash con resistencia a (segundas) preimágenes. Es la hipótesis más débil posible: si estas firmas cayeran, caería casi toda la criptografía simétrica. Contra un adversario cuántico solo se conocen ataques genéricos (Grover y, para colisiones, BHT), así que basta con dimensionar la salida del hash: SLH-DSA usa <var>n</var> = 16, 24 o 32 bytes para los niveles 1, 3 y 5.</p>
+        <h3>Firma de un solo uso de Lamport</h3>
+        <p>Para firmar un resumen de <var>ℓ</var> bits: la clave secreta son <span class="math">2<var>ℓ</var></span> valores aleatorios <span class="math"><var>x</var><sub><var>i</var>,0</sub>, <var>x</var><sub><var>i</var>,1</sub></span>; la pública, sus hashes <span class="math"><var>y</var><sub><var>i</var>,<var>b</var></sub> = <var>H</var>(<var>x</var><sub><var>i</var>,<var>b</var></sub>)</span>. Para firmar el bit <var>m</var><sub><var>i</var></sub> se revela <span class="math"><var>x</var><sub><var>i</var>,<var>m</var><sub><var>i</var></sub></sub></span>; el verificador comprueba <span class="math"><var>H</var>(σ<sub><var>i</var></sub>) = <var>y</var><sub><var>i</var>,<var>m</var><sub><var>i</var></sub></sub></span>.</p>
+        <p><strong>Ejemplo con ℓ = 3.</strong> Como función hash usamos los 16 primeros bits de SHA-256 de la cadena ASCII (valores reales, calculados con <code>hashlib</code>); los «secretos» son cadenas cortas solo por legibilidad.</p>
+        <div class="table-wrap"><table>
+          <caption>Lamport de juguete: H(x) = primeros 16 bits de SHA-256(x)</caption>
+          <thead><tr><th class="num">Posición</th><th>Secreto para 0</th><th>Público para 0</th><th>Secreto para 1</th><th>Público para 1</th></tr></thead>
+          <tbody>
+            <tr><td class="num">0</td><td><code>k00</code></td><td><code>b74f</code></td><td><code>k01</code></td><td><code>be8b</code></td></tr>
+            <tr><td class="num">1</td><td><code>k10</code></td><td><code>4ae4</code></td><td><code>k11</code></td><td><code>1387</code></td></tr>
+            <tr><td class="num">2</td><td><code>k20</code></td><td><code>cb67</code></td><td><code>k21</code></td><td><code>d71f</code></td></tr>
+          </tbody>
+        </table></div>
+        <p>Firmar el resumen <var>m</var> = 101 revela σ = (<code>k01</code>, <code>k10</code>, <code>k21</code>). El verificador calcula <span class="math"><var>H</var>(<code>k01</code>) = <code>be8b</code> = <var>y</var><sub>0,1</sub></span>, <span class="math"><var>H</var>(<code>k10</code>) = <code>4ae4</code> = <var>y</var><sub>1,0</sub></span> y <span class="math"><var>H</var>(<code>k21</code>) = <code>d71f</code> = <var>y</var><sub>2,1</sub></span>. Si se firmara también 011, el adversario conocería <code>k00</code>, <code>k01</code>, <code>k10</code>, <code>k11</code>, <code>k21</code> y podría firmar 001 o 111 sin la clave: por eso es de <strong>un solo uso</strong>.</p>
+        <h3>Winternitz (WOTS, WOTS+)</h3>
+        <p>Lamport es enorme: 2 × 256 valores de 32 bytes en la clave pública. Winternitz firma dígitos en base <var>w</var> en lugar de bits usando <strong>cadenas de hash</strong>: la clave secreta son valores <var>x</var><sub><var>i</var></sub>, la pública <span class="math"><var>y</var><sub><var>i</var></sub> = <var>H</var><sup><var>w</var>−1</sup>(<var>x</var><sub><var>i</var></sub>)</span>, y para firmar el dígito <var>d</var><sub><var>i</var></sub> se publica <span class="math"><var>H</var><sup><var>d</var><sub><var>i</var></sub></sup>(<var>x</var><sub><var>i</var></sub>)</span>; el verificador aplica <span class="math"><var>w</var> − 1 − <var>d</var><sub><var>i</var></sub></span> veces más <var>H</var> y compara. Como cualquiera puede avanzar en la cadena (convertir una firma del dígito <var>d</var> en una de <var>d</var> + 1), se añade una <strong>suma de control</strong> <span class="math"><var>C</var> = ∑(<var>w</var> − 1 − <var>d</var><sub><var>i</var></sub>)</span>, firmada también: subir un dígito del mensaje obliga a bajar uno de la suma, lo que exige invertir <var>H</var>. Con <span class="math">log<sub>2</sub> <var>w</var> = 4</span> y resúmenes de 8<var>n</var> bits, el número de cadenas es</p>
+        <div class="equation">len<sub>1</sub> = ⌈8<var>n</var> / 4⌉,   len<sub>2</sub> = ⌊log<sub>2</sub>(len<sub>1</sub>(<var>w</var> − 1)) / 4⌋ + 1,   len = len<sub>1</sub> + len<sub>2</sub><span class="eq-label">(3.11)</span></div>
+        <p>Para <var>n</var> = 16 bytes: len = 32 + 3 = 35; para <var>n</var> = 32: len = 64 + 3 = 67. WOTS+ (usado en XMSS y SLH-DSA) añade máscaras aleatorias en cada paso para reducir la seguridad a la segunda preimagen en lugar de la colisión.</p>
+
+        <h3>Árboles de Merkle</h3>
+        <p>Para firmar muchos mensajes se generan <span class="math">2<sup><var>h</var></sup></span> pares OTS y se compromete a todas sus claves públicas con un árbol hash binario; la clave pública es la <strong>raíz</strong> (32 bytes). La firma del mensaje número <var>i</var> contiene el índice <var>i</var>, la firma OTS y el <strong>camino de autenticación</strong>: los <var>h</var> nodos hermanos necesarios para recalcular la raíz desde la hoja <var>i</var>.</p>
+        <figure class="diagram">
+<svg viewBox="0 0 720 280" role="img" aria-labelledby="f36t"><title id="f36t">Árbol de Merkle de altura 3 con 8 hojas; camino de autenticación de la hoja 5 formado por los nodos hermanos L4, N3 y M0</title>
+<line x1="120" y1="162" x2="80" y2="196" class="svg-line"/>
+<line x1="120" y1="162" x2="160" y2="196" class="svg-line"/>
+<line x1="280" y1="162" x2="240" y2="196" class="svg-line"/>
+<line x1="280" y1="162" x2="320" y2="196" class="svg-line"/>
+<line x1="440" y1="162" x2="400" y2="196" class="svg-line"/>
+<line x1="440" y1="162" x2="480" y2="196" class="svg-stroke-signal" stroke-width="2.5"/>
+<line x1="600" y1="162" x2="560" y2="196" class="svg-line"/>
+<line x1="600" y1="162" x2="640" y2="196" class="svg-line"/>
+<line x1="200" y1="100" x2="120" y2="134" class="svg-line"/>
+<line x1="200" y1="100" x2="280" y2="134" class="svg-line"/>
+<line x1="520" y1="100" x2="440" y2="134" class="svg-stroke-signal" stroke-width="2.5"/>
+<line x1="520" y1="100" x2="600" y2="134" class="svg-line"/>
+<line x1="360" y1="38" x2="200" y2="72" class="svg-line"/>
+<line x1="360" y1="38" x2="520" y2="72" class="svg-stroke-signal" stroke-width="2.5"/>
+<rect x="58" y="196" width="44" height="28" rx="4" class="svg-box"/>
+<text x="80" y="214" text-anchor="middle" class="svg-text svg-mono">L0</text>
+<rect x="138" y="196" width="44" height="28" rx="4" class="svg-box"/>
+<text x="160" y="214" text-anchor="middle" class="svg-text svg-mono">L1</text>
+<rect x="218" y="196" width="44" height="28" rx="4" class="svg-box"/>
+<text x="240" y="214" text-anchor="middle" class="svg-text svg-mono">L2</text>
+<rect x="298" y="196" width="44" height="28" rx="4" class="svg-box"/>
+<text x="320" y="214" text-anchor="middle" class="svg-text svg-mono">L3</text>
+<rect x="378" y="196" width="44" height="28" rx="4" class="svg-box-amber"/>
+<text x="400" y="214" text-anchor="middle" class="svg-text svg-mono">L4</text>
+<rect x="458" y="196" width="44" height="28" rx="4" class="svg-box-signal"/>
+<text x="480" y="214" text-anchor="middle" class="svg-text svg-mono">L5</text>
+<rect x="538" y="196" width="44" height="28" rx="4" class="svg-box"/>
+<text x="560" y="214" text-anchor="middle" class="svg-text svg-mono">L6</text>
+<rect x="618" y="196" width="44" height="28" rx="4" class="svg-box"/>
+<text x="640" y="214" text-anchor="middle" class="svg-text svg-mono">L7</text>
+<rect x="98" y="134" width="44" height="28" rx="4" class="svg-box"/>
+<text x="120" y="152" text-anchor="middle" class="svg-text svg-mono">N0</text>
+<rect x="258" y="134" width="44" height="28" rx="4" class="svg-box"/>
+<text x="280" y="152" text-anchor="middle" class="svg-text svg-mono">N1</text>
+<rect x="418" y="134" width="44" height="28" rx="4" class="svg-box-signal"/>
+<text x="440" y="152" text-anchor="middle" class="svg-text svg-mono">N2</text>
+<rect x="578" y="134" width="44" height="28" rx="4" class="svg-box-amber"/>
+<text x="600" y="152" text-anchor="middle" class="svg-text svg-mono">N3</text>
+<rect x="178" y="72" width="44" height="28" rx="4" class="svg-box-amber"/>
+<text x="200" y="90" text-anchor="middle" class="svg-text svg-mono">M0</text>
+<rect x="498" y="72" width="44" height="28" rx="4" class="svg-box-signal"/>
+<text x="520" y="90" text-anchor="middle" class="svg-text svg-mono">M1</text>
+<rect x="332" y="10" width="56" height="28" rx="4" class="svg-box-signal"/>
+<text x="360" y="28" text-anchor="middle" class="svg-text svg-mono">raíz</text>
+<text x="80" y="244" text-anchor="middle" class="svg-muted">pk0</text>
+<line x1="80" y1="232" x2="80" y2="225" class="svg-line"/>
+<text x="160" y="244" text-anchor="middle" class="svg-muted">pk1</text>
+<line x1="160" y1="232" x2="160" y2="225" class="svg-line"/>
+<text x="240" y="244" text-anchor="middle" class="svg-muted">pk2</text>
+<line x1="240" y1="232" x2="240" y2="225" class="svg-line"/>
+<text x="320" y="244" text-anchor="middle" class="svg-muted">pk3</text>
+<line x1="320" y1="232" x2="320" y2="225" class="svg-line"/>
+<text x="400" y="244" text-anchor="middle" class="svg-muted">pk4</text>
+<line x1="400" y1="232" x2="400" y2="225" class="svg-line"/>
+<text x="480" y="244" text-anchor="middle" class="svg-muted">pk5</text>
+<line x1="480" y1="232" x2="480" y2="225" class="svg-line"/>
+<text x="560" y="244" text-anchor="middle" class="svg-muted">pk6</text>
+<line x1="560" y1="232" x2="560" y2="225" class="svg-line"/>
+<text x="640" y="244" text-anchor="middle" class="svg-muted">pk7</text>
+<line x1="640" y1="232" x2="640" y2="225" class="svg-line"/>
+<text x="400" y="274" class="svg-muted">nodo = H(izq ‖ der) · hoja Li = H(clave pública OTS i)</text>
+<rect x="40" y="262" width="14" height="14" class="svg-box-signal"/><text x="60" y="274" class="svg-muted">camino recalculado</text>
+<rect x="200" y="262" width="14" height="14" class="svg-box-amber"/><text x="220" y="274" class="svg-muted">camino de autenticación</text>
+</svg>
+          <figcaption><b>Figura 3.2.</b> Árbol de Merkle de altura <var>h</var> = 3. Para verificar una firma con la hoja L5, el verificador recalcula L5 = H(pk<sub>5</sub>) a partir de la firma OTS, después N2 = H(L4 ‖ L5), M1 = H(N2 ‖ N3) y raíz = H(M0 ‖ M1), y compara con la clave pública. El camino de autenticación son los <var>h</var> = 3 nodos en ámbar.</figcaption>
+        </figure>
+        <h3>Con estado (XMSS, LMS) y sin estado (SLH-DSA)</h3>
+        <p><strong>XMSS</strong> (RFC 8391 [24]) y <strong>LMS/HSS</strong> (RFC 8554 [25]) son esquemas de Merkle con varios niveles de árboles. Son <strong>con estado</strong> (<em>stateful</em>): el firmante debe recordar qué hojas ha usado y no reutilizar ninguna jamás. Una copia de seguridad restaurada, una máquina virtual clonada o dos firmantes con la misma clave pueden reutilizar un índice y romper la seguridad. Por eso NIST SP 800-208 [26] los aprueba solo para casos concretos (firma de <em>firmware</em>, por ejemplo) y exige que las claves se generen y usen dentro de módulos criptográficos hardware sin exportarlas.</p>
+        <p><strong>SPHINCS+</strong> [27], estandarizado como <strong>SLH-DSA</strong> en FIPS 205 [23], elimina el estado combinando tres ideas:</p>
+        <ul>
+          <li><strong>Hiperárbol:</strong> <var>d</var> capas de árboles de Merkle de altura <span class="math"><var>h</var>′ = <var>h</var>/<var>d</var></span>; las hojas de cada árbol firman (con WOTS+) las raíces de los árboles de la capa inferior. El total de hojas es <span class="math">2<sup><var>h</var></sup></span> con <var>h</var> = 63–68, pero solo se calculan los árboles del camino usado.</li>
+          <li><strong>Índice pseudoaleatorio:</strong> la hoja se elige a partir del hash del mensaje y de un valor aleatorio. Con <span class="math">2<sup>63</sup></span> hojas, la probabilidad de reutilizar una en <span class="math">2<sup>64</sup></span> firmas es pequeña, y reutilizar una hoja es tolerable gracias al punto siguiente.</li>
+          <li><strong>FORS</strong> (<em>Forest Of Random Subsets</em>): la capa inferior no es un OTS sino una firma de <em>pocos usos</em>: <var>k</var> árboles de <span class="math">2<sup><var>a</var></sup></span> hojas; el resumen del mensaje se divide en <var>k</var> índices de <var>a</var> bits y se revela una hoja por árbol con su camino. Reutilizar una instancia FORS unas pocas veces degrada la seguridad de forma gradual y cuantificable, no catastrófica.</li>
+        </ul>
+        <p>El tamaño de la firma se deduce directamente de la estructura: <span class="math">|σ| = <var>n</var> · (1 + <var>k</var>(<var>a</var> + 1) + <var>h</var> + <var>d</var> · len)</span> (aleatoriedad, FORS, caminos del hiperárbol y firmas WOTS+). Lo calcularás en el ejercicio 3.6; los parámetros exactos están en el <a href="../tema4/index.html">Tema 4</a>.</p>
+
+        <h2 id="multivariante"><span class="sec">3.10</span>Criptografía multivariante</h2>
+        <div class="definition"><span class="def-title"><b>Problema</b>MQ (sistemas cuadráticos multivariantes)</span>
+          <p>Dados <var>m</var> polinomios cuadráticos <span class="math"><var>p</var><sub>1</sub>, …, <var>p</var><sub><var>m</var></sub> ∈ 𝔽<sub><var>q</var></sub>[<var>x</var><sub>1</sub>, …, <var>x</var><sub><var>n</var></sub>]</span> y un objetivo <span class="math"><b>t</b> ∈ 𝔽<sub><var>q</var></sub><sup><var>m</var></sup></span>, encontrar <b>x</b> con <span class="math"><var>p</var><sub><var>i</var></sub>(<b>x</b>) = <var>t</var><sub><var>i</var></sub></span> para todo <var>i</var>. Es NP-completo sobre cualquier cuerpo finito, y para sistemas aleatorios los mejores algoritmos (bases de Gröbner F4/F5, XL, <em>hybrid</em>) son exponenciales.</p>
+        </div>
+        <p>Una firma multivariante es una función cuadrática pública <span class="math"><var>P</var> : 𝔽<sub><var>q</var></sub><sup><var>n</var></sup> → 𝔽<sub><var>q</var></sub><sup><var>m</var></sup></span> que el firmante sabe invertir. Firmar el mensaje es encontrar <b>x</b> con <span class="math"><var>P</var>(<b>x</b>) = <var>H</var>(<var>M</var>)</span>; verificar es evaluar polinomios, lo que hace la verificación muy rápida y la firma muy corta. La trampa es una estructura oculta; la historia de la familia es la historia de esas estructuras siendo descubiertas.</p>
+        <h3>Aceite y vinagre (UOV)</h3>
+        <p>Las variables se dividen en <var>v</var> de «vinagre» y <var>o</var> de «aceite» (<var>n</var> = <var>v</var> + <var>o</var>, normalmente <var>o</var> = <var>m</var>). El mapa central <var>F</var> tiene polinomios sin términos aceite×aceite:</p>
+        <div class="equation"><var>f</var><sub><var>k</var></sub>(<b>x</b>) = ∑<sub><var>i</var>,<var>j</var> ∈ V</sub> α<sub><var>ij</var></sub><var>x</var><sub><var>i</var></sub><var>x</var><sub><var>j</var></sub> + ∑<sub><var>i</var> ∈ V, <var>j</var> ∈ O</sub> β<sub><var>ij</var></sub><var>x</var><sub><var>i</var></sub><var>x</var><sub><var>j</var></sub> + (términos lineales)<span class="eq-label">(3.12)</span></div>
+        <p>Si se fijan valores aleatorios para el vinagre, el sistema queda <strong>lineal</strong> en el aceite y se resuelve por eliminación gaussiana. La clave pública es <span class="math"><var>P</var> = <var>F</var> ∘ <var>T</var></span> con <var>T</var> un cambio lineal de variables secreto, que esconde qué variables son aceite. Equivalentemente, <var>P</var> se anula en un subespacio secreto de dimensión <var>o</var> (el «espacio de aceite»).</p>
+        <p><strong>Ejemplo en 𝔽<sub>7</sub></strong> con vinagre <var>x</var><sub>1</sub>, <var>x</var><sub>2</sub> y aceite <var>y</var>: <span class="math"><var>f</var> = <var>x</var><sub>1</sub><sup>2</sup> + 2<var>x</var><sub>1</sub><var>x</var><sub>2</sub> + 4<var>x</var><sub>2</sub><sup>2</sup> + 3<var>x</var><sub>1</sub><var>y</var> + 5<var>x</var><sub>2</sub><var>y</var></span>, objetivo <var>t</var> = 3. Fijamos <var>x</var><sub>1</sub> = 1, <var>x</var><sub>2</sub> = 2: <span class="math"><var>f</var> = 1 + 4 + 16 + 3<var>y</var> + 10<var>y</var> ≡ 0 + 6<var>y</var> (mod 7)</span>. Resolvemos <span class="math">6<var>y</var> ≡ 3</span>: como <span class="math">6<sup>−1</sup> ≡ 6</span>, <span class="math"><var>y</var> ≡ 18 ≡ 4</span>. Comprobación: 6 · 4 = 24 ≡ 3. La firma sería <span class="math"><var>T</var><sup>−1</sup>(1, 2, 4)</span>.</p>
+        <p>Kipnis y Shamir (1998) rompieron el caso equilibrado <var>o</var> = <var>v</var>; con <var>v</var> &gt; <var>o</var> (<em>Unbalanced</em> OV) su ataque cuesta del orden de <span class="math"><var>q</var><sup><var>v</var>−<var>o</var></sup></span> y UOV sigue en pie tras más de 25 años. Su inconveniente es la clave pública: la versión clásica <code>uov-Ip</code> (<var>n</var> = 112, <var>m</var> = 44, <var>q</var> = 256) tiene clave pública expandida de 278 432 bytes (43 576 comprimida) con firmas de 128 bytes; <code>uov-Is</code> (<var>q</var> = 16) firma con 96 bytes [28].</p>
+        <h3>Rainbow y el ataque de Beullens (2022)</h3>
+        <p><strong>Rainbow</strong>, finalista de la ronda 3 de NIST, apilaba varias capas de aceite y vinagre para reducir la clave. En febrero de 2022, Ward Beullens publicó un ataque de recuperación de clave que explota precisamente esa estructura en capas (combinando un ataque «rectangular MinRank» con una búsqueda de vectores en el espacio de aceite): para los parámetros de nivel 1 de la segunda ronda, recupera la clave secreta en unas 53 horas de media en un portátil [30]. Rainbow fue descartado. La lección: la estructura extra que abarata la clave puede abrir atajos que el problema MQ genérico no tiene.</p>
+        <h3>MAYO y los candidatos actuales</h3>
+        <p><strong>MAYO</strong> (Beullens) usa un mapa UOV con espacio de aceite <em>demasiado pequeño</em> para firmar (<var>o</var> &lt; <var>m</var>), lo que permite una clave pública muy pequeña, y lo «agranda» (<em>whipping</em>) combinando <var>k</var> copias del mapa en uno de <span class="math"><var>k</var><var>n</var></span> variables. <code>MAYO_one</code> tiene (<var>n</var>, <var>m</var>, <var>o</var>, <var>k</var>, <var>q</var>) = (88, 80, 8, 10, 16), clave pública de 1456 bytes y firma de 464; <code>MAYO_two</code>, clave de 2928 bytes y firma de 239 [29].</p>
+        <div class="callout update"><span class="callout-title">Novedad · mayo y julio de 2026</span>
+          <p>El 14 de mayo de 2026 NIST anunció los candidatos de la <strong>ronda 3</strong> del proceso de firmas adicionales (NIST IR 8610): FAEST, HAWK, MAYO, MQOM, QR-UOV, SDitH, SNOVA, SQIsign y UOV [35][36]. Cuatro son multivariantes de la familia aceite-vinagre (MAYO, QR-UOV, SNOVA, UOV) y MQOM se basa también en MQ. El 29 de julio de 2026 el equipo de HAWK —una firma de retículos basada en el problema de isomorfismo de retículos— retiró su candidatura tras confirmar un ataque de recuperación de clave, encontrado con ayuda de un modelo de IA de Anthropic, que explota un automorfismo de su retículo ciclotómico y reduce aproximadamente a la mitad el tamaño de bloque de la reducción necesaria [35]. El ataque no afecta a ML-DSA, FN-DSA ni ML-KEM. La ronda 3 durará unos dos años.</p>
+        </div>
+
+        <h2 id="isogenias"><span class="sec">3.11</span>Criptografía basada en isogenias</h2>
+        <p>Una <strong>isogenia</strong> <span class="math">φ : <var>E</var> → <var>E</var>′</span> entre curvas elípticas es una aplicación racional no constante que lleva el punto del infinito al punto del infinito; es automáticamente un homomorfismo de grupos. Una isogenia separable queda determinada, salvo isomorfismo, por su núcleo, un subgrupo finito <span class="math"><var>K</var> ⊂ <var>E</var></span>, y su <strong>grado</strong> es |<var>K</var>|. La fórmula de Vélu calcula <span class="math"><var>E</var>′ = <var>E</var>/<var>K</var></span> y φ a partir de <var>K</var>. Las curvas, salvo isomorfismo, se identifican por su invariante <var>j</var>.</p>
+        <p>Las curvas <strong>supersingulares</strong> sobre <span class="math">𝔽<sub><var>p</var><sup>2</sup></sub></span> son aproximadamente <var>p</var>/12. Fijado un primo pequeño ℓ, el <strong>grafo de ℓ-isogenias</strong> (vértices: invariantes <var>j</var>; aristas: isogenias de grado ℓ) es (ℓ + 1)-regular, conexo y un excelente expansor (grafo de Ramanujan): un camino aleatorio de longitud ~log <var>p</var> llega a una curva casi uniforme. El problema difícil es el inverso: dadas dos curvas, encontrar un camino (una isogenia) entre ellas. El mejor algoritmo genérico cuesta <span class="math">Õ(<var>p</var><sup>1/2</sup>)</span> clásicamente y <span class="math">Õ(<var>p</var><sup>1/4</sup>)</span> con Grover; no hay estructura abeliana que Shor pueda explotar.</p>
+        <h3>SIDH/SIKE y el ataque de Castryck–Decru (2022)</h3>
+        <p>SIDH (Jao y De Feo, 2011) usa <span class="math"><var>p</var> = 2<sup><var>e</var><sub>A</sub></sup>3<sup><var>e</var><sub>B</sub></sup> − 1</span>. Alice toma un camino secreto de grado <span class="math">2<sup><var>e</var><sub>A</sub></sup></span> y Bob uno de grado <span class="math">3<sup><var>e</var><sub>B</sub></sup></span>; ambos llegan a curvas isomorfas y comparten su invariante <var>j</var>. Para que cada uno pueda «continuar» el camino del otro, cada parte publica además la <strong>imagen de los puntos de torsión</strong> del otro por su isogenia secreta.</p>
+        <figure class="diagram">
+<svg viewBox="0 0 720 270" role="img" aria-labelledby="f37t"><title id="f37t">Diagrama conmutativo de SIDH: desde E0, Alice recorre una isogenia de grado 2 elevado a eA hasta EA y Bob una de grado 3 elevado a eB hasta EB; ambos llegan a la misma curva EAB salvo isomorfismo. Alice publica además las imágenes de los puntos de torsión de Bob, que es lo que explota el ataque de Castryck y Decru</title>
+<defs><marker id="arr-sidh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-ink"/></marker></defs>
+<rect x="40" y="30" width="150" height="46" rx="6" class="svg-box"/>
+<text x="115" y="52" text-anchor="middle" class="svg-text">E₀ (pública)</text>
+<text x="115" y="68" text-anchor="middle" class="svg-muted">P<tspan baseline-shift="sub" font-size="9">A</tspan>, Q<tspan baseline-shift="sub" font-size="9">A</tspan>, P<tspan baseline-shift="sub" font-size="9">B</tspan>, Q<tspan baseline-shift="sub" font-size="9">B</tspan></text>
+<rect x="420" y="30" width="190" height="46" rx="6" class="svg-box-signal"/>
+<text x="515" y="52" text-anchor="middle" class="svg-text">E<tspan baseline-shift="sub" font-size="9">A</tspan> = E₀ / ⟨P<tspan baseline-shift="sub" font-size="9">A</tspan> + [a]Q<tspan baseline-shift="sub" font-size="9">A</tspan>⟩</text>
+<text x="515" y="68" text-anchor="middle" class="svg-muted">clave pública de Alice</text>
+<rect x="40" y="190" width="150" height="46" rx="6" class="svg-box-signal"/>
+<text x="115" y="212" text-anchor="middle" class="svg-text">E<tspan baseline-shift="sub" font-size="9">B</tspan></text>
+<text x="115" y="228" text-anchor="middle" class="svg-muted">clave pública de Bob</text>
+<rect x="420" y="190" width="190" height="46" rx="6" class="svg-box-ink"/>
+<text x="515" y="212" text-anchor="middle" class="svg-on-ink">E<tspan baseline-shift="sub" font-size="9">AB</tspan> ≅ E<tspan baseline-shift="sub" font-size="9">BA</tspan></text>
+<text x="515" y="228" text-anchor="middle" class="svg-on-ink">j(E<tspan baseline-shift="sub" font-size="9">AB</tspan>) = secreto compartido</text>
+<line x1="192" y1="53" x2="416" y2="53" class="svg-stroke-ink" stroke-width="1.5" marker-end="url(#arr-sidh)"/>
+<text x="304" y="44" text-anchor="middle" class="svg-text">φ<tspan baseline-shift="sub" font-size="9">A</tspan>, grado 2<tspan baseline-shift="super" font-size="9">eA</tspan></text>
+<line x1="115" y1="78" x2="115" y2="186" class="svg-stroke-ink" stroke-width="1.5" marker-end="url(#arr-sidh)"/>
+<text x="124" y="136" class="svg-text">φ<tspan baseline-shift="sub" font-size="9">B</tspan>, grado 3<tspan baseline-shift="super" font-size="9">eB</tspan></text>
+<line x1="515" y1="78" x2="515" y2="186" class="svg-stroke-ink" stroke-width="1.5" marker-end="url(#arr-sidh)"/>
+<text x="524" y="130" class="svg-text">φ′<tspan baseline-shift="sub" font-size="9">B</tspan></text>
+<line x1="192" y1="213" x2="416" y2="213" class="svg-stroke-ink" stroke-width="1.5" marker-end="url(#arr-sidh)"/>
+<text x="304" y="204" text-anchor="middle" class="svg-text">φ′<tspan baseline-shift="sub" font-size="9">A</tspan></text>
+<rect x="250" y="96" width="232" height="60" rx="6" class="svg-box-amber"/>
+<text x="366" y="118" text-anchor="middle" class="svg-text">Alice publica también</text>
+<text x="366" y="136" text-anchor="middle" class="svg-text">φ<tspan baseline-shift="sub" font-size="9">A</tspan>(P<tspan baseline-shift="sub" font-size="9">B</tspan>), φ<tspan baseline-shift="sub" font-size="9">A</tspan>(Q<tspan baseline-shift="sub" font-size="9">B</tspan>)</text>
+<text x="366" y="150" text-anchor="middle" class="svg-muted">(necesario para que Bob continúe)</text>
+<text x="40" y="262" class="svg-muted">Estas imágenes de puntos de torsión son la información que explota el ataque de 2022 (teorema de Kani, isogenias en dimensión 2).</text>
+</svg>
+
+          <figcaption><b>Figura 3.3.</b> Esquema de SIDH. El intercambio conmuta porque <span class="math">ker φ′<sub>B</sub> = φ<sub>A</sub>(ker φ<sub>B</sub>)</span> y <span class="math">ker φ′<sub>A</sub> = φ<sub>B</sub>(ker φ<sub>A</sub>)</span>. Las imágenes de los puntos de torsión, imprescindibles para ello, resultaron revelar la isogenia secreta.</figcaption>
+        </figure>
+        <p>En julio de 2022, Castryck y Decru mostraron que esas imágenes, junto con el grado conocido, permiten recuperar la isogenia secreta en tiempo polinómico usando un teorema de Kani (1997) sobre isogenias entre productos de curvas en <strong>dimensión 2</strong> [31]. Su implementación rompe SIKEp434 (nivel 1) en unos diez minutos en un solo núcleo. Maino–Martindale y Robert extendieron el ataque a cualquier curva inicial. SIKE, candidato alternativo de la ronda 4 de NIST, quedó totalmente roto. La lección es opuesta a la de Rainbow: el problema general (encontrar isogenias) sigue siendo difícil; lo que se rompió fue la <strong>información adicional</strong> que el protocolo publicaba.</p>
+        <h3>Qué sobrevive</h3>
+        <ul>
+          <li><strong>CSIDH</strong> (Castryck, Lange, Martindale, Panny y Renes, 2018 [32]) usa curvas supersingulares sobre 𝔽<sub><var>p</var></sub> y la acción del grupo de clases, que es <strong>conmutativa</strong>: permite un Diffie–Hellman «de verdad» sin puntos de torsión, así que no le afecta el ataque de 2022. Pero la acción de un grupo abeliano convierte la recuperación de clave en un problema de <em>desplazamiento oculto</em>, atacable con el algoritmo subexponencial de Kuperberg. Hay debate sobre el tamaño de <var>p</var> necesario (el CSIDH-512 original no llegaría al nivel 1 según varias estimaciones) y es lento; no se ha propuesto a NIST.</li>
+          <li><strong>SQIsign</strong> [33][34] es una firma que usa la correspondencia de Deuring entre curvas supersingulares y órdenes maximales en un álgebra de cuaterniones: el firmante, que conoce el anillo de endomorfismos de su curva, puede calcular isogenias que nadie más puede. Paradójicamente, las versiones de 2025–2026 aprovechan las isogenias en dimensión 2 del ataque a SIDH para representar y verificar isogenias de forma eficiente. Según la especificación de la ronda 3 (versión 3.0, 1 de septiembre de 2026), en el nivel 1 la clave pública ocupa 83 bytes y la firma 200 bytes, las más compactas de toda la PQC; firmar sigue siendo mucho más lento que verificar (≈ 94 frente a ≈ 12 millones de ciclos en x86-64). SQIsign es candidato de la ronda 3 de NIST.</li>
+        </ul>
+
+        <h2 id="comparativa"><span class="sec">3.12</span>Comparativa de familias</h2>
+        <p>La tabla resume el estado a septiembre de 2026. Los tamaños corresponden al nivel de seguridad más bajo que ofrece cada esquema (nivel 1, o nivel 2 en el caso de ML-DSA-44) y proceden de las especificaciones citadas. «Rapidez» es cualitativa; las cifras de rendimiento dependen mucho de la plataforma (Tema 5). Una visión general de la familia de problemas se encuentra en Bernstein y Lange [7].</p>
+        <div class="table-wrap"><table>
+          <caption>Familias de criptografía post-cuántica (tamaños en bytes)</caption>
+          <thead><tr><th>Familia</th><th>Problema difícil</th><th>Madurez del análisis</th><th>Esquema</th><th class="num">Clave pública</th><th class="num">Texto cifrado / firma</th><th>Rapidez</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="3">Retículos</td><td>Module-LWE</td><td rowspan="3">Alta (LWE desde 2005, NTRU desde 1996); seguridad concreta aún en refinamiento</td><td>ML-KEM-512</td><td class="num">800</td><td class="num">768</td><td>Muy rápido</td><td><span class="badge final">FIPS 203</span></td></tr>
+            <tr><td>Module-LWE + Module-SIS</td><td>ML-DSA-44</td><td class="num">1 312</td><td class="num">2 420</td><td>Rápido</td><td><span class="badge final">FIPS 204</span></td></tr>
+            <tr><td>NTRU + SIS</td><td>FN-DSA-512 (Falcon)</td><td class="num">897</td><td class="num">666</td><td>Rápido; firma compleja</td><td><span class="badge draft">FIPS 206 (pendiente)</span></td></tr>
+            <tr><td rowspan="3">Códigos</td><td>Decodificación de Goppa</td><td>Muy alta (desde 1978)</td><td>Classic McEliece 348864</td><td class="num">261 120</td><td class="num">96</td><td>Generación de claves lenta; resto rápido</td><td><span class="badge final">ISO (2026)</span></td></tr>
+            <tr><td rowspan="2">QC-SDP</td><td rowspan="2">Media-alta</td><td>HQC-1</td><td class="num">2 241</td><td class="num">4 433</td><td>Rápido</td><td><span class="badge draft">Seleccionado 2025</span></td></tr>
+            <tr><td>BIKE-L1</td><td class="num">1 541</td><td class="num">1 573</td><td>Rápido</td><td><span class="badge info">No seleccionado</span></td></tr>
+            <tr><td rowspan="3">Hash</td><td rowspan="3">Segunda preimagen / PRF</td><td rowspan="3">Muy alta (Lamport 1979, Merkle 1979)</td><td>SLH-DSA-SHA2-128s</td><td class="num">32</td><td class="num">7 856</td><td>Firma muy lenta</td><td><span class="badge final">FIPS 205</span></td></tr>
+            <tr><td>SLH-DSA-SHA2-128f</td><td class="num">32</td><td class="num">17 088</td><td>Firma lenta</td><td><span class="badge final">FIPS 205</span></td></tr>
+            <tr><td>XMSS-SHA2_10_256</td><td class="num">68</td><td class="num">2 500</td><td>Rápido; con estado</td><td><span class="badge final">RFC 8391, SP 800-208</span></td></tr>
+            <tr><td rowspan="3">Multivariante</td><td rowspan="3">MQ + aceite-vinagre</td><td rowspan="3">Media (UOV desde 1999; muchas variantes rotas)</td><td>UOV <code>uov-Ip</code></td><td class="num">278 432 (43 576 compr.)</td><td class="num">128</td><td>Muy rápido</td><td><span class="badge info">Ronda 3</span></td></tr>
+            <tr><td>MAYO_one</td><td class="num">1 456</td><td class="num">464</td><td>Rápido</td><td><span class="badge info">Ronda 3</span></td></tr>
+            <tr><td>Rainbow</td><td class="num">—</td><td class="num">—</td><td>—</td><td><span class="badge broken">Roto 2022</span></td></tr>
+            <tr><td rowspan="2">Isogenias</td><td rowspan="2">Caminos en el grafo supersingular / anillo de endomorfismos</td><td rowspan="2">Baja-media (análisis reciente)</td><td>SQIsign (nivel I, v3.0)</td><td class="num">83</td><td class="num">200</td><td>Firma lenta; verificación moderada</td><td><span class="badge info">Ronda 3</span></td></tr>
+            <tr><td>SIKE</td><td class="num">—</td><td class="num">—</td><td>—</td><td><span class="badge broken">Roto 2022</span></td></tr>
+          </tbody>
+        </table></div>
+        <p>Algunas conclusiones útiles para el diseño:</p>
+        <ul>
+          <li><strong>Retículos</strong> ofrecen el mejor compromiso general, y por eso dominan los estándares. Su punto débil es que la seguridad concreta depende de estimaciones de ataques que siguen mejorando lentamente.</li>
+          <li><strong>Códigos</strong> dan la mayor confianza para KEM (Classic McEliece) a cambio de claves enormes; útiles donde la clave se distribuye una vez (VPN estáticas, arranque seguro). HQC aporta diversidad con tamaños manejables.</li>
+          <li><strong>Hash</strong> son la opción conservadora para firmas de larga vida (<em>firmware</em>, raíces de confianza), a costa de firmas grandes y lentas.</li>
+          <li><strong>Multivariantes e isogenias</strong> ofrecen firmas muy cortas, pero con un historial de roturas que aconseja esperar al final del proceso de NIST.</li>
+        </ul>
+
+        <h2 id="ejercicios"><span class="sec">3.13</span>Ejercicios</h2>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 3.1 <span class="level">Básico</span></span>
+          <p>Reduce con el algoritmo de Gauss–Lagrange la base <span class="math"><b>b</b><sub>1</sub> = (3, 4)</span>, <span class="math"><b>b</b><sub>2</sub> = (7, 11)</span>. Comprueba que genera el mismo retículo que la figura 3.1 y calcula λ<sub>1</sub>.</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>det = 3·11 − 4·7 = 5, y ambos vectores cumplen <span class="math"><var>x</var> + 3<var>y</var> ≡ 0 (mod 5)</span> (15 y 40), así que generan un subretículo de índice 1 del de la figura: el mismo retículo.</p>
+            <p>Paso 1: normas² 25 y 170; μ = redondear(65/25 = 2,6) = 3; <span class="math"><b>b</b><sub>2</sub> ← (7, 11) − 3(3, 4) = (−2, −1)</span>, norma² 5.</p>
+            <p>Paso 2: intercambio, <span class="math"><b>b</b><sub>1</sub> = (−2, −1)</span>, <span class="math"><b>b</b><sub>2</sub> = (3, 4)</span>; μ = redondear(−10/5) = −2; <span class="math"><b>b</b><sub>2</sub> ← (3, 4) + 2(−2, −1) = (−1, 2)</span>, norma² 5.</p>
+            <p>Paso 3: μ = redondear(0/5) = 0. Base reducida <span class="math">{(−2, −1), (−1, 2)}</span> y λ<sub>1</sub> = √5 ≈ 2,24.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 3.2 <span class="level">Básico</span></span>
+          <p>Con la clave del ejemplo de Regev (<var>q</var> = 97, <b>s</b> = (3, 7)), descifra el texto cifrado <span class="math">(<b>u</b>, <var>v</var>) = ((13, 10), 59)</span>. Después, suponiendo errores <span class="math"><var>e</var><sub><var>i</var></sub> ∈ {−1, 0, 1}</span>, ¿cuál es el mayor número de muestras <var>m</var> que garantiza que el descifrado nunca falla, sea cual sea el subconjunto <var>S</var>?</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p><span class="math">⟨<b>u</b>, <b>s</b>⟩ = 39 + 70 = 109 ≡ 12</span>; <span class="math"><var>d</var> = 59 − 12 = 47</span>, a distancia 1 de 48: el bit es <strong>1</strong>. (Se generó con <var>S</var> = {1, 2, 6}, cuyos errores suman 1 − 1 − 1 = −1.)</p>
+            <p>El descifrado es correcto si <span class="math">|∑<var>e</var><sub><var>i</var></sub>| &lt; <var>q</var>/4 = 24,25</span>. En el peor caso <span class="math">|∑<var>e</var><sub><var>i</var></sub>| = |<var>S</var>| ≤ <var>m</var></span>, así que <var>m</var> ≤ 24 garantiza la corrección. Con errores aleatorios la suma crece como √<var>m</var>, y por eso los esquemas reales admiten una probabilidad de fallo pequeña en lugar de una cota del peor caso.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 3.3 <span class="level">Intermedio</span></span>
+          <p>(a) Comprueba que 17 es raíz primitiva 256-ésima de la unidad módulo 3329 sabiendo que <span class="math">17<sup>128</sup> ≡ 3328 (mod 3329)</span>. (b) ¿Por qué no existe una raíz primitiva 512-ésima? (c) ¿En cuántos factores se descompone <span class="math"><var>X</var><sup>256</sup> + 1</span> módulo 3329 y de qué grado?</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>(a) <span class="math">17<sup>128</sup> ≡ −1</span> implica <span class="math">17<sup>256</sup> ≡ 1</span>. El orden divide 256 = 2<sup>8</sup> y no divide 128 (porque <span class="math">17<sup>128</sup> ≠ 1</span>), así que es exactamente 256.</p>
+            <p>(b) El grupo <span class="math">ℤ<sub>3329</sub><sup>*</sup></span> es cíclico de orden 3328 = 2<sup>8</sup> · 13; un elemento de orden 512 exigiría 512 | 3328, y no es así.</p>
+            <p>(c) Las raíces de <span class="math"><var>X</var><sup>256</sup> + 1</span> serían raíces primitivas 512-ésimas, que no existen; pero <span class="math"><var>X</var><sup>256</sup> + 1 = ∏ (<var>X</var><sup>2</sup> − ζ<sup>2<var>i</var>+1</sup>)</span> con ζ = 17 e <var>i</var> = 0…127: <strong>128 factores de grado 2</strong>. Es la NTT incompleta de ML-KEM.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 3.4 <span class="level">Básico</span></span>
+          <p>Calcula el tamaño de la clave pública y de la firma de Lamport para resúmenes de 256 bits y valores de 32 bytes. Compáralo con WOTS con <var>w</var> = 16 y <var>n</var> = 32 bytes.</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>Lamport: clave pública 2 · 256 · 32 = <strong>16 384 bytes</strong> (igual la secreta, salvo que se derive de una semilla); firma 256 · 32 = <strong>8 192 bytes</strong>.</p>
+            <p>WOTS (<var>w</var> = 16, <var>n</var> = 32): len = 64 + 3 = 67 cadenas; firma y clave pública de 67 · 32 = <strong>2 144 bytes</strong>, casi 4 veces menos que la firma de Lamport, a cambio de hasta 15 evaluaciones de hash por cadena.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 3.5 <span class="level">Básico</span></span>
+          <p>(a) ¿Cuántos nodos tiene el camino de autenticación en un árbol de Merkle con 2<sup>20</sup> hojas y cuántos bytes ocupa con hash de 32 bytes? (b) Una firma XMSS consta de un índice de 4 bytes, un valor aleatorio de <var>n</var> bytes, una firma WOTS+ y el camino. Calcula su tamaño para XMSS-SHA2_10_256 (<var>h</var> = 10, <var>n</var> = 32, <var>w</var> = 16).</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>(a) Un nodo por nivel: 20 nodos, 20 · 32 = <strong>640 bytes</strong>. Verificar cuesta 20 hashes más los de la OTS.</p>
+            <p>(b) 4 + 32 + 67 · 32 + 10 · 32 = 4 + 32 + 2144 + 320 = <strong>2 500 bytes</strong>, que coincide con RFC 8391. La clave admite 2<sup>10</sup> = 1024 firmas.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 3.6 <span class="level">Intermedio</span></span>
+          <p>SLH-DSA-SHA2-128s tiene <var>n</var> = 16, <var>h</var> = 63, <var>d</var> = 7, <var>a</var> = 12, <var>k</var> = 14 y <var>w</var> = 16; SLH-DSA-SHA2-128f tiene <var>n</var> = 16, <var>h</var> = 66, <var>d</var> = 22, <var>a</var> = 6, <var>k</var> = 33. Calcula ambos tamaños de firma con <span class="math">|σ| = <var>n</var>(1 + <var>k</var>(<var>a</var> + 1) + <var>h</var> + <var>d</var> · len)</span> y explica por qué la variante «f» es más rápida pero más grande.</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>Con <var>n</var> = 16, len = 35. 128s: 16 · (1 + 14·13 + 63 + 7·35) = 16 · (1 + 182 + 63 + 245) = 16 · 491 = <strong>7 856 bytes</strong>. 128f: 16 · (1 + 33·7 + 66 + 22·35) = 16 · (1 + 231 + 66 + 770) = 16 · 1068 = <strong>17 088 bytes</strong>. Ambos coinciden con FIPS 205.</p>
+            <p>El coste de firmar está dominado por construir los árboles de altura <var>h</var>′ = <var>h</var>/<var>d</var> (2<sup><var>h</var>′</sup> claves WOTS+ cada uno) y los árboles FORS (2<sup><var>a</var></sup> hojas). En 128s, <var>h</var>′ = 9 y <var>a</var> = 12; en 128f, <var>h</var>′ = 3 y <var>a</var> = 6: árboles mucho más pequeños, luego firma rápida, pero muchas más capas (22 firmas WOTS+) y más árboles FORS en la firma.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 3.7 <span class="level">Intermedio</span></span>
+          <p>Con la matriz <b>H</b> del código de Hamming (3.10), un receptor calcula el síndrome <span class="math">(1, 1, 0)</span>. ¿Dónde está el error? Explica por qué este código no sirve para McEliece aunque se esconda con <span class="math"><b>S</b><b>H</b><b>P</b></span>.</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>(1, 1, 0) es 6 en binario: el error está en el bit 6 (la sexta columna de <b>H</b> es (1, 1, 0)).</p>
+            <p>El código solo corrige <var>t</var> = 1 error; el adversario puede probar las <var>n</var> posiciones y resolver el SDP por fuerza bruta. Además, el código de Hamming está determinado por su longitud, así que <span class="math"><b>S</b><b>H</b><b>P</b></span> no esconde nada: es un código de Hamming con las columnas permutadas. McEliece necesita familias con muchísimos miembros, <var>t</var> grande (64–128) y sin estructura detectable en la clave pública, como los códigos de Goppa.</p>
+          </div></details>
+        </div>
+
+        <div class="exercise"><span class="ex-title">Ejercicio 3.8 <span class="level">Avanzado</span></span>
+          <p>En una firma tipo Fiat–Shamir con abortos, cada coeficiente de <b>y</b> es uniforme en <span class="math">{−γ + 1, …, γ}</span> y se acepta si <span class="math">|<var>z</var>| &lt; γ − β</span>, con <span class="math">|<var>c</var><var>s</var>| ≤ β</span>. (a) Estima la probabilidad de aceptar un vector de <var>N</var> coeficientes. (b) Evalúala para ML-DSA-44: γ<sub>1</sub> = 2<sup>17</sup>, β = 78, <var>N</var> = 4 · 256. (c) FIPS 204 indica 4,25 repeticiones esperadas. ¿Por qué es mayor que lo que obtienes?</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>(a) Por coeficiente se aceptan <span class="math">2(γ − β) − 1</span> de los 2γ valores posibles: <span class="math"><var>p</var> ≈ 1 − β/γ</span>. Para <var>N</var> coeficientes independientes, <span class="math"><var>p</var><sup><var>N</var></sup> ≈ exp(−<var>N</var>β/γ)</span>.</p>
+            <p>(b) <span class="math">exp(−1024 · 78 / 131 072) = exp(−0,609) ≈ 0,54</span>: una iteración de cada 1,84 supera la condición sobre <b>z</b>.</p>
+            <p>(c) ML-DSA también rechaza si los bits bajos de <span class="math"><b>w</b> − <var>c</var><b>s</b><sub>2</sub></span> se salen de <span class="math">γ<sub>2</sub> − β</span> (condición necesaria para que el verificador recupere los mismos bits altos) y si la pista <b>h</b> tiene más de ω unos. El producto de las probabilidades de todas las condiciones da ≈ 1/4,25.</p>
+          </div></details>
+        </div>
+
+        <aside class="key-points"><span class="kp-title">Ideas clave</span><ul>
+          <li>Shor resuelve el <strong>subgrupo oculto en grupos abelianos</strong>. Retículos, códigos y hash no tienen esa estructura; la PQC confía en décadas de criptoanálisis, no en demostraciones de dificultad.</li>
+          <li>Un retículo tiene muchas bases; la seguridad descansa en que, con una base «mala», encontrar vectores cortos (SVP) o cercanos (CVP/BDD) exige BKZ con bloques grandes, de coste <span class="math">2<sup>0,292β</sup></span> clásico.</li>
+          <li><strong>LWE</strong> = sistema lineal con ruido. Ring/Module-LWE sobre <span class="math">ℤ<sub><var>q</var></sub>[<var>X</var>]/(<var>X</var><sup>256</sup> + 1)</span> lo hacen compacto y rápido con la NTT; <var>q</var> = 3329 y <var>q</var> = 8 380 417 se eligen por la NTT y por el tamaño de ruido/firma que debe caber.</li>
+          <li>ML-DSA es Fiat–Shamir con abortos (el rechazo hace la firma independiente del secreto); FN-DSA es <em>hash-and-sign</em> GPV sobre retículos NTRU con muestreo gaussiano.</li>
+          <li>La seguridad concreta se mide con el ataque primal y la métrica <strong>core-SVP</strong> (ML-KEM-512: β = 406, 2<sup>118</sup>) y herramientas como el <em>lattice-estimator</em>.</li>
+          <li>Códigos: McEliece con Goppa resiste desde 1978 con claves de 0,26–1 MB; BIKE y HQC usan estructura cuasi-cíclica para claves de pocos kB.</li>
+          <li>Hash: Lamport → Winternitz → Merkle. XMSS/LMS requieren gestionar el estado; SLH-DSA lo evita con hiperárbol, índices pseudoaleatorios y FORS.</li>
+          <li>Rainbow (2022) y SIKE (2022) se rompieron por la estructura o la información extra que añadían, no por el problema base. UOV, MAYO y SQIsign siguen en la ronda 3 de NIST (mayo de 2026).</li>
+        </ul></aside>
+
+        <h2 id="referencias">Referencias</h2>
+        <ol class="refs">
+          <li>O. Regev. <a href="https://cims.nyu.edu/~regev/papers/qcrypto.pdf">On Lattices, Learning with Errors, Random Linear Codes, and Cryptography</a>. <span class="src">STOC 2005; versión completa en J. ACM 56(6), 2009.</span></li>
+          <li>C. Peikert. <a href="https://eprint.iacr.org/2015/939">A Decade of Lattice Cryptography</a>. <span class="src">IACR ePrint 2015/939.</span></li>
+          <li>O. Regev. <a href="https://arxiv.org/abs/cs/0304005">Quantum Computation and Lattice Problems</a>. <span class="src">FOCS 2002; arXiv cs/0304005.</span></li>
+          <li>G. Kuperberg. <a href="https://arxiv.org/abs/quant-ph/0302112">A subexponential-time quantum algorithm for the dihedral hidden subgroup problem</a>. <span class="src">arXiv quant-ph/0302112, 2003.</span></li>
+          <li>A. Childs, D. Jao, V. Soukharev. <a href="https://arxiv.org/abs/1012.4019">Constructing elliptic curve isogenies in quantum subexponential time</a>. <span class="src">arXiv 1012.4019, 2010.</span></li>
+          <li>Y. Chen. <a href="https://eprint.iacr.org/2024/555">Quantum Algorithms for Lattice Problems</a>. <span class="src">IACR ePrint 2024/555 (con nota del 18 de abril de 2024 sobre el error).</span></li>
+          <li>D. J. Bernstein, T. Lange. <a href="https://www.nature.com/articles/nature23461">Post-quantum cryptography</a>. <span class="src">Nature 549, 188–194, 2017.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/fips/203/final">FIPS 203: Module-Lattice-Based Key-Encapsulation Mechanism Standard</a>. <span class="src">Agosto de 2024.</span></li>
+          <li>V. Lyubashevsky, C. Peikert, O. Regev. <a href="https://eprint.iacr.org/2012/230">On Ideal Lattices and Learning with Errors Over Rings</a>. <span class="src">EUROCRYPT 2010; IACR ePrint 2012/230.</span></li>
+          <li>A. Langlois, D. Stehlé. <a href="https://eprint.iacr.org/2012/090">Worst-Case to Average-Case Reductions for Module Lattices</a>. <span class="src">Des. Codes Cryptogr., 2015; IACR ePrint 2012/090.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/fips/204/final">FIPS 204: Module-Lattice-Based Digital Signature Standard</a>. <span class="src">Agosto de 2024.</span></li>
+          <li>V. Lyubashevsky. <a href="https://eprint.iacr.org/2011/537">Lattice Signatures Without Trapdoors</a>. <span class="src">EUROCRYPT 2012; IACR ePrint 2011/537.</span></li>
+          <li>C. Gentry, C. Peikert, V. Vaikuntanathan. <a href="https://eprint.iacr.org/2007/432">Trapdoors for Hard Lattices and New Cryptographic Constructions</a>. <span class="src">STOC 2008; IACR ePrint 2007/432.</span></li>
+          <li>Equipo Falcon. <a href="https://falcon-sign.info/">Falcon: Fast-Fourier Lattice-based Compact Signatures over NTRU</a>. <span class="src">Sitio oficial.</span></li>
+          <li>E. Alkim, L. Ducas, T. Pöppelmann, P. Schwabe. <a href="https://eprint.iacr.org/2015/1092">Post-quantum key exchange — a new hope</a>. <span class="src">USENIX Security 2016; IACR ePrint 2015/1092.</span></li>
+          <li>R. Avanzi et al. <a href="https://pq-crystals.org/kyber/data/kyber-specification-round3-20210804.pdf">CRYSTALS-Kyber: Algorithm Specifications and Supporting Documentation (v3.02)</a>. <span class="src">Agosto de 2021.</span></li>
+          <li>M. Albrecht et al. <a href="https://github.com/malb/lattice-estimator">lattice-estimator</a>. <span class="src">GitHub, consultado en septiembre de 2026.</span></li>
+          <li>M. Albrecht, R. Player, S. Scott. <a href="https://eprint.iacr.org/2015/046">On the concrete hardness of Learning with Errors</a>. <span class="src">J. Math. Cryptol., 2015; IACR ePrint 2015/046.</span></li>
+          <li>Equipo Classic McEliece. <a href="https://classic.mceliece.org/impl.html">Classic McEliece: implementación y tamaños</a>. <span class="src">Sitio oficial.</span></li>
+          <li>Open Quantum Safe. <a href="https://github.com/open-quantum-safe/liboqs/blob/main/docs/algorithms/kem/bike.md">liboqs: BIKE</a>. <span class="src">Documentación de liboqs (tamaños de BIKE-L1).</span></li>
+          <li>Equipo HQC. <a href="https://pqc-hqc.org/">HQC: Hamming Quasi-Cyclic</a>. <span class="src">Sitio oficial.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/ir/8545/final">IR 8545: Status Report on the Fourth Round of the NIST PQC Standardization Process</a>. <span class="src">Marzo de 2025.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/fips/205/final">FIPS 205: Stateless Hash-Based Digital Signature Standard</a>. <span class="src">Agosto de 2024.</span></li>
+          <li>A. Hülsing et al. <a href="https://www.rfc-editor.org/rfc/rfc8391">RFC 8391: XMSS: eXtended Merkle Signature Scheme</a>. <span class="src">IRTF, mayo de 2018.</span></li>
+          <li>D. McGrew, M. Curcio, S. Fluhrer. <a href="https://www.rfc-editor.org/rfc/rfc8554">RFC 8554: Leighton-Micali Hash-Based Signatures</a>. <span class="src">IRTF, abril de 2019.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/sp/800/208/final">SP 800-208: Recommendation for Stateful Hash-Based Signature Schemes</a>. <span class="src">Octubre de 2020.</span></li>
+          <li>Equipo SPHINCS+. <a href="https://sphincs.org/">SPHINCS+</a>. <span class="src">Sitio oficial.</span></li>
+          <li>W. Beullens et al. <a href="https://csrc.nist.gov/csrc/media/Projects/pqc-dig-sig/documents/round-2/spec-files/uov-spec-round2-web.pdf">UOV: Unbalanced Oil and Vinegar — Specification Document (ronda 2)</a>. <span class="src">NIST, 2025.</span></li>
+          <li>Equipo MAYO. <a href="https://pqmayo.org/params-times/">MAYO: parámetros y tiempos (ronda 3)</a>. <span class="src">Sitio oficial.</span></li>
+          <li>W. Beullens. <a href="https://eprint.iacr.org/2022/214">Breaking Rainbow Takes a Weekend on a Laptop</a>. <span class="src">CRYPTO 2022; IACR ePrint 2022/214.</span></li>
+          <li>W. Castryck, T. Decru. <a href="https://eprint.iacr.org/2022/975">An efficient key recovery attack on SIDH</a>. <span class="src">EUROCRYPT 2023; IACR ePrint 2022/975.</span></li>
+          <li>W. Castryck, T. Lange, C. Martindale, L. Panny, J. Renes. <a href="https://eprint.iacr.org/2018/383">CSIDH: An Efficient Post-Quantum Commutative Group Action</a>. <span class="src">ASIACRYPT 2018; IACR ePrint 2018/383.</span></li>
+          <li>Equipo SQIsign. <a href="https://sqisign.org/">SQIsign</a>. <span class="src">Sitio oficial; especificación v3.0 de 1 de septiembre de 2026.</span></li>
+          <li>L. De Feo, D. Kohel, A. Leroux, C. Petit, B. Wesolowski. <a href="https://eprint.iacr.org/2020/1240">SQISign: compact post-quantum signatures from quaternions and isogenies</a>. <span class="src">ASIACRYPT 2020; IACR ePrint 2020/1240.</span></li>
+          <li>NIST. <a href="https://www.nist.gov/news-events/news/2026/05/nine-candidates-advance-third-round-additional-digital-signatures-pqc">Nine Candidates Advance to the Third Round of the Additional Digital Signatures for the PQC Standardization Process</a>. <span class="src">14 de mayo de 2026, con nota del 29 de julio de 2026.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/ir/8610/final">IR 8610: Status Report on the Second Round of the Additional Digital Signature Schemes</a>. <span class="src">Mayo de 2026.</span></li>
+          <li>Equipo Classic McEliece. <a href="https://classic.mceliece.org/iso.html">ISO — Classic McEliece</a>. <span class="src">Página de 15 de junio de 2026.</span></li>
+        </ol>
+      </article>
+
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../../index.html">Inicio</a></li>
-                    <li><a href="../../programa.html">Programa</a></li>
-                    <li><a href="../tema1/index.html">Temas</a></li>
-                    <li><a href="../../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="../../guias/index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Ejemplos</h3>
-                <ul>
-                    <li><a href="../../ejemplos/algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="../../ejemplos/ml_kem.html">ML-KEM</a></li>
-                    <li><a href="../../ejemplos/ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="../../ejemplos/criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="../../ejemplos/qkd_bb84.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../../js/script.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../../glosario.html">Glosario</a>
+        <a href="../../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

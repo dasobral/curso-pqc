@@ -1,646 +1,386 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../" data-page="lab-mlkem">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ML-KEM - Guía de Laboratorio</title>
-    <link rel="stylesheet" href="../css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>L2 · ML-KEM en la práctica — Curso PQC</title>
+  <meta name="description" content="Laboratorio de ML-KEM: K-PKE de juguete en NumPy, ML-KEM real con pyca/cryptography, liboqs-python y OpenSSL 3.5, comparación con X25519, validación con vectores ACVP de NIST y preguntas sobre rechazo implícito y canales laterales.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/course-data.js" defer></script>
+  <script src="../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Inicio</a></li>
-                <li><a href="../programa.html">Programa</a></li>
-                <li><a href="../temas/tema1/index.html">Temas</a></li>
-                <li><a href="../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="index.html">Guías de Laboratorio</a></li>
-                <li><a href="../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../index.html">Inicio</a> &gt; <a href="index.html">Guías de Laboratorio</a> &gt; ML-KEM
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../index.html">Inicio</a>
+        <a href="../programa.html">Programa</a>
+        <a href="../temas/index.html">Temas</a>
+        <a href="../ejemplos/index.html">Ejemplos</a>
+        <a href="../guias/index.html" aria-current="page">Laboratorios</a>
+        <a href="../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Guía de Laboratorio: Implementación de ML-KEM</h1>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../index.html">Inicio</a></li><li><a href="../guias/index.html">Laboratorios</a></li><li aria-current="page">L2 · ML-KEM</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Laboratorio L2 · 2 sesiones</p>
+        <h1>ML-KEM <em>en la práctica</em></h1>
+        <p class="lede">Primero construirá un K-PKE de juguete con NumPy para entender de dónde sale el ruido; después usará ML-KEM de verdad con tres bibliotecas, comprobará los tamaños de FIPS 203, lo comparará con X25519 y validará las implementaciones con los vectores oficiales de NIST.</p>
+        <dl class="page-meta">
+          <div><dt>Duración</dt><dd>2 × 2 h</dd></div>
+          <div><dt>Nivel</dt><dd>Intermedio</dd></div>
+          <div><dt>Requisitos</dt><dd>Tema 4, Python, terminal Linux/macOS</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
 
-        <section class="lab-section">
-            <h2>Objetivos de Aprendizaje</h2>
-            <ul>
-                <li>Comprender los fundamentos teóricos de ML-KEM (anteriormente Kyber)</li>
-                <li>Implementar una versión simplificada del mecanismo de encapsulamiento de claves</li>
-                <li>Analizar las propiedades de seguridad y eficiencia de ML-KEM</li>
-                <li>Comparar ML-KEM con mecanismos de intercambio de claves tradicionales</li>
-            </ul>
-        </section>
+      <article class="prose">
+        <h2 id="objetivos"><span class="sec">L2.0</span>Objetivos</h2>
+        <ul>
+          <li>Implementar K-PKE (la capa IND-CPA de ML-KEM) con aritmética en ℤ<sub>q</sub>[<var>X</var>]/(<var>X</var><sup>256</sup> + 1) y medir su ruido de descifrado.</li>
+          <li>Usar ML-KEM con <strong>pyca/cryptography</strong>, <strong>liboqs-python</strong> y la línea de órdenes de <strong>OpenSSL 3.5</strong>, y conocer sus diferencias de API y de formato de clave.</li>
+          <li>Verificar los tamaños de FIPS 203 y medir el coste de ML-KEM frente a X25519.</li>
+          <li>Validar implementaciones con los vectores <strong>ACVP</strong> de NIST.</li>
+          <li>Razonar sobre el rechazo implícito y los canales laterales reales (KyberSlash, Clangover).</li>
+        </ul>
+        <p>Conviene haber leído el <a href="../temas/tema4/index.html#ml-kem">Tema 4, §4.3</a> y haber jugado con el <a href="../ejemplos/ml_kem.html">ejemplo E2</a>.</p>
 
-        <section class="lab-section">
-            <h2>Requisitos Previos</h2>
-            <ul>
-                <li>Conocimientos básicos de criptografía de clave pública</li>
-                <li>Familiaridad con conceptos matemáticos: álgebra lineal, retículos, distribuciones estadísticas</li>
-                <li>Python 3.8 o superior instalado</li>
-                <li>Bibliotecas requeridas: numpy, scipy, matplotlib</li>
-            </ul>
+        <h2 id="entorno"><span class="sec">L2.1</span>Preparación del entorno</h2>
+        <div class="table-wrap"><table>
+          <caption>Versiones con las que se ha comprobado esta guía (24 de septiembre de 2026)</caption>
+          <thead><tr><th>Componente</th><th>Versión</th><th>Notas</th></tr></thead>
+          <tbody>
+            <tr><th>Python</th><td>3.12.7</td><td>Cualquier 3.10+ debería servir; pyca/cryptography 48+ ya no admite 3.8.</td></tr>
+            <tr><th>NumPy</th><td>2.5.3</td><td>Parte A.</td></tr>
+            <tr><th>pyca/cryptography</th><td>50.0.1</td><td>ML-KEM y ML-DSA en las ruedas oficiales desde la 48.0.0 (compiladas con OpenSSL; la 50.0.1 incluye OpenSSL 4.0.2). Solo ML-KEM-768 y ML-KEM-1024.</td></tr>
+            <tr><th>liboqs / liboqs-python</th><td>0.16.0 / 0.16.0.1</td><td>Los tres conjuntos de ML-KEM y muchos otros algoritmos; incluye <code>speed_kem</code>.</td></tr>
+            <tr><th>OpenSSL (CLI)</th><td>3.5.8</td><td>3.5 es la primera versión LTS con ML-KEM, ML-DSA y SLH-DSA nativos. Muchas distribuciones aún traen 3.0 (Ubuntu 24.04: 3.0.13).</td></tr>
+          </tbody>
+        </table></div>
+        <pre class="terminal" data-lang="shell"><code>$ python3 -m venv ~/pqc-l2 &amp;&amp; source ~/pqc-l2/bin/activate
+$ pip install "numpy&gt;=2" "cryptography&gt;=48" "liboqs-python==0.16.0.1"
+$ python -c "import cryptography; print(cryptography.__version__)"
+50.0.1
+$ python -c "from cryptography.hazmat.backends.openssl import backend as b; print(b.openssl_version_text())"
+OpenSSL 4.0.2 25 Aug 2026</code></pre>
+        <h3>liboqs</h3>
+        <p>liboqs-python es solo un envoltorio: necesita la biblioteca C. Si no la encuentra, la descarga y compila automáticamente en el primer <code>import oqs</code>. Es preferible compilarla de forma explícita, porque así obtendrá también los programas de medida:</p>
+        <pre class="terminal" data-lang="shell"><code>$ git clone --depth 1 --branch 0.16.0 https://github.com/open-quantum-safe/liboqs.git
+$ cmake -S liboqs -B liboqs/build -GNinja -DBUILD_SHARED_LIBS=ON \
+        -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/_oqs
+$ ninja -C liboqs/build &amp;&amp; ninja -C liboqs/build install
+$ export OQS_INSTALL_PATH=$HOME/_oqs
+$ python -c "import oqs; print(oqs.oqs_version(), oqs.oqs_python_version())"
+0.16.0 0.16.0.1</code></pre>
+        <h3>OpenSSL 3.5 (opcional)</h3>
+        <p>Si <code>openssl version</code> muestra una versión anterior a 3.5, compile una copia local sin tocar la del sistema:</p>
+        <pre class="terminal" data-lang="shell"><code>$ curl -LO https://github.com/openssl/openssl/releases/download/openssl-3.5.8/openssl-3.5.8.tar.gz
+$ tar xzf openssl-3.5.8.tar.gz &amp;&amp; cd openssl-3.5.8
+$ ./Configure --prefix=$HOME/ossl35 --libdir=lib no-docs &amp;&amp; make -j8 &amp;&amp; make install_sw
+$ export PATH=$HOME/ossl35/bin:$PATH LD_LIBRARY_PATH=$HOME/ossl35/lib
+$ openssl version
+OpenSSL 3.5.8 25 Aug 2026 (Library: OpenSSL 3.5.8 25 Aug 2026)</code></pre>
+        <div class="callout"><span class="callout-title">Punto de control 1</span><p>Las tres órdenes de verificación anteriores funcionan. Si <code>import oqs</code> tarda varios minutos la primera vez, está compilando liboqs por su cuenta: es normal.</p></div>
 
-            <div class="alert alert-info">
-                <p><strong>Nota:</strong> Esta práctica implementa una versión simplificada de ML-KEM con fines educativos. No debe utilizarse en entornos de producción.</p>
-            </div>
-        </section>
+        <h2 id="parte-a"><span class="sec">L2.2</span>Parte A · K-PKE de juguete con NumPy</h2>
+        <p>Implementará el cifrado subyacente de ML-KEM con los parámetros reales (<var>n</var> = 256, <var>q</var> = 3329, <var>k</var>, η₁, η₂, <var>d<sub>u</sub></var>, <var>d<sub>v</sub></var>), pero con dos simplificaciones deliberadas: multiplicación de polinomios ingenua en lugar de NTT y aleatoriedad de NumPy en lugar de SHAKE. No hay transformación FO: es solo la capa IND-CPA.</p>
+        <h3>A.1 · Aritmética en el anillo</h3>
+        <p>El producto en ℤ<sub>q</sub>[<var>X</var>]/(<var>X</var><sup><var>n</var></sup> + 1) es una convolución seguida de un plegado <em>negacíclico</em>: como <var>X</var><sup><var>n</var></sup> = −1, el coeficiente de grado <var>n</var> + <var>i</var> se <strong>resta</strong> del de grado <var>i</var>.</p>
+        <pre data-lang="python"><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 
-        <section class="lab-section">
-            <h2>Introducción Teórica</h2>
-            <p>ML-KEM (Module-Lattice-Based Key Encapsulation Mechanism), anteriormente conocido como Kyber, es un mecanismo de encapsulamiento de claves basado en retículos modulares. Fue seleccionado por el NIST como el estándar para encapsulamiento de claves post-cuántico (FIPS 203).</p>
-            
-            <p>ML-KEM basa su seguridad en la dificultad del problema de Learning With Errors (LWE) en su variante modular. Este problema es considerado resistente a ataques cuánticos, incluyendo el algoritmo de Shor.</p>
-            
-            <p>El esquema consta de tres algoritmos principales:</p>
-            <ol>
-                <li><strong>KeyGen</strong>: Genera un par de claves pública/privada.</li>
-                <li><strong>Encaps</strong>: Utiliza la clave pública para encapsular (cifrar) una clave simétrica compartida.</li>
-                <li><strong>Decaps</strong>: Utiliza la clave privada para desencapsular (descifrar) la clave simétrica compartida.</li>
-            </ol>
+Q, N = <span class="tok-n">3329</span>, <span class="tok-n">256</span>
+rng = np.random.default_rng()
 
-            <p>ML-KEM viene en tres variantes con diferentes niveles de seguridad:</p>
-            <ul>
-                <li><strong>ML-KEM-512</strong>: Seguridad aproximadamente equivalente a AES-128</li>
-                <li><strong>ML-KEM-768</strong>: Seguridad aproximadamente equivalente a AES-192</li>
-                <li><strong>ML-KEM-1024</strong>: Seguridad aproximadamente equivalente a AES-256</li>
-            </ul>
-        </section>
+<span class="tok-k">def</span> <span class="tok-f">polymul</span>(a, b):
+    <span class="tok-s">"""Producto en Z_q[X]/(X^n + 1): convolución y plegado negacíclico."""</span>
+    n = <span class="tok-f">len</span>(a)
+    c = np.convolve(a.astype(np.int64), b.astype(np.int64))   <span class="tok-c"># grado ≤ 2n − 2</span>
+    res = c[:n].copy()
+    res[: n - <span class="tok-n">1</span>] -= c[n:]                                     <span class="tok-c"># X^n = −1</span>
+    <span class="tok-k">return</span> res % Q
 
-        <section class="lab-section">
-            <h2>Parte 1: Implementación Simplificada de ML-KEM</h2>
-            
-            <h3>1.1 Configuración del Entorno</h3>
-            <p>Crea un nuevo archivo Python llamado <code>ml_kem_simplified.py</code> e importa las bibliotecas necesarias:</p>
-            <pre><code class="language-python">import numpy as np
-import hashlib
-import os
-import matplotlib.pyplot as plt
-from scipy.stats import norm
-</code></pre>
+<span class="tok-k">def</span> <span class="tok-f">matvec</span>(A, v, transpose=<span class="tok-k">False</span>):
+    k = <span class="tok-f">len</span>(v)
+    <span class="tok-k">return</span> np.array([<span class="tok-f">sum</span>(polymul(A[j][i] <span class="tok-k">if</span> transpose <span class="tok-k">else</span> A[i][j], v[j]) <span class="tok-k">for</span> j <span class="tok-k">in</span> <span class="tok-f">range</span>(k)) % Q
+                     <span class="tok-k">for</span> i <span class="tok-k">in</span> <span class="tok-f">range</span>(k)])
 
-            <h3>1.2 Implementación de Funciones Auxiliares</h3>
-            <p>Primero, implementaremos algunas funciones auxiliares necesarias:</p>
-            <pre><code class="language-python"># Parámetros para ML-KEM-512 simplificado
-PARAMS = {
-    'n': 256,       # Dimensión del polinomio
-    'k': 2,         # Dimensión del módulo
-    'q': 3329,      # Módulo
-    'eta1': 3,      # Parámetro de ruido para la clave secreta
-    'eta2': 2,      # Parámetro de ruido para el error
-    'du': 10,       # Bits para comprimir u
-    'dv': 4,        # Bits para comprimir v
-}
+<span class="tok-k">def</span> <span class="tok-f">dot</span>(a, b):
+    <span class="tok-k">return</span> <span class="tok-f">sum</span>(polymul(x, y) <span class="tok-k">for</span> x, y <span class="tok-k">in</span> <span class="tok-f">zip</span>(a, b)) % Q</code></pre>
+        <p><strong>Tarea A.1.</strong> Compruebe con <code>assert</code> que <var>X</var>·<var>X</var><sup>255</sup> = −1 ≡ 3328 y que el producto es conmutativo y distributivo sobre polinomios aleatorios.</p>
 
-# Función para generar una distribución centrada binomial
-def centered_binomial_distribution(eta, size):
-    """
-    Genera muestras de una distribución centrada binomial con parámetro eta.
-    Esta es una aproximación a la distribución normal discreta utilizada en ML-KEM.
-    """
-    a = np.random.randint(0, 2, size=(size, eta))
-    b = np.random.randint(0, 2, size=(size, eta))
-    return np.sum(a, axis=1) - np.sum(b, axis=1)
+        <h3>A.2 · Ruido, compresión y K-PKE</h3>
+        <pre data-lang="python"><code><span class="tok-k">def</span> <span class="tok-f">cbd</span>(eta, shape):
+    <span class="tok-s">"""Binomial centrada: suma de η bits menos suma de otros η bits."""</span>
+    bits = rng.integers(<span class="tok-n">0</span>, <span class="tok-n">2</span>, size=shape + (<span class="tok-n">2</span>, eta))
+    <span class="tok-k">return</span> bits[..., <span class="tok-n">0</span>, :].sum(-<span class="tok-n">1</span>) - bits[..., <span class="tok-n">1</span>, :].sum(-<span class="tok-n">1</span>)
 
-# Función para generar una matriz A uniforme aleatoria
-def gen_matrix_A(k, n, q, seed=None):
-    """
-    Genera una matriz A uniforme aleatoria de dimensiones (k, k, n) con coeficientes en Z_q.
-    En la implementación real, esto se haría usando XOF (función de expansión de salida extendida).
-    """
-    if seed is not None:
-        np.random.seed(seed)
-    return np.random.randint(0, q, size=(k, k, n))
+<span class="tok-k">def</span> <span class="tok-f">compress</span>(x, d):      <span class="tok-c"># ⌈(2^d/q)·x⌋ mod 2^d, con aritmética entera</span>
+    <span class="tok-k">return</span> ((x.astype(np.int64) &lt;&lt; (d + <span class="tok-n">1</span>)) + Q) // (<span class="tok-n">2</span> * Q) % (<span class="tok-n">1</span> &lt;&lt; d)
 
-# Función para comprimir un polinomio
-def compress(x, d, q):
-    """
-    Comprime un polinomio x módulo q a d bits por coeficiente.
-    """
-    factor = 2**d / q
-    return np.round(factor * x).astype(int) % (2**d)
+<span class="tok-k">def</span> <span class="tok-f">decompress</span>(y, d):    <span class="tok-c"># ⌈(q/2^d)·y⌋</span>
+    <span class="tok-k">return</span> (y.astype(np.int64) * <span class="tok-n">2</span> * Q + (<span class="tok-n">1</span> &lt;&lt; d)) &gt;&gt; (d + <span class="tok-n">1</span>)
 
-# Función para descomprimir un polinomio
-def decompress(x, d, q):
-    """
-    Descomprime un polinomio x de d bits por coeficiente a módulo q.
-    """
-    factor = q / (2**d)
-    return np.round(factor * x).astype(int) % q
+<span class="tok-k">def</span> <span class="tok-f">centered</span>(x):
+    x = x % Q
+    <span class="tok-k">return</span> np.where(x &gt; Q // <span class="tok-n">2</span>, x - Q, x)
 
-# Función para multiplicar polinomios en el anillo R_q
-def poly_mul(a, b, q):
-    """
-    Multiplica dos polinomios en el anillo R_q = Z_q[X]/(X^n + 1).
-    Esta es una implementación simplificada que no utiliza NTT para eficiencia.
-    """
-    n = len(a)
-    c = np.zeros(n, dtype=int)
-    
-    for i in range(n):
-        for j in range(n):
-            idx = (i + j) % n
-            if i + j >= n:
-                c[idx] = (c[idx] - a[i] * b[j]) % q
-            else:
-                c[idx] = (c[idx] + a[i] * b[j]) % q
-    
-    return c
+<span class="tok-k">def</span> <span class="tok-f">keygen</span>(k, eta1):
+    A = rng.integers(<span class="tok-n">0</span>, Q, size=(k, k, N))       <span class="tok-c"># en FIPS 203: SHAKE128(ρ), dominio NTT</span>
+    s, e = cbd(eta1, (k, N)), cbd(eta1, (k, N))
+    t = (matvec(A, s) + e) % Q
+    <span class="tok-k">return</span> (A, t), s
 
-# Función para multiplicar matrices de polinomios
-def matrix_poly_mul(A, s, q):
-    """
-    Multiplica una matriz de polinomios A por un vector de polinomios s.
-    """
-    k = A.shape[0]
-    n = A.shape[2]
-    result = np.zeros((k, n), dtype=int)
-    
-    for i in range(k):
-        for j in range(k):
-            result[i] = (result[i] + poly_mul(A[i, j], s[j], q)) % q
-    
-    return result
+<span class="tok-k">def</span> <span class="tok-f">encrypt</span>(pk, m, k, eta1, eta2, du, dv):
+    A, t = pk
+    y, e1, e2 = cbd(eta1, (k, N)), cbd(eta2, (k, N)), cbd(eta2, (N,))
+    u = (matvec(A, y, transpose=<span class="tok-k">True</span>) + e1) % Q
+    v = (dot(t, y) + e2 + decompress(m, <span class="tok-n">1</span>)) % Q   <span class="tok-c"># ⌈q/2⌋·m = 1665·m</span>
+    <span class="tok-k">return</span> compress(u, du), compress(v, dv)
 
-# Función para añadir vectores de polinomios
-def poly_add(a, b, q):
-    """
-    Suma dos vectores de polinomios módulo q.
-    """
-    return (a + b) % q
+<span class="tok-k">def</span> <span class="tok-f">decrypt</span>(s, c, du, dv):
+    cu, cv = c
+    u, v = decompress(cu, du), decompress(cv, dv)
+    w = (v - dot(s, u)) % Q
+    <span class="tok-k">return</span> compress(w, <span class="tok-n">1</span>), w</code></pre>
+        <p><strong>Tarea A.2.</strong> Para los tres conjuntos de parámetros de FIPS 203, ejecute 200 cifrados/descifrados, cuente los fallos y registre el máximo |ruido| = |centered(<var>w</var> − 1665·<var>m</var>)|. Salida de referencia (la suya variará ligeramente):</p>
+        <pre class="terminal" data-lang="salida"><code>ML-KEM-512: 200 ejecuciones, 0 fallos, máx |ruido| = 320 (umbral 832), |c| = 768 B
+ML-KEM-768: 200 ejecuciones, 0 fallos, máx |ruido| = 271 (umbral 832), |c| = 1088 B
+ML-KEM-1024: 200 ejecuciones, 0 fallos, máx |ruido| = 231 (umbral 832), |c| = 1568 B</code></pre>
+        <details><summary>Esqueleto del bucle de la tarea A.2</summary><div class="details-body">
+          <pre data-lang="python"><code>PARAMS = {<span class="tok-s">"ML-KEM-512"</span>: (<span class="tok-n">2</span>, <span class="tok-n">3</span>, <span class="tok-n">2</span>, <span class="tok-n">10</span>, <span class="tok-n">4</span>), <span class="tok-s">"ML-KEM-768"</span>: (<span class="tok-n">3</span>, <span class="tok-n">2</span>, <span class="tok-n">2</span>, <span class="tok-n">10</span>, <span class="tok-n">4</span>), <span class="tok-s">"ML-KEM-1024"</span>: (<span class="tok-n">4</span>, <span class="tok-n">2</span>, <span class="tok-n">2</span>, <span class="tok-n">11</span>, <span class="tok-n">5</span>)}
+<span class="tok-k">for</span> name, (k, eta1, eta2, du, dv) <span class="tok-k">in</span> PARAMS.items():
+    worst, fails = <span class="tok-n">0</span>, <span class="tok-n">0</span>
+    <span class="tok-k">for</span> _ <span class="tok-k">in</span> <span class="tok-f">range</span>(<span class="tok-n">200</span>):
+        pk, s = keygen(k, eta1)
+        m = rng.integers(<span class="tok-n">0</span>, <span class="tok-n">2</span>, N)
+        m2, w = decrypt(s, encrypt(pk, m, k, eta1, eta2, du, dv), du, dv)
+        fails += <span class="tok-f">int</span>(np.any(m2 != m))
+        worst = <span class="tok-f">max</span>(worst, <span class="tok-f">int</span>(np.abs(centered(w - decompress(m, <span class="tok-n">1</span>))).max()))
+    <span class="tok-f">print</span>(<span class="tok-s">f"</span>{name}<span class="tok-s">: 200 ejecuciones, </span>{fails}<span class="tok-s"> fallos, máx |ruido| = </span>{worst}<span class="tok-s">"</span>)</code></pre>
+        </div></details>
+        <p><strong>Tarea A.3 (experimento).</strong> Fije ML-KEM-768 y repita con η₁ = η₂ ∈ {4, 8, 12, 16} y, por separado, con <var>d<sub>v</sub></var> ∈ {4, 3, 2, 1}. Represente el histograma de los coeficientes del ruido (matplotlib, si lo tiene) y la proporción de ejecuciones con fallo. Explique qué término de la ecuación (4.1) del Tema 4 domina en cada caso.</p>
+        <div class="callout"><span class="callout-title">Punto de control 2</span><p>Con parámetros reales, 0 fallos y máximo |ruido| entre 200 y 350. Si obtiene fallos con ML-KEM-768, revise el signo del plegado en <code>polymul</code> (un error típico es sumar en lugar de restar, que corresponde a <var>X</var><sup><var>n</var></sup> − 1) o el uso de <b>A</b><sup>T</sup> en el cifrado.</p></div>
 
-# Función para generar un hash
-def hash_function(data):
-    """
-    Función de hash utilizada en ML-KEM.
-    En la implementación real, se utilizarían funciones específicas como SHA3.
-    """
-    return hashlib.sha256(data).digest()
-</code></pre>
+        <h2 id="parte-b"><span class="sec">L2.3</span>Parte B · ML-KEM real</h2>
+        <h3>B.1 · Tres API, tres convenciones</h3>
+        <pre data-lang="python"><code><span class="tok-k">from</span> cryptography.hazmat.primitives.asymmetric <span class="tok-k">import</span> mlkem
+<span class="tok-k">import</span> oqs
 
-            <h3>1.3 Implementación de los Algoritmos Principales</h3>
-            <p>Ahora implementaremos los tres algoritmos principales de ML-KEM:</p>
-            <pre><code class="language-python"># Algoritmo KeyGen
-def keygen(params=PARAMS):
-    """
-    Genera un par de claves pública/privada para ML-KEM.
-    """
-    n = params['n']
-    k = params['k']
-    q = params['q']
-    eta1 = params['eta1']
-    
-    # Generar matriz A aleatoria
-    A = gen_matrix_A(k, n, q)
-    
-    # Generar vector secreto s con ruido
-    s = np.zeros((k, n), dtype=int)
-    for i in range(k):
-        s[i] = centered_binomial_distribution(eta1, n)
-    
-    # Generar vector de error e con ruido
-    e = np.zeros((k, n), dtype=int)
-    for i in range(k):
-        e[i] = centered_binomial_distribution(eta1, n)
-    
-    # Calcular t = A·s + e
-    t = poly_add(matrix_poly_mul(A, s, q), e, q)
-    
-    # Clave pública: (t, A)
-    # Clave privada: s
-    return {'public': (t, A), 'private': s}
+<span class="tok-c"># pyca/cryptography: encapsulate() devuelve (secreto, cifrado)</span>
+sk = mlkem.MLKEM768PrivateKey.generate()
+ss, ct = sk.public_key().encapsulate()
+<span class="tok-k">assert</span> sk.decapsulate(ct) == ss
+seed = sk.private_bytes_raw()                  <span class="tok-c"># 64 bytes: d ‖ z (solo exporta la semilla)</span>
+same = mlkem.MLKEM768PrivateKey.from_seed_bytes(seed)
 
-# Algoritmo Encaps
-def encaps(public_key, params=PARAMS):
-    """
-    Encapsula una clave simétrica compartida utilizando la clave pública.
-    """
-    t, A = public_key
-    n = params['n']
-    k = params['k']
-    q = params['q']
-    eta1 = params['eta1']
-    eta2 = params['eta2']
-    du = params['du']
-    dv = params['dv']
-    
-    # Generar vector r con ruido
-    r = np.zeros((k, n), dtype=int)
-    for i in range(k):
-        r[i] = centered_binomial_distribution(eta1, n)
-    
-    # Generar vector de error e1 con ruido
-    e1 = np.zeros((k, n), dtype=int)
-    for i in range(k):
-        e1[i] = centered_binomial_distribution(eta2, n)
-    
-    # Generar error e2 con ruido
-    e2 = centered_binomial_distribution(eta2, n)
-    
-    # Calcular u = A^T·r + e1
-    u = poly_add(matrix_poly_mul(np.transpose(A, (1, 0, 2)), r, q), e1, q)
-    
-    # Calcular v = t^T·r + e2 + ⌈q/2⌋·m
-    m = np.random.randint(0, 2, size=n)  # Mensaje aleatorio binario
-    v_temp = np.zeros(n, dtype=int)
-    for i in range(k):
-        v_temp = (v_temp + poly_mul(t[i], r[i], q)) % q
-    v = (v_temp + e2 + ((q // 2) * m)) % q
-    
-    # Comprimir u y v
-    u_compressed = np.zeros((k, n), dtype=int)
-    for i in range(k):
-        u_compressed[i] = compress(u[i], du, q)
-    v_compressed = compress(v, dv, q)
-    
-    # Calcular la clave compartida
-    shared_key = hash_function(np.concatenate([u_compressed.flatten(), v_compressed]).tobytes())
-    
-    # Cifrado: (u_compressed, v_compressed)
-    ciphertext = (u_compressed, v_compressed)
-    
-    return ciphertext, shared_key
+<span class="tok-c"># liboqs-python: encap_secret() devuelve (cifrado, secreto)</span>
+<span class="tok-k">with</span> oqs.KeyEncapsulation(<span class="tok-s">"ML-KEM-768"</span>) <span class="tok-k">as</span> rx, oqs.KeyEncapsulation(<span class="tok-s">"ML-KEM-768"</span>) <span class="tok-k">as</span> tx:
+    pk = rx.generate_keypair()
+    ct2, ss2 = tx.encap_secret(pk)
+    <span class="tok-k">assert</span> rx.decap_secret(ct2) == ss2
+    dk = rx.export_secret_key()                <span class="tok-c"># 2400 bytes: clave expandida de FIPS 203</span></code></pre>
+        <p><strong>Tarea B.1.</strong> Escriba <code>tamanos.py</code> que imprima, para cada conjunto y cada biblioteca, los tamaños de ek, dk (o semilla), cifrado y secreto, y los compare con la tabla de FIPS 203. Añada el tamaño de la clave pública en <code>SubjectPublicKeyInfo</code> DER (RFC 9935) con <code>public_bytes(Encoding.DER, PublicFormat.SubjectPublicKeyInfo)</code>. Salida esperada:</p>
+        <pre class="terminal" data-lang="salida"><code>[pyca] ML-KEM-768: ek=1184 ct=1088 ss=32 semilla=64
+        SubjectPublicKeyInfo DER (RFC 9935): 1206 bytes
+[pyca] ML-KEM-1024: ek=1568 ct=1568 ss=32 semilla=64
+        SubjectPublicKeyInfo DER (RFC 9935): 1590 bytes
+[oqs]  ML-KEM-512: ek=800 dk=1632 ct=768 ss=32 = FIPS 203  nivel NIST 1
+[oqs]  ML-KEM-768: ek=1184 dk=2400 ct=1088 ss=32 = FIPS 203  nivel NIST 3
+[oqs]  ML-KEM-1024: ek=1568 dk=3168 ct=1568 ss=32 = FIPS 203  nivel NIST 5</code></pre>
+        <div class="callout warning"><span class="callout-title">Errores frecuentes</span><ul>
+          <li>Confundir el orden de la tupla: pyca devuelve <code>(secreto, cifrado)</code> y liboqs <code>(cifrado, secreto)</code>.</li>
+          <li>Suponer que ML-KEM-512 está en pyca/cryptography: no lo está (solo 768 y 1024).</li>
+          <li>Intentar importar en pyca una clave expandida de 2 400 bytes: solo acepta la semilla de 64 bytes. Para interoperar con quien guarde la clave expandida, use liboqs u OpenSSL.</li>
+        </ul></div>
 
-# Algoritmo Decaps
-def decaps(ciphertext, private_key, public_key, params=PARAMS):
-    """
-    Desencapsula la clave simétrica compartida utilizando la clave privada.
-    """
-    u_compressed, v_compressed = ciphertext
-    s = private_key
-    n = params['n']
-    k = params['k']
-    q = params['q']
-    du = params['du']
-    dv = params['dv']
-    
-    # Descomprimir u y v
-    u = np.zeros((k, n), dtype=int)
-    for i in range(k):
-        u[i] = decompress(u_compressed[i], du, q)
-    v = decompress(v_compressed, dv, q)
-    
-    # Calcular v' = u^T·s
-    v_prime = np.zeros(n, dtype=int)
-    for i in range(k):
-        v_prime = (v_prime + poly_mul(u[i], s[i], q)) % q
-    
-    # Recuperar m
-    m_prime = np.zeros(n, dtype=int)
-    for i in range(n):
-        # Comparar v[i] con v_prime[i] para determinar si el bit es 0 o 1
-        diff = (v[i] - v_prime[i]) % q
-        if diff > q // 4 and diff < 3 * q // 4:
-            m_prime[i] = 1
-    
-    # Calcular la clave compartida
-    shared_key = hash_function(np.concatenate([u_compressed.flatten(), v_compressed]).tobytes())
-    
-    return shared_key
-</code></pre>
+        <h3>B.2 · OpenSSL 3.5 desde la línea de órdenes</h3>
+        <pre class="terminal" data-lang="shell"><code>$ openssl list -kem-algorithms | grep -i mlkem
+  { 2.16.840.1.101.3.4.4.1, id-alg-ml-kem-512, ML-KEM-512, MLKEM512 } @ default
+  { 2.16.840.1.101.3.4.4.2, id-alg-ml-kem-768, ML-KEM-768, MLKEM768 } @ default
+  { 2.16.840.1.101.3.4.4.3, id-alg-ml-kem-1024, ML-KEM-1024, MLKEM1024 } @ default
+  X25519MLKEM768 @ default
+  X448MLKEM1024 @ default
+  SecP256r1MLKEM768 @ default
+  …
+$ openssl genpkey -algorithm ML-KEM-768 -out mlkem768.pem
+$ openssl pkey -in mlkem768.pem -pubout -out mlkem768_pub.pem
+$ openssl pkeyutl -encap -inkey mlkem768_pub.pem -pubin -out ct.bin -secret ss_emisor.bin
+$ openssl pkeyutl -decap -inkey mlkem768.pem -in ct.bin -secret ss_receptor.bin
+$ wc -c ct.bin ss_*.bin &amp;&amp; cmp ss_emisor.bin ss_receptor.bin &amp;&amp; echo IGUALES
+1088 ct.bin
+  32 ss_emisor.bin
+  32 ss_receptor.bin
+IGUALES
+$ openssl pkey -in mlkem768.pem -noout -text | head -3
+ML-KEM-768 Private-Key:
+seed:
+    33:5d:22:…</code></pre>
+        <p><strong>Tarea B.2.</strong> Explique por qué el fichero PEM de la clave privada contiene tanto <code>seed</code> como <code>dk</code>, qué ocupa cada uno y cuál preferiría almacenar en un HSM. Pista: FIPS 203 §3.3 y RFC 9935.</p>
 
-            <h3>1.4 Función Principal y Visualización</h3>
-            <p>Finalmente, implementaremos la función principal y algunas visualizaciones:</p>
-            <pre><code class="language-python">def main():
-    print("Implementación simplificada de ML-KEM (anteriormente Kyber)")
-    print("Parámetros utilizados:", PARAMS)
-    
-    # Generar claves
-    print("\nGenerando par de claves...")
-    keys = keygen()
-    public_key = keys['public']
-    private_key = keys['private']
-    print("Claves generadas.")
-    
-    # Encapsular clave compartida
-    print("\nEncapsulando clave compartida...")
-    ciphertext, shared_key_sender = encaps(public_key)
-    print("Clave encapsulada.")
-    print("Longitud de la clave compartida:", len(shared_key_sender), "bytes")
-    print("Primeros bytes de la clave compartida:", shared_key_sender[:8].hex())
-    
-    # Desencapsular clave compartida
-    print("\nDesencapsulando clave compartida...")
-    shared_key_receiver = decaps(ciphertext, private_key, public_key)
-    print("Clave desencapsulada.")
-    print("Primeros bytes de la clave desencapsulada:", shared_key_receiver[:8].hex())
-    
-    # Verificar que ambas partes tienen la misma clave
-    if shared_key_sender == shared_key_receiver:
-        print("\n¡Éxito! Ambas partes han establecido la misma clave compartida.")
-    else:
-        print("\n¡Error! Las claves compartidas no coinciden.")
-    
-    # Visualizaciones
-    plt.figure(figsize=(15, 10))
-    
-    # Distribución de la clave privada
-    plt.subplot(2, 2, 1)
-    s_flat = private_key.flatten()
-    plt.hist(s_flat, bins=range(min(s_flat)-1, max(s_flat)+2), alpha=0.7, rwidth=0.85)
-    plt.title('Distribución de la clave privada')
-    plt.xlabel('Valor')
-    plt.ylabel('Frecuencia')
-    plt.grid(True, alpha=0.3)
-    
-    # Distribución de la clave pública
-    plt.subplot(2, 2, 2)
-    t_flat = public_key[0].flatten()
-    plt.hist(t_flat, bins=30, alpha=0.7, rwidth=0.85)
-    plt.title('Distribución de la clave pública (t)')
-    plt.xlabel('Valor')
-    plt.ylabel('Frecuencia')
-    plt.grid(True, alpha=0.3)
-    
-    # Distribución del cifrado (u)
-    plt.subplot(2, 2, 3)
-    u_flat = ciphertext[0].flatten()
-    plt.hist(u_flat, bins=range(min(u_flat)-1, max(u_flat)+2), alpha=0.7, rwidth=0.85)
-    plt.title('Distribución del cifrado (u comprimido)')
-    plt.xlabel('Valor')
-    plt.ylabel('Frecuencia')
-    plt.grid(True, alpha=0.3)
-    
-    # Distribución del cifrado (v)
-    plt.subplot(2, 2, 4)
-    v_flat = ciphertext[1]
-    plt.hist(v_flat, bins=range(min(v_flat)-1, max(v_flat)+2), alpha=0.7, rwidth=0.85)
-    plt.title('Distribución del cifrado (v comprimido)')
-    plt.xlabel('Valor')
-    plt.ylabel('Frecuencia')
-    plt.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    plt.savefig('ml_kem_visualization.png')
-    plt.show()
+        <h3>B.3 · ¿Es caro ML-KEM?</h3>
+        <p><strong>Tarea B.3.</strong> Mida con <code>timeit</code> (mediana de 7 repeticiones de 2000 operaciones) generación de claves, encapsulamiento y desencapsulamiento de ML-KEM-768 en pyca y en liboqs, y la generación y el intercambio de X25519 en pyca. Complete con los programas nativos:</p>
+        <pre class="terminal" data-lang="shell"><code>$ liboqs/build/tests/speed_kem -d 3 ML-KEM-768
+$ openssl speed -seconds 2 ML-KEM-512 ML-KEM-768 ML-KEM-1024 X25519</code></pre>
+        <p>Resultados de referencia en un AMD Ryzen 9 5900X (µs por operación):</p>
+        <div class="table-wrap"><table>
+          <caption>Medidas de referencia de los autores, 24 de septiembre de 2026</caption>
+          <thead><tr><th>Medida</th><th class="num">KeyGen</th><th class="num">Encaps</th><th class="num">Decaps</th></tr></thead>
+          <tbody>
+            <tr><th>pyca 50.0.1 (OpenSSL 4.0.2), ML-KEM-768</th><td class="num">63,1</td><td class="num">15,6</td><td class="num">22,9</td></tr>
+            <tr><th>liboqs-python 0.16.0.1, ML-KEM-768</th><td class="num">—</td><td class="num">13,9</td><td class="num">14,5</td></tr>
+            <tr><th>liboqs <code>speed_kem</code>, ML-KEM-768</th><td class="num">10,6</td><td class="num">11,0</td><td class="num">12,8</td></tr>
+            <tr><th><code>openssl speed</code> 3.5.8, ML-KEM-768</th><td class="num">25</td><td class="num">15</td><td class="num">22</td></tr>
+            <tr><th>pyca, X25519 (generación / intercambio)</th><td class="num">24,2</td><td class="num" colspan="2">23,8 (intercambio)</td></tr>
+          </tbody>
+        </table></div>
+        <p>Interprete: ¿cuánto pesa la sobrecarga de Python? ¿Por qué liboqs, que usa código AVX2 de mlkem-native, es más rápido que OpenSSL 3.5? ¿Cuántos bytes más viajan en <code>X25519MLKEM768</code> frente a X25519 solo, y cuántos milisegundos añade eso en un enlace de 10 Mbit/s?</p>
 
-if __name__ == "__main__":
-    main()
-</code></pre>
-        </section>
+        <h2 id="parte-c"><span class="sec">L2.4</span>Parte C · Validación con vectores ACVP de NIST</h2>
+        <p>El programa de validación de algoritmos criptográficos de NIST (CAVP) publica sus vectores de prueba en formato JSON en el repositorio <code>usnistgov/ACVP-Server</code>. El fichero <code>internalProjection.json</code> de cada conjunto contiene entradas y resultados esperados. Para ML-KEM hay dos: generación de claves (entradas <var>d</var>, <var>z</var>; salidas ek, dk) y encapsulamiento/desencapsulamiento (incluye cifrados modificados que deben producir la clave de rechazo implícito, y comprobaciones de claves mal formadas).</p>
+        <pre class="terminal" data-lang="shell"><code>$ B=https://raw.githubusercontent.com/usnistgov/ACVP-Server/master/gen-val/json-files
+$ for d in ML-KEM-keyGen-FIPS203 ML-KEM-encapDecap-FIPS203; do
+    mkdir -p acvp/$d &amp;&amp; curl -s -o acvp/$d/internalProjection.json $B/$d/internalProjection.json
+  done</code></pre>
+        <pre data-lang="python"><code><span class="tok-s">"""Comprueba ML-KEM (pyca y liboqs) contra los vectores ACVP de NIST."""</span>
+<span class="tok-k">import</span> json
+<span class="tok-k">from</span> pathlib <span class="tok-k">import</span> Path
+<span class="tok-k">from</span> cryptography.hazmat.primitives.asymmetric <span class="tok-k">import</span> mlkem
+<span class="tok-k">import</span> oqs
 
-        <section class="lab-section">
-            <h2>Parte 2: Análisis de Seguridad y Rendimiento</h2>
-            
-            <h3>2.1 Comparación con ECDH</h3>
-            <p>Implementaremos una versión simplificada de ECDH (Elliptic Curve Diffie-Hellman) para comparar con ML-KEM:</p>
-            <pre><code class="language-python"># Crear un nuevo archivo ecdh_comparison.py
-import time
-import numpy as np
-import matplotlib.pyplot as plt
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+load = <span class="tok-k">lambda</span> name: json.loads((Path(<span class="tok-s">"acvp"</span>) / name / <span class="tok-s">"internalProjection.json"</span>).read_text())
+PYCA = {<span class="tok-s">"ML-KEM-768"</span>: mlkem.MLKEM768PrivateKey, <span class="tok-s">"ML-KEM-1024"</span>: mlkem.MLKEM1024PrivateKey}
 
-# Importar nuestra implementación de ML-KEM
-from ml_kem_simplified import keygen, encaps, decaps, PARAMS
+ok = fail = <span class="tok-n">0</span>
+<span class="tok-k">for</span> g <span class="tok-k">in</span> load(<span class="tok-s">"ML-KEM-keyGen-FIPS203"</span>)[<span class="tok-s">"testGroups"</span>]:
+    ps = g[<span class="tok-s">"parameterSet"</span>]
+    <span class="tok-k">for</span> t <span class="tok-k">in</span> g[<span class="tok-s">"tests"</span>]:
+        seed = bytes.fromhex(t[<span class="tok-s">"d"</span>] + t[<span class="tok-s">"z"</span>])          <span class="tok-c"># semilla de 64 bytes = d ‖ z</span>
+        ek, dk = bytes.fromhex(t[<span class="tok-s">"ek"</span>]), bytes.fromhex(t[<span class="tok-s">"dk"</span>])
+        <span class="tok-k">if</span> ps <span class="tok-k">in</span> PYCA:
+            good = PYCA[ps].from_seed_bytes(seed).public_key().public_bytes_raw() == ek
+            ok += good; fail += <span class="tok-k">not</span> good
+        <span class="tok-k">with</span> oqs.KeyEncapsulation(ps) <span class="tok-k">as</span> kem:
+            good = kem.generate_keypair_seed(seed) == ek <span class="tok-k">and</span> kem.export_secret_key() == dk
+            ok += good; fail += <span class="tok-k">not</span> good
+<span class="tok-f">print</span>(<span class="tok-s">f"keyGen: </span>{ok}<span class="tok-s"> correctos, </span>{fail}<span class="tok-s"> fallos"</span>)
 
-def ecdh_keygen():
-    """
-    Genera un par de claves para ECDH.
-    """
-    private_key = ec.generate_private_key(ec.SECP256R1())
-    public_key = private_key.public_key()
-    return private_key, public_key
+ok = fail = <span class="tok-n">0</span>
+<span class="tok-k">for</span> g <span class="tok-k">in</span> load(<span class="tok-s">"ML-KEM-encapDecap-FIPS203"</span>)[<span class="tok-s">"testGroups"</span>]:
+    <span class="tok-k">if</span> g[<span class="tok-s">"function"</span>] <span class="tok-k">not in</span> (<span class="tok-s">"encapsulation"</span>, <span class="tok-s">"decapsulation"</span>):
+        <span class="tok-k">continue</span>
+    <span class="tok-k">for</span> t <span class="tok-k">in</span> g[<span class="tok-s">"tests"</span>]:
+        <span class="tok-k">with</span> oqs.KeyEncapsulation(g[<span class="tok-s">"parameterSet"</span>], bytes.fromhex(t[<span class="tok-s">"dk"</span>])) <span class="tok-k">as</span> kem:
+            good = kem.decap_secret(bytes.fromhex(t[<span class="tok-s">"c"</span>])) == bytes.fromhex(t[<span class="tok-s">"k"</span>])
+        ok += good; fail += <span class="tok-k">not</span> good
+<span class="tok-f">print</span>(<span class="tok-s">f"decaps: </span>{ok}<span class="tok-s"> correctos, </span>{fail}<span class="tok-s"> fallos"</span>)</code></pre>
+        <pre class="terminal" data-lang="salida"><code>keyGen: 125 correctos, 0 fallos
+decaps: 105 correctos, 0 fallos</code></pre>
+        <p><strong>Tarea C.1.</strong> Ejecute el script y explique los recuentos (¿cuántos casos hay por conjunto de parámetros y por qué pyca aporta menos?). <strong>Tarea C.2.</strong> Localice un caso de desencapsulamiento con <code>"reason": "modified ciphertext"</code> y demuestre que la clave esperada es <span class="math">J(<var>z</var> ‖ <var>c</var>) = SHAKE256(<var>z</var> ‖ <var>c</var>, 32)</span>, extrayendo <var>z</var> de los últimos 32 bytes de dk y usando solo <code>hashlib.shake_256</code>. <strong>Tarea C.3 (avanzada).</strong> Los casos de encapsulamiento incluyen el mensaje <var>m</var>. Ninguna de las dos bibliotecas expone Encaps con <var>m</var> fijo; ¿por qué es razonable esa decisión de API? ¿Cómo validaría entonces el encapsulamiento de su propia implementación?</p>
+        <details><summary>Pista para C.2</summary><div class="details-body"><p>Para ML-KEM con parámetro <var>k</var>, dk = dk<sub>PKE</sub> (384<var>k</var> bytes) ‖ ek (384<var>k</var> + 32) ‖ H(ek) (32) ‖ <var>z</var> (32). <code>hashlib.shake_256(z + c).digest(32)</code> debe coincidir con <code>t["k"]</code>. Para un cifrado válido, en cambio, no coincidirá.</p></div></details>
 
-def ecdh_shared_key(private_key, peer_public_key):
-    """
-    Calcula la clave compartida ECDH.
-    """
-    shared_key = private_key.exchange(ec.ECDH(), peer_public_key)
-    # Derivar una clave simétrica usando HKDF
-    derived_key = HKDF(
-        algorithm=hashes.SHA256(),
-        length=32,
-        salt=None,
-        info=b'handshake data',
-    ).derive(shared_key)
-    return derived_key
+        <h2 id="parte-d"><span class="sec">L2.5</span>Parte D · Rechazo implícito y canales laterales</h2>
+        <pre data-lang="python"><code><span class="tok-k">import</span> statistics, time
+<span class="tok-k">from</span> cryptography.hazmat.primitives.asymmetric <span class="tok-k">import</span> mlkem
 
-def compare_performance(num_trials=10):
-    """
-    Compara el rendimiento de ML-KEM y ECDH.
-    """
-    # Tiempos para ML-KEM
-    ml_kem_keygen_times = []
-    ml_kem_encaps_times = []
-    ml_kem_decaps_times = []
-    
-    # Tiempos para ECDH
-    ecdh_keygen_times = []
-    ecdh_shared_key_times = []
-    
-    for _ in range(num_trials):
-        # ML-KEM
-        start_time = time.time()
-        keys = keygen()
-        ml_kem_keygen_times.append(time.time() - start_time)
-        
-        start_time = time.time()
-        ciphertext, shared_key_sender = encaps(keys['public'])
-        ml_kem_encaps_times.append(time.time() - start_time)
-        
-        start_time = time.time()
-        shared_key_receiver = decaps(ciphertext, keys['private'], keys['public'])
-        ml_kem_decaps_times.append(time.time() - start_time)
-        
-        # ECDH
-        start_time = time.time()
-        alice_private, alice_public = ecdh_keygen()
-        ecdh_keygen_times.append(time.time() - start_time)
-        
-        bob_private, bob_public = ecdh_keygen()
-        
-        start_time = time.time()
-        alice_shared = ecdh_shared_key(alice_private, bob_public)
-        ecdh_shared_key_times.append(time.time() - start_time)
-        
-        bob_shared = ecdh_shared_key(bob_private, alice_public)
-        
-        # Verificar que ambas partes tienen la misma clave
-        assert alice_shared == bob_shared
-        assert shared_key_sender == shared_key_receiver
-    
-    # Calcular promedios
-    ml_kem_keygen_avg = np.mean(ml_kem_keygen_times)
-    ml_kem_encaps_avg = np.mean(ml_kem_encaps_times)
-    ml_kem_decaps_avg = np.mean(ml_kem_decaps_times)
-    
-    ecdh_keygen_avg = np.mean(ecdh_keygen_times)
-    ecdh_shared_key_avg = np.mean(ecdh_shared_key_times)
-    
-    # Visualizar resultados
-    plt.figure(figsize=(12, 6))
-    
-    # Tiempos de generación de claves
-    plt.subplot(1, 2, 1)
-    plt.bar(['ML-KEM', 'ECDH'], [ml_kem_keygen_avg, ecdh_keygen_avg])
-    plt.title('Tiempo de Generación de Claves')
-    plt.ylabel('Tiempo (segundos)')
-    plt.grid(True, alpha=0.3)
-    
-    # Tiempos de establecimiento de clave compartida
-    plt.subplot(1, 2, 2)
-    plt.bar(['ML-KEM (Encaps+Decaps)', 'ECDH (2×SharedKey)'], 
-            [ml_kem_encaps_avg + ml_kem_decaps_avg, 2 * ecdh_shared_key_avg])
-    plt.title('Tiempo de Establecimiento de Clave')
-    plt.ylabel('Tiempo (segundos)')
-    plt.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    plt.savefig('ml_kem_vs_ecdh.png')
-    plt.show()
-    
-    # Imprimir resultados
-    print("\nComparación de Rendimiento (promedio de", num_trials, "pruebas):")
-    print("\nML-KEM:")
-    print("  Generación de claves:", ml_kem_keygen_avg, "segundos")
-    print("  Encapsulamiento:", ml_kem_encaps_avg, "segundos")
-    print("  Desencapsulamiento:", ml_kem_decaps_avg, "segundos")
-    print("  Total:", ml_kem_keygen_avg + ml_kem_encaps_avg + ml_kem_decaps_avg, "segundos")
-    
-    print("\nECDH:")
-    print("  Generación de claves:", ecdh_keygen_avg, "segundos")
-    print("  Cálculo de clave compartida:", ecdh_shared_key_avg, "segundos")
-    print("  Total (2 partes):", 2 * ecdh_keygen_avg + 2 * ecdh_shared_key_avg, "segundos")
-    
-    # Comparar tamaños
-    alice_private_serialized = alice_private.private_bytes(
-        encoding=serialization.Encoding.DER,
-        format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=serialization.NoEncryption()
-    )
-    
-    alice_public_serialized = alice_public.public_bytes(
-        encoding=serialization.Encoding.DER,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo
-    )
-    
-    # Tamaños aproximados para ML-KEM-512
-    ml_kem_public_size = PARAMS['k'] * PARAMS['k'] * PARAMS['n'] * np.log2(PARAMS['q']) / 8
-    ml_kem_private_size = PARAMS['k'] * PARAMS['n'] * np.log2(2 * PARAMS['eta1'] + 1) / 8
-    ml_kem_ciphertext_size = (PARAMS['k'] * PARAMS['n'] * PARAMS['du'] + PARAMS['n'] * PARAMS['dv']) / 8
-    
-    print("\nTamaños (bytes):")
-    print("  ECDH clave privada:", len(alice_private_serialized))
-    print("  ECDH clave pública:", len(alice_public_serialized))
-    print("  ML-KEM clave privada (aprox.):", int(ml_kem_private_size))
-    print("  ML-KEM clave pública (aprox.):", int(ml_kem_public_size))
-    print("  ML-KEM cifrado (aprox.):", int(ml_kem_ciphertext_size))
+sk = mlkem.MLKEM768PrivateKey.generate()
+ss, ct = sk.public_key().encapsulate()
+bad = bytearray(ct); bad[<span class="tok-n">100</span>] ^= <span class="tok-n">0x01</span>; bad = bytes(bad)
+<span class="tok-f">print</span>(sk.decapsulate(ct) == ss, sk.decapsulate(bad) == ss)   <span class="tok-c"># True False, sin excepción</span>
+<span class="tok-f">print</span>(sk.decapsulate(bad) == sk.decapsulate(bad))            <span class="tok-c"># True: K̄ es determinista</span>
 
-if __name__ == "__main__":
-    compare_performance()
-</code></pre>
-        </section>
+<span class="tok-k">def</span> <span class="tok-f">muestras</span>(c, n=<span class="tok-n">20000</span>):
+    out = []
+    <span class="tok-k">for</span> _ <span class="tok-k">in</span> <span class="tok-f">range</span>(n):
+        t0 = time.perf_counter_ns(); sk.decapsulate(c); out.append(time.perf_counter_ns() - t0)
+    <span class="tok-k">return</span> out
+<span class="tok-f">print</span>(statistics.median(muestras(ct)), statistics.median(muestras(bad)))</code></pre>
+        <p>En nuestra ejecución: medianas de 22 934 ns (válido) y 22 783 ns (alterado). Responda por escrito:</p>
+        <ol>
+          <li><strong>D.1.</strong> ¿Por qué Decaps no lanza una excepción con el cifrado alterado? ¿Qué ataque concreto se evitaría así y cuál seguiría siendo posible si la rama de rechazo fuese mensurablemente más lenta?</li>
+          <li><strong>D.2.</strong> ¿Demuestra la diferencia de 150 ns que la implementación es de tiempo constante, o que no lo es? Proponga un test estadístico adecuado (por ejemplo, la prueba <em>t</em> de Welch al estilo de <em>dudect</em>) y qué ruido del sistema debería controlar.</li>
+          <li><strong>D.3.</strong> Lea el resumen de KyberSlash [4]. ¿En qué dos funciones estaba la división de tiempo variable? ¿Por qué la segunda (compresión del cifrado) es explotable aunque en Encaps procese datos públicos?</li>
+          <li><strong>D.4.</strong> Clangover (CVE-2024-37880) no estaba en el código fuente, sino en el binario. ¿Qué implica esto para la validación de una implementación «de tiempo constante»? ¿Qué herramientas conoce que trabajen sobre binarios?</li>
+          <li><strong>D.5.</strong> Si su implementación de la parte A fallase con probabilidad 2<sup>−20</sup> por cifrado, ¿qué problema de seguridad tendría el KEM que se construyera encima con la FO, aunque esta esté bien implementada?</li>
+        </ol>
+        <details><summary>Orientación para el profesorado</summary><div class="details-body">
+          <p>D.1: ataques de reacción / oráculo de validez; con fuga temporal el oráculo reaparece. D.2: una diferencia de medianas en un sistema multitarea no prueba nada en ninguno de los dos sentidos; hay que aislar el núcleo, fijar frecuencia, intercalar clases y usar un contraste sobre muchas muestras. D.3: <code>poly_tomsg</code> (KyberSlash1) y <code>poly_compress</code>/<code>polyvec_compress</code> (KyberSlash2); la reencriptación en Decaps procesa <var>m</var>′, derivado del secreto. D.4: hay que verificar el código máquina (p. ej., herramientas tipo Valgrind con memoria «secreta» marcada, como la que usaron los autores de KyberSlash, o verificación formal). D.5: fallos de descifrado frecuentes permiten ataques que buscan cifrados con más probabilidad de fallar y aprenden el secreto de las respuestas; por eso FIPS 203 exige ≤ 2<sup>−138,8</sup>.</p>
+        </div></details>
 
-        <section class="lab-section">
-            <h2>Parte 3: Ejercicios y Preguntas de Reflexión</h2>
-            
-            <h3>3.1 Ejercicios</h3>
-            <ol>
-                <li>Modifica el código para implementar ML-KEM-768 ajustando los parámetros adecuadamente.</li>
-                <li>Implementa una función para medir el tiempo de ejecución de cada operación en ML-KEM y compara los resultados con diferentes tamaños de parámetros.</li>
-                <li>Modifica el código para simular un ataque de "clave relacionada" y analiza su efectividad.</li>
-                <li>Implementa una versión híbrida que combine ML-KEM con ECDH para una transición segura.</li>
-            </ol>
-            
-            <h3>3.2 Preguntas de Reflexión</h3>
-            <ol>
-                <li>¿Cuáles son las ventajas y desventajas de ML-KEM en comparación con ECDH?</li>
-                <li>¿Por qué ML-KEM utiliza una distribución centrada binomial en lugar de una distribución normal?</li>
-                <li>¿Cómo afecta el tamaño de los parámetros (n, k, q) a la seguridad y eficiencia de ML-KEM?</li>
-                <li>¿Qué estrategias de implementación podrían mejorar el rendimiento de ML-KEM en dispositivos con recursos limitados?</li>
-                <li>¿Cuáles son los desafíos para la adopción generalizada de ML-KEM en sistemas existentes?</li>
-            </ol>
-        </section>
+        <h2 id="entrega"><span class="sec">L2.6</span>Entregables y evaluación</h2>
+        <p>Entregue un único archivo comprimido con:</p>
+        <ol>
+          <li><code>kpke_toy.py</code> (partes A.1–A.3) con sus pruebas <code>assert</code>, y las figuras o tablas del experimento A.3.</li>
+          <li><code>tamanos.py</code> y <code>bench.py</code> (partes B.1 y B.3) y la salida de las órdenes de OpenSSL de B.2.</li>
+          <li><code>acvp_mlkem.py</code> con su salida y la demostración de C.2.</li>
+          <li>Un informe de 4–6 páginas con las respuestas razonadas de B.2, B.3, C.1–C.3 y D.1–D.5, indicando versión de cada biblioteca y procesador usado.</li>
+        </ol>
+        <div class="table-wrap"><table>
+          <caption>Rúbrica (10 puntos)</caption>
+          <thead><tr><th>Criterio</th><th class="num">Peso</th><th>Excelente</th><th>Suficiente</th><th>Insuficiente</th></tr></thead>
+          <tbody>
+            <tr><th>Parte A: corrección del K-PKE</th><td class="num">2,5</td><td>Anillo, compresión y CBD correctos y probados; 0 fallos con parámetros reales; experimento A.3 bien diseñado y explicado con la ec. (4.1)</td><td>Funciona con parámetros reales; experimento incompleto o sin interpretar</td><td>Fallos de descifrado con parámetros reales o aritmética del anillo incorrecta</td></tr>
+            <tr><th>Parte B: uso de bibliotecas y medidas</th><td class="num">2,5</td><td>Tres bibliotecas, tamaños cotejados con FIPS 203 y RFC 9935, medidas con metodología explícita y discusión crítica</td><td>Dos bibliotecas y medidas sin análisis de sobrecargas</td><td>Una sola biblioteca o cifras sin procedimiento</td></tr>
+            <tr><th>Parte C: validación ACVP</th><td class="num">2</td><td>Todos los vectores pasan; C.2 demostrado con <code>hashlib</code>; C.3 bien argumentado</td><td>Script funcionando sin C.2 o C.3</td><td>No ejecuta o no interpreta los resultados</td></tr>
+            <tr><th>Parte D: análisis de seguridad</th><td class="num">2</td><td>Respuestas precisas, con referencias a FIPS 203 y a los artículos citados</td><td>Respuestas correctas pero superficiales</td><td>Errores conceptuales (p. ej., confundir IND-CPA e IND-CCA2)</td></tr>
+            <tr><th>Calidad del código y del informe</th><td class="num">1</td><td>Código legible y reproducible (versiones fijadas), informe claro</td><td>Reproducible con esfuerzo</td><td>No reproducible</td></tr>
+          </tbody>
+        </table></div>
 
-        <section class="lab-section">
-            <h2>Parte 4: Extensión (Opcional) - Implementación en Hardware</h2>
-            <p>Si tienes experiencia con programación de hardware (FPGA o microcontroladores), puedes intentar implementar una versión optimizada de ML-KEM:</p>
-            <ul>
-                <li>Utilizar la transformada número-teórica (NTT) para multiplicación eficiente de polinomios</li>
-                <li>Implementar optimizaciones específicas para la plataforma objetivo</li>
-                <li>Medir el rendimiento y consumo de energía</li>
-                <li>Comparar con implementaciones de referencia</li>
-            </ul>
-            <p>Esta extensión es avanzada y requiere conocimientos adicionales de programación de hardware.</p>
-        </section>
+        <div class="callout note"><span class="callout-title">Qué se ha comprobado al redactar esta guía</span><p>Todas las órdenes y scripts de esta página se ejecutaron el 24 de septiembre de 2026 en Linux (Python 3.12.7, NumPy 2.5.3, pyca/cryptography 50.0.1, liboqs 0.16.0 compilada desde el código fuente con liboqs-python 0.16.0.1, y OpenSSL 3.5.8 compilado localmente). Las salidas mostradas son las obtenidas, salvo los valores aleatorios.</p></div>
 
-        <section class="lab-section">
-            <h2>Entregables</h2>
-            <p>Al finalizar esta práctica, deberás entregar:</p>
-            <ol>
-                <li>Código fuente de las implementaciones (<code>ml_kem_simplified.py</code> y <code>ecdh_comparison.py</code>)</li>
-                <li>Capturas de pantalla o gráficos generados durante la ejecución</li>
-                <li>Un informe breve (máximo 3 páginas) que incluya:
-                    <ul>
-                        <li>Resultados obtenidos en las pruebas de rendimiento</li>
-                        <li>Análisis comparativo entre ML-KEM y ECDH</li>
-                        <li>Respuestas a las preguntas de reflexión</li>
-                        <li>Conclusiones sobre la viabilidad de ML-KEM para aplicaciones prácticas</li>
-                    </ul>
-                </li>
-            </ol>
-        </section>
+        <aside class="key-points"><span class="kp-title">Ideas clave</span><ul>
+          <li>K-PKE cabe en unas decenas de líneas; lo que lo hace correcto es el margen entre el ruido (unos cientos) y <var>q</var>/4 ≈ 832.</li>
+          <li>Las bibliotecas difieren en detalles que rompen la interoperabilidad: orden de la tupla, formato de clave (semilla de 64 bytes o clave expandida) y conjuntos disponibles.</li>
+          <li>ML-KEM-768 cuesta decenas de microsegundos, comparable a X25519; su coste real es el tamaño (1 184 + 1 088 bytes).</li>
+          <li>Los vectores ACVP permiten validar una implementación bit a bit, incluido el rechazo implícito; la ausencia de canales laterales, en cambio, hay que comprobarla sobre el binario.</li>
+        </ul></aside>
 
-        <section class="lab-section">
-            <h2>Recursos Adicionales</h2>
-            <ul>
-                <li><a href="https://csrc.nist.gov/pubs/fips/203/ipd" target="_blank">FIPS 203: Module-Lattice-Based Key-Encapsulation Mechanism Standard</a></li>
-                <li><a href="https://pq-crystals.org/kyber/" target="_blank">Sitio oficial de CRYSTALS-Kyber (ahora ML-KEM)</a></li>
-                <li><a href="https://eprint.iacr.org/2017/634" target="_blank">Artículo original: CRYSTALS-Kyber: A CCA-Secure Module-Lattice-Based KEM</a></li>
-                <li><a href="https://github.com/pq-crystals/kyber" target="_blank">Implementación de referencia de Kyber</a></li>
-                <li><a href="https://en.wikipedia.org/wiki/Learning_with_errors" target="_blank">Wikipedia: Learning With Errors</a></li>
-            </ul>
-        </section>
+        <h2 id="referencias">Referencias</h2>
+        <ol class="refs">
+          <li>NIST. <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf">FIPS 203: Module-Lattice-Based Key-Encapsulation Mechanism Standard</a>. <span class="src">13 de agosto de 2024.</span></li>
+          <li>pyca/cryptography. <a href="https://github.com/pyca/cryptography/blob/main/docs/hazmat/primitives/asymmetric/mlkem.rst">Documentación de ML-KEM</a> y <a href="https://github.com/pyca/cryptography/blob/main/CHANGELOG.rst">changelog</a>. <span class="src">Versión 50.0.1, 25 de agosto de 2026.</span></li>
+          <li>Open Quantum Safe. <a href="https://github.com/open-quantum-safe/liboqs">liboqs</a> (0.16.0, 9 de julio de 2026) y <a href="https://github.com/open-quantum-safe/liboqs-python">liboqs-python</a> (0.16.0.1, 23 de septiembre de 2026).</li>
+          <li>D. J. Bernstein et al. <a href="https://eprint.iacr.org/2024/1049">KyberSlash: Exploiting secret-dependent division timings in Kyber implementations</a>. <span class="src">IACR ePrint 2024/1049; TCHES 2025.</span></li>
+          <li>A. Purnal. <a href="https://github.com/antoonpurnal/clangover">clangover</a>; <a href="https://github.com/advisories/GHSA-58rr-w6gv-4p4h">CVE-2024-37880</a>. <span class="src">2024.</span></li>
+          <li>NIST. <a href="https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files">ACVP-Server: gen-val/json-files</a>. <span class="src">v1.1.0.43, 12 de agosto de 2026.</span></li>
+          <li>IETF. <a href="https://www.rfc-editor.org/rfc/rfc9935">RFC 9935: Algorithm Identifiers for ML-KEM in X.509</a>. <span class="src">Marzo de 2026.</span></li>
+          <li>OpenSSL. <a href="https://github.com/openssl/openssl/releases/tag/openssl-3.5.8">Release 3.5.8</a>. <span class="src">25 de agosto de 2026.</span></li>
+        </ol>
+      </article>
+
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../index.html">Inicio</a></li>
-                    <li><a href="../programa.html">Programa</a></li>
-                    <li><a href="../temas/tema1/index.html">Temas</a></li>
-                    <li><a href="../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Guías Disponibles</h3>
-                <ul>
-                    <li><a href="algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="ml_kem.html">ML-KEM</a></li>
-                    <li><a href="ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="qkd.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../js/script.js"></script>
-    <script src="../js/navigation.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../glosario.html">Glosario</a>
+        <a href="../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

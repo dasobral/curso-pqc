@@ -1,1349 +1,560 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../" data-page="lab-qkd">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QKD (BB84) - Guía de Laboratorio</title>
-    <link rel="stylesheet" href="../css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laboratorio L5 · Simulación de QKD — Curso PQC</title>
+  <meta name="description" content="Práctica de QKD: BB84 con NumPy, estadística del ataque de interceptación-reenvío, tasa de clave frente a QBER y distancia, BB84 con Qiskit 2.x y un KME simulado con la API ETSI GS QKD 014 que alimenta una clave híbrida con ML-KEM-768 y HKDF.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/course-data.js" defer></script>
+  <script src="../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Inicio</a></li>
-                <li><a href="../programa.html">Programa</a></li>
-                <li><a href="../temas/tema1/index.html">Temas</a></li>
-                <li><a href="../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="index.html">Guías de Laboratorio</a></li>
-                <li><a href="../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../index.html">Inicio</a> &gt; <a href="index.html">Guías de Laboratorio</a> &gt; QKD (BB84)
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../index.html">Inicio</a>
+        <a href="../programa.html">Programa</a>
+        <a href="../temas/index.html">Temas</a>
+        <a href="../ejemplos/index.html">Ejemplos</a>
+        <a href="../guias/index.html" aria-current="page">Laboratorios</a>
+        <a href="../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Guía de Laboratorio: Simulación de QKD (BB84)</h1>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../index.html">Inicio</a></li><li><a href="../guias/index.html">Laboratorios</a></li><li aria-current="page">L5 · QKD</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Laboratorio L5 · Tema 6</p>
+        <h1>Simulación de <em>QKD</em></h1>
+        <p class="lede">Programará BB84 en Python, medirá lo que cuesta a Eve escuchar, calculará cuánta clave sobrevive a la distancia y, en la parte opcional, conectará una aplicación a un gestor de claves con la API ETSI GS QKD 014 para derivar una clave híbrida QKD + ML-KEM.</p>
+        <dl class="page-meta">
+          <div><dt>Duración</dt><dd>2 h (+ 1 h opcional)</dd></div>
+          <div><dt>Nivel</dt><dd>Intermedio</dd></div>
+          <div><dt>Requisitos</dt><dd>Python 3.12+, NumPy; Tema 6</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
 
-        <section class="lab-section">
-            <h2>Objetivos de Aprendizaje</h2>
-            <ul>
-                <li>Comprender los principios fundamentales de la Distribución Cuántica de Claves (QKD)</li>
-                <li>Implementar una simulación del protocolo BB84</li>
-                <li>Analizar la seguridad del protocolo frente a diferentes tipos de ataques</li>
-                <li>Evaluar las ventajas, limitaciones y aplicaciones prácticas de QKD</li>
-            </ul>
-        </section>
+      <article class="prose">
+        <h2 id="objetivos"><span class="sec">L5.0</span>Objetivos</h2>
+        <ol>
+          <li>Implementar BB84 vectorizado con NumPy, incluido un espía de interceptación-reenvío.</li>
+          <li>Verificar estadísticamente la ley <span class="math"><var>Q</var> = <var>e</var> + (1 − 2<var>e</var>)<var>p</var>/4</span> y la información que obtiene Eve.</li>
+          <li>Calcular la fracción secreta <span class="math">1 − <var>h</var>(<var>Q</var>) − <var>f</var>·<var>h</var>(<var>Q</var>)</span>, el umbral efectivo y la tasa frente a la distancia, comparándola con la cota PLOB.</li>
+          <li>(Opcional) Expresar BB84 como circuito cuántico en Qiskit 2.x y ejecutarlo con Aer.</li>
+          <li>(Opcional) Consumir claves con la forma de la API ETSI GS QKD 014 y combinarlas con ML-KEM-768 mediante HKDF.</li>
+        </ol>
+        <div class="callout note"><span class="callout-title">Antes de empezar</span><p>Repase las secciones <a href="../temas/tema6/index.html">6.2 a 6.4 y 6.10 del Tema 6</a> y juegue cinco minutos con el <a href="../ejemplos/qkd_bb84.html">simulador E5</a>. Todo el código de esta guía se ha ejecutado tal cual; las salidas mostradas son reales (Linux x86-64, septiembre de 2026). Con otra semilla o plataforma los decimales cambiarán.</p></div>
 
-        <section class="lab-section">
-            <h2>Requisitos Previos</h2>
-            <ul>
-                <li>Conocimientos básicos de mecánica cuántica (superposición, medición, entrelazamiento)</li>
-                <li>Familiaridad con conceptos de criptografía simétrica</li>
-                <li>Python 3.8 o superior instalado</li>
-                <li>Bibliotecas requeridas: numpy, matplotlib, qiskit (opcional para la parte avanzada)</li>
-            </ul>
+        <h2 id="preparacion"><span class="sec">L5.1</span>Preparación del entorno</h2>
+        <p>Cree un entorno virtual; no instale paquetes en el Python del sistema. Las partes 1–3 solo necesitan NumPy y Matplotlib. La parte 4 necesita Qiskit y Qiskit Aer; la parte 5, <code>cryptography</code> 47 o posterior, la primera versión con ML-KEM (abril de 2026).</p>
+        <pre class="terminal" data-lang="shell"><code>$ python3 -m venv .venv &amp;&amp; source .venv/bin/activate
+$ pip install "numpy&gt;=2" matplotlib                      <span class="tok-c"># partes 1-3</span>
+$ pip install "qiskit==2.5.2" "qiskit-aer==0.17.2"      <span class="tok-c"># parte 4 (opcional)</span>
+$ pip install "cryptography&gt;=47"                        <span class="tok-c"># parte 5 (opcional)</span>
+$ pip list | grep -iE "^(numpy|matplotlib|qiskit|qiskit-aer|cryptography) "</code></pre>
+        <pre class="terminal" data-lang="salida"><code>cryptography      50.0.1
+matplotlib        3.11.2
+numpy             2.5.3
+qiskit            2.5.2
+qiskit-aer        0.17.2</code></pre>
+        <p class="small">Versiones con las que se probó la guía (Python 3.12.7). La biblioteca <code>cryptography</code> 50.0.1 estaba enlazada con OpenSSL 4.0.2; ML-KEM funciona con OpenSSL 3.5 o posterior, AWS-LC o BoringSSL.</p>
 
-            <div class="alert alert-info">
-                <p><strong>Nota:</strong> Esta práctica implementa una simulación clásica del protocolo BB84. No se requiere un ordenador cuántico real.</p>
-            </div>
-        </section>
+        <h2 id="parte1"><span class="sec">L5.2</span>Parte 1 · BB84 con NumPy</h2>
+        <p>Guarde el módulo como <code>bb84_numpy.py</code>. Se usa en las partes siguientes. Cada fotón es una posición de los arrays; la base 0 es la rectilínea y la 1 la diagonal. Medir en la base equivocada se modela como un bit aleatorio, y medir en la correcta devuelve el bit preparado: es exactamente la estadística de la regla de Born para los cuatro estados de BB84.</p>
+        <pre data-lang="python"><code>"""Lab L5 · Parte 1 — BB84 con NumPy (modelo de fotón único ideal)."""
+import numpy as np
 
-        <section class="lab-section">
-            <h2>Introducción Teórica</h2>
-            <p>La Distribución Cuántica de Claves (QKD, por sus siglas en inglés) es un método para compartir claves criptográficas entre dos partes utilizando propiedades de la mecánica cuántica. A diferencia de los métodos criptográficos post-cuánticos, que son algoritmos clásicos resistentes a ataques cuánticos, QKD utiliza directamente fenómenos cuánticos para establecer una clave compartida.</p>
-            
-            <p>El protocolo BB84, propuesto por Charles Bennett y Gilles Brassard en 1984, fue el primer protocolo QKD. Sus principales características son:</p>
-            
-            <ol>
-                <li><strong>Seguridad basada en principios físicos:</strong> La seguridad se basa en principios fundamentales de la mecánica cuántica, como el principio de incertidumbre de Heisenberg y el teorema de no clonación.</li>
-                <li><strong>Detección de espionaje:</strong> Cualquier intento de interceptar la comunicación introduce errores detectables en el canal.</li>
-                <li><strong>Independencia computacional:</strong> La seguridad no depende de la dificultad computacional de problemas matemáticos.</li>
-            </ol>
+def h2(x):
+    x = np.clip(np.asarray(x, dtype=float), 1e-15, 1 - 1e-15)
+    return -x * np.log2(x) - (1 - x) * np.log2(1 - x)
 
-            <p>El protocolo BB84 consta de las siguientes fases:</p>
-            
-            <ol>
-                <li><strong>Preparación y transmisión cuántica:</strong> Alice prepara y envía fotones polarizados a Bob.</li>
-                <li><strong>Medición:</strong> Bob mide los fotones recibidos utilizando bases aleatorias.</li>
-                <li><strong>Reconciliación de bases:</strong> Alice y Bob comparan públicamente las bases utilizadas.</li>
-                <li><strong>Estimación de error:</strong> Verifican una muestra de bits para detectar posibles intrusos.</li>
-                <li><strong>Amplificación de privacidad:</strong> Aplican técnicas para eliminar cualquier información que un espía pudiera haber obtenido.</li>
-            </ol>
-        </section>
+def bb84(n, noise=0.0, p_eve=0.0, rng=None):
+    """Devuelve un dict con los arrays del protocolo y el QBER del cribado."""
+    rng = np.random.default_rng(rng)
+    a_bits = rng.integers(0, 2, n)
+    a_bases = rng.integers(0, 2, n)          # 0 = rectilínea (+), 1 = diagonal (x)
+    # Eve: interceptación-reenvío con probabilidad p_eve
+    eve_on = rng.random(n) &lt; p_eve
+    e_bases = rng.integers(0, 2, n)
+    e_bits = np.where(e_bases == a_bases, a_bits, rng.integers(0, 2, n))
+    s_bits = np.where(eve_on, e_bits, a_bits)    # estado reenviado
+    s_bases = np.where(eve_on, e_bases, a_bases)
+    # Bob
+    b_bases = rng.integers(0, 2, n)
+    b_bits = np.where(b_bases == s_bases, s_bits, rng.integers(0, 2, n))
+    b_bits ^= (rng.random(n) &lt; noise).astype(b_bits.dtype)   # ruido del canal
+    sift = a_bases == b_bases
+    errors = a_bits[sift] != b_bits[sift]
+    return dict(a_bits=a_bits, a_bases=a_bases, b_bits=b_bits, b_bases=b_bases,
+                eve_on=eve_on, e_bases=e_bases, e_bits=e_bits, sift=sift, qber=errors.mean(), n_sift=int(sift.sum()))
 
-        <section class="lab-section">
-            <h2>Parte 1: Implementación Básica del Protocolo BB84</h2>
-            
-            <h3>1.1 Configuración del Entorno</h3>
-            <p>Crea un nuevo archivo Python llamado <code>bb84_simulation.py</code> e importa las bibliotecas necesarias:</p>
-            <pre><code class="language-python">import numpy as np
-import matplotlib.pyplot as plt
-import random
-from enum import Enum
-</code></pre>
-
-            <h3>1.2 Definición de Constantes y Clases</h3>
-            <p>Definiremos algunas constantes y clases para representar los elementos del protocolo:</p>
-            <pre><code class="language-python"># Definir las bases de medición
-class Basis(Enum):
-    RECTILINEAR = 0  # Base + (horizontal/vertical)
-    DIAGONAL = 1     # Base × (diagonal)
-
-# Definir los posibles estados cuánticos
-class Qubit:
-    def __init__(self, bit_value, basis):
-        self.bit_value = bit_value  # 0 o 1
-        self.basis = basis          # RECTILINEAR o DIAGONAL
-    
-    def __str__(self):
-        basis_symbol = "+" if self.basis == Basis.RECTILINEAR else "×"
-        return f"{self.bit_value}{basis_symbol}"
-    
-    def measure(self, measurement_basis):
-        """
-        Mide el qubit en la base especificada.
-        Si la base de medición coincide con la base de preparación, el resultado es determinista.
-        Si las bases son diferentes, el resultado es aleatorio.
-        """
-        if measurement_basis == self.basis:
-            # Medición en la misma base: resultado determinista
-            return self.bit_value
-        else:
-            # Medición en base diferente: resultado aleatorio
-            return random.randint(0, 1)
-</code></pre>
-
-            <h3>1.3 Implementación de las Funciones del Protocolo</h3>
-            <p>Ahora implementaremos las funciones principales del protocolo BB84:</p>
-            <pre><code class="language-python">def alice_prepare_qubits(n_bits):
-    """
-    Alice prepara n_bits qubits aleatorios.
-    Retorna:
-    - Los bits aleatorios que Alice quiere transmitir
-    - Las bases aleatorias que Alice usa para codificar los bits
-    - Los qubits preparados
-    """
-    alice_bits = np.random.randint(0, 2, n_bits)
-    alice_bases = np.random.randint(0, 2, n_bits)
-    
-    # Convertir a objetos Basis
-    alice_bases = [Basis.RECTILINEAR if b == 0 else Basis.DIAGONAL for b in alice_bases]
-    
-    # Preparar qubits
-    qubits = [Qubit(alice_bits[i], alice_bases[i]) for i in range(n_bits)]
-    
-    return alice_bits, alice_bases, qubits
-
-def bob_measure_qubits(qubits):
-    """
-    Bob mide los qubits recibidos usando bases aleatorias.
-    Retorna:
-    - Las bases aleatorias que Bob usa para medir
-    - Los resultados de las mediciones
-    """
-    n_bits = len(qubits)
-    bob_bases = np.random.randint(0, 2, n_bits)
-    
-    # Convertir a objetos Basis
-    bob_bases = [Basis.RECTILINEAR if b == 0 else Basis.DIAGONAL for b in bob_bases]
-    
-    # Medir qubits
-    bob_results = [qubits[i].measure(bob_bases[i]) for i in range(n_bits)]
-    
-    return bob_bases, bob_results
-
-def reconcile_bases(alice_bases, bob_bases):
-    """
-    Alice y Bob comparan sus bases y conservan solo los bits donde usaron la misma base.
-    Retorna:
-    - Índices de los bits donde las bases coinciden
-    """
-    matching_indices = [i for i in range(len(alice_bases)) if alice_bases[i] == bob_bases[i]]
-    return matching_indices
-
-def estimate_error_rate(alice_bits, bob_results, matching_indices, sample_size):
-    """
-    Alice y Bob sacrifican algunos bits para estimar la tasa de error.
-    Retorna:
-    - Tasa de error estimada
-    - Índices de los bits restantes después del muestreo
-    """
-    # Seleccionar aleatoriamente índices para el muestreo
-    if sample_size >= len(matching_indices):
-        sample_size = len(matching_indices) // 2  # Asegurar que queden bits para la clave
-    
-    sample_indices = random.sample(matching_indices, sample_size)
-    
-    # Calcular errores en la muestra
-    errors = sum(alice_bits[i] != bob_results[i] for i in sample_indices)
-    error_rate = errors / sample_size if sample_size > 0 else 0
-    
-    # Índices restantes después del muestreo
-    remaining_indices = [i for i in matching_indices if i not in sample_indices]
-    
-    return error_rate, remaining_indices
-
-def privacy_amplification(alice_bits, bob_results, remaining_indices, final_key_length):
-    """
-    Alice y Bob aplican amplificación de privacidad para obtener una clave final más corta pero más segura.
-    En esta implementación simplificada, simplemente tomamos un subconjunto de los bits restantes.
-    Retorna:
-    - Clave final de Alice
-    - Clave final de Bob
-    """
-    if final_key_length >= len(remaining_indices):
-        final_key_length = len(remaining_indices)
-    
-    # Seleccionar aleatoriamente índices para la clave final
-    final_indices = random.sample(remaining_indices, final_key_length)
-    
-    # Extraer bits para la clave final
-    alice_key = [alice_bits[i] for i in final_indices]
-    bob_key = [bob_results[i] for i in final_indices]
-    
-    return alice_key, bob_key
-
-def simulate_bb84(n_bits, sample_size, final_key_length, error_threshold=0.1):
-    """
-    Simula el protocolo BB84 completo.
-    Parámetros:
-    - n_bits: Número de qubits a transmitir
-    - sample_size: Tamaño de la muestra para estimación de error
-    - final_key_length: Longitud deseada de la clave final
-    - error_threshold: Umbral de error para abortar el protocolo
-    
-    Retorna:
-    - Éxito del protocolo
-    - Clave final de Alice
-    - Clave final de Bob
-    - Estadísticas del protocolo
-    """
-    # Fase 1: Alice prepara qubits
-    alice_bits, alice_bases, qubits = alice_prepare_qubits(n_bits)
-    
-    # Fase 2: Bob mide qubits
-    bob_bases, bob_results = bob_measure_qubits(qubits)
-    
-    # Fase 3: Reconciliación de bases
-    matching_indices = reconcile_bases(alice_bases, bob_bases)
-    
-    # Fase 4: Estimación de error
-    error_rate, remaining_indices = estimate_error_rate(alice_bits, bob_results, matching_indices, sample_size)
-    
-    # Verificar si el error es aceptable
-    if error_rate > error_threshold:
-        return False, [], [], {
-            'n_bits': n_bits,
-            'matching_bases': len(matching_indices),
-            'error_rate': error_rate,
-            'remaining_bits': len(remaining_indices),
-            'final_key_length': 0
-        }
-    
-    # Fase 5: Amplificación de privacidad
-    alice_key, bob_key = privacy_amplification(alice_bits, bob_results, remaining_indices, final_key_length)
-    
-    # Verificar si las claves coinciden
-    success = (alice_key == bob_key)
-    
-    return success, alice_key, bob_key, {
-        'n_bits': n_bits,
-        'matching_bases': len(matching_indices),
-        'error_rate': error_rate,
-        'remaining_bits': len(remaining_indices),
-        'final_key_length': len(alice_key)
-    }
-</code></pre>
-
-            <h3>1.4 Función Principal y Visualización</h3>
-            <p>Finalmente, implementaremos la función principal y algunas visualizaciones:</p>
-            <pre><code class="language-python">def visualize_protocol(alice_bits, alice_bases, bob_bases, bob_results, matching_indices, sample_indices, remaining_indices, final_indices):
-    """
-    Visualiza las diferentes etapas del protocolo BB84.
-    """
-    n_bits = len(alice_bits)
-    
-    # Convertir bases a formato legible
-    alice_bases_str = ["+" if b == Basis.RECTILINEAR else "×" for b in alice_bases]
-    bob_bases_str = ["+" if b == Basis.RECTILINEAR else "×" for b in bob_bases]
-    
-    # Crear figura
-    plt.figure(figsize=(12, 8))
-    
-    # Visualizar bits y bases de Alice
-    plt.subplot(4, 1, 1)
-    plt.bar(range(n_bits), alice_bits, color='blue', alpha=0.7)
-    plt.title('Bits aleatorios de Alice')
-    plt.ylabel('Bit')
-    plt.ylim(-0.1, 1.1)
-    plt.xticks(range(n_bits))
-    
-    for i in range(n_bits):
-        plt.text(i, alice_bits[i] + 0.1, alice_bases_str[i], ha='center')
-    
-    # Visualizar bases de Bob y resultados
-    plt.subplot(4, 1, 2)
-    plt.bar(range(n_bits), bob_results, color='green', alpha=0.7)
-    plt.title('Mediciones de Bob')
-    plt.ylabel('Bit')
-    plt.ylim(-0.1, 1.1)
-    plt.xticks(range(n_bits))
-    
-    for i in range(n_bits):
-        plt.text(i, bob_results[i] + 0.1, bob_bases_str[i], ha='center')
-    
-    # Visualizar coincidencias de bases
-    plt.subplot(4, 1, 3)
-    matches = np.zeros(n_bits)
-    for i in matching_indices:
-        matches[i] = 1
-    
-    plt.bar(range(n_bits), matches, color='purple', alpha=0.7)
-    plt.title('Coincidencias de Bases')
-    plt.ylabel('Coincide')
-    plt.ylim(-0.1, 1.1)
-    plt.xticks(range(n_bits))
-    
-    # Visualizar bits de la clave final
-    plt.subplot(4, 1, 4)
-    key_bits = np.zeros(n_bits)
-    
-    # Marcar bits usados para estimación de error
-    for i in sample_indices:
-        key_bits[i] = 0.5  # Valor intermedio para distinguir
-    
-    # Marcar bits de la clave final
-    for i in final_indices:
-        key_bits[i] = 1
-    
-    plt.bar(range(n_bits), key_bits, color=['red' if v == 0 else 'orange' if v == 0.5 else 'green' for v in key_bits], alpha=0.7)
-    plt.title('Uso de Bits')
-    plt.ylabel('Uso')
-    plt.ylim(-0.1, 1.1)
-    plt.xticks(range(n_bits))
-    plt.yticks([0, 0.5, 1], ['Descartado', 'Verificación', 'Clave Final'])
-    
-    plt.tight_layout()
-    plt.savefig('bb84_visualization.png')
-    plt.show()
-
-def main():
-    # Parámetros de la simulación
-    n_bits = 20          # Número de qubits a transmitir
-    sample_size = 5      # Tamaño de la muestra para estimación de error
-    final_key_length = 5 # Longitud deseada de la clave final
-    
-    print(f"Simulación del protocolo BB84 con {n_bits} qubits")
-    
-    # Para visualización, ejecutamos el protocolo paso a paso
-    # Fase 1: Alice prepara qubits
-    alice_bits, alice_bases, qubits = alice_prepare_qubits(n_bits)
-    print("\nAlice prepara qubits:")
-    print(f"Bits: {alice_bits}")
-    print(f"Bases: {''.join(['+' if b == Basis.RECTILINEAR else '×' for b in alice_bases])}")
-    
-    # Fase 2: Bob mide qubits
-    bob_bases, bob_results = bob_measure_qubits(qubits)
-    print("\nBob mide qubits:")
-    print(f"Bases: {''.join(['+' if b == Basis.RECTILINEAR else '×' for b in bob_bases])}")
-    print(f"Resultados: {bob_results}")
-    
-    # Fase 3: Reconciliación de bases
-    matching_indices = reconcile_bases(alice_bases, bob_bases)
-    print(f"\nÍndices con bases coincidentes ({len(matching_indices)}/{n_bits}): {matching_indices}")
-    
-    # Fase 4: Estimación de error
-    error_rate, remaining_indices = estimate_error_rate(alice_bits, bob_results, matching_indices, sample_size)
-    sample_indices = [i for i in matching_indices if i not in remaining_indices]
-    print(f"\nÍndices usados para estimación de error: {sample_indices}")
-    print(f"Tasa de error estimada: {error_rate:.2f}")
-    print(f"Índices restantes después de la estimación: {remaining_indices}")
-    
-    # Fase 5: Amplificación de privacidad
-    alice_key, bob_key = privacy_amplification(alice_bits, bob_results, remaining_indices, final_key_length)
-    final_indices = [remaining_indices[i] for i in range(len(alice_key))]
-    print(f"\nÍndices usados para la clave final: {final_indices}")
-    print(f"Clave final de Alice: {alice_key}")
-    print(f"Clave final de Bob: {bob_key}")
-    
-    # Verificar si las claves coinciden
-    if alice_key == bob_key:
-        print("\n¡Éxito! Las claves coinciden.")
-    else:
-        print("\n¡Error! Las claves no coinciden.")
-    
-    # Visualizar el protocolo
-    visualize_protocol(alice_bits, alice_bases, bob_bases, bob_results, matching_indices, sample_indices, remaining_indices, final_indices)
-    
-    # Ejecutar múltiples simulaciones para analizar el rendimiento
-    n_simulations = 100
-    success_count = 0
-    key_lengths = []
-    error_rates = []
-    
-    for _ in range(n_simulations):
-        success, alice_key, bob_key, stats = simulate_bb84(n_bits, sample_size, final_key_length)
-        if success:
-            success_count += 1
-            key_lengths.append(stats['final_key_length'])
-        error_rates.append(stats['error_rate'])
-    
-    print(f"\nResultados de {n_simulations} simulaciones:")
-    print(f"Tasa de éxito: {success_count / n_simulations:.2f}")
-    print(f"Longitud media de clave: {np.mean(key_lengths) if key_lengths else 0:.2f} bits")
-    print(f"Tasa de error media: {np.mean(error_rates):.4f}")
-    
-    # Visualizar estadísticas
-    plt.figure(figsize=(12, 5))
-    
-    plt.subplot(1, 2, 1)
-    plt.hist(key_lengths, bins=range(min(key_lengths) if key_lengths else 0, max(key_lengths) + 2 if key_lengths else 1), alpha=0.7, rwidth=0.85)
-    plt.title('Distribución de Longitudes de Clave')
-    plt.xlabel('Longitud de Clave (bits)')
-    plt.ylabel('Frecuencia')
-    plt.grid(True, alpha=0.3)
-    
-    plt.subplot(1, 2, 2)
-    plt.hist(error_rates, bins=10, alpha=0.7, rwidth=0.85)
-    plt.title('Distribución de Tasas de Error')
-    plt.xlabel('Tasa de Error')
-    plt.ylabel('Frecuencia')
-    plt.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    plt.savefig('bb84_statistics.png')
-    plt.show()
+def estimate(res, frac=0.2, eps=1e-3, rng=None):
+    """Estimación de parámetros sobre una muestra aleatoria del cribado."""
+    rng = np.random.default_rng(rng)
+    idx = np.flatnonzero(res["sift"])
+    k = int(round(frac * idx.size))
+    sample = rng.choice(idx, size=k, replace=False)
+    qhat = np.mean(res["a_bits"][sample] != res["b_bits"][sample])
+    q_up = min(0.5, qhat + np.sqrt(np.log(1 / eps) / (2 * k)))   # cota de Hoeffding
+    return k, qhat, q_up
 
 if __name__ == "__main__":
-    main()
-</code></pre>
-        </section>
+    for p in (0.0, 0.5, 1.0):
+        r = bb84(100_000, noise=0.02, p_eve=p, rng=2026)
+        k, qhat, qup = estimate(r, rng=1)
+        print(f"p={p:.1f}  cribado={r['n_sift']:6d}  QBER real={r['qber']:.4f}  "
+              f"teoría={0.02 + (1 - 0.04) * p / 4:.4f}  muestra k={k}  Q^={qhat:.4f}  Q_U={qup:.4f}  "
+              f"r=1-2h(Q^)={max(0, 1 - 2 * h2(qhat)):.3f}")</code></pre>
+        <pre class="terminal" data-lang="shell"><code>$ python bb84_numpy.py
+p=0.0  cribado= 50079  QBER real=0.0195  teoría=0.0200  muestra k=10016  Q^=0.0207  Q_U=0.0392  r=1-2h(Q^)=0.710
+p=0.5  cribado= 50079  QBER real=0.1402  teoría=0.1400  muestra k=10016  Q^=0.1401  Q_U=0.1586  r=1-2h(Q^)=0.000
+p=1.0  cribado= 50079  QBER real=0.2596  teoría=0.2600  muestra k=10016  Q^=0.2581  Q_U=0.2767  r=1-2h(Q^)=0.000</code></pre>
+        <div class="callout"><span class="callout-title">Punto de control 1</span><p>Con <var>p</var> = 0 el QBER debe estar en 2&nbsp;% ± 0,1; con <var>p</var> = 1, en 26&nbsp;% (el 25&nbsp;% de Eve más el ruido). Si obtiene 50&nbsp;%, ha comparado bits de posiciones no cribadas. Si obtiene 0&nbsp;% con Eve, el reenvío no usa la base de Eve.</p></div>
+        <p><strong>Tareas.</strong> (a) Explique por qué <code>n_sift</code> es igual en las tres filas (pista: mismo generador, misma semilla, y las bases no dependen de <var>p</var>). (b) Añada un parámetro <code>p_z</code> para elegir la base rectilínea con probabilidad <code>p_z</code> ≠ 1/2 (BB84 con bases sesgadas) y mida la fracción cribada: debe ser <span class="math"><var>p</var><sub>z</sub>² + (1 − <var>p</var><sub>z</sub>)²</span>.</p>
 
-        <section class="lab-section">
-            <h2>Parte 2: Simulación de Ataques al Protocolo BB84</h2>
-            
-            <h3>2.1 Implementación de Ataques</h3>
-            <p>Ahora implementaremos diferentes tipos de ataques al protocolo BB84:</p>
-            <pre><code class="language-python"># Crear un nuevo archivo bb84_attacks.py
+        <h2 id="parte2"><span class="sec">L5.3</span>Parte 2 · Estadística del ataque de interceptación-reenvío</h2>
+        <p>Repetimos 30 veces cada valor de <var>p</var> y comparamos media y desviación típica con la teoría. El script también cuantifica cuánto sabe Eve.</p>
+        <pre data-lang="python"><code>"""Lab L5 · Parte 2 — Estadística del ataque de interceptación-reenvío."""
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import random
-from enum import Enum
-from bb84_simulation import Basis, Qubit, alice_prepare_qubits, bob_measure_qubits, reconcile_bases, estimate_error_rate, privacy_amplification
+from bb84_numpy import bb84
 
-class Eavesdropper:
-    """
-    Clase base para implementar diferentes estrategias de espionaje.
-    """
-    def __init__(self, name):
-        self.name = name
-    
-    def intercept_and_resend(self, qubits):
-        """
-        Método a implementar por las subclases.
-        """
-        pass
+N, NOISE, REPS = 20_000, 0.02, 30
+ps = np.linspace(0, 1, 11)
+rng = np.random.default_rng(84)
+mean, std = [], []
+for p in ps:
+    q = [bb84(N, NOISE, p, rng)["qber"] for _ in range(REPS)]
+    mean.append(np.mean(q)); std.append(np.std(q, ddof=1))
+theory = NOISE + (1 - 2 * NOISE) * ps / 4
+print(" p     QBER medio   desv.típ.   teoría")
+for p, m, s, t in zip(ps, mean, std, theory):
+    print(f"{p:4.1f}   {m:.4f}      {s:.4f}     {t:.4f}")
+p_crit = 4 * (0.11 - NOISE) / (1 - 2 * NOISE)
+print(f"p crítica (QBER = 11 %) con e = {NOISE:.0%}: {p_crit:.3f}")
 
-class InterceptResendAttack(Eavesdropper):
-    """
-    Ataque de interceptación y reenvío.
-    Eve mide cada qubit en una base aleatoria y reenvía un nuevo qubit según su medición.
-    """
-    def __init__(self):
-        super().__init__("Intercept-Resend")
-    
-    def intercept_and_resend(self, qubits):
-        n_bits = len(qubits)
-        eve_bases = np.random.randint(0, 2, n_bits)
-        eve_bases = [Basis.RECTILINEAR if b == 0 else Basis.DIAGONAL for b in eve_bases]
-        
-        eve_results = []
-        new_qubits = []
-        
-        for i in range(n_bits):
-            # Eve mide el qubit
-            result = qubits[i].measure(eve_bases[i])
-            eve_results.append(result)
-            
-            # Eve prepara un nuevo qubit basado en su medición
-            new_qubit = Qubit(result, eve_bases[i])
-            new_qubits.append(new_qubit)
-        
-        return new_qubits, eve_bases, eve_results
+# ¿Cuánto sabe Eve? (p = 1, sin ruido)
+r = bb84(200_000, 0.0, 1.0, rng)
+s = r["sift"]
+same_basis = (r["e_bases"] == r["a_bases"])[s]
+agree = (r["e_bits"] == r["a_bits"])[s]
+print(f"Eve p=1: base correcta en {same_basis.mean():.3f} de los bits cribados; "
+      f"coincide con Alice en {agree.mean():.3f}; QBER inducido {r['qber']:.4f}")
 
-class MeasureAndResendAttack(Eavesdropper):
-    """
-    Ataque de medición y reenvío con conocimiento parcial.
-    Eve mide cada qubit en la misma base que Bob (suponiendo que conoce las bases de Bob).
-    """
-    def __init__(self, bob_bases):
-        super().__init__("Measure-Resend (conoce bases de Bob)")
-        self.bob_bases = bob_bases
-    
-    def intercept_and_resend(self, qubits):
-        n_bits = len(qubits)
-        eve_results = []
-        new_qubits = []
-        
-        for i in range(n_bits):
-            # Eve mide el qubit usando la misma base que Bob
-            result = qubits[i].measure(self.bob_bases[i])
-            eve_results.append(result)
-            
-            # Eve prepara un nuevo qubit basado en su medición
-            new_qubit = Qubit(result, self.bob_bases[i])
-            new_qubits.append(new_qubit)
-        
-        return new_qubits, self.bob_bases, eve_results
+fig, ax = plt.subplots(figsize=(6, 3.6))
+ax.errorbar(ps, mean, yerr=std, fmt="o", ms=4, capsize=3, label=f"simulación (N={N}, {REPS} rep.)")
+ax.plot(ps, theory, label="teoría e + (1-2e)p/4")
+ax.axhline(0.11, ls="--", c="tab:orange", label="umbral 11 %")
+ax.set_xlabel("probabilidad de interceptación p"); ax.set_ylabel("QBER"); ax.legend(); fig.tight_layout()
+fig.savefig("qber_vs_p.png", dpi=120)
+print("guardado qber_vs_p.png")</code></pre>
+        <pre class="terminal" data-lang="shell"><code>$ python intercept_resend.py
+ p     QBER medio   desv.típ.   teoría
+ 0.0   0.0201      0.0011     0.0200
+ 0.1   0.0437      0.0025     0.0440
+ 0.2   0.0681      0.0028     0.0680
+ 0.3   0.0927      0.0028     0.0920
+ 0.4   0.1161      0.0027     0.1160
+ 0.5   0.1389      0.0035     0.1400
+ 0.6   0.1640      0.0041     0.1640
+ 0.7   0.1870      0.0032     0.1880
+ 0.8   0.2121      0.0042     0.2120
+ 0.9   0.2361      0.0038     0.2360
+ 1.0   0.2612      0.0042     0.2600
+p crítica (QBER = 11 %) con e = 2%: 0.375
+Eve p=1: base correcta en 0.500 de los bits cribados; coincide con Alice en 0.748; QBER inducido 0.2511
+guardado qber_vs_p.png</code></pre>
+        <p>La gráfica <code>qber_vs_p.png</code> muestra los puntos sobre la recta teórica y el umbral cruzado en <var>p</var> ≈ 0,375. La desviación típica, ≈ 0,003–0,004 con ~10&#8239;000 bits cribados, coincide con la binomial <span class="math">√(<var>Q</var>(1 − <var>Q</var>)/<var>n</var>)</span>.</p>
+        <div class="callout"><span class="callout-title">Punto de control 2</span><p>Todas las medias deben quedar a menos de tres desviaciones típicas de la teoría. Con <var>p</var> = 1, Eve acierta la base en el 50&nbsp;% de los bits cribados y coincide con Alice en el 75&nbsp;%.</p></div>
+        <p><strong>Tareas.</strong> (a) Estime por separado el QBER en los bits cribados de base + y de base × cuando Eve mide <em>siempre</em> en la base +. ¿Qué ventaja tiene estimar el QBER por base? (b) Calcule cuántos bits de muestra hacen falta para distinguir, con 3σ, un canal con <var>e</var> = 2&nbsp;% sin Eve de uno con <var>p</var> = 0,1.</p>
 
-class MITM_Attack(Eavesdropper):
-    """
-    Ataque de hombre en el medio.
-    Eve intercepta todos los qubits y establece dos canales separados: uno con Alice y otro con Bob.
-    """
-    def __init__(self):
-        super().__init__("Man-in-the-Middle")
-    
-    def intercept_and_resend(self, qubits, alice_bases):
-        n_bits = len(qubits)
-        
-        # Eve genera sus propias bases y bits aleatorios para comunicarse con Bob
-        eve_bits = np.random.randint(0, 2, n_bits)
-        eve_bases = np.random.randint(0, 2, n_bits)
-        eve_bases = [Basis.RECTILINEAR if b == 0 else Basis.DIAGONAL for b in eve_bases]
-        
-        # Eve mide los qubits de Alice
-        eve_results_from_alice = []
-        for i in range(n_bits):
-            result = qubits[i].measure(alice_bases[i])  # Eve conoce las bases de Alice
-            eve_results_from_alice.append(result)
-        
-        # Eve prepara nuevos qubits para Bob
-        new_qubits = [Qubit(eve_bits[i], eve_bases[i]) for i in range(n_bits)]
-        
-        return new_qubits, eve_bases, eve_bits, eve_results_from_alice
-
-def simulate_bb84_with_attack(n_bits, sample_size, final_key_length, attack_type, error_threshold=0.1):
-    """
-    Simula el protocolo BB84 con un ataque específico.
-    """
-    # Fase 1: Alice prepara qubits
-    alice_bits, alice_bases, qubits = alice_prepare_qubits(n_bits)
-    
-    # Fase 2a: Bob decide sus bases (pero aún no mide)
-    bob_bases = np.random.randint(0, 2, n_bits)
-    bob_bases = [Basis.RECTILINEAR if b == 0 else Basis.DIAGONAL for b in bob_bases]
-    
-    # Fase 2b: Eve intercepta los qubits
-    if attack_type == "intercept-resend":
-        eve = InterceptResendAttack()
-        new_qubits, eve_bases, eve_results = eve.intercept_and_resend(qubits)
-    elif attack_type == "measure-resend":
-        eve = MeasureAndResendAttack(bob_bases)
-        new_qubits, eve_bases, eve_results = eve.intercept_and_resend(qubits)
-    elif attack_type == "mitm":
-        eve = MITM_Attack()
-        new_qubits, eve_bases, eve_bits, eve_results_from_alice = eve.intercept_and_resend(qubits, alice_bases)
-    else:
-        new_qubits = qubits  # Sin ataque
-    
-    # Fase 2c: Bob mide los qubits (posiblemente modificados por Eve)
-    _, bob_results = bob_measure_qubits(new_qubits)
-    
-    # Fase 3: Reconciliación de bases
-    matching_indices = reconcile_bases(alice_bases, bob_bases)
-    
-    # Fase 4: Estimación de error
-    error_rate, remaining_indices = estimate_error_rate(alice_bits, bob_results, matching_indices, sample_size)
-    
-    # Verificar si el error es aceptable
-    if error_rate > error_threshold:
-        return False, [], [], {
-            'n_bits': n_bits,
-            'matching_bases': len(matching_indices),
-            'error_rate': error_rate,
-            'remaining_bits': len(remaining_indices),
-            'final_key_length': 0
-        }
-    
-    # Fase 5: Amplificación de privacidad
-    alice_key, bob_key = privacy_amplification(alice_bits, bob_results, remaining_indices, final_key_length)
-    
-    # Calcular la información que Eve obtuvo
-    eve_info = 0
-    if attack_type == "intercept-resend" or attack_type == "measure-resend":
-        # Calcular cuántos bits Eve adivinó correctamente
-        for i in matching_indices:
-            if eve_bases[i] == alice_bases[i]:
-                eve_info += 1
-        eve_info = eve_info / len(matching_indices) if matching_indices else 0
-    elif attack_type == "mitm":
-        # Eve conoce toda la clave de Alice
-        eve_info = 1.0
-    
-    # Verificar si las claves coinciden
-    success = (alice_key == bob_key)
-    
-    return success, alice_key, bob_key, {
-        'n_bits': n_bits,
-        'matching_bases': len(matching_indices),
-        'error_rate': error_rate,
-        'remaining_bits': len(remaining_indices),
-        'final_key_length': len(alice_key),
-        'eve_info': eve_info
-    }
-
-def compare_attacks():
-    """
-    Compara diferentes tipos de ataques al protocolo BB84.
-    """
-    # Parámetros de la simulación
-    n_bits = 100
-    sample_size = 20
-    final_key_length = 20
-    n_simulations = 100
-    
-    # Tipos de ataques a comparar
-    attack_types = ["none", "intercept-resend", "measure-resend", "mitm"]
-    attack_names = ["Sin Ataque", "Interceptar-Reenviar", "Medir-Reenviar", "Hombre en el Medio"]
-    
-    # Resultados
-    success_rates = []
-    error_rates = []
-    key_lengths = []
-    eve_info_rates = []
-    
-    for attack_type in attack_types:
-        success_count = 0
-        attack_error_rates = []
-        attack_key_lengths = []
-        attack_eve_info = []
-        
-        for _ in range(n_simulations):
-            success, alice_key, bob_key, stats = simulate_bb84_with_attack(
-                n_bits, sample_size, final_key_length, attack_type
-            )
-            
-            if success:
-                success_count += 1
-                attack_key_lengths.append(stats['final_key_length'])
-            
-            attack_error_rates.append(stats['error_rate'])
-            
-            if 'eve_info' in stats:
-                attack_eve_info.append(stats['eve_info'])
-        
-        success_rates.append(success_count / n_simulations)
-        error_rates.append(np.mean(attack_error_rates))
-        key_lengths.append(np.mean(attack_key_lengths) if attack_key_lengths else 0)
-        eve_info_rates.append(np.mean(attack_eve_info) if attack_eve_info else 0)
-    
-    # Visualizar resultados
-    plt.figure(figsize=(15, 10))
-    
-    # Tasas de éxito
-    plt.subplot(2, 2, 1)
-    plt.bar(attack_names, success_rates, color='blue', alpha=0.7)
-    plt.title('Tasa de Éxito del Protocolo')
-    plt.ylabel('Tasa de Éxito')
-    plt.ylim(0, 1.1)
-    plt.grid(True, alpha=0.3)
-    
-    # Tasas de error
-    plt.subplot(2, 2, 2)
-    plt.bar(attack_names, error_rates, color='red', alpha=0.7)
-    plt.title('Tasa de Error Detectada')
-    plt.ylabel('Tasa de Error')
-    plt.ylim(0, max(error_rates) * 1.2)
-    plt.grid(True, alpha=0.3)
-    
-    # Longitudes de clave
-    plt.subplot(2, 2, 3)
-    plt.bar(attack_names, key_lengths, color='green', alpha=0.7)
-    plt.title('Longitud Media de Clave Final')
-    plt.ylabel('Bits')
-    plt.ylim(0, final_key_length * 1.2)
-    plt.grid(True, alpha=0.3)
-    
-    # Información obtenida por Eve
-    plt.subplot(2, 2, 4)
-    plt.bar(attack_names, eve_info_rates, color='purple', alpha=0.7)
-    plt.title('Información Obtenida por Eve')
-    plt.ylabel('Fracción de Información')
-    plt.ylim(0, 1.1)
-    plt.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    plt.savefig('bb84_attacks_comparison.png')
-    plt.show()
-    
-    # Imprimir resultados
-    print("\nComparación de Ataques:")
-    for i, attack in enumerate(attack_names):
-        print(f"\n{attack}:")
-        print(f"  Tasa de éxito: {success_rates[i]:.2f}")
-        print(f"  Tasa de error: {error_rates[i]:.4f}")
-        print(f"  Longitud media de clave: {key_lengths[i]:.2f} bits")
-        print(f"  Información obtenida por Eve: {eve_info_rates[i]:.4f}")
-
-def main():
-    print("Simulación de Ataques al Protocolo BB84")
-    compare_attacks()
-
-if __name__ == "__main__":
-    main()
-</code></pre>
-        </section>
-
-        <section class="lab-section">
-            <h2>Parte 3: Implementación Avanzada con Qiskit (Opcional)</h2>
-            <p>Para aquellos con experiencia en computación cuántica, podemos implementar una simulación más realista usando Qiskit:</p>
-            <pre><code class="language-python"># Crear un nuevo archivo bb84_qiskit.py
+        <h2 id="parte3"><span class="sec">L5.4</span>Parte 3 · Tasa de clave frente a QBER y distancia</h2>
+        <p>Primero, la fracción secreta de Shor–Preskill con reconciliación de eficiencia <var>f</var> y el umbral que resulta. Después, un modelo sencillo de enlace: fuente ideal de fotón único, fibra de 0,2 dB/km, detector con eficiencia 20&nbsp;%, probabilidad de cuenta oscura 10⁻⁶ por ventana y error óptico del 1&nbsp;%. El QBER con cuentas oscuras es <span class="math"><var>Q</var> = (<var>e</var><sub>opt</sub>η + <var>p</var><sub>d</sub>/2)/(η + <var>p</var><sub>d</sub>)</span>: cada cuenta oscura acierta con probabilidad 1/2.</p>
+        <pre data-lang="python"><code>"""Lab L5 · Parte 3 — Tasa de clave frente a QBER y frente a distancia."""
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from qiskit import QuantumCircuit, Aer, execute
-from qiskit.visualization import plot_histogram
+from bb84_numpy import h2
 
-def alice_prepare_qubit(bit_value, basis):
-    """
-    Alice prepara un qubit según el bit y la base.
-    bit_value: 0 o 1
-    basis: 0 (base Z) o 1 (base X)
-    """
-    qc = QuantumCircuit(1, 1)
-    
-    # Preparar el estado según el bit
-    if bit_value == 1:
-        qc.x(0)
-    
-    # Cambiar a la base X si es necesario
-    if basis == 1:
-        qc.h(0)
-    
+def rate(q, f=1.0):
+    """Fracción secreta por bit cribado (Shor–Preskill con reconciliación de eficiencia f)."""
+    return np.maximum(0.0, 1 - h2(q) - f * h2(q))
+
+def threshold(f):
+    lo, hi = 1e-9, 0.5
+    for _ in range(100):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if rate(mid, f) &gt; 0 else (lo, mid)
+    return lo
+
+print(" Q      r(f=1)   r(f=1,16)")
+for q in (0.00, 0.01, 0.02, 0.03, 0.05, 0.08, 0.10, 0.11):
+    print(f"{q:.2f}   {rate(q):.4f}   {rate(q, 1.16):.4f}")
+for f in (1.0, 1.1, 1.16, 1.2):
+    print(f"umbral con f={f:.2f}: Q* = {threshold(f):.4f}")
+
+# Modelo de distancia: fuente de fotón único ideal, fibra 0,2 dB/km, detector eta_d = 0,2,
+# probabilidad de cuenta oscura p_d = 1e-6 por ventana, error óptico e_opt = 1 %.
+alpha, eta_d, p_d, e_opt, f = 0.2, 0.2, 1e-6, 0.01, 1.16
+L = np.arange(0, 301, 1.0)
+eta = eta_d * 10 ** (-alpha * L / 10)
+p_click = eta + p_d
+Q = (e_opt * eta + 0.5 * p_d) / p_click
+R = 0.5 * p_click * rate(Q, f)                 # bits por pulso emitido (cribado 1/2)
+with np.errstate(divide="ignore"):
+    plob = -np.log2(1 - 10 ** (-alpha * L / 10))  # cota PLOB (canal con pérdidas, sin repetidores)
+for d in (10, 50, 100, 150, 200):
+    i = int(d)
+    print(f"L={d:3d} km  eta={eta[i]:.2e}  QBER={Q[i]:.4f}  R={R[i]:.2e} bit/pulso  PLOB={plob[i]:.2e}")
+L_max = L[R &gt; 0].max()
+print(f"distancia máxima con este modelo: {L_max:.0f} km")
+
+fig, (a1, a2) = plt.subplots(1, 2, figsize=(10, 3.6))
+qq = np.linspace(0, 0.13, 400)
+a1.plot(qq, rate(qq), label="f = 1 (Shor–Preskill)"); a1.plot(qq, rate(qq, 1.16), label="f = 1,16")
+a1.set_xlabel("QBER"); a1.set_ylabel("bits secretos / bit cribado"); a1.legend()
+a2.semilogy(L, np.where(R &gt; 0, R, np.nan), label="BB84 fotón único"); a2.semilogy(L, plob, "--", label="cota PLOB")
+a2.set_xlabel("distancia (km)"); a2.set_ylabel("bits / pulso"); a2.legend(); fig.tight_layout()
+fig.savefig("key_rate.png", dpi=120); print("guardado key_rate.png")</code></pre>
+        <pre class="terminal" data-lang="shell"><code>$ python key_rate.py
+ Q      r(f=1)   r(f=1,16)
+0.00   1.0000   1.0000
+0.01   0.8384   0.8255
+0.02   0.7171   0.6945
+0.03   0.6112   0.5801
+0.05   0.4272   0.3814
+0.08   0.1956   0.1313
+0.10   0.0620   0.0000
+0.11   0.0002   0.0000
+umbral con f=1.00: Q* = 0.1100
+umbral con f=1.10: Q* = 0.1023
+umbral con f=1.16: Q* = 0.0981
+umbral con f=1.20: Q* = 0.0955
+L= 10 km  eta=1.26e-01  QBER=0.0100  R=5.21e-02 bit/pulso  PLOB=1.44e+00
+L= 50 km  eta=2.00e-02  QBER=0.0100  R=8.25e-03 bit/pulso  PLOB=1.52e-01
+L=100 km  eta=2.00e-03  QBER=0.0102  R=8.22e-04 bit/pulso  PLOB=1.45e-02
+L=150 km  eta=2.00e-04  QBER=0.0124  R=7.95e-05 bit/pulso  PLOB=1.44e-03
+L=200 km  eta=2.00e-05  QBER=0.0333  R=5.72e-06 bit/pulso  PLOB=1.44e-04
+distancia máxima con este modelo: 232 km
+guardado key_rate.png</code></pre>
+        <p>La curva de la derecha de <code>key_rate.png</code> es una recta en escala logarítmica (la tasa es proporcional a η) hasta ~180 km; después las cuentas oscuras dominan, el QBER sube y la tasa cae a cero en 232 km. La cota PLOB queda siempre por encima: ningún protocolo punto a punto sin repetidores puede superarla.</p>
+        <div class="callout"><span class="callout-title">Punto de control 3</span><p>El umbral con <var>f</var> = 1 debe ser 0,1100 y con <var>f</var> = 1,16, 0,0981. A 100 km, <var>R</var> ≈ 8·10⁻⁴ bits por pulso: con una fuente de 1 GHz, del orden de 800 kbit/s en este modelo ideal (fuente de fotón único perfecta, sin tamaño finito).</p></div>
+        <p><strong>Tareas.</strong> (a) Repita con <var>p</var><sub>d</sub> = 10⁻⁸ (detectores superconductores) y con 0,16 dB/km (fibra de ultrabaja pérdida). ¿Cuánto crece la distancia máxima? (b) Añada la curva √η (escalado de TF-QKD, sin constantes) y localice el cruce con la cota PLOB. (c) Sustituya la fuente ideal por un láser atenuado con μ = 0,5 <em>sin</em> estados señuelo, suponiendo que solo cuentan los pulsos de un fotón y que Eve controla todos los multifotón (ataque PNS): ¿a qué distancia deja de haber clave?</p>
+
+        <h2 id="parte4"><span class="sec">L5.5</span>Parte 4 (opcional) · BB84 con Qiskit 2.x</h2>
+        <p>Cada fotón es un qubit independiente. Alice prepara |0⟩, |1⟩, |+⟩ o |−⟩ con <code>x</code> y <code>h</code>; medir en la base diagonal es aplicar <code>h</code> y medir en Z. Eve se modela con una <strong>medida intermedia</strong>: tras medir, el qubit queda colapsado en el estado que ella reenviaría, así que basta con deshacer su <code>h</code>. Como el circuito solo contiene puertas de Clifford y medidas, el método <code>stabilizer</code> de Aer simula miles de qubits en décimas de segundo.</p>
+        <pre data-lang="python"><code>"""Lab L5 · Parte 4 (opcional) — BB84 con Qiskit 2.x y Aer (simulador de estabilizadores)."""
+import numpy as np
+from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
+from qiskit_aer import AerSimulator
+from qiskit_aer.primitives import SamplerV2
+
+def bb84_circuit(a_bits, a_bases, b_bases, e_bases=None):
+    """Un qubit por fotón. e_bases = None -&gt; sin Eve; si no, Eve mide cada qubit en su base."""
+    n = len(a_bits)
+    q = QuantumRegister(n, "q")
+    bob = ClassicalRegister(n, "bob")
+    regs = [q, bob]
+    if e_bases is not None:
+        eve = ClassicalRegister(n, "eve")
+        regs.append(eve)
+    qc = QuantumCircuit(*regs)
+    for i in range(n):                       # Alice prepara |0&gt;,|1&gt;,|+&gt;,|-&gt;
+        if a_bits[i]:
+            qc.x(i)
+        if a_bases[i]:
+            qc.h(i)
+    qc.barrier()
+    if e_bases is not None:                  # Eve: medir en su base = interceptar y reenviar
+        for i in range(n):
+            if e_bases[i]:
+                qc.h(i)
+            qc.measure(i, eve[i])
+            if e_bases[i]:
+                qc.h(i)                      # el estado colapsado es el que "reenvía"
+        qc.barrier()
+    for i in range(n):                       # Bob mide en su base
+        if b_bases[i]:
+            qc.h(i)
+        qc.measure(i, bob[i])
     return qc
 
-def bob_measure_qubit(qc, basis):
-    """
-    Bob mide un qubit en la base especificada.
-    qc: circuito cuántico con el qubit preparado
-    basis: 0 (base Z) o 1 (base X)
-    """
-    # Crear un nuevo circuito para no modificar el original
-    meas_qc = qc.copy()
-    
-    # Cambiar a la base Z si la medición es en base X
-    if basis == 1:
-        meas_qc.h(0)
-    
-    # Medir el qubit
-    meas_qc.measure(0, 0)
-    
-    # Ejecutar el circuito en el simulador
-    simulator = Aer.get_backend('qasm_simulator')
-    result = execute(meas_qc, simulator, shots=1).result()
-    counts = result.get_counts()
-    
-    # Obtener el resultado de la medición
-    measured_bit = int(list(counts.keys())[0])
-    
-    return measured_bit
-
-def eve_intercept_qubit(qc, basis):
-    """
-    Eve intercepta y mide un qubit, luego prepara uno nuevo.
-    qc: circuito cuántico con el qubit preparado
-    basis: 0 (base Z) o 1 (base X)
-    """
-    # Eve mide el qubit
-    measured_bit = bob_measure_qubit(qc, basis)
-    
-    # Eve prepara un nuevo qubit
-    new_qc = alice_prepare_qubit(measured_bit, basis)
-    
-    return new_qc, measured_bit
-
-def simulate_bb84_qiskit(n_bits=10, with_eve=False):
-    """
-    Simula el protocolo BB84 usando Qiskit.
-    """
-    # Bits y bases aleatorios de Alice
-    alice_bits = np.random.randint(0, 2, n_bits)
-    alice_bases = np.random.randint(0, 2, n_bits)
-    
-    # Bases aleatorias de Bob
-    bob_bases = np.random.randint(0, 2, n_bits)
-    
-    # Bases aleatorias de Eve (si está presente)
-    if with_eve:
-        eve_bases = np.random.randint(0, 2, n_bits)
-        eve_results = []
-    
-    # Resultados de Bob
-    bob_results = []
-    
-    # Simulación qubit por qubit
-    for i in range(n_bits):
-        # Alice prepara el qubit
-        qc = alice_prepare_qubit(alice_bits[i], alice_bases[i])
-        
-        # Eve intercepta (si está presente)
-        if with_eve:
-            qc, eve_result = eve_intercept_qubit(qc, eve_bases[i])
-            eve_results.append(eve_result)
-        
-        # Bob mide el qubit
-        bob_result = bob_measure_qubit(qc, bob_bases[i])
-        bob_results.append(bob_result)
-    
-    # Reconciliación de bases
-    matching_indices = [i for i in range(n_bits) if alice_bases[i] == bob_bases[i]]
-    
-    # Bits de la clave
-    alice_key = [alice_bits[i] for i in matching_indices]
-    bob_key = [bob_results[i] for i in matching_indices]
-    
-    # Calcular tasa de error
-    errors = sum(alice_key[i] != bob_key[i] for i in range(len(alice_key)))
-    error_rate = errors / len(alice_key) if alice_key else 0
-    
-    # Resultados
-    results = {
-        'alice_bits': alice_bits,
-        'alice_bases': alice_bases,
-        'bob_bases': bob_bases,
-        'bob_results': bob_results,
-        'matching_indices': matching_indices,
-        'alice_key': alice_key,
-        'bob_key': bob_key,
-        'error_rate': error_rate
-    }
-    
-    if with_eve:
-        results['eve_bases'] = eve_bases
-        results['eve_results'] = eve_results
-    
-    return results
-
-def visualize_qiskit_simulation(results, with_eve=False):
-    """
-    Visualiza los resultados de la simulación con Qiskit.
-    """
-    n_bits = len(results['alice_bits'])
-    
-    # Crear figura
-    plt.figure(figsize=(12, 8))
-    
-    # Visualizar bits y bases de Alice
-    plt.subplot(3, 1, 1)
-    plt.bar(range(n_bits), results['alice_bits'], color='blue', alpha=0.7)
-    plt.title('Bits y Bases de Alice')
-    plt.ylabel('Bit')
-    plt.ylim(-0.1, 1.1)
-    plt.xticks(range(n_bits))
-    
-    for i in range(n_bits):
-        plt.text(i, results['alice_bits'][i] + 0.1, 'Z' if results['alice_bases'][i] == 0 else 'X', ha='center')
-    
-    # Visualizar bases y resultados de Bob
-    plt.subplot(3, 1, 2)
-    plt.bar(range(n_bits), results['bob_results'], color='green', alpha=0.7)
-    plt.title('Bases y Resultados de Bob')
-    plt.ylabel('Bit')
-    plt.ylim(-0.1, 1.1)
-    plt.xticks(range(n_bits))
-    
-    for i in range(n_bits):
-        plt.text(i, results['bob_results'][i] + 0.1, 'Z' if results['bob_bases'][i] == 0 else 'X', ha='center')
-    
-    # Visualizar coincidencias y errores
-    plt.subplot(3, 1, 3)
-    
-    # Inicializar array para visualización
-    status = np.zeros(n_bits)
-    
-    # Marcar coincidencias de bases
-    for i in results['matching_indices']:
-        status[i] = 1
-    
-    # Marcar errores
-    for i, idx in enumerate(results['matching_indices']):
-        if results['alice_bits'][idx] != results['bob_results'][idx]:
-            status[idx] = 2
-    
-    plt.bar(range(n_bits), status, color=['gray', 'green', 'red'], alpha=0.7)
-    plt.title('Estado de los Bits')
-    plt.ylabel('Estado')
-    plt.ylim(-0.1, 2.1)
-    plt.xticks(range(n_bits))
-    plt.yticks([0, 1, 2], ['Bases Diferentes', 'Clave Correcta', 'Error'])
-    
-    plt.tight_layout()
-    plt.savefig('bb84_qiskit_simulation.png')
-    plt.show()
-    
-    # Mostrar circuitos cuánticos de ejemplo
-    print("\nEjemplos de Circuitos Cuánticos:")
-    
-    # Ejemplo de preparación de qubit por Alice
-    print("\nAlice prepara |0⟩ en base Z:")
-    qc0z = alice_prepare_qubit(0, 0)
-    print(qc0z.draw())
-    
-    print("\nAlice prepara |1⟩ en base Z:")
-    qc1z = alice_prepare_qubit(1, 0)
-    print(qc1z.draw())
-    
-    print("\nAlice prepara |+⟩ en base X:")
-    qc0x = alice_prepare_qubit(0, 1)
-    print(qc0x.draw())
-    
-    print("\nAlice prepara |-⟩ en base X:")
-    qc1x = alice_prepare_qubit(1, 1)
-    print(qc1x.draw())
-    
-    # Ejemplo de medición por Bob
-    print("\nBob mide en base Z:")
-    meas_z = qc0x.copy()
-    meas_z.h(0)  # Cambiar a base Z
-    meas_z.measure(0, 0)
-    print(meas_z.draw())
-    
-    # Ejecutar simulaciones con y sin Eve
-    print("\nComparación de Simulaciones:")
-    
-    n_simulations = 100
-    n_bits = 20
-    
-    # Sin Eve
-    no_eve_error_rates = []
-    no_eve_key_lengths = []
-    
-    for _ in range(n_simulations):
-        results = simulate_bb84_qiskit(n_bits, with_eve=False)
-        no_eve_error_rates.append(results['error_rate'])
-        no_eve_key_lengths.append(len(results['alice_key']))
-    
-    # Con Eve
-    with_eve_error_rates = []
-    with_eve_key_lengths = []
-    
-    for _ in range(n_simulations):
-        results = simulate_bb84_qiskit(n_bits, with_eve=True)
-        with_eve_error_rates.append(results['error_rate'])
-        with_eve_key_lengths.append(len(results['alice_key']))
-    
-    # Visualizar comparación
-    plt.figure(figsize=(12, 5))
-    
-    plt.subplot(1, 2, 1)
-    plt.hist([no_eve_error_rates, with_eve_error_rates], bins=10, alpha=0.7, label=['Sin Eve', 'Con Eve'])
-    plt.title('Distribución de Tasas de Error')
-    plt.xlabel('Tasa de Error')
-    plt.ylabel('Frecuencia')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    
-    plt.subplot(1, 2, 2)
-    plt.hist([no_eve_key_lengths, with_eve_key_lengths], bins=range(min(min(no_eve_key_lengths), min(with_eve_key_lengths)), max(max(no_eve_key_lengths), max(with_eve_key_lengths)) + 2), alpha=0.7, label=['Sin Eve', 'Con Eve'])
-    plt.title('Distribución de Longitudes de Clave')
-    plt.xlabel('Longitud de Clave (bits)')
-    plt.ylabel('Frecuencia')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    plt.savefig('bb84_qiskit_comparison.png')
-    plt.show()
-    
-    # Imprimir estadísticas
-    print("\nEstadísticas sin Eve:")
-    print(f"  Tasa de error media: {np.mean(no_eve_error_rates):.4f}")
-    print(f"  Longitud de clave media: {np.mean(no_eve_key_lengths):.2f} bits")
-    
-    print("\nEstadísticas con Eve:")
-    print(f"  Tasa de error media: {np.mean(with_eve_error_rates):.4f}")
-    print(f"  Longitud de clave media: {np.mean(with_eve_key_lengths):.2f} bits")
-
-def main():
-    print("Simulación del Protocolo BB84 con Qiskit")
-    
-    # Ejecutar una simulación y visualizar resultados
-    results = simulate_bb84_qiskit(n_bits=10, with_eve=False)
-    visualize_qiskit_simulation(results)
-    
-    # Ejecutar una simulación con Eve
-    results_with_eve = simulate_bb84_qiskit(n_bits=10, with_eve=True)
-    visualize_qiskit_simulation(results_with_eve, with_eve=True)
+def run(n=1000, eve=False, seed=7):
+    rng = np.random.default_rng(seed)
+    a_bits, a_bases, b_bases = (rng.integers(0, 2, n) for _ in range(3))
+    e_bases = rng.integers(0, 2, n) if eve else None
+    qc = bb84_circuit(a_bits, a_bases, b_bases, e_bases)
+    sampler = SamplerV2(seed=seed, options={"backend_options": {"method": "stabilizer"}})
+    result = sampler.run([qc], shots=1).result()[0]
+    bits = result.data.bob.get_bitstrings()[0][::-1]   # Qiskit ordena el bit 0 a la derecha
+    b_bits = np.array([int(c) for c in bits])
+    sift = a_bases == b_bases
+    qber = np.mean(a_bits[sift] != b_bits[sift])
+    return int(sift.sum()), qber
 
 if __name__ == "__main__":
-    main()
-</code></pre>
-        </section>
+    import qiskit, qiskit_aer
+    print("qiskit", qiskit.__version__, "| qiskit-aer", qiskit_aer.__version__)
+    for eve in (False, True):
+        n_sift, qber = run(2000, eve)
+        print(f"Eve={'sí' if eve else 'no'}: cribado={n_sift}  QBER={qber:.4f}")</code></pre>
+        <pre class="terminal" data-lang="shell"><code>$ python bb84_qiskit.py
+qiskit 2.5.2 | qiskit-aer 0.17.2
+Eve=no: cribado=991  QBER=0.0000
+Eve=sí: cribado=991  QBER=0.2462</code></pre>
+        <div class="callout warning"><span class="callout-title">API de Qiskit 2.x</span><p>En Qiskit 2.x han desaparecido <code>execute()</code> y las primitivas V1; se usan las primitivas V2. <code>SamplerV2.run()</code> recibe una lista de circuitos (PUB) y cada resultado expone los registros clásicos por nombre: <code>result[0].data.bob.get_bitstrings()</code>. Las cadenas se leen con el bit 0 a la derecha (orden <em>little-endian</em> de Qiskit), de ahí el <code>[::-1]</code>. Para hardware real de IBM se usa el <code>SamplerV2</code> de <code>qiskit-ibm-runtime</code> con circuitos transpilados a la ISA del dispositivo.</p></div>
+        <div class="callout"><span class="callout-title">Punto de control 4</span><p>Sin Eve, QBER exactamente 0 (el simulador no tiene ruido). Con Eve, ≈ 25&nbsp;% ± 1,4 con ~1&#8239;000 bits cribados. Si sale ~50&nbsp;%, revise el orden de los bits.</p></div>
+        <p><strong>Tareas.</strong> (a) Añada ruido con un <code>NoiseModel</code> de Aer (por ejemplo un error de <em>bit flip</em> de probabilidad 0,02 en la medida) y compruebe que el QBER sin Eve se acerca al 2&nbsp;%. (b) Implemente BBM92: un par de Bell <span class="math">(|00⟩ + |11⟩)/√2</span> por ronda, Alice y Bob miden en bases aleatorias; verifique que las bases coincidentes dan bits iguales.</p>
 
-        <section class="lab-section">
-            <h2>Parte 4: Ejercicios y Preguntas de Reflexión</h2>
-            
-            <h3>4.1 Ejercicios</h3>
-            <ol>
-                <li>Modifica el código para implementar el protocolo BB84 con corrección de errores usando códigos de Hamming.</li>
-                <li>Implementa una versión del protocolo E91 basado en entrelazamiento cuántico (usando Qiskit).</li>
-                <li>Analiza cómo varía la tasa de error en función del número de qubits interceptados por Eve.</li>
-                <li>Implementa un ataque de "trojan horse" donde Eve puede obtener información sobre las bases de medición de Bob.</li>
-            </ol>
-            
-            <h3>4.2 Preguntas de Reflexión</h3>
-            <ol>
-                <li>¿Qué ventajas y desventajas tiene QKD en comparación con los algoritmos post-cuánticos como ML-KEM?</li>
-                <li>¿Cuáles son las principales limitaciones prácticas para la implementación de QKD en redes de comunicación actuales?</li>
-                <li>¿Cómo afecta la distancia de transmisión a la eficiencia y seguridad de QKD?</li>
-                <li>¿Qué estrategias podrían utilizarse para combinar QKD con criptografía post-cuántica en sistemas híbridos?</li>
-                <li>¿Cuáles son los desafíos para la estandarización de protocolos QKD?</li>
-            </ol>
-        </section>
+        <h2 id="parte5"><span class="sec">L5.6</span>Parte 5 (opcional) · ETSI GS QKD 014 y clave híbrida</h2>
+        <p>Las aplicaciones no hablan con el hardware QKD: piden claves a su <em>key management entity</em> (KME). Construiremos un KME simulado con la biblioteca estándar que respeta las URL, los verbos y los formatos JSON de ETSI GS QKD 014 V1.1.1 (véase la <a href="../temas/tema6/index.html">sección 6.8 del Tema 6</a>) y una aplicación que combina la clave QKD con un secreto ML-KEM-768.</p>
+        <div class="callout danger"><span class="callout-title">Simplificaciones deliberadas</span><p>La norma exige HTTPS con TLS 1.2 o superior y autenticación mutua por certificados; el identificador del SAE se obtiene del certificado. Aquí se usa HTTP en <code>127.0.0.1</code> y una cabecera <code>X-SAE-ID</code> que <strong>no</strong> es parte de la norma. Las claves las genera <code>secrets</code>: no hay QKD detrás. Un único proceso hace de los dos KME.</p></div>
+        <pre data-lang="python"><code>"""Lab L5 · Parte 5 — KME simulado con la forma de la API ETSI GS QKD 014 V1.1.1.
+SOLO PARA LABORATORIO: HTTP sin TLS en localhost. La norma exige HTTPS (TLS &gt;= 1.2) con
+autenticación mutua por certificados; aquí la identidad del SAE llega en la cabecera
+X-SAE-ID, que NO forma parte de la norma. Las claves se generan con secrets (no hay QKD)."""
+import base64, json, secrets, sys, threading, uuid
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import urlparse, parse_qs
 
-        <section class="lab-section">
-            <h2>Parte 5: Aplicaciones Prácticas (Opcional)</h2>
-            <p>Implementa una aplicación de chat seguro que utilice QKD simulado para el intercambio de claves:</p>
-            <pre><code class="language-python"># Crear un nuevo archivo qkd_secure_chat.py
-import tkinter as tk
-from tkinter import scrolledtext, messagebox
-import threading
-import socket
-import json
-import numpy as np
-from bb84_simulation import simulate_bb84
+KME_ID = {"SAE_A": "KME_MADRID_1", "SAE_B": "KME_MADRID_2"}
+KEY_SIZE, MIN_SIZE, MAX_SIZE, MAX_PER_REQ, MAX_COUNT = 256, 64, 1024, 128, 1000
+lock = threading.Lock()
+pending = {}          # key_ID -&gt; (key bytes, master SAE, slave SAE)
+stored = {("SAE_A", "SAE_B"): MAX_COUNT, ("SAE_B", "SAE_A"): MAX_COUNT}  # bits "disponibles" (simulado)
 
-class QKDSecureChat:
-    def __init__(self, master, is_server=True, host='localhost', port=12345):
-        self.master = master
-        self.is_server = is_server
-        self.host = host
-        self.port = port
-        
-        # Configurar la interfaz
-        master.title("QKD Secure Chat" + (" (Server)" if is_server else " (Client)"))
-        master.geometry("600x400")
-        
-        # Área de chat
-        self.chat_area = scrolledtext.ScrolledText(master, state='disabled')
-        self.chat_area.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-        
-        # Área de entrada
-        self.input_frame = tk.Frame(master)
-        self.input_frame.pack(padx=10, pady=10, fill=tk.X)
-        
-        self.input_field = tk.Entry(self.input_frame)
-        self.input_field.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        self.input_field.bind("<Return>", self.send_message)
-        
-        self.send_button = tk.Button(self.input_frame, text="Enviar", command=self.send_message)
-        self.send_button.pack(side=tk.RIGHT, padx=5)
-        
-        # Estado de la conexión
-        self.status_label = tk.Label(master, text="Desconectado", bd=1, relief=tk.SUNKEN, anchor=tk.W)
-        self.status_label.pack(side=tk.BOTTOM, fill=tk.X)
-        
-        # Variables para la comunicación
-        self.socket = None
-        self.connection = None
-        self.shared_key = None
-        
-        # Iniciar la conexión
-        threading.Thread(target=self.setup_connection).start()
-    
-    def setup_connection(self):
-        """
-        Configura la conexión de red.
-        """
-        try:
-            if self.is_server:
-                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                self.socket.bind((self.host, self.port))
-                self.socket.listen(1)
-                
-                self.update_status("Esperando conexión...")
-                self.connection, address = self.socket.accept()
-                self.update_status(f"Conectado con {address[0]}:{address[1]}")
-                
-                # Iniciar el protocolo QKD (servidor actúa como Alice)
-                self.perform_qkd_alice()
-            else:
-                self.update_status("Conectando al servidor...")
-                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.socket.connect((self.host, self.port))
-                self.connection = self.socket
-                self.update_status("Conectado al servidor")
-                
-                # Iniciar el protocolo QKD (cliente actúa como Bob)
-                self.perform_qkd_bob()
-            
-            # Iniciar el hilo para recibir mensajes
-            threading.Thread(target=self.receive_messages).start()
-            
-        except Exception as e:
-            self.update_status(f"Error de conexión: {e}")
-            messagebox.showerror("Error", f"Error de conexión: {e}")
-    
-    def perform_qkd_alice(self):
-        """
-        Realiza el protocolo QKD como Alice (servidor).
-        """
-        try:
-            self.update_status("Iniciando protocolo QKD (Alice)...")
-            
-            # Simular el protocolo BB84
-            success, alice_key, _, stats = simulate_bb84(100, 20, 32)
-            
-            if not success:
-                raise Exception("Protocolo QKD fallido")
-            
-            # Convertir la clave a bytes
-            self.shared_key = bytes(alice_key)
-            
-            self.update_status(f"Protocolo QKD completado. Clave establecida ({len(self.shared_key)} bits)")
-            self.add_to_chat("Sistema", "Conexión segura establecida con QKD")
-            
-        except Exception as e:
-            self.update_status(f"Error en QKD: {e}")
-            messagebox.showerror("Error", f"Error en QKD: {e}")
-    
-    def perform_qkd_bob(self):
-        """
-        Realiza el protocolo QKD como Bob (cliente).
-        """
-        try:
-            self.update_status("Iniciando protocolo QKD (Bob)...")
-            
-            # Simular el protocolo BB84
-            success, _, bob_key, stats = simulate_bb84(100, 20, 32)
-            
-            if not success:
-                raise Exception("Protocolo QKD fallido")
-            
-            # Convertir la clave a bytes
-            self.shared_key = bytes(bob_key)
-            
-            self.update_status(f"Protocolo QKD completado. Clave establecida ({len(self.shared_key)} bits)")
-            self.add_to_chat("Sistema", "Conexión segura establecida con QKD")
-            
-        except Exception as e:
-            self.update_status(f"Error en QKD: {e}")
-            messagebox.showerror("Error", f"Error en QKD: {e}")
-    
-    def encrypt_message(self, message):
-        """
-        Cifra un mensaje usando la clave compartida (XOR simple).
-        """
-        if not self.shared_key:
-            return message.encode()
-        
-        message_bytes = message.encode()
-        # Extender la clave si es necesario
-        key_bytes = self.shared_key * (len(message_bytes) // len(self.shared_key) + 1)
-        key_bytes = key_bytes[:len(message_bytes)]
-        
-        # Cifrado XOR
-        encrypted = bytes(m ^ k for m, k in zip(message_bytes, key_bytes))
-        return encrypted
-    
-    def decrypt_message(self, encrypted):
-        """
-        Descifra un mensaje usando la clave compartida (XOR simple).
-        """
-        if not self.shared_key:
-            return encrypted.decode()
-        
-        # Extender la clave si es necesario
-        key_bytes = self.shared_key * (len(encrypted) // len(self.shared_key) + 1)
-        key_bytes = key_bytes[:len(encrypted)]
-        
-        # Descifrado XOR
-        decrypted = bytes(e ^ k for e, k in zip(encrypted, key_bytes))
-        return decrypted.decode()
-    
-    def send_message(self, event=None):
-        """
-        Envía un mensaje cifrado.
-        """
-        message = self.input_field.get()
-        if not message:
-            return
-        
-        self.input_field.delete(0, tk.END)
-        
-        if not self.connection or not self.shared_key:
-            messagebox.showwarning("Advertencia", "No hay conexión segura establecida")
-            return
-        
-        try:
-            # Añadir el mensaje a la interfaz
-            self.add_to_chat("Tú", message)
-            
-            # Cifrar y enviar el mensaje
-            encrypted = self.encrypt_message(message)
-            
-            # Crear el paquete de mensaje
-            packet = {
-                'type': 'message',
-                'content': encrypted.hex()
-            }
-            
-            # Enviar el paquete
-            self.connection.sendall(json.dumps(packet).encode() + b'\n')
-            
-        except Exception as e:
-            self.update_status(f"Error al enviar: {e}")
-    
-    def receive_messages(self):
-        """
-        Recibe mensajes cifrados.
-        """
-        buffer = b''
-        
-        while True:
-            try:
-                data = self.connection.recv(4096)
-                if not data:
-                    break
-                
-                buffer += data
-                
-                while b'\n' in buffer:
-                    packet_data, buffer = buffer.split(b'\n', 1)
-                    packet = json.loads(packet_data.decode())
-                    
-                    if packet['type'] == 'message':
-                        # Descifrar el mensaje
-                        encrypted = bytes.fromhex(packet['content'])
-                        message = self.decrypt_message(encrypted)
-                        
-                        # Añadir el mensaje a la interfaz
-                        self.add_to_chat("Otro", message)
-            
-            except Exception as e:
-                self.update_status(f"Error al recibir: {e}")
-                break
-        
-        self.update_status("Desconectado")
-    
-    def add_to_chat(self, sender, message):
-        """
-        Añade un mensaje al área de chat.
-        """
-        def _add():
-            self.chat_area.configure(state='normal')
-            self.chat_area.insert(tk.END, f"{sender}: {message}\n")
-            self.chat_area.configure(state='disabled')
-            self.chat_area.see(tk.END)
-        
-        self.master.after(0, _add)
-    
-    def update_status(self, status):
-        """
-        Actualiza la etiqueta de estado.
-        """
-        def _update():
-            self.status_label.config(text=status)
-        
-        self.master.after(0, _update)
+class Handler(BaseHTTPRequestHandler):
+    def _send(self, code, obj):
+        body = json.dumps(obj).encode()
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
-def main():
-    import argparse
-    
-    parser = argparse.ArgumentParser(description='QKD Secure Chat')
-    parser.add_argument('--client', action='store_true', help='Run as client')
-    parser.add_argument('--host', default='localhost', help='Host to connect to')
-    parser.add_argument('--port', type=int, default=12345, help='Port to use')
-    
-    args = parser.parse_args()
-    
-    root = tk.Tk()
-    app = QKDSecureChat(root, not args.client, args.host, args.port)
-    root.mainloop()
+    def _parse(self):
+        u = urlparse(self.path)
+        parts = u.path.strip("/").split("/")          # api v1 keys {SAE_ID} {method}
+        if len(parts) != 5 or parts[:3] != ["api", "v1", "keys"]:
+            return None, None, None
+        return parts[3], parts[4], parse_qs(u.query)
+
+    def _body(self):
+        n = int(self.headers.get("Content-Length") or 0)
+        return json.loads(self.rfile.read(n) or b"{}") if n else {}
+
+    def _caller(self):
+        sae = self.headers.get("X-SAE-ID")
+        return sae if sae in KME_ID else None
+
+    def do_GET(self):
+        self._dispatch(self._parse(), {})
+
+    def do_POST(self):
+        try:
+            body = self._body()
+        except json.JSONDecodeError:
+            return self._send(400, {"message": "bad request format"})
+        self._dispatch(self._parse(), body)
+
+    def _dispatch(self, parsed, body):
+        other, method, qs = parsed
+        caller = self._caller()
+        if caller is None:
+            return self._send(401, {"message": "unauthorized"})
+        if other not in KME_ID or method not in ("status", "enc_keys", "dec_keys"):
+            return self._send(400, {"message": "bad request format"})
+        if method == "status":
+            return self._send(200, {
+                "source_KME_ID": KME_ID[caller], "target_KME_ID": KME_ID[other],
+                "master_SAE_ID": caller, "slave_SAE_ID": other, "key_size": KEY_SIZE,
+                "stored_key_count": stored[(caller, other)], "max_key_count": MAX_COUNT,
+                "max_key_per_request": MAX_PER_REQ, "max_key_size": MAX_SIZE,
+                "min_key_size": MIN_SIZE, "max_SAE_ID_count": 0})
+        if method == "enc_keys":                       # llamada del SAE maestro
+            number = int(body.get("number", qs.get("number", [1])[0]))
+            size = int(body.get("size", qs.get("size", [KEY_SIZE])[0]))
+            if size % 8 or not MIN_SIZE &lt;= size &lt;= MAX_SIZE:
+                return self._send(400, {"message": "size shall be a multiple of 8"})
+            if not 1 &lt;= number &lt;= MAX_PER_REQ:
+                return self._send(400, {"message": "bad request format"})
+            keys = []
+            with lock:
+                if stored[(caller, other)] &lt; number:
+                    return self._send(503, {"message": "keys are being exhausted"})
+                stored[(caller, other)] -= number
+                for _ in range(number):
+                    kid, key = str(uuid.uuid4()), secrets.token_bytes(size // 8)
+                    pending[kid] = (key, caller, other)
+                    keys.append({"key_ID": kid, "key": base64.b64encode(key).decode()})
+            return self._send(200, {"keys": keys})
+        # dec_keys: llamada del SAE esclavo; {other} es el SAE maestro
+        ids = [k["key_ID"] for k in body.get("key_IDs", [])] or qs.get("key_ID", [])
+        out = []
+        with lock:
+            for kid in ids:
+                entry = pending.get(kid)
+                if entry is None or entry[1] != other or entry[2] != caller:
+                    return self._send(401 if entry else 400, {"message": "key_ID not available",
+                                                              "details": [{"key_ID": kid}]})
+            for kid in ids:                            # la clave se entrega una sola vez
+                key, _, _ = pending.pop(kid)
+                out.append({"key_ID": kid, "key": base64.b64encode(key).decode()})
+        return self._send(200, {"keys": out})
+
+    def log_message(self, fmt, *args):
+        sys.stderr.write("[KME] " + fmt % args + "\n")
 
 if __name__ == "__main__":
-    main()
-</code></pre>
-            <p>Para ejecutar esta aplicación, necesitarás abrir dos terminales:</p>
-            <ul>
-                <li>En la primera terminal: <code>python qkd_secure_chat.py</code> (servidor)</li>
-                <li>En la segunda terminal: <code>python qkd_secure_chat.py --client</code> (cliente)</li>
-            </ul>
-        </section>
+    port = int(sys.argv[1]) if len(sys.argv) &gt; 1 else 8443
+    print(f"KME simulado en http://127.0.0.1:{port}/api/v1/keys/... (Ctrl+C para parar)")
+    ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()</code></pre>
+        <p>La aplicación híbrida: Bob publica su clave de encapsulado ML-KEM-768; Alice pide una clave QKD a su KME (<code>enc_keys</code>), encapsula contra Bob y deriva <span class="math"><var>K</var> = HKDF-SHA256(<var>K</var><sub>QKD</sub> ‖ <var>K</var><sub>KEM</sub>, info)</span>, con <code>info</code> ligado al <code>key_ID</code> y al hash de <span class="math">ek ‖ ct</span>. Bob recupera la clave QKD por su ID (<code>dec_keys</code>), desencapsula y deriva lo mismo.</p>
+        <pre data-lang="python"><code>"""Lab L5 · Parte 5 — Clave híbrida QKD + ML-KEM-768 con HKDF-SHA256.
+Requiere cryptography &gt;= 47 (ML-KEM) y el KME simulado (kme_mock.py) en marcha."""
+import base64, hashlib, json, os, sys, urllib.request, urllib.error
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.primitives.asymmetric.mlkem import MLKEM768PrivateKey
 
-        <section class="lab-section">
-            <h2>Entregables</h2>
-            <p>Al finalizar esta práctica, deberás entregar:</p>
-            <ol>
-                <li>Código fuente de las implementaciones (<code>bb84_simulation.py</code>, <code>bb84_attacks.py</code> y opcionalmente <code>bb84_qiskit.py</code> y <code>qkd_secure_chat.py</code>)</li>
-                <li>Capturas de pantalla o gráficos generados durante la ejecución</li>
-                <li>Un informe breve (máximo 3 páginas) que incluya:
-                    <ul>
-                        <li>Resultados obtenidos en las simulaciones</li>
-                        <li>Análisis de la seguridad del protocolo BB84 frente a diferentes ataques</li>
-                        <li>Respuestas a las preguntas de reflexión</li>
-                        <li>Conclusiones sobre la viabilidad de QKD para aplicaciones prácticas</li>
-                    </ul>
-                </li>
-            </ol>
-        </section>
+KME = sys.argv[1] if len(sys.argv) &gt; 1 else "http://127.0.0.1:8443"
 
-        <section class="lab-section">
-            <h2>Recursos Adicionales</h2>
-            <ul>
-                <li><a href="https://arxiv.org/abs/quant-ph/0003004" target="_blank">Artículo: Quantum Cryptography: Public Key Distribution and Coin Tossing</a></li>
-                <li><a href="https://qiskit.org/textbook/ch-quantum-crypto/quantum-key-distribution.html" target="_blank">Tutorial de Qiskit sobre QKD</a></li>
-                <li><a href="https://en.wikipedia.org/wiki/Quantum_key_distribution" target="_blank">Wikipedia: Quantum Key Distribution</a></li>
-                <li><a href="https://www.etsi.org/technologies/quantum-key-distribution" target="_blank">ETSI: Quantum Key Distribution</a></li>
-                <li><a href="https://www.idquantique.com/quantum-safe-security/overview/" target="_blank">ID Quantique: Implementaciones comerciales de QKD</a></li>
-            </ul>
-        </section>
+def call(sae, path, body=None):
+    data = None if body is None else json.dumps(body).encode()
+    req = urllib.request.Request(f"{KME}/api/v1/keys/{path}", data=data,
+                                 headers={"X-SAE-ID": sae, "Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req) as r:
+            return r.status, json.load(r)
+    except urllib.error.HTTPError as e:
+        return e.code, json.load(e)
+
+def combine(k_qkd, k_kem, key_id, transcript):
+    """Combinador: HKDF-Extract/Expand sobre K_QKD || K_KEM, ligado al key_ID y al transcript."""
+    info = b"curso-pqc L5 hybrid v1|" + key_id.encode() + b"|" + hashlib.sha256(transcript).digest()
+    return HKDF(algorithm=hashes.SHA256(), length=32, salt=None, info=info).derive(k_qkd + k_kem)
+
+# 0) Estado del enlace visto por SAE_A
+print("status:", call("SAE_A", "SAE_B/status"))
+
+# 1) Bob (SAE_B) genera su par ML-KEM-768 y publica la clave de encapsulado
+bob_sk = MLKEM768PrivateKey.generate()
+bob_ek = bob_sk.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
+
+# 2) Alice (SAE_A, maestro) pide una clave QKD de 256 bits para SAE_B
+code, cont = call("SAE_A", "SAE_B/enc_keys", {"number": 1, "size": 256})
+key_id, k_qkd_a = cont["keys"][0]["key_ID"], base64.b64decode(cont["keys"][0]["key"])
+print(f"enc_keys -&gt; {code} key_ID={key_id} ({len(k_qkd_a) * 8} bits)")
+
+# 3) Alice encapsula contra ek de Bob y deriva la clave híbrida
+ss_a, ct = bob_sk.public_key().encapsulate()     # (secreto, texto cifrado)
+transcript = bob_ek + ct
+k_a = combine(k_qkd_a, ss_a, key_id, transcript)
+nonce = os.urandom(12)
+msg = AESGCM(k_a).encrypt(nonce, b"Informe confidencial: nivel 3", key_id.encode())
+print(f"ek={len(bob_ek)} B  ct={len(ct)} B  K_A={k_a.hex()[:32]}...")
+
+# 4) Bob recibe (key_ID, ct, nonce, msg); pide la clave QKD por su ID y desencapsula
+code, cont = call("SAE_B", "SAE_A/dec_keys", {"key_IDs": [{"key_ID": key_id}]})
+k_qkd_b = base64.b64decode(cont["keys"][0]["key"])
+ss_b = bob_sk.decapsulate(ct)
+k_b = combine(k_qkd_b, ss_b, key_id, bob_ek + ct)
+print(f"dec_keys -&gt; {code}  K_B={k_b.hex()[:32]}...  iguales={k_a == k_b}")
+print("descifrado:", AESGCM(k_b).decrypt(nonce, msg, key_id.encode()).decode())
+
+# 5) La clave QKD se entrega una única vez
+print("segundo dec_keys -&gt;", call("SAE_B", "SAE_A/dec_keys", {"key_IDs": [{"key_ID": key_id}]}))</code></pre>
+        <pre class="terminal" data-lang="shell"><code>$ python kme_mock.py 8443 &amp;          <span class="tok-c"># en otra terminal, o en segundo plano</span>
+$ python hybrid_client.py http://127.0.0.1:8443
+status: (200, {'source_KME_ID': 'KME_MADRID_1', 'target_KME_ID': 'KME_MADRID_2', 'master_SAE_ID': 'SAE_A', 'slave_SAE_ID': 'SAE_B', 'key_size': 256, 'stored_key_count': 1000, 'max_key_count': 1000, 'max_key_per_request': 128, 'max_key_size': 1024, 'min_key_size': 64, 'max_SAE_ID_count': 0})
+enc_keys -&gt; 200 key_ID=ce9ef8aa-3214-41f2-9c73-27c4a3060721 (256 bits)
+ek=1184 B  ct=1088 B  K_A=45dbccb9d30b59f13953fa2aa110dc01...
+dec_keys -&gt; 200  K_B=45dbccb9d30b59f13953fa2aa110dc01...  iguales=True
+descifrado: Informe confidencial: nivel 3
+segundo dec_keys -&gt; (400, {'message': 'key_ID not available', 'details': [{'key_ID': 'ce9ef8aa-3214-41f2-9c73-27c4a3060721'}]})
+$ curl -s -H 'X-SAE-ID: SAE_A' 'http://127.0.0.1:8443/api/v1/keys/SAE_B/enc_keys?number=2&amp;size=128'
+{"keys": [{"key_ID": "516854b4-f254-46ac-849b-ec9f175c7411", "key": "CtNaze+0wU4Oe1d6v6mCeQ=="}, {"key_ID": "73098d2a-c507-46e3-b22c-11bc9b3db4ba", "key": "7q3DhiQ1UyCVcUcsnp15gA=="}]}</code></pre>
+        <div class="callout"><span class="callout-title">Punto de control 5</span><p>Los 16 primeros bytes de K<sub>A</sub> y K<sub>B</sub> coinciden, el mensaje se descifra y el segundo <code>dec_keys</code> falla con 400: una clave QKD se entrega una sola vez. La clave de encapsulado ocupa 1&#8239;184 bytes y el texto cifrado 1&#8239;088, los tamaños de ML-KEM-768 en FIPS 203.</p></div>
+        <p><strong>Tareas.</strong> (a) Demuestre con un argumento de dos líneas que, si el atacante conoce <var>K</var><sub>QKD</sub> (por ejemplo, porque controla un nodo de confianza) pero no <var>K</var><sub>KEM</sub>, la clave de sesión sigue siendo segura, y viceversa; ¿qué propiedad de HKDF está usando? (b) Pase el KME a HTTPS con autenticación mutua: genere una CA y certificados de KME y SAE con OpenSSL y use <code>ssl.SSLContext</code> con <code>verify_mode = CERT_REQUIRED</code>; obtenga el SAE_ID del certificado del cliente en lugar de la cabecera. (c) Si el TLS entre SAE y KME usara ECDHE clásico, ¿qué podría hacer un adversario que «almacena ahora y descifra después»?</p>
+
+        <h2 id="entregables"><span class="sec">L5.7</span>Entregables</h2>
+        <ol>
+          <li>Código de las partes 1–3 (y 4–5 si las hace), ejecutable con las versiones indicadas.</li>
+          <li>Las gráficas <code>qber_vs_p.png</code> y <code>key_rate.png</code>, más las de las tareas de ampliación.</li>
+          <li>Un informe de 3–5 páginas: respuestas razonadas a las tareas de cada parte; tabla de umbrales frente a <var>f</var>; distancias máximas de la parte 3 con cada conjunto de parámetros; y una conclusión de media página sobre cuándo tiene sentido desplegar QKD y cómo combinarla con PQC, apoyada en las posiciones de las agencias citadas en el Tema 6.</li>
+        </ol>
+
+        <h2 id="rubrica"><span class="sec">L5.8</span>Rúbrica de evaluación</h2>
+        <div class="table-wrap"><table>
+          <caption>Evaluación sobre 10 puntos</caption>
+          <thead><tr><th>Criterio</th><th class="num">Peso</th><th>Excelente</th><th>Suficiente</th></tr></thead>
+          <tbody>
+            <tr><td>Parte 1: BB84 correcto y vectorizado</td><td class="num">2</td><td>Cribado, muestreo y bases sesgadas correctos; fracción cribada verificada</td><td>BB84 sin Eve correcto</td></tr>
+            <tr><td>Parte 2: estadística y análisis del espía</td><td class="num">2</td><td>Medias dentro de 3σ, QBER por base, tamaño de muestra razonado</td><td>Curva QBER(<var>p</var>) correcta</td></tr>
+            <tr><td>Parte 3: tasa de clave y distancia</td><td class="num">2</td><td>Umbrales, efecto de <var>p</var><sub>d</sub> y de la fibra, TF-QKD y PNS discutidos con números</td><td>Curvas <var>r</var>(<var>Q</var>) y <var>R</var>(<var>L</var>) correctas</td></tr>
+            <tr><td>Informe y conclusiones</td><td class="num">2</td><td>Argumentación precisa, cifras con fuente, comparación QKD/PQC equilibrada</td><td>Respuestas completas sin errores conceptuales</td></tr>
+            <tr><td>Calidad del código</td><td class="num">1</td><td>Funciones documentadas, semillas fijadas, reproducible</td><td>Se ejecuta sin cambios</td></tr>
+            <tr><td>Parte 4 o 5 (opcional)</td><td class="num">+1</td><td>Tareas de ampliación resueltas (ruido en Aer o mTLS en el KME)</td><td>Código de la guía ejecutado y explicado</td></tr>
+          </tbody>
+        </table></div>
+        <p class="small">La parte opcional suma hasta 1 punto sin superar el máximo de 10.</p>
+
+        <h2 id="problemas"><span class="sec">L5.9</span>Problemas frecuentes</h2>
+        <ul>
+          <li><code>ImportError: cannot import name 'execute' from 'qiskit'</code>: código escrito para Qiskit 0.x; use las primitivas V2 como en la parte 4.</li>
+          <li><code>ModuleNotFoundError: ... asymmetric.mlkem</code>: versión de <code>cryptography</code> anterior a la 47 o compilada contra un OpenSSL sin ML-KEM. Actualice o use liboqs-python como alternativa.</li>
+          <li><code>OSError: [Errno 98] Address already in use</code>: ya hay un KME escuchando; cambie el puerto o detenga el proceso anterior.</li>
+          <li>QBER del 50&nbsp;% en la parte 1 o 4: se han comparado posiciones no cribadas o el orden de bits está invertido.</li>
+        </ul>
+
+        <h2 id="referencias">Referencias</h2>
+        <ol class="refs">
+          <li>ETSI. <a href="https://www.etsi.org/deliver/etsi_gs/QKD/001_099/014/01.01.01_60/gs_qkd014v010101p.pdf">GS QKD 014 V1.1.1: Protocol and data format of REST-based key delivery API</a>. <span class="src">Febrero de 2019.</span></li>
+          <li>P. W. Shor, J. Preskill. <a href="https://link.aps.org/doi/10.1103/PhysRevLett.85.441">Simple proof of security of the BB84 quantum key distribution protocol</a>. <span class="src">Phys. Rev. Lett. 85, 441, 2000.</span></li>
+          <li>S. Pirandola et al. <a href="https://www.nature.com/articles/ncomms15043">Fundamental limits of repeaterless quantum communications</a>. <span class="src">Nature Communications 8, 15043, 2017.</span></li>
+          <li>Qiskit. <a href="https://pypi.org/project/qiskit/">qiskit en PyPI</a> y <a href="https://qiskit.github.io/qiskit-aer/stubs/qiskit_aer.primitives.SamplerV2.html">qiskit_aer.primitives.SamplerV2</a>. <span class="src">Qiskit 2.5.2, Aer 0.17.2.</span></li>
+          <li>pyca/cryptography. <a href="https://cryptography.io/en/latest/hazmat/primitives/asymmetric/mlkem/">ML-KEM key encapsulation</a>. <span class="src">Disponible desde la versión 47.0.0.</span></li>
+          <li>IETF. <a href="https://www.rfc-editor.org/info/rfc8784/">RFC 8784: Mixing preshared keys in IKEv2 for post-quantum security</a>. <span class="src">2020.</span></li>
+        </ol>
+      </article>
+
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../index.html">Inicio</a></li>
-                    <li><a href="../programa.html">Programa</a></li>
-                    <li><a href="../temas/tema1/index.html">Temas</a></li>
-                    <li><a href="../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Guías Disponibles</h3>
-                <ul>
-                    <li><a href="algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="ml_kem.html">ML-KEM</a></li>
-                    <li><a href="ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="qkd.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../js/script.js"></script>
-    <script src="../js/navigation.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../glosario.html">Glosario</a>
+        <a href="../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

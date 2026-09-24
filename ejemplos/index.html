@@ -1,153 +1,76 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../" data-page="ejemplos">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejemplos Prácticos - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/prism.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ejemplos — Curso PQC</title>
+  <meta name="description" content="Cinco simulaciones que se ejecutan en tu navegador. Cambia parámetros, provoca fallos y observa cómo responde cada mecanismo.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/course-data.js" defer></script>
+  <script src="../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Inicio</a></li>
-                <li><a href="../programa.html">Programa</a></li>
-                <li><a href="../temas/tema1/index.html">Temas</a></li>
-                <li><a href="index.html" class="active">Ejemplos Prácticos</a></li>
-                <li><a href="../guias/index.html">Guías de Laboratorio</a></li>
-                <li><a href="../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../index.html">Inicio</a> &gt; Ejemplos Prácticos
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../index.html">Inicio</a>
+        <a href="../programa.html">Programa</a>
+        <a href="../temas/index.html">Temas</a>
+        <a href="../ejemplos/index.html" aria-current="page">Ejemplos</a>
+        <a href="../guias/index.html">Laboratorios</a>
+        <a href="../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Ejemplos Prácticos</h1>
-        
-        <p class="intro-text">
-            Esta sección contiene ejemplos prácticos que ilustran los conceptos clave de la criptografía post-cuántica. 
-            Cada ejemplo incluye código interactivo que permite experimentar con los algoritmos y comprender mejor su funcionamiento.
-        </p>
-
-        <div class="ejemplos-grid">
-            <div class="ejemplo-card">
-                <div class="ejemplo-icon">🔢</div>
-                <h2>Algoritmo de Shor</h2>
-                <p>Simulación del algoritmo cuántico que amenaza la criptografía RSA, demostrando cómo un ordenador cuántico puede factorizar números grandes eficientemente.</p>
-                <div class="ejemplo-actions">
-                    <a href="algoritmo_shor.html" class="btn">Ver ejemplo</a>
-                    <a href="../guias/algoritmo_shor.html" class="btn btn-outline">Ver guía</a>
-                </div>
-            </div>
-
-            <div class="ejemplo-card">
-                <div class="ejemplo-icon">🔐</div>
-                <h2>ML-KEM</h2>
-                <p>Implementación del algoritmo de encapsulamiento de claves basado en retículos (FIPS 203), mostrando generación de claves, encapsulamiento y desencapsulamiento.</p>
-                <div class="ejemplo-actions">
-                    <a href="ml_kem.html" class="btn">Ver ejemplo</a>
-                    <a href="../guias/ml_kem.html" class="btn btn-outline">Ver guía</a>
-                </div>
-            </div>
-
-            <div class="ejemplo-card">
-                <div class="ejemplo-icon">✍️</div>
-                <h2>ML-DSA</h2>
-                <p>Demostración del algoritmo de firma digital basado en retículos (FIPS 204), ilustrando la generación de claves, firma y verificación de mensajes.</p>
-                <div class="ejemplo-actions">
-                    <a href="ml_dsa.html" class="btn">Ver ejemplo</a>
-                    <a href="../guias/ml_dsa.html" class="btn btn-outline">Ver guía</a>
-                </div>
-            </div>
-
-            <div class="ejemplo-card">
-                <div class="ejemplo-icon">🔄</div>
-                <h2>Criptografía Híbrida</h2>
-                <p>Ejemplo de implementación de criptografía híbrida que combina algoritmos clásicos y post-cuánticos para una seguridad robusta durante la transición.</p>
-                <div class="ejemplo-actions">
-                    <a href="criptografia_hibrida.html" class="btn">Ver ejemplo</a>
-                    <a href="../guias/criptografia_hibrida.html" class="btn btn-outline">Ver guía</a>
-                </div>
-            </div>
-
-            <div class="ejemplo-card">
-                <div class="ejemplo-icon">📡</div>
-                <h2>QKD (BB84)</h2>
-                <p>Simulación del protocolo BB84 para distribución cuántica de claves, mostrando cómo las leyes de la física cuántica garantizan la seguridad.</p>
-                <div class="ejemplo-actions">
-                    <a href="qkd_bb84.html" class="btn">Ver ejemplo</a>
-                    <a href="../guias/qkd.html" class="btn btn-outline">Ver guía</a>
-                </div>
-            </div>
-        </div>
-
-        <section class="ejemplos-info">
-            <h2>Sobre los Ejemplos</h2>
-            <p>
-                Estos ejemplos han sido diseñados con fines educativos para ilustrar los conceptos fundamentales de la criptografía post-cuántica. 
-                Las implementaciones son simplificadas y no deben utilizarse en entornos de producción. Para aplicaciones reales, 
-                se recomienda utilizar bibliotecas criptográficas bien establecidas y auditadas.
-            </p>
-            <p>
-                Cada ejemplo incluye:
-            </p>
-            <ul>
-                <li>Explicación teórica del algoritmo o protocolo</li>
-                <li>Implementación interactiva que permite experimentar con diferentes parámetros</li>
-                <li>Visualizaciones que ayudan a comprender los conceptos subyacentes</li>
-                <li>Código fuente comentado para referencia</li>
-            </ul>
-            <p>
-                Para un estudio más profundo, consulte las <a href="../guias/index.html">Guías de Laboratorio</a> asociadas a cada ejemplo, 
-                que incluyen ejercicios prácticos y preguntas de reflexión.
-            </p>
-        </section>
+  <div class="layout no-toc">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../index.html">Inicio</a></li><li aria-current="page">Ejemplos</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Ejemplos interactivos</p>
+        <h1>Mira los algoritmos <em>por dentro</em></h1>
+        <p class="lede">Cinco simulaciones que se ejecutan en tu navegador. Cambia parámetros, provoca fallos y observa cómo responde cada mecanismo.</p>
+      </header>
+      <div class="card-grid">
+        <a class="card" href="../ejemplos/algoritmo_shor.html"><span class="card-kicker">E1</span><h3 class="card-title">Algoritmo de Shor</h3><p>Reduce la factorización a buscar un periodo. Elige N y a, observa la secuencia periódica, los picos de la medida y la recuperación con fracciones continuas.</p><span class="card-foot"><span>Tema 1</span></span></a>
+        <a class="card" href="../ejemplos/ml_kem.html"><span class="card-kicker">E2</span><h3 class="card-title">ML-KEM paso a paso</h3><p>Un ML-KEM de juguete fiel a la estructura: polinomios módulo X<sup>n</sup>+1, ruido, compresión, descifrado por redondeo y la transformación FO.</p><span class="card-foot"><span>Temas 3 y 4</span></span></a>
+        <a class="card" href="../ejemplos/ml_dsa.html"><span class="card-kicker">E3</span><h3 class="card-title">ML-DSA paso a paso</h3><p>Firma con «Fiat–Shamir con abortos»: compromiso, reto, respuesta y muestreo por rechazo. Mira por qué se repiten intentos.</p><span class="card-foot"><span>Temas 3 y 4</span></span></a>
+        <a class="card" href="../ejemplos/criptografia_hibrida.html"><span class="card-kicker">E4</span><h3 class="card-title">Intercambio híbrido</h3><p>Combina un intercambio clásico con un KEM post-cuántico mediante HKDF y comprueba qué pasa si uno de los dos se rompe.</p><span class="card-foot"><span>Tema 5</span></span></a>
+        <a class="card" href="../ejemplos/qkd_bb84.html"><span class="card-kicker">E5</span><h3 class="card-title">Protocolo BB84</h3><p>Simula fotones, bases, ruido y un espía que intercepta y reenvía. Mide el QBER, corrige errores y amplifica la privacidad.</p><span class="card-foot"><span>Tema 6</span></span></a>
+      </div>
+      <article class="prose">
+        <h2 id="sobre">Sobre los ejemplos</h2>
+        <p>Cada ejemplo implementa en JavaScript, sin dependencias, una versión reducida del mecanismo real: parámetros pequeños, formatos simplificados y, cuando hace falta, funciones hash sustituidas por las disponibles en el navegador. Mantienen la estructura del algoritmo para que puedas seguir cada paso y cambiar parámetros para ver qué se rompe.</p>
+        <div class="callout warning"><span class="callout-title">Solo para aprender</span><p>Ninguno de estos ejemplos es seguro ni interoperable con los estándares. Para usar criptografía post-cuántica de verdad, usa bibliotecas mantenidas y validadas; los <a href="../guias/index.html">laboratorios</a> explican cómo.</p></div>
+      </article>
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../index.html">Inicio</a></li>
-                    <li><a href="../programa.html">Programa</a></li>
-                    <li><a href="../temas/tema1/index.html">Temas</a></li>
-                    <li><a href="index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="../guias/index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Ejemplos</h3>
-                <ul>
-                    <li><a href="algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="ml_kem.html">ML-KEM</a></li>
-                    <li><a href="ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="qkd_bb84.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../js/script.js"></script>
-    <script src="../js/prism.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../glosario.html">Glosario</a>
+        <a href="../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

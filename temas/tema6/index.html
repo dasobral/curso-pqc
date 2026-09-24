@@ -1,624 +1,544 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../../" data-page="tema6">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tema 6: Distribución Cuántica de Claves (QKD) - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="../../css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tema 6 · Distribución cuántica de claves (QKD) — Curso PQC</title>
+  <meta name="description" content="QKD de principio a fin: no clonación, BB84 paso a paso, QBER y umbral del 11 %, postprocesado (Cascade, Toeplitz), protocolos modernos, ataques a implementaciones, redes, normas, posiciones de las agencias y combinación con PQC.">
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../css/styles.css">
+  <script src="../../js/course-data.js" defer></script>
+  <script src="../../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../../index.html">Inicio</a></li>
-                <li><a href="../../programa.html">Programa</a></li>
-                <li><a href="../tema1/index.html">Temas</a></li>
-                <li><a href="../../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="../../guias/index.html">Guías de Laboratorio</a></li>
-                <li><a href="../../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../../index.html">Inicio</a> &gt; <a href="../tema1/index.html">Temas</a> &gt; Tema 6: Distribución Cuántica de Claves (QKD)
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../../index.html">Inicio</a>
+        <a href="../../programa.html">Programa</a>
+        <a href="../../temas/index.html" aria-current="page">Temas</a>
+        <a href="../../ejemplos/index.html">Ejemplos</a>
+        <a href="../../guias/index.html">Laboratorios</a>
+        <a href="../../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Tema 6: Distribución Cuántica de Claves (QKD)</h1>
-        
-        <div class="tema-navegacion">
-            <div class="tema-nav-item">
-                <a href="../tema1/index.html">
-                    <span>Tema 1</span>
-                    <p>Fundamentos de Criptografía Moderna</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema2/index.html">
-                    <span>Tema 2</span>
-                    <p>Infraestructura de Seguridad en Internet</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema3/index.html">
-                    <span>Tema 3</span>
-                    <p>Fundamentos de Criptografía Post-Cuántica</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema4/index.html">
-                    <span>Tema 4</span>
-                    <p>Estandarización de Criptografía Post-Cuántica</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema5/index.html">
-                    <span>Tema 5</span>
-                    <p>Implementaciones, Consideraciones y Desafíos</p>
-                </a>
-            </div>
-            <div class="tema-nav-item actual">
-                <span>Tema 6</span>
-                <p>Distribución Cuántica de Claves (QKD)</p>
-            </div>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../../index.html">Inicio</a></li><li><a href="../../temas/index.html">Temas</a></li><li aria-current="page">Tema 6</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Tema 06 · 2 horas</p>
+        <h1>Distribución cuántica <em>de claves</em> (QKD)</h1>
+        <p class="lede">La QKD establece claves simétricas cuya confidencialidad se apoya en la física y no en la dificultad de un problema matemático. Veremos por qué funciona BB84, cuánta clave se puede extraer, qué la rompe en la práctica y por qué las agencias europeas y norteamericanas la consideran, hoy, un complemento de nicho y no un sustituto de la criptografía post-cuántica.</p>
+        <dl class="page-meta">
+          <div><dt>Duración</dt><dd>2 h</dd></div>
+          <div><dt>Nivel</dt><dd>Intermedio</dd></div>
+          <div><dt>Requisitos</dt><dd>Temas 1 y 5; notación de Dirac básica; entropía binaria</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
+
+      <article class="prose">
+        <h2 id="objetivos"><span class="sec">6.0</span>Objetivos</h2>
+        <p>Al terminar este tema el estudiante será capaz de:</p>
+        <ol>
+          <li>Explicar qué propiedades cuánticas (no clonación, perturbación por la medida, bases conjugadas) sostienen la seguridad de la QKD y cuáles <em>no</em> aporta (autenticación).</li>
+          <li>Ejecutar a mano el protocolo BB84 con y sin espía, y calcular el QBER que induce un ataque de interceptación-reenvío.</li>
+          <li>Calcular la fracción de clave secreta con la fórmula de Shor–Preskill, <span class="math">r = 1 − 2h(Q)</span>, y justificar el umbral del 11&nbsp;%.</li>
+          <li>Describir la cadena de postprocesado: cribado, estimación de parámetros, reconciliación (Cascade, LDPC), verificación y amplificación de privacidad con hashing universal.</li>
+          <li>Situar los protocolos modernos (E91/BBM92, estados señuelo, MDI-QKD, TF-QKD, CV-QKD) y los ataques a implementaciones reales.</li>
+          <li>Analizar una red QKD con nodos de confianza, el panorama de despliegue (China, EuroQCI, España) y las normas ETSI, ITU-T e ISO/IEC.</li>
+          <li>Comparar QKD y PQC con criterio y diseñar una derivación de clave híbrida que combine ambas.</li>
+        </ol>
+        <div class="callout note"><span class="callout-title">Material asociado</span><p>Simulador en el navegador: <a href="../../ejemplos/qkd_bb84.html">Ejemplo E5 · Protocolo BB84</a>. Práctica con Python, Qiskit y la API ETSI GS QKD 014: <a href="../../guias/qkd.html">Laboratorio L5 · Simulación de QKD</a>. La combinación de secretos se enlaza con el <a href="../tema5/index.html">Tema 5</a> y con el <a href="../../ejemplos/criptografia_hibrida.html">Ejemplo E4 · Intercambio híbrido</a>.</p></div>
+
+        <h2 id="fundamentos"><span class="sec">6.1</span>Fundamentos físicos</h2>
+        <p>Un <strong>qubit</strong> es un sistema cuántico de dos niveles, <span class="math">|ψ⟩ = α|0⟩ + β|1⟩</span> con <span class="math">|α|² + |β|² = 1</span>. En QKD sobre fibra o espacio libre se codifica casi siempre en un fotón: en su polarización, en la fase relativa entre dos pulsos (codificación en fase o <em>time-bin</em>) o en su instante de llegada. Usaremos la polarización porque es la más fácil de visualizar.</p>
+
+        <h3>Dos bases conjugadas</h3>
+        <p>BB84 utiliza dos bases ortonormales del mismo qubit:</p>
+        <div class="table-wrap"><table>
+          <caption>Estados de BB84 con codificación en polarización</caption>
+          <thead><tr><th>Base</th><th>Bit 0</th><th>Bit 1</th></tr></thead>
+          <tbody>
+            <tr><td>Rectilínea (+), también «Z»</td><td>|0⟩ = H (0°)</td><td>|1⟩ = V (90°)</td></tr>
+            <tr><td>Diagonal (×), también «X»</td><td>|+⟩ = (|0⟩ + |1⟩)/√2 = D (+45°)</td><td>|−⟩ = (|0⟩ − |1⟩)/√2 = A (−45°)</td></tr>
+          </tbody>
+        </table></div>
+        <p>Las dos bases son <strong>mutuamente no sesgadas</strong> (<em>mutually unbiased</em>): cualquier estado de una tiene solapamiento <span class="math">|⟨0|+⟩|² = |⟨1|+⟩|² = 1/2</span> con los de la otra. Consecuencia operativa: si se prepara un estado en la base diagonal y se mide en la rectilínea, el resultado es un bit perfectamente aleatorio y el estado original se pierde (queda proyectado en H o V). Si se mide en la base correcta, el resultado es determinista.</p>
+
+        <h3>No clonación y perturbación por la medida</h3>
+        <div class="definition"><span class="def-title"><b>Teorema</b>No clonación (Wootters–Zurek, 1982)</span><p>No existe una operación unitaria <var>U</var> tal que <span class="math"><var>U</var>(|ψ⟩|0⟩) = |ψ⟩|ψ⟩</span> para todo estado <span class="math">|ψ⟩</span>. Prueba en una línea: si clonara |0⟩ y |1⟩, por linealidad llevaría |+⟩|0⟩ a (|00⟩ + |11⟩)/√2, que no es |+⟩|+⟩ [2].</p></div>
+        <p>La no clonación impide que un espía (Eve) guarde una copia del fotón para medirla después, cuando Alice y Bob anuncien las bases. Le queda interactuar con el fotón original, y aquí aparece el segundo ingrediente: en mecánica cuántica <strong>cualquier operación que extraiga información sobre un estado elegido entre estados no ortogonales lo perturba</strong> (compromiso información–perturbación). La perturbación se manifiesta como errores en la clave de Bob, que Alice y Bob pueden medir comparando una muestra. Esto es todo lo que la física ofrece: <em>detectar</em> la escucha, no impedirla.</p>
+        <div class="callout warning"><span class="callout-title">Lo que la física no aporta</span><p>La QKD no autentica a nadie. Si Eve se hace pasar por Bob ante Alice y por Alice ante Bob (ataque de intermediario), establece dos claves y no hay errores que detectar. Por eso todo protocolo QKD necesita un <strong>canal clásico autenticado</strong>, y esa autenticación es criptografía clásica: una clave simétrica compartida de antemano o una firma digital (sección 6.4).</p></div>
+
+        <h2 id="bb84"><span class="sec">6.2</span>El protocolo BB84 paso a paso</h2>
+        <p>BB84 fue propuesto por Charles Bennett y Gilles Brassard en 1984 [1]. En su versión de «preparar y medir» intervienen un canal cuántico (fibra o espacio libre) y un canal clásico público pero autenticado.</p>
+        <ol>
+          <li><strong>Preparación.</strong> Para cada fotón <var>i</var>, Alice elige con un generador de números aleatorios un bit <span class="math"><var>a</var><sub><var>i</var></sub></span> y una base <span class="math">α<sub><var>i</var></sub> ∈ {+, ×}</span>, y envía el estado correspondiente.</li>
+          <li><strong>Medida.</strong> Bob elige al azar una base <span class="math">β<sub><var>i</var></sub></span> y mide; obtiene <span class="math"><var>b</var><sub><var>i</var></sub></span>. Si <span class="math">α<sub><var>i</var></sub> = β<sub><var>i</var></sub></span> y no hay ruido ni espía, <span class="math"><var>b</var><sub><var>i</var></sub> = <var>a</var><sub><var>i</var></sub></span>; si no, <span class="math"><var>b</var><sub><var>i</var></sub></span> es aleatorio.</li>
+          <li><strong>Cribado (<em>sifting</em>).</strong> Bob anuncia sus bases (no sus resultados); Alice indica qué posiciones coinciden. Se descartan las demás: sobrevive, en media, el 50&nbsp;% (clave cribada).</li>
+          <li><strong>Estimación de parámetros.</strong> Revelan y descartan una muestra aleatoria de la clave cribada y calculan la tasa de error de bit cuántico, QBER. Si supera el umbral, abortan.</li>
+          <li><strong>Reconciliación.</strong> Corrigen los errores restantes intercambiando paridades (sección 6.4).</li>
+          <li><strong>Amplificación de privacidad.</strong> Comprimen la clave con una función hash universal para eliminar la información parcial de Eve.</li>
+        </ol>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 760 340" role="img" aria-labelledby="f61t f61d">
+            <title id="f61t">Flujo de BB84</title>
+            <desc id="f61d">Alice envía fotones polarizados a Bob por el canal cuántico, donde Eve puede interceptarlos. Por el canal clásico autenticado ejecutan cribado, estimación del QBER, reconciliación, verificación y amplificación de privacidad hasta obtener la clave final.</desc>
+            <defs>
+              <marker id="f61a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-ink"/></marker>
+            </defs>
+            <rect x="20" y="30" width="180" height="120" rx="4" class="svg-box-signal"/>
+            <text x="110" y="56" text-anchor="middle" class="svg-text" font-weight="700">Alice</text>
+            <text x="110" y="80" text-anchor="middle" class="svg-muted">QRNG: bit a, base α</text>
+            <text x="110" y="100" text-anchor="middle" class="svg-muted">fuente + modulador</text>
+            <text x="110" y="120" text-anchor="middle" class="svg-muted">de polarización</text>
+            <rect x="560" y="30" width="180" height="120" rx="4" class="svg-box-signal"/>
+            <text x="650" y="56" text-anchor="middle" class="svg-text" font-weight="700">Bob</text>
+            <text x="650" y="80" text-anchor="middle" class="svg-muted">QRNG: base β</text>
+            <text x="650" y="100" text-anchor="middle" class="svg-muted">analizador + dos</text>
+            <text x="650" y="120" text-anchor="middle" class="svg-muted">detectores de fotón único</text>
+            <line x1="200" y1="70" x2="556" y2="70" class="svg-stroke-signal" stroke-width="2" marker-end="url(#f61a)"/>
+            <text x="380" y="24" text-anchor="middle" class="svg-text">canal cuántico (fibra o espacio libre)</text>
+            <g class="svg-mono">
+              <circle cx="250" cy="70" r="11" class="svg-box"/><text x="250" y="74" text-anchor="middle" class="svg-text">H</text>
+              <circle cx="300" cy="70" r="11" class="svg-box"/><text x="300" y="74" text-anchor="middle" class="svg-text">D</text>
+              <circle cx="460" cy="70" r="11" class="svg-box"/><text x="460" y="74" text-anchor="middle" class="svg-text">V</text>
+              <circle cx="510" cy="70" r="11" class="svg-box"/><text x="510" y="74" text-anchor="middle" class="svg-text">A</text>
+            </g>
+            <rect x="320" y="100" width="120" height="44" rx="4" class="svg-box-amber" stroke-dasharray="5 3"/>
+            <text x="380" y="119" text-anchor="middle" class="svg-text">Eve</text>
+            <text x="380" y="136" text-anchor="middle" class="svg-muted">mide y reenvía</text>
+            <line x1="350" y1="73" x2="350" y2="100" class="svg-stroke-amber" stroke-dasharray="3 3"/>
+            <line x1="410" y1="73" x2="410" y2="100" class="svg-stroke-amber" stroke-dasharray="3 3"/>
+            <line x1="110" y1="150" x2="110" y2="196" class="svg-line"/>
+            <line x1="650" y1="150" x2="650" y2="196" class="svg-line"/>
+            <line x1="110" y1="196" x2="650" y2="196" class="svg-stroke-ink" stroke-width="1.5" marker-start="url(#f61a)" marker-end="url(#f61a)"/>
+            <text x="380" y="188" text-anchor="middle" class="svg-text">canal clásico público y autenticado</text>
+            <g>
+              <rect x="20" y="240" width="108" height="50" rx="4" class="svg-box"/>
+              <text x="74" y="262" text-anchor="middle" class="svg-text">Cribado</text>
+              <text x="74" y="279" text-anchor="middle" class="svg-muted">≈ 50&nbsp;%</text>
+              <rect x="146" y="240" width="108" height="50" rx="4" class="svg-box"/>
+              <text x="200" y="262" text-anchor="middle" class="svg-text">Estimación</text>
+              <text x="200" y="279" text-anchor="middle" class="svg-muted">QBER ≤ umbral?</text>
+              <rect x="272" y="240" width="108" height="50" rx="4" class="svg-box"/>
+              <text x="326" y="262" text-anchor="middle" class="svg-text">Reconciliación</text>
+              <text x="326" y="279" text-anchor="middle" class="svg-muted">Cascade / LDPC</text>
+              <rect x="398" y="240" width="108" height="50" rx="4" class="svg-box"/>
+              <text x="452" y="262" text-anchor="middle" class="svg-text">Verificación</text>
+              <text x="452" y="279" text-anchor="middle" class="svg-muted">hash universal</text>
+              <rect x="524" y="240" width="108" height="50" rx="4" class="svg-box"/>
+              <text x="578" y="258" text-anchor="middle" class="svg-text">Amplificación</text>
+              <text x="578" y="274" text-anchor="middle" class="svg-text">de privacidad</text>
+              <text x="578" y="287" text-anchor="middle" class="svg-muted">Toeplitz</text>
+              <rect x="650" y="240" width="90" height="50" rx="4" class="svg-box-ink"/>
+              <text x="695" y="262" text-anchor="middle" class="svg-on-ink">clave K</text>
+              <text x="695" y="279" text-anchor="middle" class="svg-on-ink">ℓ bits</text>
+              <line x1="128" y1="265" x2="144" y2="265" class="svg-stroke-ink" marker-end="url(#f61a)"/>
+              <line x1="254" y1="265" x2="270" y2="265" class="svg-stroke-ink" marker-end="url(#f61a)"/>
+              <line x1="380" y1="265" x2="396" y2="265" class="svg-stroke-ink" marker-end="url(#f61a)"/>
+              <line x1="506" y1="265" x2="522" y2="265" class="svg-stroke-ink" marker-end="url(#f61a)"/>
+              <line x1="632" y1="265" x2="648" y2="265" class="svg-stroke-ink" marker-end="url(#f61a)"/>
+            </g>
+            <line x1="380" y1="200" x2="380" y2="236" class="svg-line" stroke-dasharray="3 3"/>
+            <text x="20" y="320" class="svg-muted">Todo el postprocesado usa el canal clásico: cada mensaje debe estar autenticado; si no, un intermediario suplanta a Alice o a Bob.</text>
+          </svg>
+          <figcaption><b>Figura 6.1.</b> BB84 de «preparar y medir». La parte cuántica solo produce bits correlacionados; la clave nace del postprocesado clásico, que ocupa la fila inferior.</figcaption>
+        </figure>
+
+        <h3 id="bb84-ejemplo">Ejemplo resuelto: 12 fotones con un espía</h3>
+        <p>Eve intercepta todos los fotones (<var>p</var> = 1), mide cada uno en una base aleatoria y reenvía el estado que ha obtenido. Las filas «Eve» y «Bob» muestran resultados aleatorios cuando la base no coincide con la del estado recibido.</p>
+        <div class="table-wrap"><table>
+          <caption>BB84 con interceptación-reenvío (valores aleatorios fijados para el ejemplo)</caption>
+          <thead><tr><th>Fotón</th><th class="num">1</th><th class="num">2</th><th class="num">3</th><th class="num">4</th><th class="num">5</th><th class="num">6</th><th class="num">7</th><th class="num">8</th><th class="num">9</th><th class="num">10</th><th class="num">11</th><th class="num">12</th></tr></thead>
+          <tbody>
+            <tr><th>Bit de Alice</th><td class="num">0</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">0</td></tr>
+            <tr><th>Base de Alice</th><td class="num">+</td><td class="num">+</td><td class="num">×</td><td class="num">×</td><td class="num">+</td><td class="num">×</td><td class="num">+</td><td class="num">×</td><td class="num">+</td><td class="num">×</td><td class="num">×</td><td class="num">+</td></tr>
+            <tr><th>Estado enviado</th><td class="num">H</td><td class="num">V</td><td class="num">A</td><td class="num">D</td><td class="num">V</td><td class="num">D</td><td class="num">H</td><td class="num">A</td><td class="num">V</td><td class="num">D</td><td class="num">A</td><td class="num">H</td></tr>
+            <tr><th>Base de Eve</th><td class="num">+</td><td class="num">×</td><td class="num">+</td><td class="num">×</td><td class="num">×</td><td class="num">×</td><td class="num">+</td><td class="num">+</td><td class="num">×</td><td class="num">+</td><td class="num">×</td><td class="num">+</td></tr>
+            <tr><th>Eve obtiene</th><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">1</td><td class="num">0</td></tr>
+            <tr><th>Eve reenvía</th><td class="num">H</td><td class="num">D</td><td class="num">H</td><td class="num">D</td><td class="num">A</td><td class="num">D</td><td class="num">H</td><td class="num">V</td><td class="num">D</td><td class="num">V</td><td class="num">A</td><td class="num">H</td></tr>
+            <tr><th>Base de Bob</th><td class="num">+</td><td class="num">×</td><td class="num">×</td><td class="num">+</td><td class="num">+</td><td class="num">×</td><td class="num">×</td><td class="num">×</td><td class="num">+</td><td class="num">+</td><td class="num">×</td><td class="num">+</td></tr>
+            <tr><th>Bit de Bob</th><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">0</td></tr>
+            <tr><th>¿α = β?</th><td class="num">sí</td><td class="num">no</td><td class="num">sí</td><td class="num">no</td><td class="num">sí</td><td class="num">sí</td><td class="num">no</td><td class="num">sí</td><td class="num">sí</td><td class="num">no</td><td class="num">sí</td><td class="num">sí</td></tr>
+            <tr><th>Clave cribada A / B</th><td class="num">0/0</td><td class="num">—</td><td class="num"><strong>1/0</strong></td><td class="num">—</td><td class="num">1/1</td><td class="num">0/0</td><td class="num">—</td><td class="num"><strong>1/0</strong></td><td class="num">1/1</td><td class="num">—</td><td class="num">1/1</td><td class="num">0/0</td></tr>
+          </tbody>
+        </table></div>
+        <p>Quedan 8 bits cribados con 2 errores (fotones 3 y 8): QBER = 2/8 = 25&nbsp;%. En los ocho, Eve acertó la base en cuatro (1, 6, 11, 12) y conoce esos bits con certeza; en los otros cuatro adivinó dos (5 y 8). Sin Eve, las dos filas de la clave cribada serían idénticas.</p>
+
+        <h3>Cuánto error introduce la interceptación-reenvío</h3>
+        <p>Consideremos un bit cribado (Alice y Bob usaron la misma base). Con probabilidad 1/2 Eve elige la misma base, reenvía el estado correcto y no introduce error. Con probabilidad 1/2 elige la otra, reenvía un estado de la base equivocada y Bob, que mide en la base de Alice, obtiene un resultado aleatorio: se equivoca con probabilidad 1/2. Si Eve ataca una fracción <var>p</var> de los fotones y el canal tiene una tasa de error propia <var>e</var> (independiente):</p>
+        <div class="equation"><var>Q</var>(<var>p</var>) = <var>e</var> + (1 − 2<var>e</var>) · <var>p</var>/4 <span class="eq-label">(6.1)</span></div>
+        <p>Con <var>e</var> = 0 y <var>p</var> = 1 se obtiene el 25&nbsp;% del ejemplo. A cambio, Eve conoce el 50&nbsp;% de los bits cribados con certeza y acierta el 75&nbsp;% en total, información que la amplificación de privacidad debe eliminar. Con un canal de <var>e</var> = 2&nbsp;% y umbral del 11&nbsp;%, el QBER supera el umbral cuando <span class="math"><var>p</var> &gt; 4(0,11 − 0,02)/0,96 ≈ 0,375</span>: Eve puede atacar hasta un 37&nbsp;% de los fotones sin provocar el aborto, y precisamente por eso el umbral no puede fijarse de forma arbitraria; lo determina la prueba de seguridad (sección 6.3), que acota la información de <em>cualquier</em> ataque, no solo de este.</p>
+        <p>Pruebe estos números en el <a href="../../ejemplos/qkd_bb84.html">simulador E5</a>, que dibuja la curva (6.1) junto a puntos simulados.</p>
+
+        <h2 id="seguridad"><span class="sec">6.3</span>Seguridad: QBER, umbral del 11&nbsp;% y tasa de clave</h2>
+        <div class="definition"><span class="def-title"><b>Definición</b>QBER</span><p>La <em>quantum bit error rate</em> es la fracción de bits de la clave cribada en que Alice y Bob discrepan, <span class="math"><var>Q</var> = <var>n</var><sub>err</sub>/<var>n</var><sub>crib</sub></span>. Se estima con una muestra aleatoria que se revela y se descarta. En sistemas comerciales sobre fibra, los valores típicos en funcionamiento normal son de pocos puntos porcentuales; su origen es la desalineación óptica, las cuentas oscuras de los detectores y la dispersión.</p></div>
+        <p>El criterio conservador de las pruebas de seguridad es <strong>atribuir todos los errores a Eve</strong>: no se distingue ruido de ataque. Shor y Preskill demostraron en 2000 que BB84 con reconciliación y amplificación de privacidad unidireccionales es seguro frente a cualquier ataque permitido por la mecánica cuántica, y que la fracción de clave secreta por bit cribado es, en el límite asintótico [5]:</p>
+        <div class="equation"><var>r</var> = 1 − <var>h</var>(<var>Q</var><sub>bit</sub>) − <var>h</var>(<var>Q</var><sub>fase</sub>) = 1 − 2<var>h</var>(<var>Q</var>) <span class="eq-label">(6.2)</span></div>
+        <p>donde <span class="math"><var>h</var>(<var>x</var>) = −<var>x</var> log₂ <var>x</var> − (1 − <var>x</var>) log₂(1 − <var>x</var>)</span> es la entropía binaria. Un término <var>h</var>(<var>Q</var>) paga la corrección de errores (lo que se revela por el canal público); el otro paga la información de Eve, acotada por la tasa de error en la base conjugada (error de fase), que en BB84 simétrico coincide con el QBER. La fracción se anula cuando <span class="math"><var>h</var>(<var>Q</var>) = 1/2</span>, es decir, en <strong><var>Q</var> ≈ 11,0&nbsp;%</strong>: ese es el origen del umbral.</p>
+        <div class="table-wrap"><table>
+          <caption>Fracción secreta por bit cribado, r = 1 − h(Q) − f·h(Q)</caption>
+          <thead><tr><th class="num">QBER</th><th class="num">h(Q)</th><th class="num">r, f = 1 (ec. 6.2)</th><th class="num">r, f = 1,16</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1&nbsp;%</td><td class="num">0,081</td><td class="num">0,838</td><td class="num">0,826</td></tr>
+            <tr><td class="num">2&nbsp;%</td><td class="num">0,141</td><td class="num">0,717</td><td class="num">0,695</td></tr>
+            <tr><td class="num">3&nbsp;%</td><td class="num">0,194</td><td class="num">0,611</td><td class="num">0,580</td></tr>
+            <tr><td class="num">5&nbsp;%</td><td class="num">0,286</td><td class="num">0,427</td><td class="num">0,381</td></tr>
+            <tr><td class="num">8&nbsp;%</td><td class="num">0,402</td><td class="num">0,196</td><td class="num">0,131</td></tr>
+            <tr><td class="num">10&nbsp;%</td><td class="num">0,469</td><td class="num">0,062</td><td class="num">0</td></tr>
+            <tr><td class="num">11&nbsp;%</td><td class="num">0,500</td><td class="num">≈ 0</td><td class="num">0</td></tr>
+          </tbody>
+        </table></div>
+        <p>El factor <var>f</var> ≥ 1 mide la ineficiencia real de la reconciliación (se revelan <span class="math"><var>f</var>·<var>h</var>(<var>Q</var>)</span> bits por bit en lugar del mínimo de Shannon). Con <var>f</var> = 1,16, valor típico de Cascade, el umbral efectivo baja a ≈ 9,8&nbsp;% (calculado en el laboratorio L5). Para una revisión completa de las pruebas de seguridad prácticas véase [34]. Los protocolos con postprocesado bidireccional (destilación de ventaja) toleran QBER algo mayores, y el protocolo de seis estados también, a costa de más complejidad.</p>
+
+        <h3>De la fracción por bit a bits por segundo</h3>
+        <p>La tasa útil por pulso emitido es aproximadamente <span class="math"><var>R</var> ≈ ½ · <var>p</var><sub>det</sub> · <var>r</var>(<var>Q</var>)</span>, con el factor ½ del cribado (reducible con bases sesgadas) y <span class="math"><var>p</var><sub>det</sub></span> la probabilidad de detección. En fibra estándar la atenuación es de unos 0,2 dB/km, así que la transmitancia cae como <span class="math">η = 10<sup>−0,02·<var>L</var></sup></span>: 1&nbsp;% a 100 km, 0,01&nbsp;% a 200 km. Cuando la señal se acerca a las cuentas oscuras del detector, el QBER se dispara y la tasa cae a cero. Existe además un límite fundamental para cualquier protocolo punto a punto sin repetidores, la cota PLOB [21]:</p>
+        <div class="equation"><var>R</var> ≤ −log₂(1 − η) ≈ 1,44 η  bits por uso del canal <span class="eq-label">(6.3)</span></div>
+        <p>A 100 km (η = 0,01) la cota es 0,0144 bits por pulso; con una fuente a 1 GHz, del orden de 14 Mbit/s como máximo teórico, y los sistemas reales quedan uno o dos órdenes por debajo. Este escalado lineal con η es la razón de ser de los nodos de confianza, los satélites y la TF-QKD (sección 6.5).</p>
+
+        <h3>Claves finitas y seguridad componible</h3>
+        <p>La ecuación (6.2) supone infinitos pulsos. En la práctica se procesan bloques finitos, el QBER se conoce solo con un intervalo de confianza y la clave final es ε-segura: indistinguible de una clave perfecta salvo con probabilidad ε (por ejemplo 10<sup>−10</sup>), una definición <em>componible</em> que permite usar la clave en cualquier protocolo posterior. Las pruebas de clave finita [22] restan términos que crecen como <span class="math">√<var>n</var></span> y <span class="math">log(1/ε)</span>; con bloques por debajo de ~10<sup>5</sup> bits la penalización es muy grande. Tanto el simulador E5 como el laboratorio L5 muestran este efecto con una cota de Hoeffding simplificada.</p>
+
+        <h2 id="postprocesado"><span class="sec">6.4</span>Postprocesado clásico</h2>
+        <h3>Cribado y estimación de parámetros</h3>
+        <p>Tras el cribado, Alice elige al azar <var>k</var> posiciones, publica sus bits y Bob cuenta discrepancias: <span class="math"><var>Q̂</var> = <var>n</var><sub>err</sub>/<var>k</var></span>. Como se trata de un muestreo sin reemplazo, el QBER de los bits restantes está acotado con probabilidad ≥ 1 − ε por una cota de tipo Hoeffding–Serfling; en su forma más simple:</p>
+        <div class="equation"><var>Q</var> ≤ <var>Q</var><sub>U</sub> = <var>Q̂</var> + √( ln(1/ε) / (2<var>k</var>) ) <span class="eq-label">(6.4)</span></div>
+        <p>Con <var>k</var> = 2&#8239;500 y ε = 10<sup>−3</sup> el término añadido es 3,7 puntos: un QBER observado del 3&nbsp;% se convierte en una cota del 6,7&nbsp;%. Por eso las muestras deben ser grandes y los sistemas reales procesan bloques de 10<sup>6</sup> bits o más.</p>
+
+        <h3>Reconciliación: Cascade y LDPC</h3>
+        <p>Alice y Bob tienen cadenas que difieren en ≈ <var>Qn</var> posiciones. <strong>Cascade</strong> (Brassard y Salvail, 1993) [6] es interactivo:</p>
+        <ol>
+          <li>Dividir la clave en bloques de tamaño <span class="math"><var>k</var><sub>1</sub> ≈ 0,73/<var>Q</var></span> (así cada bloque contiene, en media, menos de un error) y comparar la paridad de cada bloque.</li>
+          <li>En cada bloque con paridades distintas hay un número impar de errores; la subrutina <strong>BINARY</strong> lo localiza por bisección, revelando una paridad por paso: <span class="math">⌈log₂ <var>k</var>⌉</span> bits.</li>
+          <li>Repetir con bloques del doble de tamaño tras una permutación pública. Si en la pasada <var>j</var> se corrige un bit, los bloques de pasadas anteriores que lo contienen pasan a tener paridad distinta y se corrigen también: ese es el efecto «cascada».</li>
+        </ol>
+        <p><strong>Ejemplo BINARY.</strong> Bloque de 8 bits: Alice 1011 0010, Bob 1011 0110. Paridades del bloque: 0 frente a 1, hay error. Mitad izquierda (1011): 1 y 1, iguales, el error está a la derecha. Posiciones 5–6: Alice 00 → 0, Bob 01 → 1, distinto. Posición 5: 0 y 0, iguales, luego el error es el bit 6. Se han revelado 4 paridades, <span class="math">1 + log₂ 8</span>, y cada una es un bit de información que Eve también conoce y que habrá que descontar.</p>
+        <p>Cascade alcanza eficiencias de <var>f</var> ≈ 1,1–1,2 pero necesita muchas rondas de comunicación, lo que limita la velocidad con latencias altas. Los sistemas de alta velocidad usan códigos <strong>LDPC</strong> unidireccionales: Alice envía el síndrome <span class="math"><var>s</var> = <var>H</var><var>x</var></span> de una matriz de paridad dispersa y Bob decodifica por propagación de creencias usando su cadena como información lateral; la fuga es la longitud del síndrome. Hay variantes adaptativas («reconciliación ciega») que ajustan la tasa al QBER sin conocerlo con precisión [23].</p>
+
+        <h3>Verificación</h3>
+        <p>Tras la reconciliación, Alice y Bob comparan un hash universal corto (por ejemplo 64 bits) de sus cadenas; si difieren, abortan. La probabilidad de que dos cadenas distintas pasen la comprobación queda acotada por el tamaño del hash, y esos bits también se descuentan.</p>
+
+        <h3>Amplificación de privacidad</h3>
+        <p>Eve conoce parte de la clave: por lo que dedujo del canal cuántico y por las paridades reveladas. El <strong>lema del hash residual</strong> (<em>leftover hash lemma</em>) garantiza que, si se aplica una función elegida al azar de una familia 2-universal, la salida de ℓ bits es casi uniforme e independiente de Eve siempre que ℓ sea menor que la min-entropía de la clave condicionada a lo que sabe Eve, menos <span class="math">2 log₂(1/ε<sub>PA</sub>)</span>.</p>
+        <div class="definition"><span class="def-title"><b>Construcción</b>Hash de Toeplitz</span><p>Una matriz de Toeplitz <var>T</var> de tamaño ℓ × <var>n</var> sobre GF(2) es constante a lo largo de cada diagonal, <span class="math"><var>T</var><sub><var>ij</var></sub> = <var>s</var><sub><var>j</var>−<var>i</var>+ℓ−1</sub></span>, así que queda definida por una semilla pública de <span class="math"><var>n</var> + ℓ − 1</span> bits. La clave final es <span class="math"><var>K</var> = <var>T</var>·<var>x</var> mod 2</span>. La familia es 2-universal y el producto se calcula en <span class="math"><var>O</var>(<var>n</var> log <var>n</var>)</span> con la FFT, lo que la hace la opción habitual en hardware.</p></div>
+        <p>Una estimación didáctica de la longitud final, coherente con (6.2) pero con los términos finitos más simples, es:</p>
+        <div class="equation">ℓ ≈ <var>n</var> · [1 − <var>h</var>(<var>Q</var><sub>U</sub>)] − leak<sub>EC</sub> − 2 log₂(1/ε<sub>PA</sub>) <span class="eq-label">(6.5)</span></div>
+        <div class="callout"><span class="callout-title">Ejemplo numérico</span><p><var>n</var> = 10&#8239;000 bits tras el muestreo, <var>Q̂</var> = 3&nbsp;%, <var>k</var> = 2&#8239;500, ε = 10<sup>−3</sup>, ε<sub>PA</sub> = 10<sup>−10</sup>, reconciliación con <var>f</var> = 1,16. Entonces <var>Q</var><sub>U</sub> = 6,72&nbsp;%, <var>h</var>(<var>Q</var><sub>U</sub>) = 0,355, leak<sub>EC</sub> = 1,16 · 10&#8239;000 · 0,194 ≈ 2&#8239;255 bits y 2 log₂(10<sup>10</sup>) ≈ 66 bits. Resultado: ℓ ≈ 6&#8239;447 − 2&#8239;255 − 66 ≈ <strong>4&#8239;126 bits</strong>. La fórmula asintótica (6.2) daría 6&#8239;112: el tamaño finito cuesta un tercio de la clave.</p></div>
+
+        <h3 id="autenticacion">Autenticación: la QKD no es autónoma</h3>
+        <p>Todos los mensajes anteriores deben ir autenticados. Hay dos opciones:</p>
+        <ul>
+          <li><strong>Clave simétrica previa y MAC de Wegman–Carter</strong> (seguridad incondicional). Cada sesión consume algo de clave, que se repone con la propia QKD: por eso se dice que la QKD es un mecanismo de <em>expansión</em> de claves, no de establecimiento desde cero. El problema de distribuir la primera clave sigue existiendo.</li>
+          <li><strong>Firmas digitales con PKI</strong>. Si son RSA o ECDSA, un ordenador cuántico criptográficamente relevante (CRQC) futuro no puede romper retroactivamente una autenticación ya realizada (la autenticación solo tiene que resistir en tiempo real), pero sí suplantar en sesiones futuras; con ML-DSA o SLH-DSA el conjunto es resistente. En ambos casos la seguridad total ya no es solo «física»: depende de la firma elegida [16].</li>
+        </ul>
+
+        <h2 id="protocolos"><span class="sec">6.5</span>Más allá de BB84: protocolos modernos</h2>
+        <h3>Basados en entrelazamiento: E91 y BBM92</h3>
+        <p>En E91 (Ekert, 1991) [3] una fuente emite pares entrelazados; Alice y Bob miden en bases aleatorias y usan parte de los resultados para comprobar una desigualdad de Bell (CHSH): una violación garantiza que las correlaciones no fueron preparadas por Eve. BBM92 (Bennett, Brassard y Mermin, 1992) [4] mostró que basta con las dos bases de BB84, sin test de Bell, y que el esquema es equivalente a BB84. La idea de Ekert, llevada al extremo, da la <strong>QKD independiente del dispositivo</strong> (DI-QKD), que no confía en los aparatos sino en la violación observada; hoy es un experimento de laboratorio con tasas muy bajas.</p>
+
+        <h3>Estados señuelo frente al ataque PNS</h3>
+        <p>Las fuentes reales son láseres atenuados con estadística de Poisson: con número medio de fotones μ, una fracción <span class="math">≈ μ²/2</span> de los pulsos lleva dos o más fotones. En el ataque de <strong>división del número de fotones</strong> (PNS) [7], Eve mide el número de fotones sin perturbar la polarización, se queda un fotón de cada pulso múltiple, bloquea los pulsos de un fotón y deja pasar el resto por un canal sin pérdidas; espera al anuncio de bases y mide su copia sin error. No introduce QBER y, con pérdidas altas, conoce toda la clave. Los <strong>estados señuelo</strong> (Hwang, 2003; Lo, Ma y Chen, 2005) [8] lo neutralizan: Alice varía al azar la intensidad entre varios valores (señal, señuelo, vacío) y, como Eve no puede distinguirlos, comparar las tasas de detección de cada intensidad permite estimar la ganancia y el error de los pulsos de un solo fotón, que son los únicos que cuentan como clave (análisis GLLP). Es el estándar de facto en sistemas de fibra y satélite.</p>
+
+        <h3>MDI-QKD</h3>
+        <p>La mayoría de los ataques prácticos se dirigen a los detectores. En la QKD <strong>independiente del dispositivo de medida</strong> (Lo, Curty y Qi, 2012) [9], Alice y Bob solo preparan estados y los envían a un nodo intermedio, Charlie, que realiza una medida de Bell y anuncia el resultado. Charlie puede estar controlado por Eve: su anuncio solo correlaciona los bits de Alice y Bob, y la seguridad no depende de que los detectores sean honestos. Elimina todos los canales laterales del lado de detección, aunque exige interferencia de dos fotones de fuentes independientes. El experimento de referencia alcanzó 404 km de fibra de ultrabaja pérdida (y 311 km de fibra estándar) en 2016 [36].</p>
+
+        <h3>TF-QKD: romper el escalado lineal</h3>
+        <p>La QKD de <strong>campos gemelos</strong> (Lucamarini et al., 2018) [10] también usa un nodo intermedio, pero en él interfieren campos ópticos de fase coherente enviados desde ambos extremos. Como solo tiene que llegar un fotón a la estación central desde cualquiera de los dos lados, la tasa escala como <span class="math">√η</span> y supera la cota PLOB (6.3) sin repetidores: a 500 km de fibra estándar, √η = 10<sup>−5</sup> frente a η = 10<sup>−10</sup>. El precio es estabilizar la fase entre láseres separados cientos de kilómetros. El récord publicado es de <strong>1&#8239;002 km</strong> de fibra de ultrabaja pérdida (USTC, 2023, protocolo <em>sending-or-not-sending</em>) con tasas del orden de bits por hora a esa distancia [11]; no hemos encontrado resultados posteriores que lo superen a septiembre de 2026.</p>
+
+        <h3>CV-QKD</h3>
+        <p>La QKD de <strong>variable continua</strong> codifica en las cuadraturas de estados coherentes (modulación gaussiana o discreta) y mide con detección homodina o heterodina, igual que un receptor coherente de telecomunicaciones. Ventajas: componentes estándar, integración fotónica y buena convivencia con tráfico clásico en la misma fibra. Inconvenientes: postprocesado muy exigente a bajas relaciones señal-ruido y pruebas de seguridad finitas menos maduras. Se ha demostrado sobre 202,81 km de fibra de ultrabaja pérdida (2020) [24] y, en 2025, coexistiendo con tráfico WDM a 100–120 km.</p>
+
+        <div class="table-wrap"><table>
+          <caption>Resumen de protocolos (cifras: experimentos de referencia citados)</caption>
+          <thead><tr><th>Protocolo</th><th>Qué elimina o mejora</th><th>Coste</th><th>Alcance demostrado</th></tr></thead>
+          <tbody>
+            <tr><td>BB84 con señuelos</td><td>Ataque PNS con fuentes láser</td><td>Moduladores de intensidad</td><td>≈ 100–150 km en sistemas comerciales; satélite LEO</td></tr>
+            <tr><td>E91 / BBM92</td><td>Confianza en la fuente (la fuente puede ser de Eve)</td><td>Fuentes de pares, tasas bajas</td><td>1&#8239;120 km vía satélite (Micius, 2020)</td></tr>
+            <tr><td>MDI-QKD</td><td>Todos los ataques a detectores</td><td>Interferencia de fuentes independientes</td><td>404 km (2016)</td></tr>
+            <tr><td>TF-QKD</td><td>Escalado <var>R</var> ∝ η → √η</td><td>Estabilización de fase a larga distancia</td><td>1&#8239;002 km (2023)</td></tr>
+            <tr><td>CV-QKD</td><td>Hardware de telecomunicaciones estándar</td><td>Postprocesado, ruido de fase</td><td>202,81 km (2020)</td></tr>
+            <tr><td>DI-QKD</td><td>Confianza en todos los dispositivos</td><td>Violación de Bell sin resquicios</td><td>Laboratorio</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="hacking"><span class="sec">6.6</span>Ataques a implementaciones (<em>quantum hacking</em>)</h2>
+        <p>Las pruebas de seguridad valen para un modelo de los dispositivos. Cuando el hardware se aparta del modelo aparecen ataques que no dejan QBER. La historia es instructiva porque se parece mucho a la de los canales laterales en criptografía clásica.</p>
+        <ol class="timeline">
+          <li><span class="when">2000</span>Brassard, Lütkenhaus, Mor y Sanders formalizan el ataque PNS contra fuentes multifotón [7]. Respuesta: estados señuelo (2003–2005).</li>
+          <li><span class="when">2006</span>Ataques de «caballo de Troya»: Eve inyecta luz en el equipo de Alice y lee el estado de sus moduladores en la reflexión. Respuesta: aisladores, filtros y un detector auxiliar que monitoriza la luz entrante (Gisin et al.) [35].</li>
+          <li><span class="when">2008</span>Ataque de desplazamiento temporal contra un sistema comercial: Eve explota la diferente eficiencia de los dos detectores en función del instante de llegada (Zhao et al.) [12].</li>
+          <li><span class="when">2010</span><strong>Cegado de detectores</strong>: con luz continua brillante, los fotodiodos de avalancha dejan de funcionar en modo Geiger y pasan a responder como detectores clásicos; Eve los controla con pulsos ajustados y obtiene la clave completa sin QBER en dos sistemas comerciales (Lydersen et al., <em>Nature Photonics</em>) [13].</li>
+          <li><span class="when">2011</span>Primer espía «perfecto» sobre un enlace en funcionamiento: clave completa, ningún parámetro monitorizado fuera de rango (Gerhardt et al.) [14].</li>
+          <li><span class="when">2012</span>MDI-QKD elimina por diseño toda la superficie de ataque de los detectores [9].</li>
+          <li><span class="when">2025</span>Un análisis de datos publicados del satélite Micius sostiene que la desincronización entre sus láseres permitiría distinguir pulsos señal y señuelo (preprint de un único autor, pendiente de confirmación independiente) [15].</li>
+        </ol>
+        <p>Lección: «seguridad incondicional» describe al protocolo ideal, nunca a una implementación. Por eso la certificación (sección 6.8) y la evaluación de ataques físicos son el principal obstáculo que citan las agencias [16].</p>
+
+        <h2 id="redes"><span class="sec">6.7</span>Redes QKD</h2>
+        <h3>Nodos de confianza</h3>
+        <p>Como un enlace de fibra no pasa de unos cientos de kilómetros y no existen repetidores cuánticos prácticos, las redes actuales encadenan enlaces punto a punto a través de <strong>nodos de confianza</strong> (<em>trusted nodes</em>). Cada enlace genera su propia clave; el nodo intermedio retransmite la clave extremo a extremo cifrándola con la del siguiente enlace (cifrado de Vernam salto a salto).</p>
+        <figure class="diagram">
+          <svg viewBox="0 0 760 330" role="img" aria-labelledby="f62t f62d">
+            <title id="f62t">Red QKD con nodos de confianza</title>
+            <desc id="f62d">Alice y Bob están unidos por tres enlaces QKD a través de dos nodos de confianza N1 y N2. Cada enlace produce una clave K1, K2 y K3. N1 envía K1 xor K2 a N2 y N2 envía K1 xor K3 a Bob, que recupera K1. Los nodos intermedios conocen K1.</desc>
+            <defs>
+              <marker id="f62a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-ink"/></marker>
+            </defs>
+            <rect x="20" y="20" width="120" height="40" rx="4" class="svg-box"/>
+            <text x="80" y="45" text-anchor="middle" class="svg-text">SAE de Alice</text>
+            <rect x="620" y="20" width="120" height="40" rx="4" class="svg-box"/>
+            <text x="680" y="45" text-anchor="middle" class="svg-text">SAE de Bob</text>
+            <line x1="80" y1="60" x2="80" y2="102" class="svg-stroke-ink" marker-start="url(#f62a)" marker-end="url(#f62a)"/>
+            <line x1="680" y1="60" x2="680" y2="102" class="svg-stroke-ink" marker-start="url(#f62a)" marker-end="url(#f62a)"/>
+            <text x="90" y="86" class="svg-muted">ETSI 014</text>
+            <text x="670" y="86" text-anchor="end" class="svg-muted">ETSI 014</text>
+            <rect x="20" y="104" width="120" height="56" rx="4" class="svg-box-signal"/>
+            <text x="80" y="128" text-anchor="middle" class="svg-text" font-weight="700">Alice</text>
+            <text x="80" y="147" text-anchor="middle" class="svg-muted">KME + QKD</text>
+            <rect x="233" y="104" width="120" height="56" rx="4" class="svg-box-amber"/>
+            <text x="293" y="128" text-anchor="middle" class="svg-text" font-weight="700">Nodo N1</text>
+            <text x="293" y="147" text-anchor="middle" class="svg-muted">de confianza</text>
+            <rect x="407" y="104" width="120" height="56" rx="4" class="svg-box-amber"/>
+            <text x="467" y="128" text-anchor="middle" class="svg-text" font-weight="700">Nodo N2</text>
+            <text x="467" y="147" text-anchor="middle" class="svg-muted">de confianza</text>
+            <rect x="620" y="104" width="120" height="56" rx="4" class="svg-box-signal"/>
+            <text x="680" y="128" text-anchor="middle" class="svg-text" font-weight="700">Bob</text>
+            <text x="680" y="147" text-anchor="middle" class="svg-muted">KME + QKD</text>
+            <line x1="140" y1="132" x2="233" y2="132" class="svg-stroke-signal" stroke-width="3"/>
+            <line x1="353" y1="132" x2="407" y2="132" class="svg-stroke-signal" stroke-width="3"/>
+            <line x1="527" y1="132" x2="620" y2="132" class="svg-stroke-signal" stroke-width="3"/>
+            <text x="186" y="182" text-anchor="middle" class="svg-text">QKD → K₁</text>
+            <text x="380" y="182" text-anchor="middle" class="svg-text">QKD → K₂</text>
+            <text x="573" y="182" text-anchor="middle" class="svg-text">QKD → K₃</text>
+            <path d="M293,162 C320,240 440,240 465,164" class="svg-stroke-ink" stroke-dasharray="5 4" marker-end="url(#f62a)"/>
+            <text x="380" y="242" text-anchor="middle" class="svg-mono svg-text">K₁ ⊕ K₂</text>
+            <path d="M467,162 C500,262 650,262 678,164" class="svg-stroke-ink" stroke-dasharray="5 4" marker-end="url(#f62a)"/>
+            <text x="572" y="266" text-anchor="middle" class="svg-mono svg-text">K₁ ⊕ K₃</text>
+            <text x="20" y="298" class="svg-muted">N2 calcula (K₁ ⊕ K₂) ⊕ K₂ = K₁; Bob calcula (K₁ ⊕ K₃) ⊕ K₃ = K₁. Clave extremo a extremo: K₁.</text>
+            <text x="20" y="318" class="svg-muted">N1 y N2 ven K₁ en claro: quien controle un nodo intermedio conoce la clave. Las flechas discontinuas van por el canal clásico.</text>
+          </svg>
+          <figcaption><b>Figura 6.2.</b> Retransmisión salto a salto en una red QKD. La aplicación (SAE, <em>secure application entity</em>) pide las claves a su gestor de claves (KME) mediante una API como ETSI GS QKD 014.</figcaption>
+        </figure>
+        <p>La consecuencia es la que subrayan todas las agencias: una red con nodos de confianza <strong>no proporciona seguridad extremo a extremo</strong>. Cada nodo es un punto donde la clave existe en claro y que debe protegerse física y lógicamente como un HSM; el satélite de un enlace espacial es, en la mayoría de las misiones actuales, otro nodo de confianza [16]. La alternativa real serán los repetidores cuánticos basados en memorias y entrelazamiento, todavía en investigación básica.</p>
+
+        <h3>Despliegues: China</h3>
+        <ul>
+          <li><strong>Micius</strong> (lanzado en agosto de 2016): QKD satélite-tierra con estados señuelo hasta 1&#8239;200 km de distancia (2017) [17], enlace intercontinental con nodo de confianza en el satélite entre China y Austria (2017–2018), y QKD basada en entrelazamiento entre dos estaciones separadas 1&#8239;120 km (2020).</li>
+          <li><strong>Red troncal Pekín–Shanghái</strong>: más de 2&#8239;000 km de fibra con nodos de confianza. Integrada con dos enlaces de satélite formó en 2021 una red de 4&#8239;600 km con más de 700 enlaces QKD y más de 150 usuarios industriales (banca, redes eléctricas, administración) [18].</li>
+          <li><strong>Jinan-1</strong> (microsatélite lanzado en julio de 2022, carga útil de ≈ 23 kg y estaciones terrestres portátiles de ≈ 100 kg): QKD en tiempo real con varias estaciones y un enlace entre Pekín y Stellenbosch (Sudáfrica) a 12&#8239;900 km, con el satélite como nodo de confianza (<em>Nature</em>, marzo de 2025) [19].</li>
+        </ul>
+
+        <h3>Despliegues: Unión Europea y España</h3>
+        <ul>
+          <li><strong>EuroQCI</strong>. Los 27 Estados miembros participan con redes nacionales (primera fase 2023–2025 financiada por el programa Europa Digital); el Mecanismo «Conectar Europa» financia 19 proyectos de enlaces transfronterizos; desde 2024 el proyecto NOSTRADAMUS construye la infraestructura de evaluación de equipos QKD, que se transfiere al Centro Común de Investigación en Ispra. La EuroQCI es parte integrante de IRIS² [25].</li>
+          <li><strong>Eagle-1</strong> (ESA, SES y consorcio europeo): primer satélite QKD europeo en órbita baja, con carga útil de Tesat y plataforma de SITAEL. La ESA lo anunciaba para finales de 2026 o principios de 2027; en junio de 2026 se informó de un nuevo retraso de la carga útil que lo sitúa no antes de finales de 2027 o principios de 2028, y la página de la Comisión (julio de 2026) indica finales de 2027 [26].</li>
+          <li><strong>MadQCI</strong> (Madrid): red QKD heterogénea, con equipos de varios fabricantes, gestionada con redes definidas por software (SDN) y desplegada en instalaciones de producción de Telefónica y RedIMadrid, compartiendo fibra con tráfico comercial durante cerca de tres años; descrita en <em>npj Quantum Information</em> en 2024 [20].</li>
+          <li><strong>EuroQCI-Spain</strong> (2023–2025, coordinado por ICFO, con UPM, CSIC, Telefónica I+D, Cellnex, Tecnobit e Indra) desplegó los nodos de Madrid y Barcelona. En junio de 2026 Indra anunció la finalización de la fase nacional: cerca de 30 nodos en Madrid y un anillo de tres nodos en Barcelona, con QKD, PQC y gestión híbrida de claves; lidera además IberianQCI, que enlaza España y Portugal [27].</li>
+          <li><strong>Caramuel</strong> (Hispasat y 17 entidades españolas): misión de QKD desde órbita geoestacionaria, alojada en un futuro satélite de Hispasat; fase A completada en diciembre de 2022 [28]. Sus responsables han situado el lanzamiento hacia 2028; trátese como una previsión.</li>
+        </ul>
+
+        <h2 id="estandares"><span class="sec">6.8</span>Normalización y certificación</h2>
+        <div class="table-wrap"><table>
+          <caption>Normas relevantes (verificadas en septiembre de 2026) [32, 33]</caption>
+          <thead><tr><th>Documento</th><th>Contenido</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td>ETSI GS QKD 014 V1.1.1 (2019-02)</td><td>API REST de entrega de claves entre KME y SAE: HTTPS con TLS ≥ 1.2 y autenticación mutua, JSON, tres métodos</td><td><span class="badge final">Publicada</span></td></tr>
+            <tr><td>ETSI GS QKD 004 V2.1.1 (2020-08)</td><td>Interfaz de aplicación orientada a sesiones (OPEN_CONNECT, GET_KEY, CLOSE)</td><td><span class="badge final">Publicada</span></td></tr>
+            <tr><td>ETSI GS QKD 016 V2.1.1 (2024-01)</td><td>Perfil de protección Common Criteria para pares de módulos QKD de «preparar y medir»; esta versión está certificada por el BSI</td><td><span class="badge final">Certificado</span></td></tr>
+            <tr><td>ETSI GS QKD 020 V1.1.1 (2026-06)</td><td>API REST para la interoperabilidad entre sistemas de gestión de claves (KMS) de distintos fabricantes</td><td><span class="badge final">Publicada (2026)</span></td></tr>
+            <tr><td>ITU-T Y.3800 (10/2019) y serie Y.38xx</td><td>Arquitectura de redes que soportan QKD: capas cuántica, de gestión de claves, de control y de gestión; Y.3801 requisitos, Y.3802 arquitectura detallada</td><td><span class="badge final">Recomendación</span></td></tr>
+            <tr><td>ISO/IEC 23837-1 y -2:2023</td><td>Requisitos de seguridad y métodos de ensayo y evaluación de módulos QKD en el marco de ISO/IEC 15408 (Common Criteria)</td><td><span class="badge final">Norma</span></td></tr>
+          </tbody>
+        </table></div>
+        <p>Obsérvese lo que <em>falta</em>: según la posición conjunta de 2024 de ANSSI, BSI, NLNCSA y la autoridad sueca, ningún protocolo QKD ha pasado por un proceso de normalización comparable al concurso PQC del NIST, ni existe una prueba de seguridad completa y cohesionada para un protocolo práctico, ni una metodología reconocida para evaluar ataques físicos [16].</p>
+
+        <h3 id="etsi-014">La API ETSI GS QKD 014 en una página</h3>
+        <p>La aplicación no ve fotones: pide claves a su KME. Hay un SAE <em>maestro</em>, que pide claves nuevas, y un SAE <em>esclavo</em>, que recupera las mismas claves por su identificador:</p>
+        <div class="table-wrap"><table>
+          <caption>Métodos de ETSI GS QKD 014 V1.1.1 (tabla 2 de la norma)</caption>
+          <thead><tr><th>Método</th><th>URL</th><th>Verbo</th><th>Quién</th></tr></thead>
+          <tbody>
+            <tr><td>Get status</td><td><code>/api/v1/keys/{slave_SAE_ID}/status</code></td><td>GET</td><td>Maestro</td></tr>
+            <tr><td>Get key</td><td><code>/api/v1/keys/{slave_SAE_ID}/enc_keys</code></td><td>POST (o GET con <code>number</code> y <code>size</code>)</td><td>Maestro</td></tr>
+            <tr><td>Get key with key IDs</td><td><code>/api/v1/keys/{master_SAE_ID}/dec_keys</code></td><td>POST (o GET)</td><td>Esclavo</td></tr>
+          </tbody>
+        </table></div>
+        <pre data-lang="json"><code><span class="tok-c">// POST /api/v1/keys/SAE_B/enc_keys</span>
+<span class="tok-c">// cuerpo: {"number": 1, "size": 256}</span>
+{ <span class="tok-s">"keys"</span>: [ { <span class="tok-s">"key_ID"</span>: <span class="tok-s">"bc490419-7d60-487f-adc1-4ddcc177c139"</span>,
+              <span class="tok-s">"key"</span>: <span class="tok-s">"wHHVxRwDJs3/bXd38GHP3oe4svTuRpZS0yCC7x4Ly+s="</span> } ] }
+<span class="tok-c">// El SAE esclavo envía {"key_IDs": [{"key_ID": "bc490419-..."}]}</span>
+<span class="tok-c">// a dec_keys y recibe la misma clave. Tamaño en bits, clave en</span>
+<span class="tok-c">// base64; una clave entregada se retira del almacén del KME.</span></code></pre>
+        <p>La autenticación entre SAE y KME es TLS con certificados: en una red «resistente a ordenadores cuánticos», ese TLS debe ser a su vez post-cuántico o híbrido. En el laboratorio L5 se implementa un KME simulado con esta forma exacta.</p>
+
+        <h2 id="posiciones"><span class="sec">6.9</span>Qué dicen las agencias</h2>
+        <div class="grid-2">
+          <div class="callout note"><span class="callout-title">NSA (Estados Unidos)</span><p>No recomienda QKD ni criptografía cuántica para proteger sistemas de seguridad nacional mientras no se superen cinco limitaciones: solución parcial sin autenticación propia, hardware de propósito específico, más coste y riesgo interno (nodos de confianza), dificultad de validar la seguridad real y mayor riesgo de denegación de servicio. Considera la PQC más rentable y fácil de mantener [29].</p></div>
+          <div class="callout note"><span class="callout-title">NCSC (Reino Unido)</span><p>Libro blanco de 2020, actualizado el 15 de mayo de 2026: no respalda el uso de QKD en aplicaciones gubernamentales o militares, desaconseja confiar solo en ella en infraestructuras críticas y exige, si se usa, autenticación resistente a ordenadores cuánticos junto a ella. Su recomendación principal es la criptografía post-cuántica [30].</p></div>
         </div>
+        <div class="callout"><span class="callout-title">Posición conjunta ANSSI · BSI · NLNCSA · Suecia (25 de enero de 2024)</span><p>La QKD solo es utilizable hoy en algunos casos de nicho, no es suficientemente madura en seguridad y no puede aplicarse en la gran mayoría de los usos actuales del intercambio de claves. La prioridad debe ser la migración a PQC, en soluciones híbridas con criptografía clásica o con claves simétricas previas. Recomienda seguir investigando [16]. La agencia checa NÚKIB se adhirió después con una carta de apoyo.</p></div>
+        <p>La posición no es «la QKD no funciona», sino que su relación coste-beneficio solo compensa en casos concretos: enlaces fijos de muy alto valor, distancias metropolitanas, requisitos de confidencialidad a décadas vista, y siempre como capa adicional.</p>
+        <div class="table-wrap"><table>
+          <caption>Comparación equilibrada QKD frente a PQC</caption>
+          <thead><tr><th>Aspecto</th><th>QKD</th><th>PQC (ML-KEM, ML-DSA…)</th></tr></thead>
+          <tbody>
+            <tr><td>Fundamento</td><td>Física cuántica; no depende de supuestos computacionales (en el modelo ideal)</td><td>Dificultad supuesta de problemas (retículos, hash…) frente a ordenadores cuánticos</td></tr>
+            <tr><td>«Almacenar ahora, descifrar después»</td><td>Resistente si la clave se usa con un cifrado simétrico robusto y la autenticación fue correcta</td><td>Resistente si el problema subyacente sigue siendo difícil; riesgo de avances criptoanalíticos (mitigado con hibridación)</td></tr>
+            <tr><td>Autenticación</td><td>No la proporciona: requiere PSK o firmas (PQC)</td><td>Firmas digitales incluidas (ML-DSA, SLH-DSA)</td></tr>
+            <tr><td>Infraestructura</td><td>Fibra oscura o canal dedicado, óptica específica, equipos por enlace</td><td>Software y hardware existentes; actualización de protocolos</td></tr>
+            <tr><td>Alcance</td><td>≈ 100 km comercial por enlace; más lejos con nodos de confianza o satélite</td><td>Ilimitado, extremo a extremo por Internet</td></tr>
+            <tr><td>Seguridad de la implementación</td><td>Historial de ataques físicos; certificación incipiente (ETSI 016, ISO/IEC 23837)</td><td>Canales laterales (p. ej. KyberSlash); validación FIPS 140-3 y CMVP madura</td></tr>
+            <tr><td>Disponibilidad</td><td>Cualquier perturbación del canal detiene la generación (DoS)</td><td>Igual que la criptografía actual</td></tr>
+            <tr><td>Tasa de clave</td><td>kbit/s–Mbit/s según distancia</td><td>Sin límite práctico</td></tr>
+            <tr><td>Coste</td><td>Alto en adquisición y operación</td><td>Bajo, marginal</td></tr>
+            <tr><td>Normalización</td><td>Interfaces y evaluación (ETSI, ITU-T, ISO/IEC); protocolos sin normalizar</td><td>FIPS 203/204/205, RFC e ISO en curso</td></tr>
+          </tbody>
+        </table></div>
 
-        <section class="tema-intro">
-            <h2>Introducción</h2>
-            <p>Este tema explora la Distribución Cuántica de Claves (QKD), un enfoque fundamentalmente diferente para el establecimiento seguro de claves que utiliza principios de la mecánica cuántica. A diferencia de la criptografía post-cuántica, que utiliza matemáticas clásicas resistentes a ataques cuánticos, QKD aprovecha las propiedades cuánticas para detectar cualquier intento de interceptación.</p>
-            
-            <div class="tema-info">
-                <div class="info-item">
-                    <h3>Duración</h3>
-                    <p>2 horas</p>
-                </div>
-                <div class="info-item">
-                    <h3>Objetivos</h3>
-                    <ul>
-                        <li>Comprender los principios físicos fundamentales de la distribución cuántica de claves</li>
-                        <li>Analizar los principales protocolos QKD y sus características</li>
-                        <li>Examinar las implementaciones prácticas y limitaciones actuales</li>
-                        <li>Comparar QKD con enfoques de criptografía post-cuántica</li>
-                        <li>Explorar aplicaciones y casos de uso apropiados para QKD</li>
-                        <li>Evaluar el futuro de QKD y su papel en la seguridad cuántica</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+        <h2 id="qkd-pqc"><span class="sec">6.10</span>Combinar QKD y PQC</h2>
+        <p>Allí donde se despliega QKD, lo razonable es usarla <strong>junto</strong> a la PQC, de modo que un atacante tenga que romper ambas. Se aplican los principios del intercambio de claves híbrido del <a href="../tema5/index.html">Tema 5</a>:</p>
+        <ol>
+          <li><strong>Autenticar la QKD con PQC</strong>: el canal clásico del postprocesado y el TLS entre SAE y KME se protegen con ML-DSA (o SLH-DSA) y ML-KEM, o con claves simétricas previas.</li>
+          <li><strong>Combinar secretos con una KDF</strong>: la aplicación obtiene <span class="math"><var>K</var><sub>QKD</sub></span> por ETSI GS QKD 014 y ejecuta además un intercambio ML-KEM (o X25519MLKEM768); la clave de sesión es
+            <span class="math"><var>K</var> = HKDF(<var>K</var><sub>QKD</sub> ‖ <var>K</var><sub>KEM</sub>, info = contexto ‖ key_ID ‖ H(transcript))</span>. Si cualquiera de los dos secretos permanece oculto, <var>K</var> también.</li>
+          <li><strong>Protocolos estándar</strong>. En IPsec, RFC 8784 mezcla una clave precompartida post-cuántica (PPK) con el intercambio IKEv2, y los fabricantes la alimentan con claves QKD; RFC 9370 permite encadenar varios intercambios (por ejemplo ML-KEM tras ECDH) [31]. En TLS 1.3 una clave QKD puede entrar como PSK externa en el modo <code>psk_dhe_ke</code>, combinada con el grupo X25519MLKEM768.</li>
+        </ol>
+        <figure class="diagram">
+          <svg viewBox="0 0 760 210" role="img" aria-labelledby="f63t f63d">
+            <title id="f63t">Derivación de una clave híbrida QKD y ML-KEM</title>
+            <desc id="f63d">La clave QKD, obtenida del KME mediante ETSI 014, y el secreto de ML-KEM-768 entran concatenados en HKDF junto con el key_ID y el hash del transcript; la salida es la clave de sesión para AES-GCM o IPsec.</desc>
+            <defs>
+              <marker id="f63a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="svg-ink"/></marker>
+            </defs>
+            <rect x="20" y="20" width="200" height="60" rx="4" class="svg-box-signal"/>
+            <text x="120" y="45" text-anchor="middle" class="svg-text">KME (red QKD)</text>
+            <text x="120" y="64" text-anchor="middle" class="svg-muted">ETSI 014 → K_QKD, key_ID</text>
+            <rect x="20" y="120" width="200" height="60" rx="4" class="svg-box"/>
+            <text x="120" y="145" text-anchor="middle" class="svg-text">ML-KEM-768</text>
+            <text x="120" y="164" text-anchor="middle" class="svg-muted">encapsular → K_KEM, ct</text>
+            <rect x="300" y="70" width="200" height="60" rx="4" class="svg-box-ink"/>
+            <text x="400" y="95" text-anchor="middle" class="svg-on-ink">HKDF-SHA-256</text>
+            <text x="400" y="114" text-anchor="middle" class="svg-on-ink">K_QKD ‖ K_KEM ; info</text>
+            <rect x="580" y="70" width="160" height="60" rx="4" class="svg-box-amber"/>
+            <text x="660" y="95" text-anchor="middle" class="svg-text">clave de sesión</text>
+            <text x="660" y="114" text-anchor="middle" class="svg-muted">AES-256-GCM / IPsec</text>
+            <path d="M220,50 L260,50 L260,92 L296,92" class="svg-stroke-ink" marker-end="url(#f63a)"/>
+            <path d="M220,150 L260,150 L260,108 L296,108" class="svg-stroke-ink" marker-end="url(#f63a)"/>
+            <line x1="500" y1="100" x2="576" y2="100" class="svg-stroke-ink" marker-end="url(#f63a)"/>
+            <text x="400" y="160" text-anchor="middle" class="svg-muted">info = etiqueta ‖ key_ID ‖ SHA-256(ek ‖ ct)</text>
+            <text x="400" y="195" text-anchor="middle" class="svg-muted">Seguro si al menos uno de los dos secretos es desconocido para el atacante</text>
+          </svg>
+          <figcaption><b>Figura 6.3.</b> Combinador híbrido QKD + PQC. Es el mismo patrón de «concatenar y derivar» que X25519MLKEM768, con una clave QKD en lugar del secreto ECDH. Implementado en la parte 5 del laboratorio L5.</figcaption>
+        </figure>
+        <div class="callout warning"><span class="callout-title">Errores frecuentes</span><p>(1) Usar la clave QKD directamente como clave AES sin KDF ni separación de dominios. (2) Olvidar que el TLS entre SAE y KME sigue siendo criptografía clásica: si es RSA o ECDHE, un atacante HNDL que capture ese tráfico obtiene las claves QKD. (3) Presentar una red con nodos de confianza como «seguridad extremo a extremo». (4) Aplicar XOR de dos claves sin ligarlas al contexto: la KDF con <code>info</code> evita reutilizaciones entre sesiones.</p></div>
 
-        <section class="tema-contenido">
-            <h2>Contenido del Tema</h2>
-            
-            <div class="subtema">
-                <h3>6.1 Fundamentos de Mecánica Cuántica para QKD</h3>
-                <p>La distribución cuántica de claves se basa en principios fundamentales de la mecánica cuántica que proporcionan garantías de seguridad basadas en las leyes de la física.</p>
-                
-                <h4>Principios Cuánticos Clave</h4>
-                <ul>
-                    <li><strong>Superposición Cuántica:</strong> Un sistema cuántico puede existir simultáneamente en múltiples estados hasta que se realiza una medición.</li>
-                    <li><strong>Principio de Incertidumbre de Heisenberg:</strong> No es posible medir simultáneamente con precisión arbitraria ciertas parejas de propiedades físicas complementarias.</li>
-                    <li><strong>Teorema de No-Clonación:</strong> Es imposible crear una copia exacta de un estado cuántico desconocido. Este principio es fundamental para la seguridad de QKD.</li>
-                    <li><strong>Entrelazamiento Cuántico:</strong> Dos o más partículas pueden estar correlacionadas de tal manera que el estado de una no puede describirse independientemente del estado de las otras.</li>
-                </ul>
-                
-                <h4>Qubits: Unidades Básicas de Información Cuántica</h4>
-                <ul>
-                    <li><strong>Definición:</strong> Un qubit es la unidad básica de información cuántica, análoga al bit clásico pero con capacidad de existir en superposición.</li>
-                    <li><strong>Representación:</strong> Un qubit puede representarse como |ψ⟩ = α|0⟩ + β|1⟩, donde α y β son números complejos que satisfacen |α|² + |β|² = 1.</li>
-                    <li><strong>Implementaciones Físicas:</strong> Los qubits pueden implementarse utilizando:
-                        <ul>
-                            <li>Polarización de fotones (horizontal/vertical, diagonal/antidiagonal, circular derecha/izquierda)</li>
-                            <li>Espín de electrones o núcleos atómicos</li>
-                            <li>Niveles de energía en átomos o iones atrapados</li>
-                            <li>Circuitos superconductores</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Bases de Medición</h4>
-                <p>En QKD, las mediciones se realizan en diferentes bases, que son conjuntos de estados ortogonales:</p>
-                <ul>
-                    <li><strong>Base Rectilinear (Z):</strong> Estados de polarización horizontal (|0⟩) y vertical (|1⟩).</li>
-                    <li><strong>Base Diagonal (X):</strong> Estados de polarización a 45° (|+⟩) y 135° (|-⟩).</li>
-                    <li><strong>Base Circular (Y):</strong> Estados de polarización circular derecha (|R⟩) y circular izquierda (|L⟩).</li>
-                </ul>
-                <p>Medir un qubit en una base diferente a la de su preparación produce resultados aleatorios y destruye la información original.</p>
-                
-                <h4>Detección de Espionaje</h4>
-                <p>La capacidad de detectar espionaje en QKD se basa en dos principios fundamentales:</p>
-                <ul>
-                    <li><strong>Teorema de No-Clonación:</strong> Un espía no puede copiar qubits desconocidos para analizarlos sin perturbarlos.</li>
-                    <li><strong>Colapso de la Función de Onda:</strong> Cualquier medición perturba el estado cuántico, introduciendo errores detectables.</li>
-                </ul>
-                <p>Estos principios garantizan que cualquier intento de interceptar la comunicación cuántica será detectable a través de un aumento en la tasa de error.</p>
-            </div>
-            
-            <div class="subtema">
-                <h3>6.2 Protocolos de Distribución Cuántica de Claves</h3>
-                <p>Existen varios protocolos para implementar QKD, cada uno con características y ventajas específicas.</p>
-                
-                <h4>Protocolo BB84</h4>
-                <p>Desarrollado por Charles Bennett y Gilles Brassard en 1984, BB84 fue el primer protocolo QKD:</p>
-                <ol>
-                    <li><strong>Preparación:</strong> Alice genera bits aleatorios y los codifica en qubits utilizando aleatoriamente la base rectilinear o diagonal.</li>
-                    <li><strong>Transmisión:</strong> Alice envía los qubits a Bob a través de un canal cuántico.</li>
-                    <li><strong>Medición:</strong> Bob mide cada qubit utilizando aleatoriamente la base rectilinear o diagonal.</li>
-                    <li><strong>Reconciliación de Bases:</strong> Alice y Bob revelan públicamente qué bases utilizaron para cada qubit (pero no los resultados).</li>
-                    <li><strong>Filtrado:</strong> Descartan los bits donde utilizaron bases diferentes, conservando solo aquellos donde coincidieron las bases.</li>
-                    <li><strong>Estimación de Error:</strong> Revelan una muestra aleatoria de sus bits para estimar la tasa de error.</li>
-                    <li><strong>Corrección de Errores:</strong> Aplican protocolos de corrección de errores para corregir discrepancias.</li>
-                    <li><strong>Amplificación de Privacidad:</strong> Aplican funciones hash para reducir la información que un espía podría haber obtenido.</li>
-                </ol>
-                <p>La seguridad de BB84 se basa en que cualquier intento de medición por parte de un espía introducirá errores detectables, ya que el espía no conoce las bases utilizadas por Alice.</p>
-                
-                <h4>Protocolo E91</h4>
-                <p>Propuesto por Artur Ekert en 1991, E91 utiliza pares de partículas entrelazadas:</p>
-                <ol>
-                    <li><strong>Generación:</strong> Una fuente genera pares de fotones entrelazados, enviando uno a Alice y otro a Bob.</li>
-                    <li><strong>Medición:</strong> Alice y Bob miden sus fotones en bases elegidas aleatoriamente de entre tres opciones.</li>
-                    <li><strong>Reconciliación:</strong> Revelan públicamente sus bases de medición (pero no los resultados).</li>
-                    <li><strong>Correlación:</strong> Para ciertas combinaciones de bases, utilizan los resultados para generar bits de clave.</li>
-                    <li><strong>Prueba de Bell:</strong> Para otras combinaciones de bases, utilizan los resultados para verificar el entrelazamiento mediante desigualdades de Bell.</li>
-                </ol>
-                <p>La seguridad de E91 se basa en que cualquier interferencia con el entrelazamiento será detectable mediante las desigualdades de Bell.</p>
-                
-                <h4>Protocolo BBM92</h4>
-                <p>Desarrollado por Bennett, Brassard y Mermin en 1992, BBM92 combina elementos de BB84 y E91:</p>
-                <ul>
-                    <li>Utiliza pares entrelazados como E91, pero solo dos bases de medición como BB84.</li>
-                    <li>Simplifica la implementación mientras mantiene las ventajas del entrelazamiento.</li>
-                    <li>No requiere pruebas de Bell, lo que facilita su implementación práctica.</li>
-                </ul>
-                
-                <h4>Protocolo B92</h4>
-                <p>Una versión simplificada de BB84 propuesta por Bennett en 1992:</p>
-                <ul>
-                    <li>Utiliza solo dos estados cuánticos no ortogonales en lugar de cuatro.</li>
-                    <li>Más simple pero generalmente menos eficiente que BB84.</li>
-                    <li>Potencialmente más vulnerable a ciertos tipos de ataques.</li>
-                </ul>
-                
-                <h4>Protocolos de Variables Continuas (CV-QKD)</h4>
-                <p>A diferencia de los protocolos basados en variables discretas (como BB84), los protocolos CV-QKD utilizan estados cuánticos con variables continuas:</p>
-                <ul>
-                    <li>Utilizan la modulación de amplitud y fase de estados coherentes de luz.</li>
-                    <li>Pueden implementarse con tecnología de telecomunicaciones estándar (detección homodina o heterodina).</li>
-                    <li>Potencialmente más adecuados para integración con infraestructura de fibra óptica existente.</li>
-                    <li>Ejemplos incluyen el protocolo GG02 (Grosshans-Grangier 2002).</li>
-                </ul>
-                
-                <h4>Protocolos de Referencia de Fase Distribuida (DPR-QKD)</h4>
-                <p>Estos protocolos utilizan la interferencia entre pulsos de luz para codificar información:</p>
-                <ul>
-                    <li>No requieren una referencia de fase externa, lo que simplifica la implementación.</li>
-                    <li>Más robustos frente a fluctuaciones en el canal de transmisión.</li>
-                    <li>Ejemplos incluyen el protocolo COW (Coherent One-Way) y el protocolo DPS (Differential Phase Shift).</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>6.3 Implementaciones Prácticas y Limitaciones</h3>
-                <p>La implementación práctica de QKD enfrenta diversos desafíos técnicos y limitaciones.</p>
-                
-                <h4>Componentes Físicos</h4>
-                <ul>
-                    <li><strong>Fuentes de Fotones:</strong>
-                        <ul>
-                            <li>Fuentes de fotones individuales (átomos, iones, centros de color)</li>
-                            <li>Fuentes de fotones atenuados (láseres pulsados atenuados)</li>
-                            <li>Fuentes de pares entrelazados (conversión paramétrica espontánea)</li>
-                        </ul>
-                    </li>
-                    <li><strong>Canales Cuánticos:</strong>
-                        <ul>
-                            <li>Fibra óptica (telecomunicaciones, 1310 nm o 1550 nm)</li>
-                            <li>Espacio libre (enlaces terrestres o satelitales)</li>
-                        </ul>
-                    </li>
-                    <li><strong>Detectores:</strong>
-                        <ul>
-                            <li>Fotodiodos de avalancha de fotón único (SPADs)</li>
-                            <li>Detectores superconductores de nanohilos (SNSPDs)</li>
-                            <li>Detectores homodinos/heterodinos (para CV-QKD)</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Limitaciones Prácticas</h4>
-                <ul>
-                    <li><strong>Pérdidas en el Canal:</strong> La atenuación en fibra óptica limita la distancia a típicamente 100-200 km sin repetidores.</li>
-                    <li><strong>Tasas de Generación de Claves:</strong> Generalmente mucho más bajas que en criptografía clásica (kbps vs. Gbps).</li>
-                    <li><strong>Fuentes de Fotones Imperfectas:</strong> Las fuentes prácticas pueden emitir múltiples fotones, creando vulnerabilidades.</li>
-                    <li><strong>Detectores Imperfectos:</strong> Eficiencia limitada, cuentas oscuras, y vulnerabilidades específicas.</li>
-                    <li><strong>Sensibilidad Ambiental:</strong> Cambios de temperatura, vibraciones y otros factores pueden afectar la estabilidad.</li>
-                    <li><strong>Necesidad de Autenticación Clásica:</strong> QKD requiere un canal clásico autenticado, generalmente mediante criptografía clásica.</li>
-                </ul>
-                
-                <h4>Ataques y Contramedidas</h4>
-                <ul>
-                    <li><strong>Ataque de División de Número de Fotones:</strong> Explota pulsos que contienen múltiples fotones.
-                        <ul>
-                            <li>Contramedida: Protocolo de estados señuelo (decoy state).</li>
-                        </ul>
-                    </li>
-                    <li><strong>Ataques a Detectores:</strong> Explotan imperfecciones en los detectores.
-                        <ul>
-                            <li>Contramedida: QKD independiente de dispositivos (device-independent QKD).</li>
-                        </ul>
-                    </li>
-                    <li><strong>Ataques de Canal Lateral:</strong> Explotan implementaciones físicas específicas.
-                        <ul>
-                            <li>Contramedida: Diseño cuidadoso y aislamiento de componentes críticos.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Ataques de Hombre en el Medio en el Canal Clásico:</strong> Intentan manipular la comunicación clásica.
-                        <ul>
-                            <li>Contramedida: Autenticación fuerte del canal clásico.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Sistemas QKD Comerciales</h4>
-                <p>Varios sistemas QKD comerciales están disponibles o en desarrollo:</p>
-                <ul>
-                    <li><strong>ID Quantique (Suiza):</strong> Sistemas Cerberis y Clavis basados en BB84 y COW.</li>
-                    <li><strong>Toshiba (Japón):</strong> Sistemas basados en BB84 con estados señuelo.</li>
-                    <li><strong>QuantumCTek (China):</strong> Diversos sistemas QKD para diferentes aplicaciones.</li>
-                    <li><strong>MagiQ Technologies (EE.UU.):</strong> Sistemas QPN para aplicaciones gubernamentales y financieras.</li>
-                </ul>
-                <p>Estos sistemas típicamente alcanzan distancias de 50-100 km y tasas de generación de claves de 1-10 kbps en condiciones óptimas.</p>
-            </div>
-            
-            <div class="subtema">
-                <h3>6.4 Redes QKD y Repetidores Cuánticos</h3>
-                <p>Para superar las limitaciones de distancia de QKD punto a punto, se están desarrollando redes QKD y tecnologías de repetidores cuánticos.</p>
-                
-                <h4>Arquitecturas de Redes QKD</h4>
-                <ul>
-                    <li><strong>Redes de Confianza (Trusted-Node Networks):</strong>
-                        <ul>
-                            <li>Utilizan nodos intermedios de confianza para extender la distancia.</li>
-                            <li>Cada enlace QKD es independiente, con claves descifradas y recifradas en cada nodo.</li>
-                            <li>Limitación: Los nodos intermedios deben ser completamente confiables.</li>
-                            <li>Ejemplo: Red de Backbone Cuántico de China (2,000+ km).</li>
-                        </ul>
-                    </li>
-                    <li><strong>Redes Conmutadas:</strong>
-                        <ul>
-                            <li>Permiten establecer conexiones QKD entre diferentes pares de usuarios según sea necesario.</li>
-                            <li>Utilizan conmutadores ópticos para reconfigurar la topología de la red.</li>
-                            <li>Ejemplo: Red de Tokio (UQCC-Tokyo).</li>
-                        </ul>
-                    </li>
-                    <li><strong>Redes Basadas en Satélites:</strong>
-                        <ul>
-                            <li>Utilizan satélites como repetidores o fuentes de entrelazamiento.</li>
-                            <li>Permiten distribución de claves a escala global.</li>
-                            <li>Ejemplo: Satélite Micius (China), que ha demostrado QKD intercontinental.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Repetidores Cuánticos</h4>
-                <p>Los repetidores cuánticos permitirían extender la distancia de QKD sin nodos de confianza:</p>
-                <ul>
-                    <li><strong>Basados en Entrelazamiento:</strong>
-                        <ul>
-                            <li>Utilizan el intercambio de entrelazamiento (entanglement swapping) para crear correlaciones a larga distancia.</li>
-                            <li>Requieren memorias cuánticas para almacenar estados cuánticos.</li>
-                            <li>Estado actual: Demostrados en laboratorio a pequeña escala.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Repetidores de Código Cuántico:</strong>
-                        <ul>
-                            <li>Utilizan códigos de corrección de errores cuánticos para proteger la información.</li>
-                            <li>Potencialmente más robustos pero requieren computación cuántica.</li>
-                            <li>Estado actual: Principalmente teóricos, con algunas demostraciones de principio.</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Proyectos de Redes QKD</h4>
-                <ul>
-                    <li><strong>Red Nacional de China:</strong> La red QKD más grande del mundo, conectando Beijing, Shanghai y otras ciudades.</li>
-                    <li><strong>OpenQKD (UE):</strong> Proyecto para desarrollar una infraestructura QKD europea.</li>
-                    <li><strong>UK Quantum Network:</strong> Red que conecta Cambridge, Bristol y otras localidades en Reino Unido.</li>
-                    <li><strong>Quantum Xchange (EE.UU.):</strong> Red comercial en el corredor Boston-Washington.</li>
-                    <li><strong>Red de Tokio (Japón):</strong> Red metropolitana que conecta múltiples ubicaciones en Tokio.</li>
-                </ul>
-                
-                <h4>Integración con Redes Clásicas</h4>
-                <p>La integración de QKD con infraestructura de red existente presenta varios desafíos:</p>
-                <ul>
-                    <li><strong>Multiplexación por División de Longitud de Onda (WDM):</strong> Permite que señales cuánticas y clásicas compartan la misma fibra.</li>
-                    <li><strong>Gestión de Claves:</strong> Sistemas para distribuir, almacenar y gestionar claves cuánticas.</li>
-                    <li><strong>Interfaces con Aplicaciones:</strong> APIs para que aplicaciones de seguridad utilicen claves cuánticas.</li>
-                    <li><strong>Estándares:</strong> ETSI, ITU-T y otros organismos están desarrollando estándares para QKD.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>6.5 Comparación entre QKD y Criptografía Post-Cuántica</h3>
-                <p>QKD y criptografía post-cuántica representan enfoques fundamentalmente diferentes para la seguridad en la era cuántica.</p>
-                
-                <h4>Diferencias Fundamentales</h4>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Aspecto</th>
-                            <th>Distribución Cuántica de Claves (QKD)</th>
-                            <th>Criptografía Post-Cuántica (PQC)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Base de Seguridad</td>
-                            <td>Leyes de la física cuántica</td>
-                            <td>Problemas matemáticos computacionalmente difíciles</td>
-                        </tr>
-                        <tr>
-                            <td>Tipo de Seguridad</td>
-                            <td>Seguridad incondicional (teóricamente)</td>
-                            <td>Seguridad computacional</td>
-                        </tr>
-                        <tr>
-                            <td>Infraestructura</td>
-                            <td>Requiere hardware especializado</td>
-                            <td>Compatible con infraestructura existente</td>
-                        </tr>
-                        <tr>
-                            <td>Distancia</td>
-                            <td>Limitada (típicamente <200 km sin repetidores)</td>
-                            <td>Global (Internet)</td>
-                        </tr>
-                        <tr>
-                            <td>Tasa de Datos</td>
-                            <td>Baja (kbps)</td>
-                            <td>Alta (Mbps-Gbps)</td>
-                        </tr>
-                        <tr>
-                            <td>Funcionalidad</td>
-                            <td>Solo distribución de claves</td>
-                            <td>Cifrado, firmas, intercambio de claves</td>
-                        </tr>
-                        <tr>
-                            <td>Madurez</td>
-                            <td>Comercial pero especializada</td>
-                            <td>En proceso de estandarización</td>
-                        </tr>
-                        <tr>
-                            <td>Costo</td>
-                            <td>Alto</td>
-                            <td>Bajo</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h4>Ventajas de QKD</h4>
-                <ul>
-                    <li><strong>Seguridad Basada en Física:</strong> No depende de suposiciones computacionales que podrían ser invalidadas.</li>
-                    <li><strong>Detección de Espionaje:</strong> Puede detectar intentos de interceptación en tiempo real.</li>
-                    <li><strong>Seguridad a Largo Plazo:</strong> Las claves generadas hoy no pueden ser descifradas en el futuro con tecnología más avanzada.</li>
-                    <li><strong>Resistencia a Todos los Ataques Cuánticos:</strong> No solo a algoritmos conocidos como Shor o Grover.</li>
-                </ul>
-                
-                <h4>Ventajas de PQC</h4>
-                <ul>
-                    <li><strong>Compatibilidad:</strong> Funciona con infraestructura de red existente sin hardware especializado.</li>
-                    <li><strong>Escalabilidad:</strong> No tiene limitaciones de distancia inherentes.</li>
-                    <li><strong>Funcionalidad Completa:</strong> Proporciona cifrado, firmas digitales y otras primitivas criptográficas.</li>
-                    <li><strong>Costo:</strong> Significativamente más económico de implementar y mantener.</li>
-                    <li><strong>Rendimiento:</strong> Tasas de datos mucho más altas.</li>
-                </ul>
-                
-                <h4>Enfoques Complementarios</h4>
-                <p>QKD y PQC pueden considerarse tecnologías complementarias más que competidoras:</p>
-                <ul>
-                    <li><strong>Uso Híbrido:</strong> QKD para establecer claves en enlaces críticos, PQC para comunicaciones generales.</li>
-                    <li><strong>Autenticación Mutua:</strong> PQC puede proporcionar autenticación para el canal clásico en QKD.</li>
-                    <li><strong>Defensa en Profundidad:</strong> Utilizar ambas tecnologías proporciona múltiples capas de seguridad.</li>
-                    <li><strong>Casos de Uso Diferenciados:</strong> QKD para comunicaciones de alta seguridad en distancias limitadas, PQC para comunicaciones globales.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>6.6 Aplicaciones y Futuro de QKD</h3>
-                <p>A pesar de sus limitaciones, QKD tiene aplicaciones específicas donde sus características únicas son valiosas.</p>
-                
-                <h4>Aplicaciones Actuales</h4>
-                <ul>
-                    <li><strong>Protección de Infraestructuras Críticas:</strong>
-                        <ul>
-                            <li>Redes eléctricas y de energía</li>
-                            <li>Sistemas de control industrial</li>
-                            <li>Instalaciones gubernamentales y militares</li>
-                        </ul>
-                    </li>
-                    <li><strong>Sector Financiero:</strong>
-                        <ul>
-                            <li>Comunicaciones entre centros de datos bancarios</li>
-                            <li>Protección de transacciones de alto valor</li>
-                            <li>Respaldo de claves maestras</li>
-                        </ul>
-                    </li>
-                    <li><strong>Comunicaciones Gubernamentales:</strong>
-                        <ul>
-                            <li>Protección de información clasificada</li>
-                            <li>Comunicaciones diplomáticas</li>
-                            <li>Elecciones y sistemas de votación</li>
-                        </ul>
-                    </li>
-                    <li><strong>Sector Sanitario:</strong>
-                        <ul>
-                            <li>Protección de datos médicos sensibles</li>
-                            <li>Comunicaciones entre hospitales y centros de investigación</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Casos de Uso Implementados</h4>
-                <ul>
-                    <li><strong>Elecciones en Suiza (2007):</strong> ID Quantique proporcionó seguridad basada en QKD para la transmisión de resultados electorales en Ginebra.</li>
-                    <li><strong>SECOQC (UE, 2008):</strong> Demostración de una red QKD de seis nodos en Viena.</li>
-                    <li><strong>Red Financiera de Tokio (2010):</strong> Conexión segura entre centros de datos financieros.</li>
-                    <li><strong>Red de Backbone Cuántico de China (2017-):</strong> Red a escala nacional que conecta múltiples ciudades.</li>
-                    <li><strong>Comunicación Intercontinental Micius (2017):</strong> Distribución de claves entre China y Austria vía satélite.</li>
-                </ul>
-                
-                <h4>Tendencias y Desarrollos Futuros</h4>
-                <ul>
-                    <li><strong>Miniaturización:</strong>
-                        <ul>
-                            <li>Sistemas QKD en chips fotónicos integrados</li>
-                            <li>Reducción de tamaño, costo y consumo de energía</li>
-                            <li>Potencial integración en dispositivos de consumo</li>
-                        </ul>
-                    </li>
-                    <li><strong>Repetidores Cuánticos:</strong>
-                        <ul>
-                            <li>Desarrollo de memorias cuánticas prácticas</li>
-                            <li>Implementación de protocolos de intercambio de entrelazamiento</li>
-                            <li>Redes QKD de larga distancia sin nodos de confianza</li>
-                        </ul>
-                    </li>
-                    <li><strong>Redes Basadas en Satélites:</strong>
-                        <ul>
-                            <li>Constelaciones de satélites para cobertura global</li>
-                            <li>Miniaturización de tecnología QKD para CubeSats</li>
-                            <li>Integración con redes terrestres</li>
-                        </ul>
-                    </li>
-                    <li><strong>Estandarización:</strong>
-                        <ul>
-                            <li>Estándares ETSI, ITU-T, ISO/IEC para interoperabilidad</li>
-                            <li>Certificación y validación de seguridad</li>
-                            <li>Integración con marcos regulatorios</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Desafíos Pendientes</h4>
-                <ul>
-                    <li><strong>Técnicos:</strong>
-                        <ul>
-                            <li>Aumento de tasas de generación de claves</li>
-                            <li>Extensión de distancias sin nodos de confianza</li>
-                            <li>Reducción de costos y complejidad</li>
-                        </ul>
-                    </li>
-                    <li><strong>Prácticos:</strong>
-                        <ul>
-                            <li>Integración con infraestructura existente</li>
-                            <li>Desarrollo de interfaces de usuario amigables</li>
-                            <li>Formación de personal técnico</li>
-                        </ul>
-                    </li>
-                    <li><strong>Regulatorios:</strong>
-                        <ul>
-                            <li>Certificación de seguridad</li>
-                            <li>Cumplimiento normativo</li>
-                            <li>Restricciones de exportación</li>
-                        </ul>
-                    </li>
-                </ul>
-                
-                <h4>Visión a Largo Plazo: El Internet Cuántico</h4>
-                <p>El concepto de "Internet Cuántico" va más allá de QKD, contemplando una red que pueda distribuir entrelazamiento y transmitir estados cuánticos:</p>
-                <ul>
-                    <li><strong>Distribución de Entrelazamiento:</strong> Creación y distribución de pares entrelazados a escala global.</li>
-                    <li><strong>Teletransporte Cuántico:</strong> Transferencia de estados cuánticos entre nodos distantes.</li>
-                    <li><strong>Computación Cuántica Distribuida:</strong> Conexión de procesadores cuánticos en diferentes ubicaciones.</li>
-                    <li><strong>Aplicaciones:</strong> Metrología cuántica distribuida, sensores cuánticos en red, computación cuántica en la nube.</li>
-                </ul>
-                <p>Aunque el Internet Cuántico completo está aún en fase conceptual, QKD representa el primer paso hacia esta visión.</p>
-            </div>
-        </section>
+        <h2 id="ejercicios"><span class="sec">6.11</span>Ejercicios</h2>
+        <div class="exercise"><span class="ex-title">Ejercicio 6.1 <span class="level">Básico</span></span>
+          <p>Alice envía 1&#8239;000 fotones y Bob mide todos. (a) ¿Cuántos bits cribados esperan? (b) Si revelan un 20&nbsp;% para estimar el QBER, ¿cuántos quedan? (c) ¿Qué desviación típica tiene el número de bits cribados?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>(a) Cada fotón coincide en base con probabilidad 1/2: 500 en media. (b) 500 · 0,8 = 400. (c) Binomial con <var>n</var> = 1&#8239;000, <var>p</var> = 1/2: <span class="math">σ = √(1&#8239;000 · 0,25) ≈ 15,8</span>; lo normal es obtener entre ~470 y ~530.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 6.2 <span class="level">Básico</span></span>
+          <p>Demuestre que Eve, con interceptación-reenvío sobre todos los fotones, induce un QBER del 25&nbsp;% y conoce el 75&nbsp;% de los bits cribados. ¿Qué pasa si Eve siempre mide en la base rectilínea?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>Base de Eve correcta (prob. 1/2): sin error y bit conocido. Incorrecta (1/2): Bob acierta con probabilidad 1/2, luego error con probabilidad 1/2 · 1/2 = 1/4; Eve adivina el bit con probabilidad 1/2. Aciertos de Eve: 1/2 + 1/2 · 1/2 = 3/4. Si mide siempre en +, la mitad de los bits cribados (los de base +) no tienen error y Eve los conoce; en los de base × induce error con probabilidad 1/2. El QBER medio vuelve a ser 25&nbsp;%, pero concentrado en la base diagonal: Alice y Bob lo detectarían aún mejor estimando el QBER por separado en cada base.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 6.3 <span class="level">Intermedio</span></span>
+          <p>Un enlace tiene QBER intrínseco del 1,5&nbsp;%. (a) ¿Qué fracción máxima de fotones puede interceptar Eve (interceptación-reenvío) sin superar el 11&nbsp;%? (b) Calcule la fracción secreta <span class="math">1 − 2h(Q)</span> para 1,5&nbsp;% y para el QBER resultante de interceptar la mitad de los fotones.</p>
+          <details><summary>Solución</summary><div class="details-body"><p>(a) Por (6.1), <span class="math"><var>p</var> = 4(0,11 − 0,015)/(1 − 0,03) ≈ 0,392</span>. (b) <span class="math"><var>h</var>(0,015) ≈ 0,112</span>, <var>r</var> ≈ 0,776. Con <var>p</var> = 0,5: <span class="math"><var>Q</var> = 0,015 + 0,97 · 0,125 ≈ 0,136 &gt; 0,11</span>: se aborta y <var>r</var> = 0. La prueba no distingue ruido de ataque, así que el QBER que «consume» el ruido es margen que se le deja a Eve.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 6.4 <span class="level">Intermedio</span></span>
+          <p>Aplique BINARY al bloque de 16 bits Alice <code>0110 1001 1100 0011</code>, Bob <code>0110 1001 1110 0011</code>. Indique las paridades reveladas y cuántos bits de información filtra.</p>
+          <details><summary>Solución</summary><div class="details-body"><p>Paridad total: Alice 8 unos → 0; Bob 9 → 1; hay error (1 bit filtrado). Bits 1–8: iguales (paridad 0 y 0) → error en 9–16. Bits 9–12: Alice 1100 → 0, Bob 1110 → 1 → error en 9–12. Bits 9–10: 11 y 11, iguales → error en 11–12. Bit 11: Alice 0, Bob 1 → es el 11. Total: 1 + 4 = 5 paridades = 1 + log₂ 16. La amplificación de privacidad debe descontar esos 5 bits.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 6.5 <span class="level">Intermedio</span></span>
+          <p>En la red de la figura 6.2, un atacante compromete el nodo N2. ¿Qué obtiene? ¿Y si solo intercepta los mensajes <span class="math"><var>K</var>₁ ⊕ <var>K</var>₂</span> y <span class="math"><var>K</var>₁ ⊕ <var>K</var>₃</span> del canal clásico?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>Comprometiendo N2 conoce <var>K</var>₂ y <var>K</var>₃ y descifra <var>K</var>₁: la clave extremo a extremo. Interceptando solo los mensajes obtiene <span class="math">(<var>K</var>₁ ⊕ <var>K</var>₂) ⊕ (<var>K</var>₁ ⊕ <var>K</var>₃) = <var>K</var>₂ ⊕ <var>K</var>₃</span>, sin información sobre <var>K</var>₁ si las claves de enlace son uniformes y se usan una sola vez (cifrado de Vernam). La seguridad depende de los nodos, no del canal.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 6.6 <span class="level">Avanzado</span></span>
+          <p>Con atenuación de 0,2 dB/km: (a) calcule la cota PLOB a 50, 100 y 200 km; (b) calcule la mejora teórica de escalado de TF-QKD a 400 km; (c) explique por qué, pese a ello, los 1&#8239;002 km de 2023 dan tasas bajísimas.</p>
+          <details><summary>Solución</summary><div class="details-body"><p>(a) η = 0,1; 0,01; 10<sup>−4</sup>. Cota: <span class="math">−log₂(1 − η)</span> ≈ 0,152; 0,0145; 1,44·10<sup>−4</sup> bits por pulso. (b) A 400 km, η = 10<sup>−8</sup>; TF-QKD escala como √η = 10<sup>−4</sup>, cuatro órdenes de magnitud por encima de η. (c) A 1&#8239;002 km incluso en fibra de ultrabaja pérdida la atenuación total supera los 150 dB; √η sigue siendo minúsculo, se suman cuentas oscuras, ruido de fase y efectos de clave finita, y la tasa baja a bits por hora. El récord demuestra el principio, no un servicio.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 6.7 <span class="level">Avanzado</span></span>
+          <p>Un banco dispone de QKD entre dos centros de datos a 30 km y pregunta si puede retirar TLS híbrido con ML-KEM en ese enlace. Redacte una recomendación de cinco puntos basada en este tema.</p>
+          <details><summary>Solución</summary><div class="details-body"><p>(1) No retirar la PQC: combinar <var>K</var><sub>QKD</sub> y ML-KEM con una KDF (figura 6.3), de modo que haya que romper ambas. (2) Proteger con PQC o PSK el TLS SAE–KME y la autenticación del canal clásico. (3) Exigir equipos evaluados (ETSI GS QKD 016 / ISO/IEC 23837) y contramedidas documentadas frente a cegado y caballo de Troya. (4) Tratar la QKD como fuente de disponibilidad limitada: plan de continuidad con claves PQC si el enlace cae (DoS). (5) Considerar los KME como activos críticos equivalentes a HSM. La QKD aporta defensa en profundidad para un enlace fijo de alto valor, que es precisamente el nicho que reconocen las agencias.</p></div></details></div>
 
-        <section class="tema-recursos">
-            <h2>Recursos Adicionales</h2>
-            
-            <div class="recursos-grid">
-                <div class="recurso-item">
-                    <h3>Lecturas Recomendadas</h3>
-                    <ul>
-                        <li>Bennett, C. H., & Brassard, G. (2014). Quantum cryptography: Public key distribution and coin tossing. Theoretical Computer Science, 560, 7-11. (Reimpresión del artículo original de 1984)</li>
-                        <li>Gisin, N., Ribordy, G., Tittel, W., & Zbinden, H. (2002). Quantum cryptography. Reviews of Modern Physics, 74(1), 145.</li>
-                        <li>Diamanti, E., Lo, H. K., Qi, B., & Yuan, Z. (2016). Practical challenges in quantum key distribution. npj Quantum Information, 2(1), 1-12.</li>
-                    </ul>
-                </div>
-                
-                <div class="recurso-item">
-                    <h3>Recursos en Línea</h3>
-                    <ul>
-                        <li><a href="https://www.idquantique.com/quantum-safe-security/overview/">ID Quantique: Quantum-Safe Security</a></li>
-                        <li><a href="https://www.etsi.org/technologies/quantum-safe-cryptography">ETSI: Quantum-Safe Cryptography</a></li>
-                        <li><a href="https://www.quantumxc.com/quantum-key-distribution-explained/">Quantum Xchange: QKD Explained</a></li>
-                    </ul>
-                </div>
-                
-                <div class="recurso-item">
-                    <h3>Ejemplos Prácticos</h3>
-                    <ul>
-                        <li><a href="../../ejemplos/qkd_bb84.html">Simulación del Protocolo BB84</a></li>
-                        <li><a href="../../guias/qkd.html">Guía de Laboratorio: Protocolo BB84</a></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+        <aside class="key-points"><span class="kp-title">Ideas clave</span><ul>
+          <li>La QKD <strong>detecta</strong> la escucha gracias a la no clonación y a la perturbación que produce medir en bases conjugadas; no la impide ni autentica.</li>
+          <li>En BB84, la interceptación-reenvío completa produce un QBER del 25&nbsp;%; la prueba de Shor–Preskill da <strong>r = 1 − 2h(Q)</strong> y el umbral del <strong>11&nbsp;%</strong>.</li>
+          <li>La clave nace en el <strong>postprocesado clásico</strong>: cribado, estimación, reconciliación (Cascade, LDPC), verificación y amplificación de privacidad (Toeplitz). Los efectos de tamaño finito son grandes.</li>
+          <li>Los ataques reales (PNS, cegado de detectores, desplazamiento temporal) atacan el hardware, no el protocolo; señuelos y MDI-QKD cierran parte de esos huecos.</li>
+          <li>La tasa cae exponencialmente con la distancia en fibra (cota PLOB); las redes usan <strong>nodos de confianza</strong> y satélites, que no dan seguridad extremo a extremo.</li>
+          <li>NSA, NCSC y la posición conjunta ANSSI/BSI/NLNCSA/Suecia priorizan la PQC; donde haya QKD, se debe <strong>combinar</strong> con PQC mediante una KDF y autenticar con PQC.</li>
+        </ul></aside>
 
-        <div class="tema-navegacion-inferior">
-            <div class="nav-anterior">
-                <a href="../tema5/index.html">
-                    <span class="flecha">←</span>
-                    Anterior: Tema 5 - Implementaciones, Consideraciones y Desafíos
-                </a>
-            </div>
-            <div class="nav-siguiente">
-                <!-- No hay tema siguiente -->
-            </div>
-        </div>
+        <h2 id="referencias">Referencias</h2>
+        <ol class="refs">
+          <li>C. H. Bennett, G. Brassard. <a href="https://arxiv.org/abs/2003.06557">Quantum cryptography: Public key distribution and coin tossing</a>. <span class="src">Proc. IEEE ICCSSP, Bangalore, 1984 (reedición en arXiv:2003.06557, 2020).</span></li>
+          <li>W. K. Wootters, W. H. Zurek. <a href="https://www.nature.com/articles/299802a0">A single quantum cannot be cloned</a>. <span class="src">Nature 299, 802–803, 1982.</span></li>
+          <li>A. K. Ekert. <a href="https://link.aps.org/doi/10.1103/PhysRevLett.67.661">Quantum cryptography based on Bell's theorem</a>. <span class="src">Phys. Rev. Lett. 67, 661, 1991.</span></li>
+          <li>C. H. Bennett, G. Brassard, N. D. Mermin. <a href="https://link.aps.org/doi/10.1103/PhysRevLett.68.557">Quantum cryptography without Bell's theorem</a>. <span class="src">Phys. Rev. Lett. 68, 557, 1992.</span></li>
+          <li>P. W. Shor, J. Preskill. <a href="https://link.aps.org/doi/10.1103/PhysRevLett.85.441">Simple proof of security of the BB84 quantum key distribution protocol</a>. <span class="src">Phys. Rev. Lett. 85, 441, 2000 (arXiv:quant-ph/0003004).</span></li>
+          <li>G. Brassard, L. Salvail. <a href="https://link.springer.com/chapter/10.1007/3-540-48285-7_35">Secret-key reconciliation by public discussion</a>. <span class="src">EUROCRYPT '93, LNCS 765, 410–423, 1994.</span></li>
+          <li>G. Brassard, N. Lütkenhaus, T. Mor, B. C. Sanders. <a href="https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.85.1330">Limitations on practical quantum cryptography</a>. <span class="src">Phys. Rev. Lett. 85, 1330, 2000.</span></li>
+          <li>W.-Y. Hwang, <a href="https://ui.adsabs.harvard.edu/abs/2003PhRvL..91e7901H/abstract">Quantum key distribution with high loss: toward global secure communication</a>, Phys. Rev. Lett. 91, 057901 (2003); H.-K. Lo, X. Ma, K. Chen, <a href="https://utoronto.scholaris.ca/items/f7f27a1a-2348-441b-9a20-e2a159354939">Decoy state quantum key distribution</a>. <span class="src">Phys. Rev. Lett. 94, 230504, 2005.</span></li>
+          <li>H.-K. Lo, M. Curty, B. Qi. <a href="https://arxiv.org/abs/1109.1473">Measurement-device-independent quantum key distribution</a>. <span class="src">Phys. Rev. Lett. 108, 130503, 2012.</span></li>
+          <li>M. Lucamarini, Z. L. Yuan, J. F. Dynes, A. J. Shields. <a href="https://pure.york.ac.uk/portal/en/publications/overcoming-the-rate-distance-limit-of-quantum-key-distribution-wi/">Overcoming the rate–distance limit of quantum key distribution without quantum repeaters</a>. <span class="src">Nature 557, 400–403, 2018.</span></li>
+          <li>Y. Liu et al. <a href="https://link.aps.org/doi/10.1103/PhysRevLett.130.210801">Experimental twin-field quantum key distribution over 1000 km fiber distance</a>. <span class="src">Phys. Rev. Lett. 130, 210801, 2023.</span></li>
+          <li>Y. Zhao, C.-H. F. Fung, B. Qi, C. Chen, H.-K. Lo. <a href="https://link.aps.org/doi/10.1103/PhysRevA.78.042333">Quantum hacking: experimental demonstration of time-shift attack against practical QKD systems</a>. <span class="src">Phys. Rev. A 78, 042333, 2008.</span></li>
+          <li>L. Lydersen et al. <a href="https://www.nature.com/articles/nphoton.2010.214">Hacking commercial quantum cryptography systems by tailored bright illumination</a>. <span class="src">Nature Photonics 4, 686–689, 2010.</span></li>
+          <li>I. Gerhardt et al. <a href="https://www.nature.com/articles/ncomms1348">Full-field implementation of a perfect eavesdropper on a quantum cryptography system</a>. <span class="src">Nature Communications 2, 349, 2011.</span></li>
+          <li>A. Miller. <a href="https://arxiv.org/abs/2505.06532">Micius, the world's first quantum communication satellite, was hackable</a>. <span class="src">arXiv:2505.06532 (preprint), 2025.</span></li>
+          <li>ANSSI, BSI, NLNCSA, Swedish Armed Forces. <a href="https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/Quantum_Positionspapier.pdf?__blob=publicationFile&amp;v=4">Position Paper on Quantum Key Distribution</a> (<a href="https://cyber.gouv.fr/en/publications/jointly-led-international-publications/position-paper-on-quantum-key-distribution/">página de ANSSI</a>). <span class="src">25 de enero de 2024.</span></li>
+          <li>S.-K. Liao et al. <a href="https://www.nature.com/articles/nature23655">Satellite-to-ground quantum key distribution</a>. <span class="src">Nature 549, 43–47, 2017.</span></li>
+          <li>Y.-A. Chen et al. <a href="https://www.nature.com/articles/s41586-020-03093-8">An integrated space-to-ground quantum communication network over 4,600 kilometres</a>. <span class="src">Nature 589, 214–219, 2021.</span></li>
+          <li><a href="https://www.nature.com/articles/s41586-025-08739-z">Microsatellite-based real-time quantum key distribution</a> (Jinan-1); nota de la <a href="https://english.cas.cn/head/202503/t20250319_908294.shtml">Academia China de Ciencias</a>. <span class="src">Nature, 19 de marzo de 2025.</span></li>
+          <li>V. Martin et al. <a href="https://www.nature.com/articles/s41534-024-00873-2">MadQCI: a heterogeneous and scalable SDN-QKD network deployed in production facilities</a>. <span class="src">npj Quantum Information 10, 80, 2024 (arXiv:2311.12791).</span></li>
+          <li>S. Pirandola, R. Laurenza, C. Ottaviani, L. Banchi. <a href="https://www.nature.com/articles/ncomms15043">Fundamental limits of repeaterless quantum communications</a>. <span class="src">Nature Communications 8, 15043, 2017.</span></li>
+          <li>M. Tomamichel, C. C. W. Lim, N. Gisin, R. Renner. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3274703/">Tight finite-key analysis for quantum cryptography</a>. <span class="src">Nature Communications 3, 634, 2012.</span></li>
+          <li>J. Martinez-Mateo, D. Elkouss, V. Martin. <a href="https://arxiv.org/abs/1205.5729">Blind reconciliation</a>. <span class="src">Quantum Inf. Comput. 12, 791–812, 2012.</span> Véase también <a href="https://arxiv.org/abs/1407.3257">Demystifying the information reconciliation protocol Cascade</a>, Quantum Inf. Comput. 15, 453–477, 2015.</li>
+          <li>Y. Zhang et al. <a href="https://arxiv.org/abs/2001.02555">Long-distance continuous-variable quantum key distribution over 202.81 km of fiber</a>. <span class="src">Phys. Rev. Lett. 125, 010502, 2020.</span></li>
+          <li>Comisión Europea. <a href="https://digital-strategy.ec.europa.eu/en/policies/european-quantum-communication-infrastructure-euroqci">The European Quantum Communication Infrastructure (EuroQCI) Initiative</a>. <span class="src">Actualizada el 9 de julio de 2026.</span></li>
+          <li>ESA. <a href="https://www.esa.int/Applications/Connectivity_and_Secure_Communications/Eagle-1">Eagle-1</a>; Space Intel Report, <a href="https://www.spaceintelreport.com/europes-eagle-1-quantum-key-distribution-satellite-delayed-again-backers-defend-its-value-vs-post-quantum-cryptography/">Europe's Eagle-1 QKD satellite delayed again</a>. <span class="src">2 de junio de 2026.</span></li>
+          <li><a href="https://www.itefi.csic.es/en/proyectos/euroqci-spain">EuroQCI-Spain</a> (ITEFI-CSIC); Indra Group, <a href="https://www.indragroup.com/en/news/indra-group-leads-the-implementation-of-the-national-quantum-communications-network-to-be-integrated-into-the-european-euroqci-network">Indra Group leads the implementation of the national quantum communications network</a>. <span class="src">Junio de 2026.</span></li>
+          <li>ESA. <a href="https://resilience.esa.int/archives/projects/caramuel">Caramuel</a>. <span class="src">Estado a 26 de diciembre de 2023.</span></li>
+          <li>NSA. <a href="https://www.nsa.gov/Cybersecurity/Quantum-Key-Distribution-QKD-and-Quantum-Cryptography-QC/">Quantum Key Distribution (QKD) and Quantum Cryptography (QC)</a>. <span class="src">Consultada en septiembre de 2026.</span></li>
+          <li>NCSC. <a href="https://www.ncsc.gov.uk/paper/quantum-security-technologies">Quantum security technologies</a>. <span class="src">24 de marzo de 2020, actualizado el 15 de mayo de 2026.</span></li>
+          <li>IETF. <a href="https://www.rfc-editor.org/info/rfc8784/">RFC 8784: Mixing preshared keys in IKEv2 for post-quantum security</a> (2020); <a href="https://www.rfc-editor.org/rfc/rfc9370.html">RFC 9370: Multiple key exchanges in IKEv2</a>. <span class="src">2023.</span></li>
+          <li>ETSI. <a href="https://www.etsi.org/deliver/etsi_gs/QKD/001_099/014/01.01.01_60/gs_qkd014v010101p.pdf">GS QKD 014 V1.1.1</a> (2019); <a href="https://www.etsi.org/deliver/etsi_gs/QKD/001_099/004/02.01.01_60/gs_qkd004v020101p.pdf">GS QKD 004 V2.1.1</a> (2020); <a href="https://www.etsi.org/deliver/etsi_gs/QKD/001_099/016/02.01.01_60/gs_QKD016v020101p.pdf">GS QKD 016 V2.1.1</a> (2024); <a href="https://www.etsi.org/deliver/etsi_gs/QKD/001_099/020/01.01.01_60/gs_QKD020v010101p.pdf">GS QKD 020 V1.1.1</a>. <span class="src">2026.</span></li>
+          <li>ITU-T. <a href="https://www.itu.int/rec/T-REC-Y.3800-201910-P/en">Y.3800: Overview on networks supporting quantum key distribution</a>. <span class="src">Octubre de 2019.</span> ISO/IEC. <a href="https://www.iso.org/standard/77097.html">ISO/IEC 23837-1:2023</a>.</li>
+          <li>V. Scarani et al. <a href="https://link.aps.org/doi/10.1103/RevModPhys.81.1301">The security of practical quantum key distribution</a>. <span class="src">Rev. Mod. Phys. 81, 1301, 2009 (revisión recomendada).</span></li>
+          <li>N. Gisin, S. Fasel, B. Kraus, H. Zbinden, G. Ribordy. <a href="https://link.aps.org/doi/10.1103/PhysRevA.73.022320">Trojan-horse attacks on quantum-key-distribution systems</a>. <span class="src">Phys. Rev. A 73, 022320, 2006.</span></li>
+          <li>H.-L. Yin et al. <a href="https://link.aps.org/doi/10.1103/PhysRevLett.117.190501">Measurement-device-independent quantum key distribution over a 404 km optical fiber</a>. <span class="src">Phys. Rev. Lett. 117, 190501, 2016.</span></li>
+        </ol>
+      </article>
+
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../../index.html">Inicio</a></li>
-                    <li><a href="../../programa.html">Programa</a></li>
-                    <li><a href="../tema1/index.html">Temas</a></li>
-                    <li><a href="../../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="../../guias/index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Ejemplos</h3>
-                <ul>
-                    <li><a href="../../ejemplos/algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="../../ejemplos/ml_kem.html">ML-KEM</a></li>
-                    <li><a href="../../ejemplos/ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="../../ejemplos/criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="../../ejemplos/qkd_bb84.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../../js/script.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../../glosario.html">Glosario</a>
+        <a href="../../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

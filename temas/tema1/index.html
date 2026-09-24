@@ -1,353 +1,393 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../../" data-page="tema1">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tema 1: Fundamentos de Criptografía Moderna - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="../../css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tema 1 · Criptografía moderna y la amenaza cuántica — Curso PQC</title>
+  <meta name="description" content="Repaso de la criptografía simétrica, hash y de clave pública, fundamentos de computación cuántica, algoritmos de Shor y Grover, estimaciones de recursos hasta 2026, «almacenar ahora, descifrar después» y la desigualdad de Mosca.">
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../css/styles.css">
+  <script src="../../js/course-data.js" defer></script>
+  <script src="../../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../../index.html">Inicio</a></li>
-                <li><a href="../../programa.html">Programa</a></li>
-                <li><a href="../tema1/index.html">Temas</a></li>
-                <li><a href="../../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="../../guias/index.html">Guías de Laboratorio</a></li>
-                <li><a href="../../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../../index.html">Inicio</a> &gt; <a href="../tema1/index.html">Temas</a> &gt; Tema 1: Fundamentos de Criptografía Moderna
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../../index.html">Inicio</a>
+        <a href="../../programa.html">Programa</a>
+        <a href="../../temas/index.html" aria-current="page">Temas</a>
+        <a href="../../ejemplos/index.html">Ejemplos</a>
+        <a href="../../guias/index.html">Laboratorios</a>
+        <a href="../../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Tema 1: Fundamentos de Criptografía Moderna</h1>
-        
-        <div class="tema-navegacion">
-            <div class="tema-nav-item actual">
-                <span>Tema 1</span>
-                <p>Fundamentos de Criptografía Moderna</p>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema2/index.html">
-                    <span>Tema 2</span>
-                    <p>Infraestructura de Seguridad en Internet</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema3/index.html">
-                    <span>Tema 3</span>
-                    <p>Fundamentos de Criptografía Post-Cuántica</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema4/index.html">
-                    <span>Tema 4</span>
-                    <p>Estandarización de Criptografía Post-Cuántica</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema5/index.html">
-                    <span>Tema 5</span>
-                    <p>Implementaciones, Consideraciones y Desafíos</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema6/index.html">
-                    <span>Tema 6</span>
-                    <p>Distribución Cuántica de Claves (QKD)</p>
-                </a>
-            </div>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../../index.html">Inicio</a></li><li><a href="../../temas/index.html">Temas</a></li><li aria-current="page">Tema 1</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Tema 01 · 2 horas</p>
+        <h1>Criptografía moderna y la <em>amenaza cuántica</em></h1>
+        <p class="lede">Qué garantiza hoy la criptografía que protege Internet, en qué problemas matemáticos se apoya y por qué los algoritmos de Shor y Grover rompen unos y apenas rozan otros. Con cifras de recursos actualizadas a 2026 y una herramienta, la desigualdad de Mosca, para decidir cuándo hay que migrar.</p>
+        <dl class="page-meta">
+          <div><dt>Duración</dt><dd>2 h</dd></div>
+          <div><dt>Nivel</dt><dd>Introductorio</dd></div>
+          <div><dt>Requisitos</dt><dd>Aritmética modular, álgebra lineal básica</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
+
+      <article class="prose">
+        <h2 id="objetivos"><span class="sec">1.0</span>Objetivos</h2>
+        <p>Al terminar este tema deberías ser capaz de:</p>
+        <ol>
+          <li>Enunciar de manera intuitiva qué significan IND-CPA, IND-CCA y EUF-CMA y por qué los esquemas «de libro» no los cumplen.</li>
+          <li>Situar AES, ChaCha20-Poly1305, SHA-2, SHA-3/SHAKE, RSA, Diffie-Hellman, ECDH, ECDSA y EdDSA con sus problemas difíciles y tamaños de clave.</li>
+          <li>Explicar con precisión suficiente qué es un qubit, la superposición, la interferencia y la medida, sin caer en la idea de que un ordenador cuántico «prueba todas las soluciones a la vez».</li>
+          <li>Describir el algoritmo de Shor como búsqueda de periodo y aplicarlo a mano a un <var>N</var> pequeño; explicar por qué también resuelve el logaritmo discreto en curvas elípticas.</li>
+          <li>Cuantificar el efecto de Grover sobre claves simétricas y funciones hash, y por qué se paraleliza mal.</li>
+          <li>Leer una estimación de recursos (qubits lógicos y físicos, puertas Toffoli, tiempo) y explicar cómo han evolucionado desde 2019 hasta 2026.</li>
+          <li>Aplicar la desigualdad de Mosca y el modelo «almacenar ahora, descifrar después» a un caso concreto.</li>
+        </ol>
+
+        <h2 id="modelos"><span class="sec">1.1</span>Objetivos y modelos de seguridad</h2>
+        <p>La criptografía moderna no promete «que nadie pueda romperlo»; promete que <strong>ningún adversario con unos recursos dados</strong> gana un <strong>juego bien definido</strong> con ventaja apreciable. Cambiar el modelo de adversario (por ejemplo, darle un ordenador cuántico) cambia qué esquemas satisfacen la definición, no la definición misma. Por eso la migración post-cuántica mantiene las mismas nociones de seguridad y sustituye los problemas difíciles subyacentes.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Nociones de seguridad que aparecen en todo el curso (nivel intuitivo)</caption>
+            <thead><tr><th>Noción</th><th>Qué puede hacer el adversario</th><th>Qué no debe lograr</th><th>Quién la exige</th></tr></thead>
+            <tbody>
+              <tr><th>IND-CPA</th><td>Cifrar mensajes de su elección (en clave pública, siempre puede)</td><td>Distinguir, con ventaja no despreciable, cuál de dos mensajes que él eligió está dentro de un cifrado de desafío</td><td>Cifrado; KEM «débil»</td></tr>
+              <tr><th>IND-CCA2</th><td>Además, pedir descifrados de cualquier cifrado salvo el de desafío</td><td>Lo mismo que en IND-CPA</td><td>Cifrado en protocolos reales; ML-KEM (tema 4)</td></tr>
+              <tr><th>EUF-CMA</th><td>Obtener firmas de mensajes de su elección</td><td>Producir una firma válida para un mensaje nuevo</td><td>Firmas: ECDSA, EdDSA, ML-DSA</td></tr>
+              <tr><th>AEAD</th><td>Cifrar y descifrar con nonces que no se repiten</td><td>Ni distinguir cifrados de ruido ni falsificar un cifrado aceptado</td><td>AES-GCM, ChaCha20-Poly1305</td></tr>
+            </tbody>
+          </table>
         </div>
+        <p>Dos consecuencias inmediatas. Primera: todo cifrado IND-CPA es <strong>aleatorizado</strong>; si fuese determinista, el adversario cifraría él mismo los dos mensajes candidatos y compararía. RSA «de libro» (<span class="math"><var>c</var> = <var>m</var><sup><var>e</var></sup> mod <var>N</var></span>) es determinista y, además, maleable; por eso se usa RSA-OAEP. Segunda: la seguridad se enuncia como una <strong>reducción</strong> («si alguien gana el juego, resuelve el problema <var>P</var>»), de modo que la seguridad concreta depende de lo difícil que sea <var>P</var> para el adversario considerado. Shor hace fácil <var>P</var> para RSA y curvas elípticas; Grover solo acorta la búsqueda exhaustiva.</p>
+        <div class="definition"><span class="def-title"><b>Definición</b>Nivel de seguridad de <var>λ</var> bits</span><p>Un esquema tiene <var>λ</var> bits de seguridad si el mejor ataque conocido requiere del orden de 2<sup><var>λ</var></sup> operaciones elementales. NIST SP 800-57 fija equivalencias para algoritmos clásicos [4]; para la PQC, NIST define niveles de seguridad NIST 1–5 comparando con la búsqueda de clave en AES y de colisiones en SHA-2/SHA-3 (§1.7 y tema 4).</p></div>
 
-        <section class="tema-intro">
-            <h2>Introducción</h2>
-            <p>Este tema proporciona una revisión de los fundamentos de la criptografía moderna y explora cómo la computación cuántica amenaza estos sistemas de seguridad. Comprender estos conceptos es esencial para apreciar la necesidad y los principios de la criptografía post-cuántica.</p>
-            
-            <div class="tema-info">
-                <div class="info-item">
-                    <h3>Duración</h3>
-                    <p>2 horas</p>
-                </div>
-                <div class="info-item">
-                    <h3>Objetivos</h3>
-                    <ul>
-                        <li>Revisar los principios fundamentales de la criptografía moderna</li>
-                        <li>Comprender los algoritmos criptográficos actuales y sus aplicaciones</li>
-                        <li>Analizar las vulnerabilidades ante la computación cuántica</li>
-                        <li>Explorar los algoritmos cuánticos de Shor y Grover</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+        <h2 id="simetrica"><span class="sec">1.2</span>Criptografía simétrica: AES, ChaCha20 y AEAD</h2>
+        <p><strong>AES</strong> (FIPS 197 [5]) es un cifrado por bloques de 128 bits con claves de 128, 192 o 256 bits y 10, 12 o 14 rondas. Cada ronda combina una sustitución no lineal byte a byte (<em>SubBytes</em>), una permutación de filas (<em>ShiftRows</em>), una mezcla lineal de columnas sobre GF(2<sup>8</sup>) (<em>MixColumns</em>) y la suma de la subclave. Tras más de 25 años de criptoanálisis, el mejor ataque genérico contra AES completo sigue siendo, a efectos prácticos, la búsqueda exhaustiva de la clave.</p>
+        <p>Un cifrado por bloques no es un cifrado utilizable; necesita un <strong>modo de operación</strong>. ECB (cada bloque por separado) filtra patrones y no debe usarse. CTR convierte AES en un cifrado en flujo: <span class="math"><var>c</var><sub><var>i</var></sub> = <var>m</var><sub><var>i</var></sub> ⊕ AES<sub><var>K</var></sub>(<var>nonce</var> ‖ <var>i</var>)</span>, que es IND-CPA si el par (clave, contador) nunca se repite, pero no aporta integridad. <strong>GCM</strong> (SP 800-38D [6]) añade un autenticador polinómico (GHASH) sobre CTR y da un <em>cifrado autenticado con datos asociados</em> (AEAD): confidencialidad del texto y autenticidad de texto y cabeceras.</p>
+        <p><strong>ChaCha20-Poly1305</strong> (RFC 8439 [7]) es la alternativa AEAD sin tablas: ChaCha20 es un cifrado en flujo de clave de 256 bits basado en sumas, rotaciones y XOR (ARX), rápido y de tiempo constante en software sin instrucciones AES; Poly1305 es un autenticador de un solo uso. TLS 1.3 negocia AES-GCM o ChaCha20-Poly1305 en todas sus conexiones (tema 2).</p>
+        <div class="callout warning"><span class="callout-title">Error clásico: reutilizar el nonce</span><p>En AES-GCM y ChaCha20-Poly1305, repetir un nonce con la misma clave revela el XOR de los dos textos claros y, en GCM, permite recuperar la clave de autenticación y falsificar mensajes. Con nonces aleatorios de 96 bits, SP 800-38D limita a 2<sup>32</sup> las invocaciones por clave. Ningún ordenador cuántico hace falta para este ataque: los fallos de implementación siguen siendo el riesgo dominante también en la era post-cuántica (tema 5).</p></div>
 
-        <section class="tema-contenido">
-            <h2>Contenido del Tema</h2>
-            
-            <div class="subtema">
-                <h3>1.1 Revisión de Criptografía Simétrica</h3>
-                <p>La criptografía simétrica utiliza la misma clave para cifrar y descifrar información. Estos algoritmos son generalmente rápidos y eficientes, pero presentan el desafío de la distribución segura de claves.</p>
-                
-                <h4>Algoritmos Simétricos Principales</h4>
-                <ul>
-                    <li><strong>AES (Advanced Encryption Standard):</strong> Estándar actual para cifrado simétrico, con tamaños de clave de 128, 192 o 256 bits. Utiliza una estructura de red de sustitución-permutación.</li>
-                    <li><strong>ChaCha20:</strong> Cifrado de flujo moderno que ofrece alto rendimiento en implementaciones de software. Ampliamente utilizado en TLS y otras aplicaciones.</li>
-                    <li><strong>3DES:</strong> Versión triple del antiguo DES, aún en uso en algunos sistemas legados aunque está siendo retirado.</li>
-                </ul>
-                
-                <h4>Modos de Operación</h4>
-                <ul>
-                    <li><strong>ECB (Electronic Codebook):</strong> Modo básico que cifra cada bloque independientemente. No recomendado para la mayoría de aplicaciones.</li>
-                    <li><strong>CBC (Cipher Block Chaining):</strong> Cada bloque se combina con el bloque cifrado anterior, requiriendo un vector de inicialización (IV).</li>
-                    <li><strong>CTR (Counter):</strong> Convierte un cifrado de bloque en un cifrado de flujo, cifrando valores de contador incrementales.</li>
-                    <li><strong>GCM (Galois/Counter Mode):</strong> Proporciona cifrado autenticado, garantizando confidencialidad e integridad.</li>
-                </ul>
-                
-                <h4>Impacto de la Computación Cuántica</h4>
-                <p>Los algoritmos simétricos son relativamente resistentes a los ataques cuánticos. El algoritmo de Grover reduce efectivamente la seguridad a la mitad (una clave de 256 bits proporciona aproximadamente 128 bits de seguridad contra ataques cuánticos). La solución es simple: duplicar el tamaño de las claves.</p>
-            </div>
-            
-            <div class="subtema">
-                <h3>1.2 Revisión de Criptografía Asimétrica</h3>
-                <p>La criptografía asimétrica o de clave pública utiliza pares de claves: una pública para cifrar y una privada para descifrar. Esto resuelve el problema de distribución de claves pero es computacionalmente más intensiva.</p>
-                
-                <h4>Algoritmos Asimétricos Principales</h4>
-                <ul>
-                    <li><strong>RSA:</strong> Basado en la dificultad de factorizar números grandes. Ampliamente utilizado para cifrado y firmas digitales.</li>
-                    <li><strong>ECC (Criptografía de Curva Elíptica):</strong> Basado en el problema del logaritmo discreto en curvas elípticas. Ofrece la misma seguridad que RSA con claves más pequeñas.</li>
-                    <li><strong>Diffie-Hellman:</strong> Protocolo para establecer una clave compartida sobre un canal inseguro. La variante ECDH utiliza curvas elípticas.</li>
-                    <li><strong>ElGamal:</strong> Sistema basado en el problema del logaritmo discreto, utilizado principalmente para cifrado.</li>
-                </ul>
-                
-                <h4>Aplicaciones Comunes</h4>
-                <ul>
-                    <li><strong>Intercambio de claves:</strong> Establecimiento seguro de claves simétricas.</li>
-                    <li><strong>Firmas digitales:</strong> Autenticación e integridad de mensajes y documentos.</li>
-                    <li><strong>Certificados digitales:</strong> Vinculación de claves públicas a identidades.</li>
-                    <li><strong>Infraestructura de clave pública (PKI):</strong> Marco para gestionar certificados y claves.</li>
-                </ul>
-                
-                <h4>Impacto de la Computación Cuántica</h4>
-                <p>Los algoritmos asimétricos actuales son extremadamente vulnerables a los ataques cuánticos. El algoritmo de Shor puede factorizar números grandes y resolver problemas de logaritmo discreto en tiempo polinómico, rompiendo efectivamente RSA, ECC, Diffie-Hellman y otros sistemas basados en estos problemas matemáticos.</p>
-            </div>
-            
-            <div class="subtema">
-                <h3>1.3 Funciones Hash y Firmas Digitales</h3>
-                <p>Las funciones hash criptográficas transforman datos de entrada de cualquier tamaño en una salida de tamaño fijo, y son fundamentales para muchas aplicaciones de seguridad.</p>
-                
-                <h4>Propiedades de las Funciones Hash</h4>
-                <ul>
-                    <li><strong>Resistencia a preimagen:</strong> Dado un hash, debe ser computacionalmente inviable encontrar un mensaje que lo produzca.</li>
-                    <li><strong>Resistencia a segunda preimagen:</strong> Dado un mensaje, debe ser inviable encontrar otro mensaje que produzca el mismo hash.</li>
-                    <li><strong>Resistencia a colisiones:</strong> Debe ser inviable encontrar dos mensajes diferentes que produzcan el mismo hash.</li>
-                </ul>
-                
-                <h4>Funciones Hash Comunes</h4>
-                <ul>
-                    <li><strong>SHA-2:</strong> Familia que incluye SHA-256, SHA-384 y SHA-512, ampliamente utilizada.</li>
-                    <li><strong>SHA-3:</strong> Estándar más reciente, basado en la construcción Keccak, con un diseño diferente a SHA-2.</li>
-                    <li><strong>BLAKE2/BLAKE3:</strong> Funciones hash de alto rendimiento.</li>
-                </ul>
-                
-                <h4>Firmas Digitales</h4>
-                <p>Las firmas digitales combinan funciones hash y criptografía asimétrica para proporcionar autenticación, integridad y no repudio.</p>
-                <ul>
-                    <li><strong>RSA-PSS:</strong> Esquema de firma basado en RSA con relleno probabilístico.</li>
-                    <li><strong>ECDSA:</strong> Algoritmo de firma digital basado en curvas elípticas.</li>
-                    <li><strong>EdDSA:</strong> Variante de firma digital de curva elíptica con propiedades mejoradas (como Ed25519).</li>
-                </ul>
-                
-                <h4>Impacto de la Computación Cuántica</h4>
-                <p>Las funciones hash son parcialmente vulnerables a los ataques cuánticos. El algoritmo de Grover reduce la seguridad a la mitad, por lo que se recomienda duplicar el tamaño de la salida hash. Sin embargo, los esquemas de firma digital basados en criptografía asimétrica (RSA, ECDSA) son completamente vulnerables debido al algoritmo de Shor.</p>
-            </div>
-            
-            <div class="subtema">
-                <h3>1.4 Algoritmo Cuántico de Shor</h3>
-                <p>El algoritmo de Shor, desarrollado por Peter Shor en 1994, es uno de los algoritmos cuánticos más significativos debido a su capacidad para romper la criptografía de clave pública actual.</p>
-                
-                <h4>Fundamentos del Algoritmo</h4>
-                <ul>
-                    <li><strong>Propósito:</strong> Factorizar números enteros en tiempo polinómico.</li>
-                    <li><strong>Principio:</strong> Reduce la factorización a encontrar el período de una función, utilizando la transformada cuántica de Fourier.</li>
-                    <li><strong>Complejidad:</strong> O((log N)³), donde N es el número a factorizar, exponencialmente más rápido que los mejores algoritmos clásicos.</li>
-                </ul>
-                
-                <h4>Implicaciones para la Criptografía</h4>
-                <ul>
-                    <li><strong>RSA:</strong> Completamente vulnerable, ya que la seguridad depende de la dificultad de factorizar.</li>
-                    <li><strong>ECC:</strong> Igualmente vulnerable, ya que Shor también puede resolver el problema del logaritmo discreto en curvas elípticas.</li>
-                    <li><strong>Diffie-Hellman:</strong> Vulnerable debido a la capacidad de Shor para resolver logaritmos discretos.</li>
-                </ul>
-                
-                <h4>Estado Actual</h4>
-                <p>El algoritmo de Shor ha sido demostrado experimentalmente para números pequeños en computadoras cuánticas rudimentarias. Aunque las implementaciones actuales están lejos de poder factorizar claves RSA de 2048 bits, el progreso en la computación cuántica hace que esta amenaza sea cada vez más real.</p>
-            </div>
-            
-            <div class="subtema">
-                <h3>1.5 Algoritmo Cuántico de Grover</h3>
-                <p>El algoritmo de Grover, desarrollado por Lov Grover en 1996, proporciona una aceleración cuadrática para problemas de búsqueda no estructurada.</p>
-                
-                <h4>Fundamentos del Algoritmo</h4>
-                <ul>
-                    <li><strong>Propósito:</strong> Buscar en un espacio no estructurado (como encontrar una entrada específica en una base de datos no ordenada).</li>
-                    <li><strong>Principio:</strong> Amplifica la probabilidad de medir el estado correcto mediante la aplicación repetida de un operador específico.</li>
-                    <li><strong>Complejidad:</strong> O(√N), donde N es el tamaño del espacio de búsqueda, cuadráticamente más rápido que la búsqueda clásica.</li>
-                </ul>
-                
-                <h4>Implicaciones para la Criptografía</h4>
-                <ul>
-                    <li><strong>Cifrado simétrico:</strong> Reduce efectivamente la seguridad a la mitad. Una clave de 128 bits proporcionaría aproximadamente 64 bits de seguridad contra ataques cuánticos.</li>
-                    <li><strong>Funciones hash:</strong> Similar al cifrado simétrico, la resistencia a preimagen se reduce a la mitad.</li>
-                    <li><strong>Solución:</strong> Duplicar el tamaño de las claves y salidas hash (por ejemplo, usar AES-256 en lugar de AES-128).</li>
-                </ul>
-                
-                <h4>Limitaciones</h4>
-                <p>A diferencia del algoritmo de Shor, el algoritmo de Grover solo proporciona una aceleración cuadrática, no exponencial. Esto significa que los algoritmos simétricos pueden seguir siendo seguros simplemente aumentando el tamaño de las claves.</p>
-            </div>
-            
-            <div class="subtema">
-                <h3>1.6 Impacto de la Computación Cuántica en la Criptografía Actual</h3>
-                <p>La computación cuántica representa una amenaza existencial para muchos sistemas criptográficos actuales, pero el impacto varía según el tipo de criptografía.</p>
-                
-                <h4>Resumen de Vulnerabilidades</h4>
-                <table class="impact-table">
-                    <thead>
-                        <tr>
-                            <th>Tipo de Criptografía</th>
-                            <th>Algoritmo Cuántico</th>
-                            <th>Nivel de Amenaza</th>
-                            <th>Solución</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>RSA, ECC, Diffie-Hellman</td>
-                            <td>Algoritmo de Shor</td>
-                            <td>Crítico (ruptura completa)</td>
-                            <td>Migrar a algoritmos post-cuánticos</td>
-                        </tr>
-                        <tr>
-                            <td>AES, ChaCha20</td>
-                            <td>Algoritmo de Grover</td>
-                            <td>Moderado (reducción de seguridad)</td>
-                            <td>Duplicar tamaño de clave</td>
-                        </tr>
-                        <tr>
-                            <td>SHA-2, SHA-3</td>
-                            <td>Algoritmo de Grover</td>
-                            <td>Moderado (reducción de seguridad)</td>
-                            <td>Duplicar tamaño de salida</td>
-                        </tr>
-                        <tr>
-                            <td>Firmas digitales (RSA, ECDSA)</td>
-                            <td>Algoritmo de Shor</td>
-                            <td>Crítico (ruptura completa)</td>
-                            <td>Migrar a firmas post-cuánticas</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h4>Línea Temporal de la Amenaza</h4>
-                <p>Aunque las computadoras cuánticas actuales son demasiado pequeñas para amenazar la criptografía moderna, el progreso es constante. Consideraciones importantes:</p>
-                <ul>
-                    <li><strong>Harvest now, decrypt later:</strong> Los adversarios pueden recopilar datos cifrados ahora para descifrarlos cuando dispongan de computadoras cuánticas.</li>
-                    <li><strong>Tiempo de migración:</strong> La transición a sistemas post-cuánticos puede llevar años o décadas para sistemas grandes y complejos.</li>
-                    <li><strong>Estimaciones actuales:</strong> Muchos expertos sugieren que las computadoras cuánticas capaces de romper RSA-2048 podrían estar disponibles en 10-20 años.</li>
-                </ul>
-                
-                <h4>Necesidad de Criptografía Post-Cuántica</h4>
-                <p>Dadas estas amenazas, es crucial desarrollar, estandarizar e implementar algoritmos criptográficos resistentes a ataques cuánticos. El resto del curso explorará estas alternativas post-cuánticas en detalle.</p>
-            </div>
-        </section>
+        <h2 id="hash"><span class="sec">1.3</span>Funciones hash y XOF: SHA-2 y SHA-3/SHAKE</h2>
+        <p>Una función hash criptográfica <span class="math"><var>H</var> : {0,1}<sup>*</sup> → {0,1}<sup><var>n</var></sup></span> debe resistir tres ataques con coste genérico conocido: <strong>preimagen</strong> (dado <var>h</var>, hallar <var>m</var> con <span class="math"><var>H</var>(<var>m</var>) = <var>h</var></span>; 2<sup><var>n</var></sup>), <strong>segunda preimagen</strong> (2<sup><var>n</var></sup>) y <strong>colisión</strong> (hallar <span class="math"><var>m</var> ≠ <var>m</var>′</span> con igual hash; 2<sup><var>n</var>/2</sup> por la paradoja del cumpleaños).</p>
+        <ul>
+          <li><strong>SHA-2</strong> (FIPS 180-4 [8]): SHA-224/256/384/512, construcción Merkle–Damgård sobre una función de compresión. Consecuencia práctica: <em>extensión de longitud</em>; conocer <span class="math"><var>H</var>(<var>k</var> ‖ <var>m</var>)</span> permite calcular <span class="math"><var>H</var>(<var>k</var> ‖ <var>m</var> ‖ <var>pad</var> ‖ <var>m</var>′)</span>. Por eso los MAC se construyen con HMAC y no como <span class="math"><var>H</var>(<var>k</var> ‖ <var>m</var>)</span>.</li>
+          <li><strong>SHA-3</strong> (FIPS 202 [9]): construcción de esponja sobre la permutación Keccak-<var>f</var>[1600]. El estado de 1 600 bits se divide en <em>tasa</em> <var>r</var> (se absorben y exprimen datos) y <em>capacidad</em> <var>c</var> (nunca sale al exterior); la seguridad genérica es <span class="math">min(2<sup><var>c</var>/2</sup>, …)</span>. No sufre extensión de longitud.</li>
+          <li><strong>SHAKE128 y SHAKE256</strong> (FIPS 202) son <em>funciones de salida extensible</em> (XOF): producen tantos bits como se pidan, con 128 o 256 bits de seguridad. ML-KEM y ML-DSA las usan para expandir semillas en matrices y vectores (tema 4), y SLH-DSA se construye solo con hash.</li>
+        </ul>
 
-        <section class="tema-recursos">
-            <h2>Recursos Adicionales</h2>
-            
-            <div class="recursos-grid">
-                <div class="recurso-item">
-                    <h3>Lecturas Recomendadas</h3>
-                    <ul>
-                        <li>Bernstein, D. J., & Lange, T. (2017). Post-quantum cryptography. Nature, 549(7671), 188-194.</li>
-                        <li>Katz, J., & Lindell, Y. (2020). Introduction to Modern Cryptography (3rd ed.). CRC Press.</li>
-                        <li>NIST. (2016). Report on Post-Quantum Cryptography. NISTIR 8105.</li>
-                    </ul>
-                </div>
-                
-                <div class="recurso-item">
-                    <h3>Recursos en Línea</h3>
-                    <ul>
-                        <li><a href="https://csrc.nist.gov/Projects/post-quantum-cryptography">Proyecto de Criptografía Post-Cuántica del NIST</a></li>
-                        <li><a href="https://en.wikipedia.org/wiki/Shor%27s_algorithm">Algoritmo de Shor (Wikipedia)</a></li>
-                        <li><a href="https://en.wikipedia.org/wiki/Grover%27s_algorithm">Algoritmo de Grover (Wikipedia)</a></li>
-                    </ul>
-                </div>
-                
-                <div class="recurso-item">
-                    <h3>Ejemplos Prácticos</h3>
-                    <ul>
-                        <li><a href="../../ejemplos/algoritmo_shor.html">Simulación del Algoritmo de Shor</a></li>
-                        <li><a href="../../guias/algoritmo_shor.html">Guía de Laboratorio: Algoritmo de Shor</a></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <div class="tema-navegacion-inferior">
-            <div class="nav-anterior">
-                <!-- No hay tema anterior -->
-            </div>
-            <div class="nav-siguiente">
-                <a href="../tema2/index.html">
-                    Siguiente: Tema 2 - Infraestructura de Seguridad en Internet
-                    <span class="flecha">→</span>
-                </a>
-            </div>
+        <h2 id="clave-publica"><span class="sec">1.4</span>Clave pública: RSA, Diffie-Hellman y curvas elípticas</h2>
+        <h3 id="rsa">RSA</h3>
+        <p>Se eligen primos <var>p</var>, <var>q</var>, se publica <span class="math"><var>N</var> = <var>pq</var></span> y un exponente <var>e</var> (habitualmente 65 537) y se guarda <span class="math"><var>d</var> = <var>e</var><sup>−1</sup> mod λ(<var>N</var>)</span>. La función <span class="math"><var>x</var> ↦ <var>x</var><sup><var>e</var></sup> mod <var>N</var></span> es una permutación con trampa: invertirla sin <var>d</var> es el <em>problema RSA</em>, que se resuelve si se sabe factorizar <var>N</var>. En la práctica se usa con relleno: RSA-OAEP para cifrar y RSA-PSS (o PKCS#1 v1.5) para firmar. El mejor ataque clásico, la criba del cuerpo de números (GNFS), tiene coste subexponencial <span class="math">exp((1,923 + o(1)) (ln <var>N</var>)<sup>1/3</sup> (ln ln <var>N</var>)<sup>2/3</sup>)</span>; por eso RSA necesita claves grandes (3 072 bits para 128 bits de seguridad).</p>
+        <h3 id="dh">Diffie-Hellman y el logaritmo discreto</h3>
+        <p>En un grupo cíclico <span class="math">⟨<var>g</var>⟩</span> de orden primo <var>q</var>, Alicia envía <span class="math"><var>g</var><sup><var>a</var></sup></span>, Bob <span class="math"><var>g</var><sup><var>b</var></sup></span>, y ambos calculan <span class="math"><var>g</var><sup><var>ab</var></sup></span>. La seguridad descansa en tres problemas encadenados: logaritmo discreto (DLP: dado <span class="math"><var>g</var><sup><var>a</var></sup></span>, hallar <var>a</var>), Diffie-Hellman computacional (CDH: dado <span class="math"><var>g</var><sup><var>a</var></sup>, <var>g</var><sup><var>b</var></sup></span>, hallar <span class="math"><var>g</var><sup><var>ab</var></sup></span>) y decisional (DDH: distinguir <span class="math"><var>g</var><sup><var>ab</var></sup></span> de un elemento aleatorio). Resolver DLP resuelve CDH y DDH. En <span class="math">ℤ<sub><var>p</var></sub><sup>*</sup></span> existe también una criba subexponencial, así que los grupos de DH clásico miden 2 048–3 072 bits.</p>
+        <h3 id="ecc">Curvas elípticas: ECDH, ECDSA, EdDSA</h3>
+        <p>Los puntos de una curva <span class="math"><var>y</var><sup>2</sup> = <var>x</var><sup>3</sup> + <var>a</var><var>x</var> + <var>b</var></span> sobre <span class="math">𝔽<sub><var>p</var></sub></span> forman un grupo. El <strong>ECDLP</strong> (dado <span class="math"><var>Q</var> = <var>k</var><var>P</var></span>, hallar <var>k</var>) no admite, en curvas bien elegidas, nada mejor que los métodos genéricos tipo rho de Pollard, de coste ≈ <span class="math">√<var>n</var></span> para un grupo de orden <var>n</var>. Una curva de 256 bits da así ≈ 128 bits de seguridad con claves de 32 bytes, frente a los 384 bytes de RSA-3072. De ahí su dominio: <strong>ECDH</strong> y X25519 (RFC 7748 [10]) para acuerdo de claves en TLS 1.3, SSH o Signal; <strong>ECDSA</strong> sobre P-256 y <strong>EdDSA</strong>/Ed25519 (RFC 8032 [11], FIPS 186-5 [12]) para firmas en certificados, actualizaciones de software y documentos.</p>
+        <div class="callout note"><span class="callout-title">Por qué EdDSA es determinista</span><p>ECDSA necesita un valor aleatorio secreto <var>k</var> por firma; si <var>k</var> se repite o está sesgado, dos firmas bastan para despejar la clave privada con álgebra lineal. EdDSA deriva <var>k</var> como hash de la clave y el mensaje, eliminando esa fuente de fallos. La misma lección de «nonces que no pueden fallar» reaparece en el diseño de ML-DSA.</p></div>
+        <div class="table-wrap">
+          <table>
+            <caption>Equivalencias clásicas de seguridad (NIST SP 800-57 parte 1 rev. 5 [4]): tamaño de N o p en RSA/DH, del orden del grupo en ECC, y hash con esa resistencia a colisiones</caption>
+            <thead><tr><th class="num">Bits</th><th>Simétrico</th><th class="num">RSA / DH</th><th class="num">ECC</th><th>Hash</th></tr></thead>
+            <tbody>
+              <tr><td class="num">112</td><td>(3DES, retirado)</td><td class="num">2 048</td><td class="num">224–255</td><td>SHA-224</td></tr>
+              <tr><td class="num">128</td><td>AES-128</td><td class="num">3 072</td><td class="num">256–383</td><td>SHA-256</td></tr>
+              <tr><td class="num">192</td><td>AES-192</td><td class="num">7 680</td><td class="num">384–511</td><td>SHA-384</td></tr>
+              <tr><td class="num">256</td><td>AES-256</td><td class="num">15 360</td><td class="num">512+</td><td>SHA-512</td></tr>
+            </tbody>
+          </table>
         </div>
+        <p>Toda esta tabla es <strong>clásica</strong>. Frente a un ordenador cuántico, las tres columnas centrales se comportan de forma radicalmente distinta, como se verá en §1.11.</p>
+
+        <h2 id="computacion-cuantica"><span class="sec">1.5</span>Lo mínimo de computación cuántica</h2>
+        <p>Un <strong>qubit</strong> es un sistema cuyo estado es un vector unitario de ℂ<sup>2</sup>: <span class="math">|ψ⟩ = α|0⟩ + β|1⟩</span> con <span class="math">|α|<sup>2</sup> + |β|<sup>2</sup> = 1</span>. <var>n</var> qubits tienen un estado en ℂ<sup>2<sup><var>n</var></sup></sup>: una <strong>superposición</strong> <span class="math">Σ<sub><var>x</var></sub> α<sub><var>x</var></sub>|<var>x</var>⟩</span> con una amplitud compleja por cada cadena de <var>n</var> bits. Cuatro reglas bastan para este curso [3]:</p>
+        <ol>
+          <li><strong>Puertas = matrices unitarias.</strong> La Hadamard <span class="math"><var>H</var>|0⟩ = (|0⟩ + |1⟩)/√2</span>; aplicada a cada uno de <var>n</var> qubits crea la superposición uniforme de los 2<sup><var>n</var></sup> valores. Toda función clásica computable <var>f</var> se puede implementar de forma reversible como <span class="math">|<var>x</var>⟩|0⟩ ↦ |<var>x</var>⟩|<var>f</var>(<var>x</var>)⟩</span>, con un coste comparable al del circuito clásico.</li>
+          <li><strong>Medida (regla de Born).</strong> Medir devuelve <var>x</var> con probabilidad <span class="math">|α<sub><var>x</var></sub>|<sup>2</sup></span> y destruye la superposición. Se obtienen <var>n</var> bits, no 2<sup><var>n</var></sup> valores.</li>
+          <li><strong>Interferencia.</strong> Las amplitudes son complejas y se suman: caminos que llegan al mismo resultado con fases opuestas se cancelan. Un algoritmo cuántico útil orquesta las fases para que las respuestas buscadas se refuercen y las demás se anulen <em>antes</em> de medir.</li>
+          <li><strong>Ruido y corrección de errores.</strong> Los qubits físicos actuales fallan con probabilidades del orden de 10<sup>−3</sup> por puerta. Un <em>qubit lógico</em> codifica un qubit en cientos o miles de qubits físicos (p. ej., con el código de superficie) y corrige errores continuamente. En 2024 Google mostró un código de superficie claramente por debajo del umbral: el error lógico se divide por ≈ 2,1 cada vez que la distancia aumenta en 2, hasta 0,143 % por ciclo con distancia 7 y 101 qubits [13]; un CRQC necesita del orden de mil qubits lógicos sosteniendo miles de millones de operaciones.</li>
+        </ol>
+        <div class="callout"><span class="callout-title">Idea clave</span><p>Un ordenador cuántico <strong>no</strong> prueba todas las claves y devuelve la buena. Prepara una superposición, pero la medida solo entrega un resultado aleatorio. La ventaja aparece cuando el problema tiene una <strong>estructura global</strong> (un periodo, una simetría) que la interferencia puede concentrar en pocas salidas. Factorización y logaritmo discreto la tienen; la búsqueda de una clave AES apenas.</p></div>
+
+        <h2 id="shor"><span class="sec">1.6</span>El algoritmo de Shor</h2>
+        <p>Shor (1994; versión de revista en 1997 [1]) resolvió en tiempo polinómico dos problemas: factorizar enteros y calcular logaritmos discretos. Ambos se reducen a encontrar el <strong>periodo oculto</strong> de una función, tarea para la que la transformada cuántica de Fourier (QFT) es exponencialmente más eficiente que cualquier método clásico conocido.</p>
+        <h3 id="shor-factorizacion">Factorización como búsqueda de orden</h3>
+        <p>Sea <var>N</var> impar, compuesto y no potencia de un primo. Se elige <var>a</var> al azar con <span class="math">gcd(<var>a</var>, <var>N</var>) = 1</span>. La función <span class="math"><var>f</var>(<var>x</var>) = <var>a</var><sup><var>x</var></sup> mod <var>N</var></span> es periódica con periodo igual al <strong>orden</strong> <var>r</var> de <var>a</var>. Si <var>r</var> es par y <span class="math"><var>a</var><sup><var>r</var>/2</sup> ≢ −1 (mod <var>N</var>)</span>, entonces</p>
+        <div class="equation">{<var>p</var>, <var>q</var>} = { gcd(<var>a</var><sup><var>r</var>/2</sup> − 1, <var>N</var>), gcd(<var>a</var><sup><var>r</var>/2</sup> + 1, <var>N</var>) }<span class="eq-label">(1.1)</span></div>
+        <p>porque <span class="math">(<var>a</var><sup><var>r</var>/2</sup> − 1)(<var>a</var><sup><var>r</var>/2</sup> + 1) = <var>a</var><sup><var>r</var></sup> − 1 ≡ 0</span> y ninguno de los factores es múltiplo de <var>N</var>. Para un módulo RSA, cada <var>a</var> aleatorio funciona con probabilidad al menos 1/2. El paso caro, hallar <var>r</var>, es lo único que hace el ordenador cuántico:</p>
+        <ol>
+          <li>Registro de fase de <var>t</var> ≈ 2 log<sub>2</sub> <var>N</var> qubits en superposición uniforme (Hadamard); registro de trabajo a |1⟩.</li>
+          <li>Exponenciación modular controlada: <span class="math">|<var>x</var>⟩|1⟩ ↦ |<var>x</var>⟩|<var>a</var><sup><var>x</var></sup> mod <var>N</var>⟩</span>, implementada como una cadena de multiplicaciones controladas por <span class="math"><var>a</var><sup>2<sup><var>k</var></sup></sup> mod <var>N</var></span> (valores que se precalculan clásicamente). Es, con mucho, la parte más costosa: <span class="math"><var>O</var>(<var>n</var><sup>3</sup>)</span> puertas con aritmética de libro para <var>n</var> = log<sub>2</sub> <var>N</var>.</li>
+          <li>QFT inversa sobre el registro de fase y medida. El resultado <var>y</var> está, con alta probabilidad, junto a un múltiplo <span class="math"><var>s</var>·2<sup><var>t</var></sup>/<var>r</var></span>.</li>
+          <li>Post-proceso clásico: el desarrollo en fracción continua de <span class="math"><var>y</var>/2<sup><var>t</var></sup></span> da <span class="math"><var>s</var>/<var>r</var></span> y, por tanto, <var>r</var> (a veces un divisor; se repite).</li>
+        </ol>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 270" role="img" aria-labelledby="f11t f11d">
+            <title id="f11t">Flujo del algoritmo de Shor</title>
+            <desc id="f11d">Tres bloques: preparación clásica (comprobar N, elegir a, gcd), búsqueda de orden cuántica (Hadamard, exponenciación modular controlada, QFT inversa, medida de y) y post-proceso clásico (fracciones continuas para obtener r y gcd para obtener p y q). Una flecha de reintento vuelve al inicio si r es impar o a^(r/2) ≡ −1.</desc>
+            <defs><marker id="f11a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-ink"/></marker></defs>
+            <rect x="10" y="40" width="170" height="150" rx="4" class="svg-box"/>
+            <text x="95" y="30" text-anchor="middle" class="svg-muted">CLÁSICO</text>
+            <text x="95" y="70" text-anchor="middle" class="svg-text">¿N par, primo,</text>
+            <text x="95" y="88" text-anchor="middle" class="svg-text">potencia de primo?</text>
+            <text x="95" y="118" text-anchor="middle" class="svg-text">elegir a al azar</text>
+            <text x="95" y="148" text-anchor="middle" class="svg-text">g = gcd(a, N)</text>
+            <text x="95" y="170" text-anchor="middle" class="svg-muted">si g &gt; 1: factor</text>
+            <rect x="215" y="40" width="290" height="150" rx="4" class="svg-box-ink"/>
+            <text x="360" y="30" text-anchor="middle" class="svg-muted">CUÁNTICO · búsqueda de orden</text>
+            <rect x="228" y="62" width="48" height="104" rx="3" class="svg-box-signal"/>
+            <text x="252" y="119" text-anchor="middle" class="svg-text">H<tspan baseline-shift="super" font-size="9">⊗t</tspan></text>
+            <rect x="286" y="62" width="104" height="104" rx="3" class="svg-box-signal"/>
+            <text x="338" y="102" text-anchor="middle" class="svg-text">×a<tspan baseline-shift="super" font-size="9">2^k</tspan> mod N</text>
+            <text x="338" y="122" text-anchor="middle" class="svg-muted">controladas</text>
+            <text x="338" y="140" text-anchor="middle" class="svg-muted">(≈ todo el coste)</text>
+            <rect x="400" y="62" width="52" height="104" rx="3" class="svg-box-signal"/>
+            <text x="426" y="119" text-anchor="middle" class="svg-text">QFT<tspan baseline-shift="super" font-size="9">−1</tspan></text>
+            <rect x="462" y="92" width="32" height="44" rx="3" class="svg-box-amber"/>
+            <text x="478" y="119" text-anchor="middle" class="svg-text">y</text>
+            <rect x="540" y="40" width="170" height="150" rx="4" class="svg-box"/>
+            <text x="625" y="30" text-anchor="middle" class="svg-muted">CLÁSICO</text>
+            <text x="625" y="70" text-anchor="middle" class="svg-text">y / 2^t ≈ s / r</text>
+            <text x="625" y="90" text-anchor="middle" class="svg-muted">fracciones continuas</text>
+            <text x="625" y="122" text-anchor="middle" class="svg-text">x = a^(r/2) mod N</text>
+            <text x="625" y="150" text-anchor="middle" class="svg-text">gcd(x ± 1, N) = p, q</text>
+            <text x="625" y="172" text-anchor="middle" class="svg-muted">r impar o x ≡ −1: repetir</text>
+            <line x1="180" y1="115" x2="212" y2="115" class="svg-stroke-ink" stroke-width="1.5" marker-end="url(#f11a)"/>
+            <line x1="505" y1="115" x2="537" y2="115" class="svg-stroke-ink" stroke-width="1.5" marker-end="url(#f11a)"/>
+            <path d="M625,190 L625,240 L95,240 L95,193" class="svg-stroke-amber" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#f11a)"/>
+            <text x="360" y="258" text-anchor="middle" class="svg-muted">reintento con otra a (probabilidad de éxito ≥ 1/2 por intento para N = pq)</text>
+          </svg>
+          <figcaption><b>Figura 1.1.</b> Estructura del algoritmo de Shor. Solo el bloque central es cuántico; su coste está dominado por la exponenciación modular, no por la QFT. Pruébalo en el <a href="../../ejemplos/algoritmo_shor.html">ejemplo E1</a> y constrúyelo en Qiskit en el <a href="../../guias/algoritmo_shor.html">laboratorio L1</a>.</figcaption>
+        </figure>
+        <p><strong>Ejemplo resuelto (N = 35, a = 3).</strong> Las potencias de 3 módulo 35 son 1, 3, 9, 27, 11, 33, 29, 17, 16, 13, 4, 12, 1, así que <var>r</var> = 12. Con <span class="math"><var>t</var> = 11</span> (<span class="math">2<sup>11</sup> = 2 048 ≥ 35<sup>2</sup></span>) los picos están en múltiplos de 2 048/12 ≈ 170,67. Supón que se mide <var>y</var> = 853. Los convergentes de 853/2 048 son 0, 1/2, 2/5, 5/12, 212/509…; el último con denominador menor que 35 es 5/12, y <span class="math">3<sup>12</sup> ≡ 1</span> confirma <var>r</var> = 12. Entonces <span class="math">3<sup>6</sup> mod 35 = 29</span>, <span class="math">gcd(28, 35) = 7</span> y <span class="math">gcd(30, 35) = 5</span>.</p>
+        <h3 id="shor-dlog">Logaritmo discreto y curvas elípticas</h3>
+        <p>Para el logaritmo discreto en un grupo de orden <var>n</var> con <span class="math"><var>Q</var> = <var>k</var><var>P</var></span>, Shor usa una función de <strong>dos</strong> variables, <span class="math"><var>f</var>(<var>u</var>, <var>v</var>) = <var>u</var><var>P</var> + <var>v</var><var>Q</var> = (<var>u</var> + <var>k</var><var>v</var>)<var>P</var></span>. Es constante sobre las rectas <span class="math"><var>u</var> + <var>k</var><var>v</var> ≡ <var>c</var></span>: su periodo oculto es el vector (<var>k</var>, −1). Dos QFT y una medida dan un par (<var>c</var>, <var>d</var>) con <span class="math"><var>d</var> ≡ <var>k</var><var>c</var> (mod <var>n</var>)</span>, del que se despeja <var>k</var>. Lo mismo vale para <span class="math">ℤ<sub><var>p</var></sub><sup>*</sup></span> (DH, DSA) y para curvas elípticas (ECDH, ECDSA, EdDSA). La diferencia práctica está en el <strong>tamaño</strong>: para 128 bits clásicos, el registro de una curva es de 256 bits frente a 3 072 de RSA, y la aritmética de puntos, aunque más compleja por bit, da circuitos con menos qubits lógicos. Por eso las estimaciones para ECDLP-256 son hoy <strong>más bajas</strong> que las de RSA-2048 (§1.8): las curvas elípticas caerían antes.</p>
+
+        <h2 id="grover"><span class="sec">1.7</span>El algoritmo de Grover</h2>
+        <p>Grover (1996 [14]) busca un elemento marcado entre <var>M</var> con ≈ <span class="math">(π/4)√<var>M</var></span> evaluaciones de un oráculo, frente a las ≈ <var>M</var>/2 clásicas. Cada iteración aplica el oráculo (que invierte la fase de la solución) y una reflexión respecto a la media; la amplitud de la solución crece como <span class="math">sin((2<var>j</var> + 1)θ)</span> con <span class="math">sin θ = 1/√<var>M</var></span>. Para una clave AES de <var>k</var> bits, el oráculo es un circuito cuántico reversible de AES completo: la búsqueda cuesta ≈ 2<sup><var>k</var>/2</sup> iteraciones de ese circuito. Zalka demostró que Grover es óptimo: ningún algoritmo cuántico genérico lo mejora [15].</p>
+        <p>Nominalmente, AES-128 bajaría a «64 bits». En la práctica el ataque es mucho más caro por tres razones:</p>
+        <ul>
+          <li><strong>Las iteraciones son secuenciales.</strong> 2<sup>64</sup> iteraciones de un circuito AES tolerante a fallos, cada una con miles de pasos lógicos, suponen siglos a velocidades de ciclo realistas.</li>
+          <li><strong>Grover se paraleliza mal.</strong> Con <var>S</var> máquinas, cada una busca en <span class="math"><var>M</var>/<var>S</var></span> claves y tarda <span class="math">√(<var>M</var>/<var>S</var>)</span>: el tiempo solo baja como <span class="math">1/√<var>S</var></span> y el trabajo total sube a <span class="math">√(<var>M</var><var>S</var>)</span> [15]. Una búsqueda clásica, en cambio, se reparte sin pérdida.</li>
+          <li><strong>Coste de corrección de errores.</strong> Cada puerta lógica cuesta muchas operaciones físicas; ese factor no se paraleliza.</li>
+        </ul>
+        <p><strong>Ejemplo resuelto.</strong> NIST propone limitar la profundidad secuencial de un ataque (MAXDEPTH) a entre 2<sup>40</sup> y 2<sup>96</sup> puertas lógicas; con MAXDEPTH = 2<sup>40</sup>, estima el coste de la búsqueda cuántica de una clave AES-128 en <span class="math">2<sup>170</sup>/MAXDEPTH = 2<sup>130</sup></span> puertas, frente a 2<sup>143</sup> puertas clásicas [16]. En términos de iteraciones: si una máquina solo puede encadenar <span class="math"><var>D</var> = 2<sup>40</sup></span> iteraciones, para cubrir 2<sup>128</sup> claves se necesitan <span class="math"><var>S</var> = 2<sup>128</sup>/<var>D</var><sup>2</sup> = 2<sup>48</sup></span> ordenadores cuánticos trabajando en paralelo y un total de <span class="math"><var>S</var>·<var>D</var> = 2<sup>88</sup></span> iteraciones de AES cuántico. Por esto NIST usa AES-128 como referencia del nivel de seguridad NIST 1 y no recomienda doblar claves simétricas con urgencia; AES-256 se elige cuando se quiere margen amplio (nivel 5) o por requisitos como CNSA 2.0 (tema 5).</p>
+        <p><strong>Funciones hash.</strong> Grover reduce la preimagen de SHA-256 a ≈ 2<sup>128</sup> evaluaciones secuenciales: sin problema. Para colisiones, el algoritmo de Brassard–Høyer–Tapp logra ≈ 2<sup><var>n</var>/3</sup> consultas [17], pero necesita ≈ 2<sup><var>n</var>/3</sup> de memoria accesible cuánticamente; con el coste real del hardware no mejora a la búsqueda de colisiones clásica en paralelo (rho con puntos distinguidos), que sigue costando ≈ 2<sup><var>n</var>/2</sup> [18]. SHA-256 y SHA3-256 siguen dando ≈ 128 bits frente a colisiones.</p>
+        <details><summary>Para saber más: cuando el atacante consulta en superposición</summary><div class="details-body"><p>Si un atacante pudiera hacer consultas <em>en superposición</em> a un oráculo con la clave (modelo Q2), el algoritmo de periodo de Simon rompe en tiempo polinómico algunos modos de operación y MAC clásicos, como CBC-MAC o ciertos modos autenticados [19]. En el modelo realista (Q1: el atacante tiene un ordenador cuántico pero solo consulta el sistema atacado de forma clásica) estos ataques no aplican. Es un recordatorio de que la «seguridad cuántica» depende del modelo de acceso.</p></div></details>
+
+        <h2 id="recursos"><span class="sec">1.8</span>Estimaciones de recursos: de 2019 a 2026</h2>
+        <p>Una estimación de recursos traduce el algoritmo en un circuito concreto (número de <strong>qubits lógicos</strong> y de <strong>puertas Toffoli</strong>, la operación no-Clifford cara), elige un código de corrección de errores y supone unos parámetros de hardware (tasa de error física, tiempo de ciclo, tiempo de reacción del decodificador). El resultado es un número de <strong>qubits físicos</strong> y un <strong>tiempo de ejecución</strong>. Las cifras se abaratan por dos vías independientes: mejor aritmética (menos qubits lógicos o Toffoli) y mejores códigos y arquitecturas (menos qubits físicos por qubit lógico).</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Estimaciones publicadas para romper RSA-2048 y ECC de 256 bits (análisis teóricos, no demostraciones)</caption>
+            <thead><tr><th>Trabajo</th><th>Objetivo</th><th class="num">Lógicos</th><th class="num">Toffoli</th><th class="num">Físicos</th><th>Tiempo</th></tr></thead>
+            <tbody>
+              <tr><td>Beauregard 2002 [20]</td><td>RSA-<var>n</var></td><td class="num">2<var>n</var> + 3</td><td class="num">—</td><td class="num">—</td><td>—</td></tr>
+              <tr><td>Roetteler et al. 2017 [21]</td><td>P-256</td><td class="num">2 330</td><td class="num">1,3·10<sup>11</sup></td><td class="num">—</td><td>—</td></tr>
+              <tr><td>Gidney, Ekerå 2019 [22]</td><td>RSA-2048</td><td class="num">≈ 6 200</td><td class="num">≈ 3·10<sup>9</sup></td><td class="num">20 M</td><td>8 h</td></tr>
+              <tr><td>Litinski 2023 [23]</td><td>ECC-256</td><td class="num">—</td><td class="num">5·10<sup>7</sup></td><td class="num">—</td><td>—</td></tr>
+              <tr><td>Gidney 2025 [2]</td><td>RSA-2048</td><td class="num">1 399</td><td class="num">6,5·10<sup>9</sup></td><td class="num">0,9 M</td><td>≈ 5 días</td></tr>
+              <tr><td>Webster et al. 2026 [24]</td><td>RSA-2048</td><td class="num">—</td><td class="num">—</td><td class="num">&lt; 0,1 M</td><td>≈ 1 mes [27]</td></tr>
+              <tr><td>Cain et al. 2026 [25]</td><td>P-256</td><td class="num">—</td><td class="num">—</td><td class="num">10–26 mil</td><td>días</td></tr>
+              <tr><td>Babbush et al. 2026 [26]</td><td>secp256k1</td><td class="num">≤ 1 200</td><td class="num">≤ 9·10<sup>7</sup></td><td class="num">&lt; 0,5 M</td><td>minutos</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="small">Supuestos: [20] y [21] dan solo el circuito lógico, sin corrección de errores; [20] minimiza qubits, [21] usa aritmética de puntos reversible (≈ 9<var>n</var> qubits). [22] y [2] suponen código de superficie con error físico <var>p</var> = 10<sup>−3</sup>, ciclo de 1 µs y reacción de 10 µs; [2] reduce qubits con aritmética aproximada de residuos, <em>yoked surface codes</em> y <em>magic state cultivation</em>, y da 897 864 qubits físicos exactos. [23] usa una arquitectura de «volumen activo» con conexiones no locales. [24] mantiene los supuestos de hardware de [2] pero cambia a códigos QLDPC, que exigen conectividad no local; el tiempo lo comenta [27]. [25] propone átomos neutros reconfigurables y códigos de alta tasa (RSA-2048 tardaría de 10 a 100 veces más que P-256). [26] ofrece dos variantes (≤ 1 200 qubits lógicos y 9·10<sup>7</sup> Toffoli, o ≤ 1 450 y 7·10<sup>7</sup>) en superconductores con conectividad plana.</p>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 280" role="img" aria-labelledby="f12t f12d">
+            <title id="f12t">Qubits físicos estimados para romper RSA-2048, en escala logarítmica</title>
+            <desc id="f12d">Barras en escala logarítmica: 20 millones (Gidney y Ekerå 2019), unos 900 000 (Gidney 2025) y menos de 100 000 (Pinnacle 2026, con códigos QLDPC). Como referencia, el procesador Willow de 2024 tiene 105 qubits físicos.</desc>
+            <g class="svg-muted">
+              <text x="92" y="244" text-anchor="end">10²</text><text x="92" y="200" text-anchor="end">10³</text><text x="92" y="156" text-anchor="end">10⁴</text><text x="92" y="112" text-anchor="end">10⁵</text><text x="92" y="68" text-anchor="end">10⁶</text><text x="92" y="24" text-anchor="end">10⁷</text>
+            </g>
+            <g class="svg-line" stroke-dasharray="2 4">
+              <line x1="100" y1="240" x2="700" y2="240"/><line x1="100" y1="196" x2="700" y2="196"/><line x1="100" y1="152" x2="700" y2="152"/><line x1="100" y1="108" x2="700" y2="108"/><line x1="100" y1="64" x2="700" y2="64"/><line x1="100" y1="20" x2="700" y2="20"/>
+            </g>
+            <!-- y = 240 - 44*(log10(q) - 2) -->
+            <rect x="140" y="6.8" width="90" height="233.2" class="svg-box-amber"/>
+            <text x="185" y="26" text-anchor="middle" class="svg-text">20 M</text>
+            <text x="185" y="262" text-anchor="middle" class="svg-text">2019 · G–E</text>
+            <rect x="280" y="66.1" width="90" height="173.9" class="svg-box-amber"/>
+            <text x="325" y="84" text-anchor="middle" class="svg-text">≈ 0,9 M</text>
+            <text x="325" y="262" text-anchor="middle" class="svg-text">2025 · Gidney</text>
+            <rect x="420" y="108" width="90" height="132" class="svg-box-signal"/>
+            <text x="465" y="126" text-anchor="middle" class="svg-text">&lt; 0,1 M</text>
+            <text x="465" y="262" text-anchor="middle" class="svg-text">2026 · QLDPC</text>
+            <line x1="560" y1="239.1" x2="690" y2="239.1" class="svg-stroke-ink" stroke-width="2"/>
+            <text x="615" y="230" text-anchor="middle" class="svg-text">105</text>
+            <text x="615" y="262" text-anchor="middle" class="svg-text">2024 · Willow</text>
+            <text x="615" y="276" text-anchor="middle" class="svg-muted">(hardware real)</text>
+          </svg>
+          <figcaption><b>Figura 1.2.</b> Qubits físicos estimados para factorizar RSA-2048 (escala logarítmica) con los mismos supuestos de hardware (<var>p</var> = 10<sup>−3</sup>, ciclo de 1 µs), frente al tamaño de un procesador real de 2024. La barra de 2026 supone códigos QLDPC, más difíciles de implementar que el código de superficie. Fuentes: [22], [2], [24], [13].</figcaption>
+        </figure>
+        <p>Tres lecturas de esta tabla:</p>
+        <ul>
+          <li><strong>La tendencia es a la baja y rápida.</strong> Entre 2019 y 2025 los qubits físicos para RSA-2048 bajaron 20 veces con el <em>mismo</em> hardware supuesto, a cambio de más tiempo; en 2026 aparecen propuestas otro orden de magnitud por debajo, con códigos más exigentes en conectividad y decodificación. Las cifras de 2026 son preprints recientes, todavía en revisión por la comunidad.</li>
+          <li><strong>ECC es el objetivo más barato.</strong> Con ≈ 1 200 qubits lógicos y menos de 10<sup>8</sup> Toffoli, romper una clave de curva de 256 bits requiere unas 70 veces menos puertas Toffoli que RSA-2048 en [2], y el tiempo por clave se mide en minutos u horas. Esto afecta de lleno a ECDH/X25519 en TLS y a las firmas ECDSA/EdDSA.</li>
+          <li><strong>La distancia al hardware sigue siendo grande.</strong> Los mejores procesadores de 2024–2026 tienen del orden de 10<sup>2</sup>–10<sup>3</sup> qubits físicos y decenas de qubits lógicos en demostraciones; un CRQC necesita del orden de 10<sup>5</sup>–10<sup>6</sup> qubits físicos funcionando durante días con errores correlacionados bajo control. El salto es de ingeniería, no de principio: nadie ha identificado un obstáculo fundamental.</li>
+        </ul>
+
+        <h2 id="cuando"><span class="sec">1.9</span>¿Cuándo? Encuestas de expertos</h2>
+        <p>Nadie sabe cuándo existirá un <strong>ordenador cuántico criptográficamente relevante</strong> (CRQC). La referencia más citada es la encuesta anual del Global Risk Institute, dirigida por M. Mosca y M. Piani, que define CRQC como una máquina capaz de romper RSA-2048 en 24 horas.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Probabilidad media asignada por los expertos a un CRQC (rango: interpretación pesimista–optimista de las respuestas)</caption>
+            <thead><tr><th>Edición (publicación)</th><th class="num">Expertos</th><th class="num">En 5 años</th><th class="num">En 10 años</th><th class="num">En 15 años</th></tr></thead>
+            <tbody>
+              <tr><td>2024 (diciembre 2024) [28]</td><td class="num">32</td><td class="num">hasta ≈ 14 %</td><td class="num">19–34 %</td><td class="num">—</td></tr>
+              <tr><td>2025 (9 marzo 2026) [29]</td><td class="num">26</td><td class="num">—</td><td class="num">28–49 %</td><td class="num">51–70 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>La estimación a 10 años de la edición 2025 es la más alta de la serie iniciada en 2019. Las encuestas no son predicciones fiables, pero sí fijan el orden de magnitud que usan los reguladores: un CRQC en la década de 2030 es una hipótesis de planificación razonable. Las agencias han traducido esto en calendarios (NIST IR 8547, todavía borrador, propone declarar obsoletos RSA y ECC de 112 bits en 2030 y prohibir todo el cifrado vulnerable en 2035 [30]; véase el tema 5 para CNSA 2.0 y la hoja de ruta de la UE).</p>
+
+        <h2 id="mosca"><span class="sec">1.10</span>«Almacenar ahora, descifrar después» y la desigualdad de Mosca</h2>
+        <p>Un adversario puede grabar hoy tráfico cifrado (un <em>handshake</em> TLS con ECDHE y la sesión que protege) y descifrarlo el día que disponga de un CRQC: es el ataque <strong>«almacenar ahora, descifrar después»</strong> (<em>harvest now, decrypt later</em>, HNDL). Para la <strong>confidencialidad</strong>, el riesgo no empieza cuando exista el CRQC sino <strong>ahora</strong>, en cuanto los datos interceptados sigan siendo valiosos cuando llegue. Las <strong>firmas</strong> son distintas: falsificar una firma exige el CRQC en el momento del ataque, así que el riesgo es futuro, salvo para raíces de confianza y firmas de larga vida (certificados raíz, firmware, documentos legales) que deben seguir siendo verificables décadas después.</p>
+        <div class="definition"><span class="def-title"><b>Teorema práctico</b>Desigualdad de Mosca</span><p>Sean <var>x</var> el tiempo que la información debe permanecer confidencial, <var>y</var> el tiempo necesario para migrar los sistemas a criptografía post-cuántica y <var>z</var> el tiempo hasta que exista un CRQC. Si</p><div class="equation"><var>x</var> + <var>y</var> &gt; <var>z</var><span class="eq-label">(1.2)</span></div><p>habrá datos que queden expuestos antes de caducar: hay que haber empezado a migrar hace <span class="math"><var>x</var> + <var>y</var> − <var>z</var></span> años [31].</p></div>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 240" role="img" aria-labelledby="f13t f13d">
+            <title id="f13t">Desigualdad de Mosca aplicada a un hospital en 2026</title>
+            <desc id="f13d">Línea de tiempo de 2026 a 2056. La migración ocupa de 2026 a 2033 y los datos cifrados hasta 2033 deben seguir siendo confidenciales 15 años más, hasta 2048. La franja 2036–2041 marca cuándo los expertos consideran posible o probable un CRQC. La zona entre z y 2048 son años de exposición.</desc>
+            <defs><marker id="f13a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="svg-ink"/></marker></defs>
+            <!-- escala: x = 40 + (año - 2026) * 21 -->
+            <rect x="250" y="30" width="105" height="150" class="svg-box-amber" opacity="0.55"/>
+            <text x="302" y="22" text-anchor="middle" class="svg-muted">z: CRQC posible (10 años) → probable (15)</text>
+            <rect x="355" y="150" width="147" height="26" class="svg-box" stroke-dasharray="4 3"/>
+            <text x="428" y="167" text-anchor="middle" class="svg-danger" font-size="12">exposición si z ≈ 2041</text>
+            <rect x="40" y="60" width="147" height="30" rx="3" class="svg-box-signal"/>
+            <text x="113" y="80" text-anchor="middle" class="svg-text">y = 7 años: migrar</text>
+            <rect x="187" y="112" width="315" height="30" rx="3" class="svg-box-ink" opacity="0.9"/>
+            <text x="345" y="131" text-anchor="middle" class="svg-on-ink">x = 15 años de confidencialidad</text>
+            <line x1="40" y1="190" x2="690" y2="190" class="svg-stroke-ink" stroke-width="1.5" marker-end="url(#f13a)"/>
+            <g class="svg-muted" text-anchor="middle">
+              <text x="40" y="208">2026</text><text x="145" y="208">2031</text><text x="250" y="208">2036</text><text x="355" y="208">2041</text><text x="460" y="208">2046</text><text x="565" y="208">2051</text><text x="670" y="208">2056</text>
+            </g>
+            <g class="svg-line"><line x1="40" y1="186" x2="40" y2="194"/><line x1="145" y1="186" x2="145" y2="194"/><line x1="250" y1="186" x2="250" y2="194"/><line x1="355" y1="186" x2="355" y2="194"/><line x1="460" y1="186" x2="460" y2="194"/><line x1="565" y1="186" x2="565" y2="194"/><line x1="670" y1="186" x2="670" y2="194"/></g>
+            <line x1="502" y1="100" x2="502" y2="190" class="svg-stroke-ink" stroke-dasharray="3 3"/>
+            <text x="508" y="104" class="svg-text">x + y = 2048</text>
+            <text x="40" y="232" class="svg-muted">Los datos cifrados con ECDHE hasta que termina la migración (2033) pueden grabarse hoy y descifrarse cuando exista el CRQC.</text>
+          </svg>
+          <figcaption><b>Figura 1.3.</b> Ejemplo de §1.10. Con <var>x</var> = 15 e <var>y</var> = 7, cualquier CRQC anterior a 2048 expone datos que aún deberían ser secretos; la franja ámbar es el intervalo en que la encuesta de 2025 considera un CRQC «posible» (28–49 % a 10 años) o «probable» (51–70 % a 15 años) [29].</figcaption>
+        </figure>
+        <p><strong>Ejemplo resuelto.</strong> Un hospital cifra historias clínicas que deben permanecer confidenciales al menos <var>x</var> = 15 años (en muchos casos, toda la vida del paciente). Su inventario criptográfico, la actualización de equipos médicos y la renovación de contratos requieren <var>y</var> = 7 años. Entonces <span class="math"><var>x</var> + <var>y</var> = 22</span>: cualquier CRQC antes de 2048 compromete datos todavía protegidos. La encuesta de 2025 asigna al menos un 51 % de probabilidad a un CRQC en 15 años (≈ 2041), es decir <span class="math"><var>z</var> ≈ 15 &lt; 22</span>. La desigualdad se cumple con 7 años de margen negativo: la migración debería haber empezado en 2019. La conclusión operativa, la misma de las agencias, es priorizar ya el <strong>intercambio de claves híbrido</strong> (X25519MLKEM768, tema 2 y tema 5) en los canales que transportan datos de larga vida, antes incluso que las firmas.</p>
+
+        <h2 id="impacto"><span class="sec">1.11</span>Qué se rompe y qué no</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>Impacto de un CRQC sobre las primitivas de uso común</caption>
+            <thead><tr><th>Primitiva</th><th>Problema</th><th>Ataque cuántico</th><th>Estado</th><th>Respuesta</th></tr></thead>
+            <tbody>
+              <tr><th>RSA (cifrado, firma, KEM)</th><td>Factorización</td><td>Shor, polinómico</td><td><span class="badge broken">Roto</span></td><td>ML-KEM, ML-DSA, SLH-DSA</td></tr>
+              <tr><th>DH finito, DSA</th><td>DLP en ℤ<sub><var>p</var></sub><sup>*</sup></td><td>Shor, polinómico</td><td><span class="badge broken">Roto</span></td><td>ML-KEM, ML-DSA</td></tr>
+              <tr><th>ECDH, X25519, ECDSA, EdDSA</th><td>ECDLP</td><td>Shor, polinómico; menos recursos que RSA</td><td><span class="badge broken">Roto</span></td><td>X25519MLKEM768 (híbrido), ML-DSA</td></tr>
+              <tr><th>AES-128</th><td>Búsqueda de clave</td><td>Grover, √ secuencial</td><td><span class="badge info">Debilitado</span></td><td>Aceptable (referencia del nivel NIST 1)</td></tr>
+              <tr><th>AES-192/256, ChaCha20</th><td>Búsqueda de clave</td><td>Grover</td><td><span class="badge final">Seguro</span></td><td>Sin cambios</td></tr>
+              <tr><th>SHA-256, SHA3-256</th><td>Preimagen / colisión</td><td>Grover 2<sup>128</sup>; BHT sin ventaja real</td><td><span class="badge final">Seguro</span></td><td>Sin cambios</td></tr>
+              <tr><th>HMAC, HKDF, SHAKE</th><td>Pseudoaleatoriedad</td><td>Grover sobre la clave</td><td><span class="badge final">Seguro</span></td><td>Claves ≥ 128 bits (256 si se quiere margen)</td></tr>
+              <tr><th>GCM, Poly1305</th><td>Autenticación</td><td>Nada relevante en el modelo Q1</td><td><span class="badge final">Seguro</span></td><td>Sin cambios</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>La conclusión que guía el resto del curso: la criptografía simétrica y los hash sobreviven con ajustes menores; <strong>toda la criptografía de clave pública desplegada cae</strong> y hay que sustituirla por esquemas basados en problemas sin estructura de periodo explotable. Los estándares de NIST publicados el 13 de agosto de 2024 (FIPS 203 ML-KEM, FIPS 204 ML-DSA, FIPS 205 SLH-DSA) se estudian en el <a href="../tema4/index.html">tema 4</a>, sus fundamentos matemáticos (retículos, hash) en el <a href="../tema3/index.html">tema 3</a>, y cómo afectan a PKI y TLS en el <a href="../tema2/index.html">tema 2</a>.</p>
+
+        <h2 id="ejercicios"><span class="sec">1.12</span>Ejercicios</h2>
+        <div class="exercise"><span class="ex-title">Ejercicio 1.1 <span class="level">Básico</span></span><p>Aplica a mano la reducción de Shor a <span class="math"><var>N</var> = 21</span> con <span class="math"><var>a</var> = 2</span>. ¿Qué pasa con <span class="math"><var>a</var> = 4</span>? ¿Y con <span class="math"><var>a</var> = 20</span>?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>Potencias de 2 mod 21: 1, 2, 4, 8, 16, 11, 1, luego <var>r</var> = 6. <span class="math">2<sup>3</sup> = 8</span>, <span class="math">gcd(7, 21) = 7</span>, <span class="math">gcd(9, 21) = 3</span>. Con <var>a</var> = 4: 1, 4, 16, 1, <var>r</var> = 3 impar, falla. Con <var>a</var> = 20 ≡ −1: <var>r</var> = 2 y <span class="math"><var>a</var><sup>1</sup> ≡ −1</span>, falla (factores triviales 1 y 21).</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 1.2 <span class="level">Básico</span></span><p>Una administración almacena expedientes que deben ser secretos 25 años. Estima que su migración durará 10 años. Si toma como hipótesis un CRQC en 2036, ¿cumple la desigualdad de Mosca? ¿Cuándo debería haber empezado?</p>
+          <details><summary>Solución</summary><div class="details-body"><p><span class="math"><var>x</var> + <var>y</var> = 35 &gt; <var>z</var> = 10</span> (de 2026 a 2036). Hay 25 años de déficit: debería haber empezado en 2001, antes de que existieran estándares post-cuánticos. La consecuencia práctica es que parte de lo ya transmitido está expuesto sin remedio y que hay que minimizar la exposición futura con urgencia (canales híbridos, cifrado en reposo con claves simétricas no derivadas de RSA/ECDH).</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 1.3 <span class="level">Intermedio</span></span><p>En el ejemplo de <var>N</var> = 35, <var>a</var> = 3, <var>t</var> = 11 se mide <var>y</var> = 512. ¿Qué convergentes salen, qué se recupera y cómo se obtiene <var>r</var>?</p>
+          <details><summary>Solución</summary><div class="details-body"><p><span class="math">512/2 048 = 1/4</span> exactamente: <span class="math"><var>s</var>/<var>r</var> = 3/12</span> simplificado. Se obtiene el denominador 4, pero <span class="math">3<sup>4</sup> = 81 ≡ 11 ≢ 1</span>. Probando múltiplos, <span class="math">3·4 = 12</span> cumple <span class="math">3<sup>12</sup> ≡ 1</span>. Alternativa: repetir la medida y tomar el mínimo común múltiplo de los denominadores.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 1.4 <span class="level">Intermedio</span></span><p>Repite el cálculo de Grover paralelo de §1.7 para AES-256 con <span class="math"><var>D</var> = 2<sup>64</sup></span> iteraciones secuenciales por máquina. ¿Cuántas máquinas y cuántas iteraciones en total?</p>
+          <details><summary>Solución</summary><div class="details-body"><p><span class="math"><var>S</var> = 2<sup>256</sup>/<var>D</var><sup>2</sup> = 2<sup>128</sup></span> máquinas y <span class="math"><var>S</var>·<var>D</var> = 2<sup>192</sup></span> iteraciones. Incluso con una profundidad secuencial enorme, el ataque es inviable por completo.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 1.5 <span class="level">Intermedio</span></span><p>P-256 y RSA-3072 dan ambos 128 bits de seguridad clásica. Explica por qué romper P-256 requiere menos qubits lógicos que RSA-3072, aunque la suma de puntos sea más compleja que una multiplicación modular.</p>
+          <details><summary>Solución</summary><div class="details-body"><p>El número de qubits escala con el tamaño de los registros: los registros de coordenadas son de 256 bits (unas pocas decenas de registros, ≈ 9<var>n</var> en [21], ≈ 2 330) frente a los de 3 072 bits de RSA (≈ 2<var>n</var>–3<var>n</var>, es decir 6 000–9 000 qubits lógicos con construcciones clásicas). La seguridad clásica de ECC es alta con claves cortas porque solo existen ataques genéricos √<var>n</var>; Shor no distingue: es polinómico en el tamaño del registro, así que la clave corta es una desventaja frente a él.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 1.6 <span class="level">Avanzado</span></span><p>Demuestra que ningún esquema de cifrado de clave pública determinista puede ser IND-CPA, y da un ataque concreto contra RSA «de libro» si el mensaje es «SÍ» o «NO».</p>
+          <details><summary>Solución</summary><div class="details-body"><p>En el juego IND-CPA el adversario elige <var>m</var><sub>0</sub>, <var>m</var><sub>1</sub> y recibe <span class="math"><var>c</var> = Enc(<var>pk</var>, <var>m</var><sub><var>b</var></sub>)</span>. Como conoce <var>pk</var>, calcula <span class="math">Enc(<var>pk</var>, <var>m</var><sub>0</sub>)</span>; si el cifrado es determinista y coincide con <var>c</var>, entonces <var>b</var> = 0: ventaja 1. Contra RSA de libro basta cifrar «SÍ» y «NO» con <span class="math">(<var>N</var>, <var>e</var>)</span> y comparar. OAEP introduce aleatoriedad y redundancia verificable para evitarlo.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 1.7 <span class="level">Avanzado</span></span><p>Un adversario graba en 2026 un <em>handshake</em> TLS 1.3 con ECDHE (X25519) autenticado con un certificado RSA-2048 y la sesión AES-128-GCM que le sigue. En 2040 dispone de un CRQC. ¿Qué primitiva rompe para leer el tráfico? ¿Le sirve romper la firma RSA? ¿Y Grover contra AES-128?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>Rompe el ECDLP de las comparticiones X25519 (públicas en el <em>handshake</em>) con Shor, obtiene el secreto compartido, deriva con HKDF las claves de tráfico y descifra toda la sesión. La firma RSA solo autentica el <em>handshake</em> en su momento: romperla en 2040 no aporta nada sobre el pasado (sí permitiría suplantar servidores en 2040). Grover contra AES-128 es innecesario y mucho más caro. Por eso lo urgente es el intercambio de claves (X25519MLKEM768), no los certificados.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Ejercicio 1.8 <span class="level">Avanzado</span></span><p>Con los datos de la tabla de §1.8, calcula la tasa media de puertas Toffoli por segundo en Gidney y Ekerå 2019 y en Gidney 2025. ¿Qué dice la comparación sobre el compromiso espacio–tiempo?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>2019: <span class="math">3·10<sup>9</sup> / (8 × 3 600 s) ≈ 10<sup>5</sup></span> Toffoli/s. 2025: <span class="math">6,5·10<sup>9</sup> / (4,96 × 86 400 s) ≈ 1,5·10<sup>4</sup></span> Toffoli/s. La versión de 2025 ejecuta algo más del doble de Toffoli unas siete veces más despacio, porque tiene muchos menos qubits dedicados a producir estados mágicos en paralelo y almacena de forma compacta los qubits inactivos. Se cambia volumen (qubits) por tiempo: 20 veces menos qubits, ≈ 15 veces más tiempo.</p></div></details></div>
+
+        <aside class="key-points"><span class="kp-title">Ideas clave</span><ul>
+          <li>Las definiciones de seguridad (IND-CCA2, EUF-CMA) no cambian con los ordenadores cuánticos; cambia qué problemas son difíciles.</li>
+          <li><strong>Shor</strong> encuentra periodos con la QFT y rompe en tiempo polinómico factorización, DLP y ECDLP: RSA, DH, ECDH, ECDSA y EdDSA quedan rotos. Las curvas elípticas necesitan menos recursos que RSA.</li>
+          <li><strong>Grover</strong> da una aceleración cuadrática que se paraleliza mal: AES-128 sigue siendo aceptable, AES-256, SHA-256 y SHA-3 quedan intactos.</li>
+          <li>Las estimaciones para RSA-2048 han bajado de 20 millones de qubits físicos (2019) a menos de un millón (2025) y a propuestas de menos de 100 000 (2026); para ECDLP-256, menos de 500 000 qubits y minutos por clave.</li>
+          <li>Los expertos dan un 28–49 % de probabilidad a un CRQC en 10 años (encuesta GRI publicada en marzo de 2026).</li>
+          <li>Por <strong>«almacenar ahora, descifrar después»</strong>, la confidencialidad de larga vida ya está en riesgo: si <span class="math"><var>x</var> + <var>y</var> &gt; <var>z</var></span>, hay que migrar ya, empezando por el intercambio de claves.</li>
+        </ul></aside>
+
+        <h2 id="referencias">Referencias</h2>
+        <ol class="refs">
+          <li>P. W. Shor. <a href="https://arxiv.org/abs/quant-ph/9508027">Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer</a>. <span class="src">SIAM Journal on Computing 26(5), 1997.</span></li>
+          <li>C. Gidney. <a href="https://arxiv.org/abs/2505.15917">How to factor 2048 bit RSA integers with less than a million noisy qubits</a>. <span class="src">arXiv:2505.15917, mayo de 2025.</span></li>
+          <li>M. A. Nielsen, I. L. Chuang. <em>Quantum Computation and Quantum Information</em>, edición del 10.º aniversario. <span class="src">Cambridge University Press, 2010.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/sp/800/57/pt1/r5/final">SP 800-57 Part 1 Rev. 5: Recommendation for Key Management</a>. <span class="src">NIST, 2020.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/fips/197/final">FIPS 197: Advanced Encryption Standard (AES)</a>. <span class="src">NIST, 2001 (actualizado en 2023).</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/sp/800/38/d/final">SP 800-38D: Galois/Counter Mode (GCM) and GMAC</a>. <span class="src">NIST, 2007.</span></li>
+          <li>Y. Nir, A. Langley. <a href="https://www.rfc-editor.org/rfc/rfc8439">RFC 8439: ChaCha20 and Poly1305 for IETF Protocols</a>. <span class="src">IRTF, 2018.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/fips/180-4/upd1/final">FIPS 180-4: Secure Hash Standard (SHS)</a>. <span class="src">NIST, 2015.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/fips/202/final">FIPS 202: SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions</a>. <span class="src">NIST, 2015.</span></li>
+          <li>A. Langley, M. Hamburg, S. Turner. <a href="https://www.rfc-editor.org/rfc/rfc7748">RFC 7748: Elliptic Curves for Security</a>. <span class="src">IRTF, 2016.</span></li>
+          <li>S. Josefsson, I. Liusvaara. <a href="https://www.rfc-editor.org/rfc/rfc8032">RFC 8032: Edwards-Curve Digital Signature Algorithm (EdDSA)</a>. <span class="src">IRTF, 2017.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/fips/186-5/final">FIPS 186-5: Digital Signature Standard (DSS)</a>. <span class="src">NIST, febrero de 2023.</span></li>
+          <li>Google Quantum AI and Collaborators (R. Acharya et al.). <a href="https://www.nature.com/articles/s41586-024-08449-y">Quantum error correction below the surface code threshold</a>. <span class="src">Nature 638, 2025 (arXiv:2408.13687).</span></li>
+          <li>L. K. Grover. <a href="https://arxiv.org/abs/quant-ph/9605043">A fast quantum mechanical algorithm for database search</a>. <span class="src">STOC 1996.</span></li>
+          <li>C. Zalka. <a href="https://arxiv.org/abs/quant-ph/9711070">Grover's quantum searching algorithm is optimal</a>. <span class="src">Physical Review A 60, 2746, 1999.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/projects/post-quantum-cryptography/post-quantum-cryptography-standardization/evaluation-criteria/security-(evaluation-criteria)">Post-Quantum Cryptography: Security (Evaluation Criteria)</a>. <span class="src">NIST CSRC.</span></li>
+          <li>G. Brassard, P. Høyer, A. Tapp. <a href="https://arxiv.org/abs/quant-ph/9705002">Quantum Algorithm for the Collision Problem</a>. <span class="src">LATIN 1998 (arXiv 1997).</span></li>
+          <li>D. J. Bernstein. <a href="https://cr.yp.to/hash/collisioncost-20090823.pdf">Cost analysis of hash collisions: Will quantum computers make SHARCS obsolete?</a> <span class="src">SHARCS 2009.</span></li>
+          <li>M. Kaplan, G. Leurent, A. Leverrier, M. Naya-Plasencia. <a href="https://arxiv.org/abs/1602.05973">Breaking Symmetric Cryptosystems using Quantum Period Finding</a>. <span class="src">CRYPTO 2016.</span></li>
+          <li>S. Beauregard. <a href="https://arxiv.org/abs/quant-ph/0205095">Circuit for Shor's algorithm using 2n+3 qubits</a>. <span class="src">Quantum Information and Computation 3(2), 2003.</span></li>
+          <li>M. Roetteler, M. Naehrig, K. M. Svore, K. Lauter. <a href="https://arxiv.org/abs/1706.06752">Quantum resource estimates for computing elliptic curve discrete logarithms</a>. <span class="src">ASIACRYPT 2017.</span></li>
+          <li>C. Gidney, M. Ekerå. <a href="https://arxiv.org/abs/1905.09749">How to factor 2048 bit RSA integers in 8 hours using 20 million noisy qubits</a>. <span class="src">Quantum 5, 433, 2021.</span></li>
+          <li>D. Litinski. <a href="https://arxiv.org/abs/2306.08585">How to compute a 256-bit elliptic curve private key with only 50 million Toffoli gates</a>. <span class="src">arXiv:2306.08585, 2023.</span></li>
+          <li>P. Webster et al. <a href="https://arxiv.org/abs/2602.11457">The Pinnacle Architecture: Reducing the cost of breaking RSA-2048 to 100 000 physical qubits using quantum LDPC codes</a>. <span class="src">arXiv:2602.11457, febrero de 2026 (rev. mayo de 2026).</span></li>
+          <li>M. Cain et al. <a href="https://arxiv.org/abs/2603.28627">Shor's algorithm is possible with as few as 10,000 reconfigurable atomic qubits</a>. <span class="src">arXiv:2603.28627, marzo de 2026.</span></li>
+          <li>R. Babbush, A. Zalcman, C. Gidney et al. <a href="https://eprint.iacr.org/2026/625">Securing Elliptic Curve Cryptocurrencies against Quantum Vulnerabilities: Resource Estimates and Mitigations</a>. <span class="src">IACR ePrint 2026/625 y arXiv:2603.28846, marzo de 2026.</span></li>
+          <li>S. Aaronson. <a href="https://scottaaronson.blog/?p=9564">On reducing the cost of breaking RSA-2048 to 100,000 physical qubits</a>. <span class="src">Shtetl-Optimized (blog), 2026. Comentario, no fuente primaria.</span></li>
+          <li>M. Mosca, M. Piani. <a href="https://www.evolutionq.com/publications/quantum-threat-timeline-research-report-2024">Quantum Threat Timeline Report 2024</a>. <span class="src">Global Risk Institute / evolutionQ, diciembre de 2024.</span></li>
+          <li>M. Mosca, M. Piani. <a href="https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/">Quantum Threat Timeline Report 2025</a>. <span class="src">Global Risk Institute, 9 de marzo de 2026.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/ir/8547/ipd">IR 8547 (Initial Public Draft): Transition to Post-Quantum Cryptography Standards</a>. <span class="src">NIST, noviembre de 2024.</span></li>
+          <li>M. Mosca. <a href="https://eprint.iacr.org/2015/1075">Cybersecurity in an era with quantum computers: will we be ready?</a> <span class="src">IACR ePrint 2015/1075; versión de revista en IEEE Security &amp; Privacy 16(5), 2018.</span></li>
+        </ol>
+      </article>
+
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../../index.html">Inicio</a></li>
-                    <li><a href="../../programa.html">Programa</a></li>
-                    <li><a href="../tema1/index.html">Temas</a></li>
-                    <li><a href="../../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="../../guias/index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Ejemplos</h3>
-                <ul>
-                    <li><a href="../../ejemplos/algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="../../ejemplos/ml_kem.html">ML-KEM</a></li>
-                    <li><a href="../../ejemplos/ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="../../ejemplos/criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="../../ejemplos/qkd_bb84.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../../js/script.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../../glosario.html">Glosario</a>
+        <a href="../../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

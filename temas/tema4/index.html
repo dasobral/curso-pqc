@@ -1,609 +1,562 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../../" data-page="tema4">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tema 4: Estandarización de Criptografía Post-Cuántica - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="../../css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tema 4 · Estándares: ML-KEM, ML-DSA, SLH-DSA y más — Curso PQC</title>
+  <meta name="description" content="El proceso de estandarización del NIST y los estándares post-cuánticos: ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205), FN-DSA, HQC, LMS/XMSS, Classic McEliece, FrodoKEM y el panorama IETF, ISO y ETSI a septiembre de 2026.">
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../css/styles.css">
+  <script src="../../js/course-data.js" defer></script>
+  <script src="../../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../../index.html">Inicio</a></li>
-                <li><a href="../../programa.html">Programa</a></li>
-                <li><a href="../tema1/index.html">Temas</a></li>
-                <li><a href="../../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="../../guias/index.html">Guías de Laboratorio</a></li>
-                <li><a href="../../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../../index.html">Inicio</a> &gt; <a href="../tema1/index.html">Temas</a> &gt; Tema 4: Estandarización de Criptografía Post-Cuántica
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../../index.html">Inicio</a>
+        <a href="../../programa.html">Programa</a>
+        <a href="../../temas/index.html" aria-current="page">Temas</a>
+        <a href="../../ejemplos/index.html">Ejemplos</a>
+        <a href="../../guias/index.html">Laboratorios</a>
+        <a href="../../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Tema 4: Estandarización de Criptografía Post-Cuántica</h1>
-        
-        <div class="tema-navegacion">
-            <div class="tema-nav-item">
-                <a href="../tema1/index.html">
-                    <span>Tema 1</span>
-                    <p>Fundamentos de Criptografía Moderna</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema2/index.html">
-                    <span>Tema 2</span>
-                    <p>Infraestructura de Seguridad en Internet</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema3/index.html">
-                    <span>Tema 3</span>
-                    <p>Fundamentos de Criptografía Post-Cuántica</p>
-                </a>
-            </div>
-            <div class="tema-nav-item actual">
-                <span>Tema 4</span>
-                <p>Estandarización de Criptografía Post-Cuántica</p>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema5/index.html">
-                    <span>Tema 5</span>
-                    <p>Implementaciones, Consideraciones y Desafíos</p>
-                </a>
-            </div>
-            <div class="tema-nav-item">
-                <a href="../tema6/index.html">
-                    <span>Tema 6</span>
-                    <p>Distribución Cuántica de Claves (QKD)</p>
-                </a>
-            </div>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../../index.html">Inicio</a></li><li><a href="../../temas/index.html">Temas</a></li><li aria-current="page">Tema 4</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Tema 04 · 3 horas</p>
+        <h1>Estándares: <em>ML-KEM, ML-DSA, SLH-DSA</em> y más</h1>
+        <p class="lede">De la convocatoria del NIST de 2016 a los estándares finales de 2024 y lo que llega después: cómo están construidos ML-KEM, ML-DSA y SLH-DSA, qué parámetros tienen y por qué, qué pasa con FN-DSA y HQC, y cómo encajan IETF, ISO, ETSI y las iniciativas nacionales.</p>
+        <dl class="page-meta">
+          <div><dt>Duración</dt><dd>3 h</dd></div>
+          <div><dt>Nivel</dt><dd>Intermedio</dd></div>
+          <div><dt>Requisitos</dt><dd>Tema 3 (LWE, MLWE, hash)</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
+
+      <article class="prose">
+        <h2 id="objetivos"><span class="sec">4.0</span>Objetivos</h2>
+        <p>Al terminar este tema el estudiante debería ser capaz de:</p>
+        <ul>
+          <li>Reconstruir la cronología del proceso del NIST y distinguir con precisión qué es un <strong>estándar final</strong>, un <strong>borrador</strong> y un <strong>candidato</strong> a fecha de septiembre de 2026.</li>
+          <li>Explicar las cinco <strong>categorías de seguridad</strong> del NIST y situar en ellas cada conjunto de parámetros.</li>
+          <li>Describir ML-KEM como K-PKE + transformación de Fujisaki–Okamoto con <strong>rechazo implícito</strong>, y calcular sus tamaños a partir de <var>k</var>, <var>d<sub>u</sub></var> y <var>d<sub>v</sub></var>.</li>
+          <li>Describir ML-DSA (Fiat–Shamir con abortos) y sus modos: firma aleatorizada (<em>hedged</em>) frente a determinista, ML-DSA puro frente a HashML-DSA y cadenas de contexto.</li>
+          <li>Elegir entre los doce conjuntos de SLH-DSA y entre firmas con estado (LMS/XMSS) y sin estado según el caso de uso.</li>
+          <li>Conocer el estado de FN-DSA, HQC, Classic McEliece y FrodoKEM, y los RFC de la IETF que llevan estos algoritmos a TLS, X.509, CMS y SSH.</li>
+          <li>Leer una tabla comparativa de tamaños y rendimiento y extraer consecuencias de ingeniería.</li>
+        </ul>
+        <p>Este tema se apoya en los problemas de <a href="../tema3/index.html#lwe">LWE</a>, <a href="../tema3/index.html#ring-module-lwe">Ring/Module-LWE</a>, <a href="../tema3/index.html#codigos">códigos</a> y <a href="../tema3/index.html#hash">funciones hash</a> del Tema 3. La integración en protocolos, la hibridación y los calendarios de migración se tratan en el <a href="../tema5/index.html">Tema 5</a>. Para ver ML-KEM funcionando, use el <a href="../../ejemplos/ml_kem.html">ejemplo interactivo E2</a> y el <a href="../../guias/ml_kem.html">laboratorio L2</a>; para firmas, el <a href="../../ejemplos/ml_dsa.html">ejemplo E3</a> y el <a href="../../guias/ml_dsa.html">laboratorio L3</a>.</p>
+
+        <h2 id="proceso-nist"><span class="sec">4.1</span>El proceso de estandarización del NIST</h2>
+        <p>En diciembre de 2016 el NIST publicó una convocatoria abierta de algoritmos de clave pública resistentes a un ordenador cuántico criptográficamente relevante (CRQC), en dos familias: <strong>mecanismos de encapsulamiento de claves</strong> (KEM) o cifrado de clave pública, y <strong>firmas digitales</strong>. No es un «concurso» con un ganador único como AES o SHA-3: el NIST se reservó seleccionar varios algoritmos, con fundamentos matemáticos distintos, y ajustar sus especificaciones durante la redacción de los FIPS [1].</p>
+        <p>Los criterios de evaluación fueron tres, por este orden: <strong>seguridad</strong> (frente a adversarios clásicos y cuánticos, incluida la solidez de la reducción y la madurez del criptoanálisis), <strong>coste y rendimiento</strong> (tamaños de claves, cifrados y firmas; tiempo de cálculo; memoria) y <strong>características de implementación</strong> (facilidad de implementar en tiempo constante, resistencia a canales laterales, flexibilidad, sencillez).</p>
+
+        <h3>Cronología verificada</h3>
+        <ol class="timeline">
+          <li><span class="when">Dic 2016</span>Convocatoria pública (<em>Call for Proposals</em>) con los criterios y las cinco categorías de seguridad [1].</li>
+          <li><span class="when">Nov–dic 2017</span>Cierre del plazo: 82 propuestas (59 de cifrado/KEM y 23 de firma); 69 se admiten como «completas y adecuadas» en la primera ronda.</li>
+          <li><span class="when">30 ene 2019</span>Segunda ronda con 26 candidatos (17 KEM y 9 firmas).</li>
+          <li><span class="when">22 jul 2020</span>Tercera ronda: 7 finalistas (Classic McEliece, Kyber, NTRU, SABER; Dilithium, Falcon, Rainbow) y 8 alternativos (entre ellos BIKE, FrodoKEM, HQC, NTRU Prime, SIKE, GeMSS, Picnic y SPHINCS+).</li>
+          <li><span class="when">Feb 2022</span>Beullens rompe los parámetros de Rainbow (recuperación de clave en un fin de semana en un portátil). <span class="badge broken">Roto</span></li>
+          <li><span class="when">5 jul 2022</span>El NIST selecciona <strong>CRYSTALS-Kyber</strong> (KEM) y <strong>CRYSTALS-Dilithium, Falcon y SPHINCS+</strong> (firmas); pasan a una cuarta ronda BIKE, Classic McEliece, HQC y SIKE (NIST IR 8413) [2].</li>
+          <li><span class="when">Jul 2022</span>Castryck y Decru rompen SIKE con un ataque clásico (unos diez minutos en un núcleo para SIKEp434, nivel 1, según la versión revisada del artículo). SIKE se retira. <span class="badge broken">Roto</span></li>
+          <li><span class="when">Sep 2022</span>Convocatoria de <strong>firmas adicionales</strong> (<em>on-ramp</em>), buscando firmas cortas y verificación rápida que no se basen en retículos estructurados. Cierra el 1 jun 2023 con 40 candidatos en primera ronda [9].</li>
+          <li><span class="when">24 ago 2023</span>Borradores públicos FIPS 203 (ML-KEM), FIPS 204 (ML-DSA) y FIPS 205 (SLH-DSA).</li>
+          <li><span class="when">13 ago 2024</span>Publicación de <strong>FIPS 203, 204 y 205</strong> como estándares finales [3–5]. <span class="badge final">Estándar final</span></li>
+          <li><span class="when">24 oct 2024</span>14 candidatos pasan a la segunda ronda de firmas adicionales (NIST IR 8528): CROSS, FAEST, HAWK, LESS, MAYO, Mirath, MQOM, PERK, QR-UOV, RYDE, SDitH, SNOVA, SQIsign y UOV [9].</li>
+          <li><span class="when">12 nov 2024</span>Borrador NIST IR 8547, <em>Transition to Post-Quantum Cryptography Standards</em> [7]. <span class="badge draft">Borrador</span></li>
+          <li><span class="when">11 mar 2025</span><strong>HQC</strong> se selecciona como segundo KEM, de respaldo y basado en códigos (NIST IR 8545) [8].</li>
+          <li><span class="when">18 sep 2025</span>Publicación final de <strong>NIST SP 800-227</strong>, <em>Recommendations for Key-Encapsulation Mechanisms</em> [6]. <span class="badge final">Final</span></li>
+          <li><span class="when">24–26 sep 2025</span>Sexta conferencia de estandarización PQC: el NIST anuncia que el borrador de FIPS 206 (FN-DSA) está «básicamente escrito, a la espera de aprobación» y presenta el plan de FIPS 207 (HQC-KEM) [10, 11].</li>
+          <li><span class="when">13 abr 2026</span>Borrador <strong>SP 800-230</strong>: seis conjuntos SLH-DSA adicionales limitados a 2<sup>24</sup> firmas por clave [12]. <span class="badge draft">Borrador</span></li>
+          <li><span class="when">14 may 2026</span>Tercera ronda de firmas adicionales con 9 candidatos: FAEST, HAWK, MAYO, MQOM, QR-UOV, SDitH, SNOVA, SQIsign y UOV (NIST IR 8610). Duración prevista: unos dos años [9].</li>
+          <li><span class="when">29 jul 2026</span>El equipo de HAWK retira el esquema tras un nuevo ataque que aproximadamente reduce a la mitad el tamaño de bloque necesario para recuperar la clave; el NIST lo marca como retirado [13]. <span class="badge broken">Retirado</span></li>
+          <li class="future"><span class="when">Pendiente</span>Borradores públicos de FIPS 206 (FN-DSA) y FIPS 207 (HQC-KEM): a 24 de septiembre de 2026 ninguno figura publicado en la sección de noticias del proyecto PQC del NIST. Para HQC el NIST anunció «borrador en aproximadamente un año, 90 días de comentarios y estándar final en 2027» [8].</li>
+          <li class="future"><span class="when">2030 / 2035</span>Según el borrador IR 8547: RSA y curvas elípticas de 112 bits, obsoletos (<em>deprecated</em>) tras 2030; todo algoritmo vulnerable a Shor, prohibido (<em>disallowed</em>) tras 2035 [7].</li>
+        </ol>
+        <div class="callout update"><span class="callout-title">Estado a septiembre de 2026</span>
+          <p><span class="badge final">Final</span> FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), SP 800-208 (LMS/XMSS, 2020), SP 800-227 (guía de KEM). <span class="badge draft">Borrador</span> IR 8547 (transición) y SP 800-230 (SLH-DSA limitado). <span class="badge info">En preparación</span> FIPS 206 (FN-DSA) y FIPS 207 (HQC-KEM). <span class="badge info">Candidatos</span> ocho firmas de la tercera ronda <em>on-ramp</em>.</p>
         </div>
 
-        <section class="tema-intro">
-            <h2>Introducción</h2>
-            <p>Este tema examina los esfuerzos de estandarización de la criptografía post-cuántica, con especial énfasis en el proceso del NIST y los algoritmos seleccionados. Analizaremos en detalle los estándares emergentes y sus características técnicas, así como los procesos de evaluación y selección que han llevado a su adopción.</p>
-            
-            <div class="tema-info">
-                <div class="info-item">
-                    <h3>Duración</h3>
-                    <p>3 horas</p>
-                </div>
-                <div class="info-item">
-                    <h3>Objetivos</h3>
-                    <ul>
-                        <li>Comprender el proceso de estandarización del NIST para criptografía post-cuántica</li>
-                        <li>Analizar en detalle los algoritmos seleccionados: ML-KEM, ML-DSA y SLH-DSA</li>
-                        <li>Examinar los criterios de evaluación y selección utilizados</li>
-                        <li>Explorar otros esfuerzos de estandarización a nivel internacional</li>
-                        <li>Entender las implicaciones de estos estándares para la seguridad futura</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+        <h2 id="niveles-seguridad"><span class="sec">4.2</span>Categorías de seguridad del NIST</h2>
+        <p>La convocatoria de 2016 no pidió «<var>b</var> bits de seguridad», porque la seguridad cuántica de un problema no se resume bien en un número. En su lugar definió cinco categorías por comparación con problemas de referencia de primitivas simétricas: romper el esquema debe costar al menos tanto como una búsqueda de clave o de colisión en la primitiva indicada, en <em>cualquier</em> modelo de cómputo realista [1, 4].</p>
+        <div class="table-wrap"><table>
+          <caption>Categorías de seguridad (convocatoria del NIST de 2016; estimaciones de coste en puertas clásicas de la propia convocatoria)</caption>
+          <thead><tr><th>Categoría</th><th>Tan difícil como…</th><th class="num">Coste clásico estimado</th><th>Ejemplos</th></tr></thead>
+          <tbody>
+            <tr><th>1</th><td>búsqueda de clave en AES-128</td><td class="num">2<sup>143</sup> puertas</td><td>ML-KEM-512, SLH-DSA-*-128*, FN-DSA-512, HQC-1</td></tr>
+            <tr><th>2</th><td>colisión en SHA-256 / SHA3-256</td><td class="num">2<sup>146</sup> puertas</td><td>ML-DSA-44</td></tr>
+            <tr><th>3</th><td>búsqueda de clave en AES-192</td><td class="num">2<sup>207</sup> puertas</td><td>ML-KEM-768, ML-DSA-65, SLH-DSA-*-192*, HQC-3</td></tr>
+            <tr><th>4</th><td>colisión en SHA-384 / SHA3-384</td><td class="num">2<sup>210</sup> puertas</td><td>(ninguno de los estándares actuales)</td></tr>
+            <tr><th>5</th><td>búsqueda de clave en AES-256</td><td class="num">2<sup>272</sup> puertas</td><td>ML-KEM-1024, ML-DSA-87, SLH-DSA-*-256*, FN-DSA-1024, HQC-5</td></tr>
+          </tbody>
+        </table></div>
+        <p>Dos matices importantes. Primero, el ataque cuántico de referencia contra AES es Grover, cuyo coste real está limitado por la profundidad del circuito (la convocatoria acota la profundidad a entre 2<sup>40</sup> y 2<sup>96</sup> puertas lógicas): por eso el nivel 1 no equivale a «64 bits cuánticos». Segundo, las categorías son afirmaciones de los diseñadores revisadas por la comunidad, no teoremas: un avance criptoanalítico puede bajar un esquema de categoría, como se discutió en 2023 para Kyber-512 a raíz de nuevas estimaciones del coste de la criba; el NIST lo mantuvo en la categoría 1.</p>
+        <div class="callout"><span class="callout-title">Recomendaciones de uso</span><p>La categoría 3 es el punto de equilibrio habitual para uso general (ML-KEM-768 es el KEM de <code>X25519MLKEM768</code> en TLS). CNSA 2.0 de la NSA exige la categoría 5 (ML-KEM-1024, ML-DSA-87) para sistemas de seguridad nacional, y la BSI alemana recomienda para ML-KEM solo las categorías 3 y 5 [14, 20].</p></div>
 
-        <section class="tema-contenido">
-            <h2>Contenido del Tema</h2>
-            
-            <div class="subtema">
-                <h3>4.1 Proceso de Estandarización del NIST</h3>
-                <p>El Instituto Nacional de Estándares y Tecnología (NIST) de Estados Unidos ha liderado el esfuerzo global para estandarizar algoritmos criptográficos post-cuánticos a través de un proceso competitivo y transparente.</p>
-                
-                <h4>Cronología del Proceso</h4>
-                <ul>
-                    <li><strong>Diciembre 2016:</strong> Anuncio del concurso y solicitud de propuestas.</li>
-                    <li><strong>Noviembre 2017:</strong> Fecha límite para presentación de candidatos. Se recibieron 69 propuestas válidas.</li>
-                    <li><strong>Abril 2018:</strong> Primera Conferencia PQC del NIST, inicio de la primera ronda de evaluación.</li>
-                    <li><strong>Enero 2019:</strong> Selección de 26 candidatos para la segunda ronda.</li>
-                    <li><strong>Julio 2020:</strong> Selección de 7 finalistas y 8 candidatos alternativos para la tercera ronda.</li>
-                    <li><strong>Julio 2022:</strong> Anuncio de los primeros algoritmos seleccionados para estandarización.</li>
-                    <li><strong>Agosto 2023:</strong> Publicación de los borradores de estándares FIPS 203, 204 y 205.</li>
-                    <li><strong>2024-2025:</strong> Finalización y publicación de los estándares oficiales.</li>
-                </ul>
-                
-                <h4>Criterios de Evaluación</h4>
-                <p>El NIST evaluó los algoritmos candidatos según varios criterios:</p>
-                <ul>
-                    <li><strong>Seguridad:</strong> Resistencia a ataques cuánticos y clásicos, madurez del análisis criptográfico, confianza en las suposiciones subyacentes.</li>
-                    <li><strong>Rendimiento y Características:</strong> Tamaño de claves y firmas/cifrados, velocidad de ejecución, requisitos de memoria.</li>
-                    <li><strong>Implementación:</strong> Facilidad de implementación correcta, resistencia a ataques de canal lateral, flexibilidad.</li>
-                    <li><strong>Diversidad de Enfoques:</strong> Selección de algoritmos basados en diferentes problemas matemáticos para diversificar el riesgo.</li>
-                </ul>
-                
-                <h4>Categorías de Algoritmos</h4>
-                <p>El NIST buscó algoritmos para dos categorías principales:</p>
-                <ul>
-                    <li><strong>Mecanismos de Establecimiento de Claves (KEM):</strong> Para cifrado y establecimiento seguro de claves.</li>
-                    <li><strong>Firmas Digitales:</strong> Para autenticación e integridad de datos.</li>
-                </ul>
-                
-                <h4>Niveles de Seguridad</h4>
-                <p>El NIST definió cinco niveles de seguridad para evaluar los algoritmos:</p>
-                <ul>
-                    <li><strong>Nivel 1:</strong> Al menos tan difícil de romper como AES-128.</li>
-                    <li><strong>Nivel 2:</strong> Al menos tan difícil de romper como SHA-256.</li>
-                    <li><strong>Nivel 3:</strong> Al menos tan difícil de romper como AES-192.</li>
-                    <li><strong>Nivel 4:</strong> Al menos tan difícil de romper como SHA-384.</li>
-                    <li><strong>Nivel 5:</strong> Al menos tan difícil de romper como AES-256.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>4.2 ML-KEM (FIPS 203)</h3>
-                <p>ML-KEM, anteriormente conocido como Kyber, es un mecanismo de encapsulamiento de claves basado en el problema Module Learning With Errors (MLWE). Ha sido seleccionado por el NIST como el primer estándar post-cuántico para establecimiento de claves.</p>
-                
-                <h4>Fundamentos Matemáticos</h4>
-                <ul>
-                    <li><strong>Module Learning With Errors (MLWE):</strong> Generalización del problema Ring-LWE que combina aspectos de LWE y RLWE.</li>
-                    <li><strong>Anillo Polinomial:</strong> R = Zq[X]/(X^n + 1), donde n = 256 y q = 3329.</li>
-                    <li><strong>Módulo:</strong> Rk, donde k varía según el nivel de seguridad (2, 3 o 4).</li>
-                    <li><strong>Distribución de Error:</strong> Distribución centrada binomial con parámetro η.</li>
-                </ul>
-                
-                <h4>Variantes y Parámetros</h4>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Variante</th>
-                            <th>Nivel de Seguridad</th>
-                            <th>Parámetro k</th>
-                            <th>Tamaño de Clave Pública</th>
-                            <th>Tamaño de Clave Privada</th>
-                            <th>Tamaño de Cifrado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>ML-KEM-512</td>
-                            <td>1</td>
-                            <td>2</td>
-                            <td>800 bytes</td>
-                            <td>1632 bytes</td>
-                            <td>768 bytes</td>
-                        </tr>
-                        <tr>
-                            <td>ML-KEM-768</td>
-                            <td>3</td>
-                            <td>3</td>
-                            <td>1184 bytes</td>
-                            <td>2400 bytes</td>
-                            <td>1088 bytes</td>
-                        </tr>
-                        <tr>
-                            <td>ML-KEM-1024</td>
-                            <td>5</td>
-                            <td>4</td>
-                            <td>1568 bytes</td>
-                            <td>3168 bytes</td>
-                            <td>1568 bytes</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h4>Operaciones Principales</h4>
-                <ol>
-                    <li><strong>Generación de Claves (KeyGen):</strong>
-                        <ul>
-                            <li>Genera una matriz A aleatoria.</li>
-                            <li>Muestrea vectores secretos s y e de la distribución de error.</li>
-                            <li>Calcula t = As + e.</li>
-                            <li>La clave pública es (t, A), la clave privada es s.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Encapsulamiento (Encaps):</strong>
-                        <ul>
-                            <li>Genera un mensaje aleatorio m.</li>
-                            <li>Codifica m a un vector r.</li>
-                            <li>Muestrea vectores de error e₁ y e₂.</li>
-                            <li>Calcula u = A^T r + e₁ y v = t^T r + e₂ + ⌈q/2⌋m.</li>
-                            <li>El texto cifrado es (u, v).</li>
-                            <li>La clave compartida K se deriva de m y (u, v) usando una función hash.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Desencapsulamiento (Decaps):</strong>
-                        <ul>
-                            <li>Calcula m' = Decode(v - s^T u).</li>
-                            <li>Verifica que el encapsulamiento de m' produce (u, v).</li>
-                            <li>Si la verificación es exitosa, deriva K de m' y (u, v); de lo contrario, usa un valor aleatorio.</li>
-                        </ul>
-                    </li>
-                </ol>
-                
-                <h4>Características y Ventajas</h4>
-                <ul>
-                    <li><strong>Eficiencia:</strong> Operaciones rápidas gracias al uso de transformadas rápidas de Fourier (NTT).</li>
-                    <li><strong>Tamaño Compacto:</strong> Claves y cifrados relativamente pequeños en comparación con otros esquemas post-cuánticos.</li>
-                    <li><strong>Seguridad Demostrable:</strong> Reducción a problemas MLWE bien estudiados.</li>
-                    <li><strong>Resistencia a Ataques de Canal Lateral:</strong> Diseñado con consideraciones para implementaciones seguras.</li>
-                    <li><strong>Flexibilidad:</strong> Múltiples niveles de seguridad con la misma estructura básica.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>4.3 ML-DSA (FIPS 204)</h3>
-                <p>ML-DSA, anteriormente conocido como Dilithium, es un esquema de firma digital basado en el problema Module Learning With Errors (MLWE). Ha sido seleccionado por el NIST como uno de los estándares post-cuánticos para firmas digitales.</p>
-                
-                <h4>Fundamentos Matemáticos</h4>
-                <ul>
-                    <li><strong>Module Learning With Errors (MLWE):</strong> Similar a ML-KEM, utiliza el mismo anillo polinomial R = Zq[X]/(X^n + 1).</li>
-                    <li><strong>Enfoque "Fiat-Shamir con Abortos":</strong> Técnica para convertir protocolos de identificación en esquemas de firma.</li>
-                    <li><strong>Parámetros Principales:</strong> n = 256, q = 8380417, y varios parámetros adicionales que varían según el nivel de seguridad.</li>
-                </ul>
-                
-                <h4>Variantes y Parámetros</h4>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Variante</th>
-                            <th>Nivel de Seguridad</th>
-                            <th>Tamaño de Clave Pública</th>
-                            <th>Tamaño de Clave Privada</th>
-                            <th>Tamaño de Firma</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>ML-DSA-44</td>
-                            <td>2</td>
-                            <td>1312 bytes</td>
-                            <td>2528 bytes</td>
-                            <td>2420 bytes</td>
-                        </tr>
-                        <tr>
-                            <td>ML-DSA-65</td>
-                            <td>3</td>
-                            <td>1952 bytes</td>
-                            <td>3856 bytes</td>
-                            <td>3293 bytes</td>
-                        </tr>
-                        <tr>
-                            <td>ML-DSA-87</td>
-                            <td>5</td>
-                            <td>2592 bytes</td>
-                            <td>5184 bytes</td>
-                            <td>4595 bytes</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h4>Operaciones Principales</h4>
-                <ol>
-                    <li><strong>Generación de Claves (KeyGen):</strong>
-                        <ul>
-                            <li>Genera una matriz A aleatoria.</li>
-                            <li>Muestrea vectores secretos s₁ y s₂ con coeficientes pequeños.</li>
-                            <li>Calcula t = As₁ + s₂.</li>
-                            <li>La clave pública es (t, A), la clave privada es (s₁, s₂, t).</li>
-                        </ul>
-                    </li>
-                    <li><strong>Firma (Sign):</strong>
-                        <ul>
-                            <li>Muestrea un vector aleatorio y.</li>
-                            <li>Calcula w = Ay.</li>
-                            <li>Calcula el desafío c como un hash de w y el mensaje.</li>
-                            <li>Calcula z = y + cs₁.</li>
-                            <li>Calcula h = cs₂.</li>
-                            <li>Si z o h son demasiado grandes, vuelve a empezar (enfoque "con abortos").</li>
-                            <li>La firma es (z, c, h).</li>
-                        </ul>
-                    </li>
-                    <li><strong>Verificación (Verify):</strong>
-                        <ul>
-                            <li>Verifica que z tiene coeficientes dentro de un rango específico.</li>
-                            <li>Calcula w' = Az - ct.</li>
-                            <li>Verifica que c es igual al hash de w' y el mensaje.</li>
-                        </ul>
-                    </li>
-                </ol>
-                
-                <h4>Características y Ventajas</h4>
-                <ul>
-                    <li><strong>Eficiencia:</strong> Operaciones rápidas gracias al uso de transformadas rápidas de Fourier (NTT).</li>
-                    <li><strong>Determinismo:</strong> Opción para firmas deterministas que mejoran la resistencia a ataques de canal lateral.</li>
-                    <li><strong>Seguridad Demostrable:</strong> Reducción a problemas MLWE bien estudiados.</li>
-                    <li><strong>Compatibilidad:</strong> Comparte estructura matemática con ML-KEM, facilitando implementaciones conjuntas.</li>
-                    <li><strong>Tamaño Moderado:</strong> Firmas más grandes que en esquemas clásicos pero más pequeñas que en otros esquemas post-cuánticos.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>4.4 SLH-DSA (FIPS 205)</h3>
-                <p>SLH-DSA, anteriormente conocido como SPHINCS+, es un esquema de firma digital basado en funciones hash. Ha sido seleccionado por el NIST como un estándar post-cuántico alternativo para firmas digitales, ofreciendo diferentes características y suposiciones de seguridad que ML-DSA.</p>
-                
-                <h4>Fundamentos Criptográficos</h4>
-                <ul>
-                    <li><strong>Firmas de Un Solo Uso:</strong> Esquemas WOTS+ (Winternitz One-Time Signature) como componente básico.</li>
-                    <li><strong>Árboles de Merkle:</strong> Estructura para autenticar múltiples claves de un solo uso.</li>
-                    <li><strong>Árboles Hiperarbóreos:</strong> Estructura jerárquica de árboles de Merkle para mejorar la eficiencia.</li>
-                    <li><strong>Funciones Hash:</strong> Utiliza funciones hash como SHA-256, SHAKE-256 o Haraka.</li>
-                </ul>
-                
-                <h4>Variantes y Parámetros</h4>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Variante</th>
-                            <th>Nivel de Seguridad</th>
-                            <th>Función Hash</th>
-                            <th>Tamaño de Clave Pública</th>
-                            <th>Tamaño de Clave Privada</th>
-                            <th>Tamaño de Firma</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>SLH-DSA-SHA2-128s</td>
-                            <td>1</td>
-                            <td>SHA-256</td>
-                            <td>32 bytes</td>
-                            <td>64 bytes</td>
-                            <td>7856 bytes</td>
-                        </tr>
-                        <tr>
-                            <td>SLH-DSA-SHAKE-128s</td>
-                            <td>1</td>
-                            <td>SHAKE-256</td>
-                            <td>32 bytes</td>
-                            <td>64 bytes</td>
-                            <td>7856 bytes</td>
-                        </tr>
-                        <tr>
-                            <td>SLH-DSA-SHA2-192s</td>
-                            <td>3</td>
-                            <td>SHA-256</td>
-                            <td>48 bytes</td>
-                            <td>96 bytes</td>
-                            <td>16224 bytes</td>
-                        </tr>
-                        <tr>
-                            <td>SLH-DSA-SHAKE-192s</td>
-                            <td>3</td>
-                            <td>SHAKE-256</td>
-                            <td>48 bytes</td>
-                            <td>96 bytes</td>
-                            <td>16224 bytes</td>
-                        </tr>
-                        <tr>
-                            <td>SLH-DSA-SHA2-256s</td>
-                            <td>5</td>
-                            <td>SHA-256</td>
-                            <td>64 bytes</td>
-                            <td>128 bytes</td>
-                            <td>29792 bytes</td>
-                        </tr>
-                        <tr>
-                            <td>SLH-DSA-SHAKE-256s</td>
-                            <td>5</td>
-                            <td>SHAKE-256</td>
-                            <td>64 bytes</td>
-                            <td>128 bytes</td>
-                            <td>29792 bytes</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h4>Operaciones Principales</h4>
-                <ol>
-                    <li><strong>Generación de Claves (KeyGen):</strong>
-                        <ul>
-                            <li>Genera una semilla maestra aleatoria SK.seed.</li>
-                            <li>Deriva una semilla pública PK.seed.</li>
-                            <li>Construye la raíz del árbol de Merkle superior usando SK.seed y PK.seed.</li>
-                            <li>La clave pública es (PK.seed, raíz), la clave privada es SK.seed.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Firma (Sign):</strong>
-                        <ul>
-                            <li>Genera un índice aleatorio o determinista para seleccionar una hoja del árbol.</li>
-                            <li>Genera una firma WOTS+ para el mensaje usando la clave de un solo uso correspondiente a esa hoja.</li>
-                            <li>Incluye la autenticación de la hoja hasta la raíz del árbol (camino de autenticación).</li>
-                            <li>La firma incluye el índice, la firma WOTS+ y el camino de autenticación.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Verificación (Verify):</strong>
-                        <ul>
-                            <li>Verifica la firma WOTS+ del mensaje.</li>
-                            <li>Reconstruye el camino desde la hoja hasta la raíz usando el camino de autenticación.</li>
-                            <li>Verifica que la raíz reconstruida coincide con la raíz en la clave pública.</li>
-                        </ul>
-                    </li>
-                </ol>
-                
-                <h4>Características y Ventajas</h4>
-                <ul>
-                    <li><strong>Mínimas Suposiciones Criptográficas:</strong> Solo requiere funciones hash seguras.</li>
-                    <li><strong>Sin Estado:</strong> No necesita mantener un estado entre firmas, a diferencia de otros esquemas basados en hash.</li>
-                    <li><strong>Claves Pequeñas:</strong> Tamaños de clave pública y privada muy compactos.</li>
-                    <li><strong>Diversificación:</strong> Proporciona una alternativa basada en diferentes suposiciones matemáticas que ML-DSA.</li>
-                    <li><strong>Resistencia a Avances Criptanalíticos:</strong> Alta confianza en la seguridad a largo plazo.</li>
-                </ul>
-                
-                <h4>Desventajas</h4>
-                <ul>
-                    <li><strong>Firmas Grandes:</strong> Tamaños de firma significativamente mayores que ML-DSA y esquemas clásicos.</li>
-                    <li><strong>Rendimiento:</strong> Operaciones de firma y verificación más lentas que ML-DSA.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>4.5 Otros Esfuerzos de Estandarización</h3>
-                <p>Además del proceso del NIST, existen otros esfuerzos de estandarización de criptografía post-cuántica a nivel internacional.</p>
-                
-                <h4>IETF (Internet Engineering Task Force)</h4>
-                <ul>
-                    <li><strong>RFC 8391:</strong> XMSS - Esquema de firma basado en hash estandarizado en 2018.</li>
-                    <li><strong>Grupo de Trabajo PQUIP:</strong> Post-Quantum Use In Protocols, trabajando en la integración de algoritmos post-cuánticos en protocolos de Internet.</li>
-                    <li><strong>Borradores para TLS:</strong> Extensiones para incluir algoritmos post-cuánticos en TLS 1.3.</li>
-                    <li><strong>Borradores para IKEv2:</strong> Integración de algoritmos post-cuánticos en IKEv2 para VPNs.</li>
-                </ul>
-                
-                <h4>ETSI (European Telecommunications Standards Institute)</h4>
-                <ul>
-                    <li><strong>Grupo de Trabajo QSC:</strong> Quantum-Safe Cryptography, desarrollando estándares para criptografía resistente a ataques cuánticos.</li>
-                    <li><strong>ETSI TS 103 744:</strong> Guía de migración a criptografía cuánticamente segura.</li>
-                    <li><strong>ETSI TR 103 619:</strong> Análisis de algoritmos post-cuánticos para firmas digitales.</li>
-                </ul>
-                
-                <h4>ISO/IEC</h4>
-                <ul>
-                    <li><strong>ISO/IEC 18033-7:</strong> En desarrollo, cubrirá mecanismos de cifrado resistentes a ataques cuánticos.</li>
-                    <li><strong>ISO/IEC 14888-4:</strong> En desarrollo, cubrirá firmas digitales resistentes a ataques cuánticos.</li>
-                    <li><strong>ISO/IEC 23837:</strong> En desarrollo, cubrirá la seguridad de los sistemas criptográficos post-cuánticos.</li>
-                </ul>
-                
-                <h4>Iniciativas Nacionales</h4>
-                <ul>
-                    <li><strong>BSI (Alemania):</strong> Recomendaciones para criptografía post-cuántica.</li>
-                    <li><strong>ANSSI (Francia):</strong> Guía de migración a criptografía post-cuántica.</li>
-                    <li><strong>NCSC (Reino Unido):</strong> Orientación sobre preparación para amenazas cuánticas.</li>
-                    <li><strong>CCN (España):</strong> Guías de seguridad para la transición a criptografía post-cuántica.</li>
-                </ul>
-                
-                <h4>Estándares Industriales</h4>
-                <ul>
-                    <li><strong>OASIS KMIP:</strong> Extensiones para gestión de claves post-cuánticas.</li>
-                    <li><strong>GlobalPlatform:</strong> Especificaciones para implementaciones seguras en tarjetas inteligentes y elementos seguros.</li>
-                    <li><strong>PCI DSS:</strong> Considerando requisitos para la transición a criptografía post-cuántica.</li>
-                </ul>
-            </div>
-            
-            <div class="subtema">
-                <h3>4.6 Implicaciones y Próximos Pasos</h3>
-                <p>La estandarización de algoritmos post-cuánticos marca el comienzo de una transición global hacia una infraestructura criptográfica resistente a ataques cuánticos.</p>
-                
-                <h4>Implicaciones para la Industria</h4>
-                <ul>
-                    <li><strong>Fabricantes de Hardware:</strong> Necesidad de desarrollar aceleradores hardware para algoritmos post-cuánticos.</li>
-                    <li><strong>Desarrolladores de Software:</strong> Actualización de bibliotecas criptográficas y aplicaciones.</li>
-                    <li><strong>Proveedores de Servicios Cloud:</strong> Implementación de opciones post-cuánticas para clientes.</li>
-                    <li><strong>Sector Financiero:</strong> Actualización de infraestructura de pagos y banca en línea.</li>
-                    <li><strong>Sector Sanitario:</strong> Protección a largo plazo de datos médicos sensibles.</li>
-                    <li><strong>Infraestructuras Críticas:</strong> Actualización de sistemas de control y comunicación.</li>
-                </ul>
-                
-                <h4>Próximos Pasos en Estandarización</h4>
-                <ul>
-                    <li><strong>Finalización de Estándares FIPS:</strong> Publicación final de FIPS 203, 204 y 205.</li>
-                    <li><strong>Estándares de Implementación:</strong> Guías detalladas para implementaciones seguras.</li>
-                    <li><strong>Perfiles de Uso:</strong> Recomendaciones específicas para diferentes aplicaciones y sectores.</li>
-                    <li><strong>Certificación:</strong> Desarrollo de esquemas de certificación para implementaciones.</li>
-                    <li><strong>Algoritmos Adicionales:</strong> Posible estandarización de algoritmos adicionales para casos de uso específicos.</li>
-                </ul>
-                
-                <h4>Desafíos Pendientes</h4>
-                <ul>
-                    <li><strong>Criptografía Híbrida:</strong> Estandarización de enfoques híbridos que combinen algoritmos clásicos y post-cuánticos.</li>
-                    <li><strong>Protocolos de Nivel Superior:</strong> Actualización de protocolos como TLS, SSH, IKE, etc.</li>
-                    <li><strong>Interoperabilidad:</strong> Asegurar la compatibilidad entre diferentes implementaciones.</li>
-                    <li><strong>Migración:</strong> Estrategias para la transición gradual de sistemas existentes.</li>
-                    <li><strong>Educación y Formación:</strong> Desarrollo de capacidades en la industria y academia.</li>
-                </ul>
-                
-                <h4>Línea Temporal Estimada</h4>
-                <ul>
-                    <li><strong>2024-2025:</strong> Publicación final de estándares FIPS.</li>
-                    <li><strong>2025-2027:</strong> Adopción temprana en sectores críticos y de alta seguridad.</li>
-                    <li><strong>2027-2030:</strong> Adopción generalizada en infraestructura de Internet y servicios comerciales.</li>
-                    <li><strong>2030-2035:</strong> Transición completa a criptografía post-cuántica en la mayoría de sistemas.</li>
-                </ul>
-            </div>
-        </section>
+        <h2 id="ml-kem"><span class="sec">4.3</span>ML-KEM (FIPS 203)</h2>
+        <p>ML-KEM (<em>Module-Lattice-Based Key-Encapsulation Mechanism</em>) es la versión estandarizada de CRYSTALS-Kyber. Su seguridad descansa en el problema <strong>Module-LWE</strong> sobre el anillo <span class="math"><var>R<sub>q</sub></var> = ℤ<sub><var>q</var></sub>[<var>X</var>]/(<var>X</var><sup>256</sup> + 1)</span> con <span class="math"><var>q</var> = 3329</span> [3]. Tiene dos capas: un cifrado de clave pública con seguridad IND-CPA, <strong>K-PKE</strong>, y encima una variante de la <strong>transformación de Fujisaki–Okamoto</strong> (FO) que lo convierte en un KEM con seguridad IND-CCA2.</p>
 
-        <section class="tema-recursos">
-            <h2>Recursos Adicionales</h2>
-            
-            <div class="recursos-grid">
-                <div class="recurso-item">
-                    <h3>Lecturas Recomendadas</h3>
-                    <ul>
-                        <li>NIST. (2023). FIPS 203 (Draft): Module-Lattice-Based Key-Encapsulation Mechanism Standard.</li>
-                        <li>NIST. (2023). FIPS 204 (Draft): Module-Lattice-Based Digital Signature Standard.</li>
-                        <li>NIST. (2023). FIPS 205 (Draft): Stateless Hash-Based Digital Signature Standard.</li>
-                        <li>Alagic, G., et al. (2022). Status Report on the Third Round of the NIST Post-Quantum Cryptography Standardization Process. NISTIR 8413.</li>
-                    </ul>
-                </div>
-                
-                <div class="recurso-item">
-                    <h3>Recursos en Línea</h3>
-                    <ul>
-                        <li><a href="https://csrc.nist.gov/Projects/post-quantum-cryptography/selected-algorithms-2022">NIST: Algoritmos Post-Cuánticos Seleccionados</a></li>
-                        <li><a href="https://pq-crystals.org/">Proyecto CRYSTALS (ML-KEM y ML-DSA)</a></li>
-                        <li><a href="https://sphincs.org/">Proyecto SPHINCS+ (SLH-DSA)</a></li>
-                        <li><a href="https://www.ietf.org/archive/id/draft-ietf-pquip-pqt-hybrid-00.html">IETF: Post-Quantum Traditional Hybrid Key Exchange</a></li>
-                    </ul>
-                </div>
-                
-                <div class="recurso-item">
-                    <h3>Ejemplos Prácticos</h3>
-                    <ul>
-                        <li><a href="../../ejemplos/ml_kem.html">Implementación de ML-KEM</a></li>
-                        <li><a href="../../ejemplos/ml_dsa.html">Implementación de ML-DSA</a></li>
-                        <li><a href="../../guias/ml_kem.html">Guía de Laboratorio: ML-KEM</a></li>
-                        <li><a href="../../guias/ml_dsa.html">Guía de Laboratorio: ML-DSA</a></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+        <h3>Por qué q = 3329 y n = 256</h3>
+        <p><span class="math"><var>q</var> = 3329 = 13·256 + 1</span> es primo y cumple <span class="math">256 | <var>q</var> − 1</span>, de modo que ℤ<sub><var>q</var></sub> contiene raíces 256-ésimas primitivas de la unidad (FIPS 203 usa ζ = 17). Así <span class="math"><var>X</var><sup>256</sup> + 1</span> se descompone en 128 factores cuadráticos y la multiplicación de polinomios se hace con una <strong>NTT</strong> incompleta de 7 niveles en <span class="math">O(<var>n</var> log <var>n</var>)</span>. Los coeficientes caben en 12 bits (<span class="math">2<sup>12</sup> = 4096 &gt; 3329</span>). El grado 256 es fijo en los tres conjuntos: la seguridad se escala con el <strong>rango del módulo</strong> <var>k</var> ∈ {2, 3, 4}, no con el grado. Esa es la ventaja práctica de Module-LWE: una sola implementación de la aritmética de polinomios sirve para los tres niveles.</p>
 
-        <div class="tema-navegacion-inferior">
-            <div class="nav-anterior">
-                <a href="../tema3/index.html">
-                    <span class="flecha">←</span>
-                    Anterior: Tema 3 - Fundamentos de Criptografía Post-Cuántica
-                </a>
-            </div>
-            <div class="nav-siguiente">
-                <a href="../tema5/index.html">
-                    Siguiente: Tema 5 - Implementaciones, Consideraciones y Desafíos
-                    <span class="flecha">→</span>
-                </a>
-            </div>
+        <h3>K-PKE: el cifrado subyacente</h3>
+        <div class="definition"><span class="def-title"><b>Algoritmo</b>K-PKE (FIPS 203, Alg. 13–15), simplificado</span>
+          <p><strong>KeyGen.</strong> A partir de una semilla <var>d</var> se obtienen <span class="math">(ρ, σ) = G(<var>d</var> ‖ <var>k</var>)</span>. La matriz <span class="math"><b>Â</b> ∈ <var>R<sub>q</sub></var><sup><var>k</var>×<var>k</var></sup></span> se expande desde ρ con SHAKE128 directamente en el dominio NTT; los vectores secretos <b>s</b>, <b>e</b> se muestrean de una distribución binomial centrada CBD<sub>η₁</sub> a partir de σ. La clave pública es <span class="math"><b>t</b> = <b>A</b><b>s</b> + <b>e</b></span> (codificada junto con ρ) y la privada es <b>s</b>.</p>
+          <p><strong>Encrypt(ek, m, r).</strong> Con la aleatoriedad <var>r</var> se muestrean <b>y</b> ← CBD<sub>η₁</sub> y <b>e</b><sub>1</sub>, <var>e</var><sub>2</sub> ← CBD<sub>η₂</sub>. Se calcula <span class="math"><b>u</b> = <b>A</b><sup>T</sup><b>y</b> + <b>e</b><sub>1</sub></span> y <span class="math"><var>v</var> = <b>t</b><sup>T</sup><b>y</b> + <var>e</var><sub>2</sub> + ⌈<var>q</var>/2⌋·<var>m</var></span>, donde cada bit del mensaje de 256 bits se convierte en 0 o 1665. El cifrado es <span class="math"><var>c</var> = (Compress<sub><var>d<sub>u</sub></var></sub>(<b>u</b>), Compress<sub><var>d<sub>v</sub></var></sub>(<var>v</var>))</span>.</p>
+          <p><strong>Decrypt(dk, c).</strong> Se descomprime y se calcula <span class="math"><var>w</var> = <var>v</var>′ − <b>s</b><sup>T</sup><b>u</b>′</span>. Cada coeficiente se redondea: cerca de 0 → bit 0, cerca de 1665 → bit 1.</p>
         </div>
+        <p>¿Por qué funciona? Sustituyendo:</p>
+        <div class="equation"><var>w</var> = ⌈<var>q</var>/2⌋·<var>m</var> + <b>e</b><sup>T</sup><b>y</b> + <var>e</var><sub>2</sub> − <b>s</b><sup>T</sup><b>e</b><sub>1</sub> + Δ<var>v</var> − <b>s</b><sup>T</sup>Δ<b>u</b><span class="eq-label">(4.1)</span></div>
+        <p>donde Δ<b>u</b> y Δ<var>v</var> son los errores de compresión. Todos los términos distintos del primero son productos de polinomios con coeficientes pequeños: el «ruido». El bit se recupera correctamente si cada coeficiente del ruido tiene valor absoluto menor que <span class="math"><var>q</var>/4 ≈ 832</span>. La probabilidad de fallo no es cero, pero FIPS 203 la acota por <strong>2<sup>−138,8</sup></strong> para ML-KEM-512; fallos de descifrado frecuentes serían explotables (ataques de reacción), por eso los parámetros la fijan muy por debajo de la seguridad objetivo.</p>
+
+        <h4>Compresión: el truco que reduce el cifrado</h4>
+        <div class="equation">Compress<sub><var>d</var></sub>(<var>x</var>) = ⌈(2<sup><var>d</var></sup>/<var>q</var>)·<var>x</var>⌋ mod 2<sup><var>d</var></sup>,&nbsp;&nbsp; Decompress<sub><var>d</var></sub>(<var>y</var>) = ⌈(<var>q</var>/2<sup><var>d</var></sup>)·<var>y</var>⌋<span class="eq-label">(4.2)</span></div>
+        <p>Comprimir descarta los bits menos significativos de cada coeficiente. El error introducido está acotado por <span class="math">⌈<var>q</var>/2<sup><var>d</var>+1</sup>⌋</span>: con <var>d<sub>v</sub></var> = 4 es como mucho 104, con <var>d<sub>u</sub></var> = 10 como mucho 2. Es ruido adicional, «gratis» en seguridad (el ruido LWE ya está ahí) y muy rentable en tamaño: <var>v</var> ocupa 4 bits por coeficiente en vez de 12. Compress<sub>1</sub> es exactamente la regla de decisión del descifrado.</p>
+        <div class="callout note"><span class="callout-title">Ejemplo numérico</span><p>Con <var>q</var> = 3329 y <var>d</var> = 4: Compress<sub>4</sub>(1000) = ⌈16 · 1000 / 3329⌋ = ⌈4,806⌋ = 5 y Decompress<sub>4</sub>(5) = ⌈3329 · 5 / 16⌋ = ⌈1040,3⌋ = 1040. El error es 40, dentro de la cota de 104. Para el bit de mensaje: Compress<sub>1</sub>(<var>x</var>) = 1 exactamente cuando 833 ≤ <var>x</var> ≤ 2496.</p></div>
+
+        <h3>La transformación FO con rechazo implícito</h3>
+        <p>K-PKE solo es IND-CPA: un adversario que pueda enviar cifrados manipulados y observar si el receptor descifra «bien» o «mal» puede, consulta a consulta, aprender el secreto <b>s</b>. La transformación FO lo impide haciendo el cifrado <strong>determinista</strong> a partir del mensaje y comprobando en el receptor que el cifrado recibido es exactamente el que se habría generado:</p>
+        <div class="definition"><span class="def-title"><b>Algoritmo</b>ML-KEM (FIPS 203, Alg. 16–18)</span>
+          <p><strong>KeyGen</strong>(<var>d</var>, <var>z</var>): (ek, dk<sub>PKE</sub>) ← K-PKE.KeyGen(<var>d</var>); dk = dk<sub>PKE</sub> ‖ ek ‖ H(ek) ‖ <var>z</var>.</p>
+          <p><strong>Encaps</strong>(ek): <var>m</var> ← 32 bytes aleatorios; (<var>K</var>, <var>r</var>) ← G(<var>m</var> ‖ H(ek)); <var>c</var> ← K-PKE.Encrypt(ek, <var>m</var>, <var>r</var>); devolver (<var>K</var>, <var>c</var>).</p>
+          <p><strong>Decaps</strong>(dk, <var>c</var>): <var>m</var>′ ← K-PKE.Decrypt(dk<sub>PKE</sub>, <var>c</var>); (<var>K</var>′, <var>r</var>′) ← G(<var>m</var>′ ‖ <var>h</var>); <var>K̄</var> ← J(<var>z</var> ‖ <var>c</var>); <var>c</var>′ ← K-PKE.Encrypt(ek, <var>m</var>′, <var>r</var>′); si <var>c</var> ≠ <var>c</var>′ entonces <var>K</var>′ ← <var>K̄</var>; devolver <var>K</var>′.</p>
+          <p>Con G = SHA3-512, H = SHA3-256, J = SHAKE256 con salida de 32 bytes.</p>
+        </div>
+        <p>El detalle esencial es la última línea: si la comprobación falla, Decaps <strong>no devuelve un error</strong> sino una clave pseudoaleatoria <var>K̄</var> derivada de un secreto <var>z</var> y del propio cifrado. Esto es el <strong>rechazo implícito</strong>. Para el adversario, la salida es indistinguible de una clave legítima; el fallo solo se manifiesta más tarde, cuando las dos partes no consiguen comunicarse, y no revela <em>por qué</em>. Además, la comparación <var>c</var> = <var>c</var>′ y la selección entre <var>K</var>′ y <var>K̄</var> deben hacerse en tiempo constante: un canal lateral que delate cuál de las dos ramas se tomó reconstruye el oráculo que la FO pretendía eliminar.</p>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 780 520" role="img" aria-labelledby="f41t">
+            <title id="f41t">Flujo de datos de ML-KEM: KeyGen produce ek y dk; Encaps usa ek para producir la clave K y el cifrado c; Decaps usa dk y c, reencripta y compara para devolver K o la clave de rechazo implícito</title>
+            <defs><marker id="t4-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="svg-ink"/></marker></defs>
+            <rect x="10" y="12" width="240" height="32" rx="3" class="svg-box-ink"/>
+            <text x="130" y="33" text-anchor="middle" class="svg-on-ink">KeyGen · receptor</text>
+            <rect x="270" y="12" width="240" height="32" rx="3" class="svg-box-ink"/>
+            <text x="390" y="33" text-anchor="middle" class="svg-on-ink">Encaps · emisor</text>
+            <rect x="530" y="12" width="240" height="32" rx="3" class="svg-box-ink"/>
+            <text x="650" y="33" text-anchor="middle" class="svg-on-ink">Decaps · receptor</text>
+            <rect x="10" y="60" width="240" height="40" rx="3" class="svg-box"/>
+            <text x="20" y="85" class="svg-text">d, z ← 32 bytes aleatorios c/u</text>
+            <rect x="10" y="116" width="240" height="40" rx="3" class="svg-box"/>
+            <text x="20" y="141" class="svg-text">(ρ, σ) ← G(d ‖ k)   [SHA3-512]</text>
+            <rect x="10" y="172" width="240" height="56" rx="3" class="svg-box"/>
+            <text x="20" y="194" class="svg-text">Â[i][j] ← SampleNTT(ρ ‖ j ‖ i)</text>
+            <text x="20" y="214" class="svg-text">s, e ← CBD_η1(PRF(σ, N))</text>
+            <rect x="10" y="244" width="240" height="40" rx="3" class="svg-box"/>
+            <text x="20" y="269" class="svg-text">t̂ ← Â ∘ NTT(s) + NTT(e)</text>
+            <rect x="10" y="300" width="240" height="56" rx="3" class="svg-box-signal"/>
+            <text x="20" y="322" class="svg-text">ek = ByteEncode₁₂(t̂) ‖ ρ</text>
+            <text x="20" y="342" class="svg-muted">pública · 384k + 32 bytes</text>
+            <rect x="10" y="372" width="240" height="56" rx="3" class="svg-box-amber"/>
+            <text x="20" y="394" class="svg-text">dk = ŝ ‖ ek ‖ H(ek) ‖ z</text>
+            <text x="20" y="414" class="svg-muted">secreta · 768k + 96 bytes (o semilla d ‖ z)</text>
+            <g class="svg-stroke-ink" stroke-width="1.2">
+              <line x1="130" y1="100" x2="130" y2="114" marker-end="url(#t4-arr)"/>
+              <line x1="130" y1="156" x2="130" y2="170" marker-end="url(#t4-arr)"/>
+              <line x1="130" y1="228" x2="130" y2="242" marker-end="url(#t4-arr)"/>
+              <line x1="130" y1="284" x2="130" y2="298" marker-end="url(#t4-arr)"/>
+              <line x1="130" y1="356" x2="130" y2="370" marker-end="url(#t4-arr)"/>
+            </g>
+            <rect x="270" y="60" width="240" height="40" rx="3" class="svg-box"/>
+            <text x="280" y="85" class="svg-text">m ← 32 bytes aleatorios</text>
+            <rect x="270" y="116" width="240" height="40" rx="3" class="svg-box"/>
+            <text x="280" y="141" class="svg-text">(K, r) ← G(m ‖ H(ek))</text>
+            <rect x="270" y="172" width="240" height="124" rx="3" class="svg-box"/>
+            <text x="280" y="193" class="svg-text">K-PKE.Encrypt(ek, m, r):</text>
+            <text x="280" y="215" class="svg-text">y, e₁, e₂ ← CBD(PRF(r, N))</text>
+            <text x="280" y="237" class="svg-text">u ← NTT⁻¹(Âᵀ ∘ ŷ) + e₁</text>
+            <text x="280" y="259" class="svg-text">v ← NTT⁻¹(t̂ᵀ ∘ ŷ) + e₂ + ⌈q/2⌋·m</text>
+            <text x="280" y="281" class="svg-text">c ← Compress(u) ‖ Compress(v)</text>
+            <rect x="270" y="316" width="240" height="40" rx="3" class="svg-box-signal"/>
+            <text x="280" y="341" class="svg-text">c · 32(d_u·k + d_v) bytes</text>
+            <rect x="270" y="372" width="240" height="56" rx="3" class="svg-box-amber"/>
+            <text x="280" y="394" class="svg-text">K · 32 bytes (del paso G)</text>
+            <text x="280" y="414" class="svg-muted">secreto compartido del emisor</text>
+            <g class="svg-stroke-ink" stroke-width="1.2">
+              <line x1="390" y1="100" x2="390" y2="114" marker-end="url(#t4-arr)"/>
+              <line x1="390" y1="156" x2="390" y2="170" marker-end="url(#t4-arr)"/>
+              <line x1="390" y1="296" x2="390" y2="314" marker-end="url(#t4-arr)"/>
+            </g>
+            <rect x="530" y="60" width="240" height="56" rx="3" class="svg-box"/>
+            <text x="540" y="82" class="svg-text">m′ ← K-PKE.Decrypt(ŝ, c)</text>
+            <text x="540" y="102" class="svg-muted">w = v′ − ŝᵀu′ ;  m′ = Compress₁(w)</text>
+            <rect x="530" y="132" width="240" height="40" rx="3" class="svg-box"/>
+            <text x="540" y="157" class="svg-text">(K′, r′) ← G(m′ ‖ h)</text>
+            <rect x="530" y="188" width="240" height="40" rx="3" class="svg-box"/>
+            <text x="540" y="213" class="svg-text">c′ ← K-PKE.Encrypt(ek, m′, r′)</text>
+            <rect x="530" y="244" width="240" height="40" rx="3" class="svg-box"/>
+            <text x="540" y="269" class="svg-text">¿c′ = c?  (en tiempo constante)</text>
+            <rect x="530" y="300" width="115" height="40" rx="3" class="svg-box-signal"/>
+            <text x="587" y="325" text-anchor="middle" class="svg-text">sí: K ← K′</text>
+            <rect x="655" y="300" width="115" height="40" rx="3" class="svg-box-amber"/>
+            <text x="712" y="325" text-anchor="middle" class="svg-text">no: K ← J(z ‖ c)</text>
+            <text x="712" y="356" text-anchor="middle" class="svg-muted">rechazo implícito</text>
+            <rect x="530" y="372" width="240" height="56" rx="3" class="svg-box-amber"/>
+            <text x="540" y="394" class="svg-text">K · 32 bytes</text>
+            <text x="540" y="414" class="svg-muted">igual a la del emisor salvo fallo (≤ 2⁻¹³⁸·⁸)</text>
+            <rect x="530" y="456" width="240" height="40" rx="3" class="svg-box-amber"/>
+            <text x="540" y="481" class="svg-text">dk = (ŝ, ek, h = H(ek), z)</text>
+            <g class="svg-stroke-ink" stroke-width="1.2">
+              <line x1="650" y1="116" x2="650" y2="130" marker-end="url(#t4-arr)"/>
+              <line x1="650" y1="172" x2="650" y2="186" marker-end="url(#t4-arr)"/>
+              <line x1="650" y1="228" x2="650" y2="242" marker-end="url(#t4-arr)"/>
+              <line x1="630" y1="284" x2="590" y2="298" marker-end="url(#t4-arr)"/>
+              <line x1="670" y1="284" x2="710" y2="298" marker-end="url(#t4-arr)"/>
+              <line x1="587" y1="340" x2="600" y2="370" marker-end="url(#t4-arr)"/>
+              <line x1="712" y1="362" x2="700" y2="370" marker-end="url(#t4-arr)"/>
+            </g>
+            <g class="svg-stroke-signal" stroke-width="1.6" fill="none">
+              <path d="M250,328 H260 V136 H268" marker-end="url(#t4-arr)"/>
+              <path d="M260,232 H268" marker-end="url(#t4-arr)"/>
+              <path d="M510,336 H520 V88 H528" marker-end="url(#t4-arr)"/>
+            </g>
+            <text x="263" y="126" class="svg-muted">ek</text>
+            <text x="523" y="78" class="svg-muted">c</text>
+            <g class="svg-stroke-amber" stroke-width="1.6" fill="none">
+              <path d="M250,400 H262 V476 H528" marker-end="url(#t4-arr)" stroke-dasharray="5 3"/>
+            </g>
+            <text x="280" y="468" class="svg-muted">dk no sale nunca del receptor</text>
+          </svg>
+          <figcaption><b>Figura 4.1.</b> Flujo de datos de ML-KEM según FIPS 203 (Alg. 13–18). En verde, lo que viaja por la red (ek, c); en ámbar, lo secreto (dk, K). La reencriptación en Decaps es lo que da la seguridad IND-CCA2 y lo que hace que Decaps sea la operación más cara.</figcaption>
+        </figure>
+
+        <h3>Parámetros y tamaños</h3>
+        <div class="table-wrap"><table>
+          <caption>Conjuntos de parámetros de ML-KEM (FIPS 203, tablas 1–3). n = 256 y q = 3329 en todos. Tamaños en bytes.</caption>
+          <thead><tr><th>Conjunto</th><th class="num">k</th><th class="num">η₁</th><th class="num">η₂</th><th class="num">d<sub>u</sub></th><th class="num">d<sub>v</sub></th><th class="num">ek</th><th class="num">dk</th><th class="num">c</th><th class="num">K</th><th class="num">Fallo</th><th>Cat.</th></tr></thead>
+          <tbody>
+            <tr><th class="nowrap">ML-KEM-512</th><td class="num">2</td><td class="num">3</td><td class="num">2</td><td class="num">10</td><td class="num">4</td><td class="num">800</td><td class="num">1 632</td><td class="num">768</td><td class="num">32</td><td class="num">2<sup>−138,8</sup></td><td>1</td></tr>
+            <tr><th class="nowrap">ML-KEM-768</th><td class="num">3</td><td class="num">2</td><td class="num">2</td><td class="num">10</td><td class="num">4</td><td class="num">1 184</td><td class="num">2 400</td><td class="num">1 088</td><td class="num">32</td><td class="num">2<sup>−164,8</sup></td><td>3</td></tr>
+            <tr><th class="nowrap">ML-KEM-1024</th><td class="num">4</td><td class="num">2</td><td class="num">2</td><td class="num">11</td><td class="num">5</td><td class="num">1 568</td><td class="num">3 168</td><td class="num">1 568</td><td class="num">32</td><td class="num">2<sup>−174,8</sup></td><td>5</td></tr>
+          </tbody>
+        </table></div>
+        <p>Los tamaños se deducen de la estructura: <span class="math">|ek| = 384<var>k</var> + 32</span> (<var>k</var> polinomios de 256 coeficientes de 12 bits más ρ), <span class="math">|c| = 32(<var>d<sub>u</sub></var><var>k</var> + <var>d<sub>v</sub></var>)</span> y <span class="math">|dk| = 768<var>k</var> + 96</span>. ML-KEM-512 usa η₁ = 3 (más ruido en los secretos) para compensar su menor dimensión. La clave de desencapsulamiento también puede almacenarse como la <strong>semilla de 64 bytes</strong> (<var>d</var> ‖ <var>z</var>), que es el formato preferido en RFC 9935 y el único que exportan algunas bibliotecas como pyca/cryptography [3, 23].</p>
+
+        <h3>Qué cambió respecto a Kyber (ronda 3)</h3>
+        <ul>
+          <li><strong>Secreto compartido de 256 bits fijo</strong>, utilizable directamente como clave simétrica. Kyber derivaba <var>K</var> con un KDF que también incluía un hash del cifrado.</li>
+          <li><strong>Otra variante de FO</strong>: <var>K</var> ya no depende de H(<var>c</var>); el rechazo implícito pasa a ser <var>K̄</var> = J(<var>z</var> ‖ <var>c</var>).</li>
+          <li><strong>Se eliminó <var>m</var> ← H(<var>m</var>)</strong> al principio de Encaps: FIPS 203 exige un generador aleatorio aprobado, y ese paso solo protegía contra generadores defectuosos.</li>
+          <li><strong>Comprobaciones de entrada explícitas</strong>: la clave de encapsulamiento debe decodificarse sin reducción modular (comprobación de módulo) y la de desencapsulamiento debe contener el hash correcto de ek.</li>
+          <li>Tras el borrador de 2023: <strong>separación de dominio</strong> en K-PKE.KeyGen (se concatena <var>k</var> a <var>d</var>), para que una semilla generada para un nivel no produzca claves relacionadas en otro; y se deshizo un intercambio accidental de índices de <b>Â</b> que el borrador había introducido [3, apéndice C].</li>
+        </ul>
+        <p>Estos cambios hacen que ML-KEM <strong>no sea interoperable</strong> con Kyber: implementaciones «Kyber768» anteriores a 2024 (por ejemplo, el grupo experimental <code>X25519Kyber768Draft00</code> de TLS) producen claves distintas.</p>
+
+        <h3>Implementación: los fallos que ya han ocurrido</h3>
+        <div class="callout danger"><span class="callout-title">Canales laterales reales</span>
+          <p><strong>KyberSlash</strong> (Bernstein et al., TCHES 2025): la implementación de referencia y muchas derivadas calculaban la compresión con una división entre <var>q</var> cuyo tiempo, en muchos procesadores, depende de los operandos. La división aparecía en la descodificación del mensaje (KyberSlash1) y en la compresión del cifrado durante la reencriptación de Decaps (KyberSlash2). Se recuperaron claves en minutos (KyberSlash2) u horas (KyberSlash1) en Raspberry Pi 2 y Cortex-M4 [15]. <strong>Clangover</strong> (CVE-2024-37880): Clang 15–18 convirtió en un salto condicional una máscara de tiempo constante en <code>poly_frommsg</code>, lo que permitió recuperar una clave ML-KEM-512 en 5–10 minutos midiendo tiempos de desencapsulamiento [16].</p>
+          <p>Moraleja: la FO protege contra adversarios que eligen cifrados, pero precisamente por eso toda la ruta de Decaps procesa datos derivados del secreto con entradas controladas por el atacante. Hay que usar bibliotecas verificadas (p. ej., mlkem-native, que usa liboqs, o las de OpenSSL/BoringSSL/AWS-LC) y no «optimizar» el código a mano.</p>
+        </div>
+
+        <h2 id="ml-dsa"><span class="sec">4.4</span>ML-DSA (FIPS 204)</h2>
+        <p>ML-DSA (<em>Module-Lattice-Based Digital Signature Algorithm</em>), derivada de CRYSTALS-Dilithium 3.1, es la firma de propósito general recomendada por el NIST. Trabaja en <span class="math">ℤ<sub><var>q</var></sub>[<var>X</var>]/(<var>X</var><sup>256</sup> + 1)</span> con <span class="math"><var>q</var> = 8 380 417 = 2<sup>23</sup> − 2<sup>13</sup> + 1</span>, y su seguridad se basa en Module-LWE (la clave no revela <b>s</b>) y en una variante de <a href="../tema3/index.html#sis-firmas">Module-SIS</a>, <em>SelfTargetMSIS</em> (no se pueden fabricar firmas) [4].</p>
+
+        <h3>Fiat–Shamir con abortos</h3>
+        <p>La idea procede de los protocolos de identificación de Schnorr, trasladados a retículos por Lyubashevsky:</p>
+        <ol>
+          <li><strong>Clave.</strong> <span class="math"><b>t</b> = <b>A</b><b>s</b><sub>1</sub> + <b>s</b><sub>2</sub></span> con <b>s</b><sub>1</sub>, <b>s</b><sub>2</sub> de coeficientes en [−η, η]. Para ahorrar espacio se publican solo los bits altos <b>t</b><sub>1</sub> (se descartan <var>d</var> = 13 bits); la clave pública es (ρ, <b>t</b><sub>1</sub>).</li>
+          <li><strong>Compromiso.</strong> Se elige una máscara <b>y</b> con coeficientes en (−γ₁, γ₁] y se calcula <span class="math"><b>w</b><sub>1</sub> = HighBits(<b>A</b><b>y</b>)</span>.</li>
+          <li><strong>Reto.</strong> <span class="math"><var>c̃</var> = H(μ ‖ <b>w</b><sub>1</sub>)</span>, donde μ es el representante de 64 bytes del mensaje, y <var>c</var> = SampleInBall(<var>c̃</var>) es un polinomio con exactamente τ coeficientes ±1.</li>
+          <li><strong>Respuesta.</strong> <span class="math"><b>z</b> = <b>y</b> + <var>c</var><b>s</b><sub>1</sub></span>.</li>
+          <li><strong>Aborto.</strong> Si <span class="math">‖<b>z</b>‖<sub>∞</sub> ≥ γ₁ − β</span> o los bits bajos de <b>A</b><b>y</b> − <var>c</var><b>s</b><sub>2</sub> son demasiado grandes, se descarta y se repite con otra <b>y</b>. Sin este rechazo, la distribución de <b>z</b> dependería de <b>s</b><sub>1</sub> y cada firma filtraría información sobre la clave.</li>
+          <li><strong>Pistas.</strong> Como el verificador solo conoce <b>t</b><sub>1</sub>, la firma incluye un vector de pistas <b>h</b> (como mucho ω unos) que le permite recalcular <b>w</b><sub>1</sub>. La firma es (<var>c̃</var>, <b>z</b>, <b>h</b>).</li>
+        </ol>
+        <p>El verificador comprueba <span class="math">‖<b>z</b>‖<sub>∞</sub> &lt; γ₁ − β</span>, que <b>h</b> esté bien formado y que <span class="math"><var>c̃</var> = H(μ ‖ UseHint(<b>h</b>, <b>A</b><b>z</b> − <var>c</var><b>t</b><sub>1</sub>·2<sup><var>d</var></sup>))</span>. La verificación no tiene bucles ni aleatoriedad, y es rápida.</p>
+
+        <div class="table-wrap"><table>
+          <caption>Conjuntos de parámetros de ML-DSA (FIPS 204, tablas 1 y 2). Tamaños en bytes.</caption>
+          <thead><tr><th>Conjunto</th><th class="num">(k, ℓ)</th><th class="num">η</th><th class="num">τ</th><th class="num">γ₁</th><th class="num">γ₂</th><th class="num">β</th><th class="num">ω</th><th class="num">Rep.</th><th class="num">pk</th><th class="num">sk</th><th class="num">Firma</th><th>Cat.</th></tr></thead>
+          <tbody>
+            <tr><th class="nowrap">ML-DSA-44</th><td class="num">(4, 4)</td><td class="num">2</td><td class="num">39</td><td class="num">2<sup>17</sup></td><td class="num">(q−1)/88</td><td class="num">78</td><td class="num">80</td><td class="num">4,25</td><td class="num">1 312</td><td class="num">2 560</td><td class="num">2 420</td><td>2</td></tr>
+            <tr><th class="nowrap">ML-DSA-65</th><td class="num">(6, 5)</td><td class="num">4</td><td class="num">49</td><td class="num">2<sup>19</sup></td><td class="num">(q−1)/32</td><td class="num">196</td><td class="num">55</td><td class="num">5,1</td><td class="num">1 952</td><td class="num">4 032</td><td class="num">3 309</td><td>3</td></tr>
+            <tr><th class="nowrap">ML-DSA-87</th><td class="num">(8, 7)</td><td class="num">2</td><td class="num">60</td><td class="num">2<sup>19</sup></td><td class="num">(q−1)/32</td><td class="num">120</td><td class="num">75</td><td class="num">3,85</td><td class="num">2 592</td><td class="num">4 896</td><td class="num">4 627</td><td>5</td></tr>
+          </tbody>
+        </table></div>
+        <p>«Rep.» es el número esperado de iteraciones del bucle de firma. Por eso el tiempo de firma de ML-DSA es variable (el número de repeticiones depende de valores efímeros, no de forma explotable del secreto, si se implementa correctamente), mientras que el de verificación es fijo.</p>
+
+        <h3>Modos de uso que conviene distinguir</h3>
+        <dl>
+          <dt>Firma aleatorizada (<em>hedged</em>) frente a determinista</dt>
+          <dd>La semilla de la máscara es <span class="math">ρ″ = H(<var>K</var> ‖ <var>rnd</var> ‖ μ)</span>. En la variante por defecto, <em>hedged</em>, <var>rnd</var> son 32 bytes de un generador aprobado; en la determinista, <var>rnd</var> = 0<sup>32</sup>. La variante aleatorizada es la recomendada: dificulta los ataques de inyección de fallos y de canal lateral que explotan repetir exactamente el mismo cálculo, y no depende de la calidad del generador para su seguridad básica, porque ρ″ incluye igualmente la clave secreta <var>K</var>. Ambas variantes son verificables con la misma clave pública.</dd>
+          <dt>ML-DSA «pura» frente a HashML-DSA</dt>
+          <dd>La versión pura firma el mensaje completo: <span class="math"><var>M</var>′ = 0 ‖ |ctx| ‖ ctx ‖ <var>M</var></span>. HashML-DSA firma un resumen: <span class="math"><var>M</var>′ = 1 ‖ |ctx| ‖ ctx ‖ OID<sub>PH</sub> ‖ PH(<var>M</var>)</span> con, por ejemplo, SHA-512. El primer byte separa los dominios, de modo que una firma pura nunca se valida como prehash ni viceversa. Para firmar mensajes enormes o en un HSM remoto no hace falta HashML-DSA: basta calcular fuera el representante μ = H(tr ‖ <var>M</var>′) (la llamada firma con «μ externo», que ya exponen OpenSSL y pyca/cryptography) [4, 23].</dd>
+          <dt>Cadenas de contexto</dt>
+          <dd>Hasta 255 bytes que el firmante y el verificador deben conocer (por defecto, vacía). Sirven para separar dominios de aplicación: una firma emitida para el contexto «actualización de firmware» no es válida para «certificado». RFC 9881 usa el contexto vacío para certificados X.509.</dd>
+        </dl>
+        <p>Los cambios respecto a Dilithium 3.1: <var>tr</var> pasa a 64 bytes; <var>c̃</var> tiene λ/4 bytes (32, 48 o 64) y se usa completo; la firma aleatorizada es la opción por defecto; se restauró una comprobación de pistas mal formadas que el borrador había omitido, sin la cual la firma no es fuertemente infalsificable; y se añadió la separación de dominio pura/prehash con contexto [4, apéndice D].</p>
+
+        <h2 id="slh-dsa"><span class="sec">4.5</span>SLH-DSA (FIPS 205)</h2>
+        <p>SLH-DSA (<em>Stateless Hash-Based Digital Signature Algorithm</em>), basada en SPHINCS+, es la opción <strong>conservadora</strong>: su seguridad solo depende de propiedades de la función hash (resistencia a preimágenes y segundas preimágenes, pseudoaleatoriedad), sin ninguna estructura algebraica que un nuevo algoritmo cuántico pudiera explotar [5]. Su precio son firmas grandes y firma lenta.</p>
+        <p>La estructura combina tres piezas: firmas de un solo uso <strong>WOTS+</strong> (Winternitz), árboles de Merkle <strong>XMSS</strong> apilados en un <strong>hiperárbol</strong> de <var>d</var> capas y altura total <var>h</var>, y en la base firmas de «pocos usos» <strong>FORS</strong> (<var>k</var> árboles de altura <var>a</var>) que firman el resumen del mensaje. El índice de la hoja FORS se elige pseudoaleatoriamente a partir del mensaje; como el número de hojas es 2<sup><var>h</var></sup> ≈ 2<sup>64</sup>, no hace falta recordar qué hojas se han usado: de ahí «sin estado». El diseño tolera hasta 2<sup>64</sup> firmas por clave.</p>
+        <div class="table-wrap"><table>
+          <caption>Los 12 conjuntos de parámetros de SLH-DSA (FIPS 205, tabla 2). Cada fila vale para SHA2 y SHAKE. Tamaños en bytes; la clave privada ocupa 2 × pk.</caption>
+          <thead><tr><th>Conjunto</th><th class="num">n</th><th class="num">h</th><th class="num">d</th><th class="num">h′</th><th class="num">a</th><th class="num">k</th><th class="num">lg w</th><th class="num">m</th><th>Cat.</th><th class="num">pk</th><th class="num">Firma</th></tr></thead>
+          <tbody>
+            <tr><th class="nowrap">SLH-DSA-{SHA2,SHAKE}-128s</th><td class="num">16</td><td class="num">63</td><td class="num">7</td><td class="num">9</td><td class="num">12</td><td class="num">14</td><td class="num">4</td><td class="num">30</td><td>1</td><td class="num">32</td><td class="num">7 856</td></tr>
+            <tr><th class="nowrap">SLH-DSA-{SHA2,SHAKE}-128f</th><td class="num">16</td><td class="num">66</td><td class="num">22</td><td class="num">3</td><td class="num">6</td><td class="num">33</td><td class="num">4</td><td class="num">34</td><td>1</td><td class="num">32</td><td class="num">17 088</td></tr>
+            <tr><th class="nowrap">SLH-DSA-{SHA2,SHAKE}-192s</th><td class="num">24</td><td class="num">63</td><td class="num">7</td><td class="num">9</td><td class="num">14</td><td class="num">17</td><td class="num">4</td><td class="num">39</td><td>3</td><td class="num">48</td><td class="num">16 224</td></tr>
+            <tr><th class="nowrap">SLH-DSA-{SHA2,SHAKE}-192f</th><td class="num">24</td><td class="num">66</td><td class="num">22</td><td class="num">3</td><td class="num">8</td><td class="num">33</td><td class="num">4</td><td class="num">42</td><td>3</td><td class="num">48</td><td class="num">35 664</td></tr>
+            <tr><th class="nowrap">SLH-DSA-{SHA2,SHAKE}-256s</th><td class="num">32</td><td class="num">64</td><td class="num">8</td><td class="num">8</td><td class="num">14</td><td class="num">22</td><td class="num">4</td><td class="num">47</td><td>5</td><td class="num">64</td><td class="num">29 792</td></tr>
+            <tr><th class="nowrap">SLH-DSA-{SHA2,SHAKE}-256f</th><td class="num">32</td><td class="num">68</td><td class="num">17</td><td class="num">4</td><td class="num">9</td><td class="num">35</td><td class="num">4</td><td class="num">49</td><td>5</td><td class="num">64</td><td class="num">49 856</td></tr>
+          </tbody>
+        </table></div>
+        <ul>
+          <li><strong>«s» (<em>small</em>) frente a «f» (<em>fast</em>).</strong> Las variantes «s» usan pocas capas altas (<var>d</var> = 7, <var>h</var>′ = 9): firma más corta pero hay que calcular árboles de 2<sup>9</sup> hojas en cada capa, así que firmar es un orden de magnitud más lento. Las «f» usan muchas capas bajas (<var>d</var> = 22, <var>h</var>′ = 3): firman rápido pero la firma lleva 22 firmas WOTS+ y dobla su tamaño. Verificar es rápido en ambas.</li>
+          <li><strong>SHA2 frente a SHAKE.</strong> Mismo diseño y tamaños; cambia la función subyacente. Las variantes SHA2 aprovechan la aceleración hardware de SHA-256 (y usan SHA-512 en las categorías 3 y 5 para algunas funciones); las SHAKE son más uniformes y cómodas donde ya existe Keccak.</li>
+          <li>Como ML-DSA, SLH-DSA tiene versión pura y HashSLH-DSA, con contexto de hasta 255 bytes, y firma aleatorizada por defecto.</li>
+        </ul>
+        <div class="callout update"><span class="callout-title">Novedad · abril 2026</span><p>El borrador <strong>SP 800-230</strong> propone seis conjuntos adicionales (SLH-DSA-SHA2-128-24, …, SLH-DSA-SHAKE-256-24) para usos con <strong>como mucho 2<sup>24</sup> firmas por clave</strong>, típicamente firma de software, firmware y certificados. Usan un único árbol (<var>d</var> = 1) y firmas de 3 856, 7 752 y 14 944 bytes para las categorías 1, 3 y 5, a cambio de una firma más lenta. No están aprobados para uso general: el implementador debe garantizar que la clave nunca supera el límite [12].</p></div>
+
+        <h2 id="fn-dsa"><span class="sec">4.6</span>FN-DSA (Falcon, futuro FIPS 206)</h2>
+        <p>Falcon es una firma <em>hash-and-sign</em> sobre <a href="../tema3/index.html#ntru">retículos NTRU</a> (<span class="math"><var>q</var> = 12 289</span>, <var>n</var> = 512 o 1024): la clave privada es una base corta (<var>f</var>, <var>g</var>, <var>F</var>, <var>G</var>) que cumple <span class="math"><var>f G</var> − <var>g F</var> = <var>q</var></span>, la pública es <span class="math"><var>h</var> = <var>g</var>/<var>f</var> mod <var>q</var></span>, y firmar consiste en encontrar un punto del retículo cercano a un objetivo derivado del hash del mensaje mediante muestreo gaussiano discreto con el algoritmo <em>fast Fourier sampling</em> (árbol LDL) [10, 17].</p>
+        <p>Su atractivo son los tamaños: Falcon-512 tiene clave pública de 897 bytes y firma de 666 bytes (formato con relleno; la firma comprimida es variable, hasta 752 bytes); Falcon-1024, 1 793 y 1 280 bytes. Es la combinación clave + firma más pequeña entre los esquemas seleccionados, ideal para cadenas de certificados. El inconveniente es la <strong>aritmética en coma flotante</strong> (IEEE-754 binary64) durante la generación de claves y la firma: es difícil hacerla en tiempo constante, cualquier desviación numérica altera la distribución de las firmas y puede filtrar la clave, y complica la validación.</p>
+        <p>Lo que el NIST ha anticipado del borrador (septiembre de 2025, con carácter provisional) [10]:</p>
+        <ul>
+          <li>Verificación sin coma flotante, que debe coincidir exactamente con los vectores de prueba; la firma puede usar coma flotante nativa o emulada, especificada hasta el orden de las operaciones (sin <em>fused multiply-add</em>).</li>
+          <li><strong>Solo firma aleatorizada</strong>: un error de coma flotante en modo determinista podría producir dos firmas distintas del mismo hash, lo que es peligroso.</li>
+          <li>Versiones pura y prehash separadas, transformación BUFF, límite adicional en norma infinito de la firma y prohibición de exportar la clave como semilla (distintas implementaciones de KeyGen pueden expandir la misma semilla de forma diferente).</li>
+        </ul>
+        <p>FN-DSA no tiene un conjunto de categoría 3 porque <var>n</var> debe ser potencia de dos; quien necesite nivel 3 deberá subir a FN-DSA-1024. Estado: <span class="badge info">En preparación</span>; el NIST lo anunciaba como inminente en marzo de 2025 [8] y a septiembre de 2026 el borrador público no se ha publicado.</p>
+
+        <h2 id="hqc"><span class="sec">4.7</span>HQC (futuro FIPS 207, HQC-KEM)</h2>
+        <p>HQC (<em>Hamming Quasi-Cyclic</em>) es un KEM basado en códigos, seleccionado en marzo de 2025 como <strong>respaldo de ML-KEM</strong> con matemáticas diferentes: si mañana apareciera un ataque contra Module-LWE, HQC seguiría en pie [8]. Su problema subyacente es la descodificación de síndromes en códigos cuasi-cíclicos. El esquema PKE es estructuralmente análogo a LWE, pero sobre <span class="math">𝔽<sub>2</sub>[<var>X</var>]/(<var>X</var><sup><var>n</var></sup> − 1)</span> con vectores de peso de Hamming bajo en lugar de coeficientes pequeños:</p>
+        <div class="equation">pk = (<var>h</var>, <var>s</var> = <var>x</var> + <var>h</var>·<var>y</var>),&nbsp;&nbsp; <var>c</var><sub>1</sub> = <var>r</var><sub>1</sub> + <var>h</var>·<var>r</var><sub>2</sub>,&nbsp;&nbsp; <var>c</var><sub>2</sub> = C.Encode(<var>m</var>) + <var>s</var>·<var>r</var><sub>2</sub> + <var>e</var><span class="eq-label">(4.3)</span></div>
+        <p>El receptor calcula <span class="math"><var>c</var><sub>2</sub> − <var>c</var><sub>1</sub>·<var>y</var> = C.Encode(<var>m</var>) + (ruido de peso bajo)</span> y lo corrige con un código concatenado Reed–Solomon + Reed–Muller duplicado. A diferencia de BIKE, HQC tiene un análisis cerrado de su tasa de fallo de descifrado, que fue decisivo en la selección, junto con una generación de claves y un desencapsulamiento mucho más rápidos; el precio es un cifrado mayor [11].</p>
+        <div class="table-wrap"><table>
+          <caption>Tamaños de HQC (especificación de 2025, pqc-hqc.org; coinciden con liboqs 0.16.0). Bytes.</caption>
+          <thead><tr><th>Conjunto</th><th>Cat.</th><th class="num">pk</th><th class="num">sk</th><th class="num">Cifrado</th><th class="num">K</th></tr></thead>
+          <tbody>
+            <tr><th class="nowrap">HQC-1</th><td>1</td><td class="num">2 241</td><td class="num">2 321</td><td class="num">4 433</td><td class="num">32</td></tr>
+            <tr><th class="nowrap">HQC-3</th><td>3</td><td class="num">4 514</td><td class="num">4 602</td><td class="num">8 978</td><td class="num">32</td></tr>
+            <tr><th class="nowrap">HQC-5</th><td>5</td><td class="num">7 237</td><td class="num">7 333</td><td class="num">14 421</td><td class="num">32</td></tr>
+          </tbody>
+        </table></div>
+        <p>En 2025 el equipo actualizó la especificación para alinearla con FIPS 203: transformación FO «salada» (con sal) que corrige un problema de IND-CCA2 señalado en el foro del NIST, secreto compartido de 32 bytes y clave privada con semilla para poder comprobar pares de claves. El NIST confirmó que el estándar se llamará <strong>HQC-KEM</strong> [11, 18]. Estado: <span class="badge info">En preparación</span>; final previsto para 2027.</p>
+
+        <h2 id="lms-xmss"><span class="sec">4.8</span>Firmas con estado: LMS y XMSS</h2>
+        <p>Antes que SLH-DSA ya existían firmas hash estandarizadas: <strong>LMS/HSS</strong> (RFC 8554) y <strong>XMSS/XMSS<sup>MT</sup></strong> (RFC 8391), aprobadas por el NIST en <strong>SP 800-208</strong> (octubre de 2020) [19]. Son mucho más eficientes que SLH-DSA (firmas de pocos kB, firma rápida) porque cada hoja del árbol de Merkle se usa <strong>una sola vez</strong> y el firmante lleva la cuenta: son <em>con estado</em>.</p>
+        <div class="callout warning"><span class="callout-title">El estado es la vulnerabilidad</span><p>Reutilizar un índice (por restaurar una copia de seguridad, clonar una máquina virtual o dos procesos firmando en paralelo) revela suficientes valores secretos de WOTS para falsificar firmas. Por eso SP 800-208 exige que la generación de claves y la firma se hagan en módulos criptográficos hardware que no permitan exportar el secreto, y RFC 10033 (septiembre de 2026) documenta cómo gestionar estado y copias de seguridad.</p></div>
+        <p>Su caso de uso ideal es la firma de <strong>software y firmware</strong>: pocas firmas, emitidas desde un HSM controlado, y verificación en dispositivos con recursos limitados (arranque seguro). CNSA 2.0 especifica LMS o XMSS (SP 800-208) para esa función y pide empezar a usarlos de inmediato [14]. En X.509 se identifican según RFC 9802 y en CMS según RFC 9708; RFC 9858 añade parámetros LMS adicionales.</p>
+
+        <h2 id="mceliece-frodokem"><span class="sec">4.9</span>Alternativas conservadoras: Classic McEliece y FrodoKEM</h2>
+        <p>El NIST no estandarizó ni Classic McEliece ni FrodoKEM, pero ambos tienen un papel real fuera de EE. UU.</p>
+        <h3>Classic McEliece</h3>
+        <p>El criptosistema de McEliece (1978) con códigos de Goppa binarios es el esquema de clave pública post-cuántico más antiguo que sigue en pie. Cifrados diminutos (96–208 bytes), encapsulamiento muy rápido y claves públicas enormes (261 120 bytes en nivel 1, más de 1 MB en nivel 5). Encaja en claves de larga duración que se distribuyen una vez (VPN como Mullvad y Rosenpass lo usan) [11].</p>
+        <p>En <strong>junio de 2026</strong> ISO/IEC lo incluyó, junto con FrodoKEM y ML-KEM, en la enmienda 2 de <strong>ISO/IEC 18033-2</strong>, con los tamaños mceliece460896, 6688128, 6960119 y 8192128 y sus variantes f, pc y pcf [21]. La BSI lo recomienda (460896, 6688128, 8192128 y sus variantes f) en su TR-02102-1 de 2026 [20].</p>
+        <div class="callout update"><span class="callout-title">Criptoanálisis · agosto–septiembre 2026</span><p>Ghoshal, Ishai, Jain y Sun publicaron un <strong>distinguidor en tiempo cuasipolinómico</strong> <span class="math"><var>n</var><sup>O(log <var>n</var>)</sup></span> entre claves públicas de McEliece y matrices aleatorias, con extensiones heurísticas a descifrado y recuperación de clave [22]. Un trabajo posterior estima para los parámetros propuestos una recuperación de clave de 2<sup>94</sup>–2<sup>102</sup> operaciones de bit sin coste de memoria (2<sup>110</sup>–2<sup>128</sup> con él), <em>lejos de lo práctico</em> pero por debajo de los objetivos de las categorías [22]. Es exactamente el tipo de erosión del «argumento de la historia» que el NIST ya mencionaba en su informe de la cuarta ronda [11]. Situación a vigilar: no conocemos aún respuesta oficial de ISO o la BSI.</p></div>
+        <h3>FrodoKEM</h3>
+        <p>FrodoKEM es un KEM basado en <strong>LWE sin estructura</strong>: matrices de enteros de 640 × 640, 976 × 976 o 1344 × 1344 módulo 2<sup>15</sup> o 2<sup>16</sup>, sin anillos ni módulos. Renuncia a la eficiencia de ML-KEM a cambio de no depender de ninguna estructura algebraica. Claves y cifrados de 10–22 kB y un coste de cálculo unas cuarenta veces mayor que ML-KEM en nuestra medida. La BSI recomienda FrodoKEM-976 y FrodoKEM-1344 (en modo híbrido) [20] y la ANSSI lo considera una opción conservadora válida para aplicaciones de alta seguridad en las que la penalización de ancho de banda sea asumible [28].</p>
+
+        <h2 id="internacional"><span class="sec">4.10</span>Estandarización internacional y en Internet</h2>
+        <h3>IETF: los algoritmos llegan a los protocolos</h3>
+        <p>Un FIPS define un algoritmo; hacen falta además identificadores, formatos y reglas de negociación para usarlo en TLS, certificados, correo o SSH. La tabla recoge los documentos relevantes con su estado verificado en el <em>datatracker</em> de la IETF y el índice del RFC Editor a 24 de septiembre de 2026 [27].</p>
+        <div class="table-wrap"><table>
+          <caption>Documentos IETF para ML-KEM, ML-DSA, SLH-DSA y firmas hash (PS = Proposed Standard; Inf. = informativo)</caption>
+          <thead><tr><th>Documento</th><th>Contenido</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><th>RFC 10024</th><td>Grupos híbridos TLS 1.3: <code>X25519MLKEM768</code> (0x11EC, recomendado), <code>SecP256r1MLKEM768</code> (0x11EB), <code>SecP384r1MLKEM1024</code> (0x11ED)</td><td><span class="badge final">PS · ago 2026</span></td></tr>
+            <tr><th>RFC 9954</th><td>Diseño del intercambio híbrido en TLS 1.3 (concatenación de comparticiones y secretos)</td><td><span class="badge final">Inf. · jul 2026</span></td></tr>
+            <tr><th>draft-ietf-tls-mlkem-11</th><td>ML-KEM puro en TLS 1.3 (MLKEM512/768/1024: 0x0200–0x0202)</td><td><span class="badge draft">Cola del RFC Editor</span></td></tr>
+            <tr><th>RFC 10042</th><td>SSH: <code>mlkem768x25519-sha256</code>, <code>mlkem768nistp256-sha256</code>, <code>mlkem1024nistp384-sha384</code></td><td><span class="badge final">Inf. · ago 2026</span></td></tr>
+            <tr><th>draft-ietf-ipsecme-ikev2-mlkem-09</th><td>ML-KEM en IKEv2</td><td><span class="badge draft">Cola del RFC Editor</span></td></tr>
+            <tr><th>RFC 9935 · RFC 9936</th><td>ML-KEM en X.509 y en CMS</td><td><span class="badge final">PS · mar 2026</span></td></tr>
+            <tr><th>RFC 9629</th><td><code>KEMRecipientInfo</code>: uso de KEM en CMS</td><td><span class="badge final">PS · ago 2024</span></td></tr>
+            <tr><th>RFC 9881 · RFC 9882</th><td>ML-DSA en X.509 y en CMS</td><td><span class="badge final">PS · oct 2025</span></td></tr>
+            <tr><th>RFC 9909 · RFC 9814</th><td>SLH-DSA en X.509 (dic 2025) y en CMS (jul 2025)</td><td><span class="badge final">PS</span></td></tr>
+            <tr><th>RFC 9964</th><td>ML-DSA en JOSE y COSE</td><td><span class="badge final">PS · may 2026</span></td></tr>
+            <tr><th>RFC 9980</th><td>Criptografía post-cuántica en OpenPGP</td><td><span class="badge final">PS · jun 2026</span></td></tr>
+            <tr><th>RFC 8554 · RFC 8391</th><td>LMS/HSS y XMSS</td><td><span class="badge info">Inf. · 2019 / 2018</span></td></tr>
+            <tr><th>RFC 9802 · RFC 9708 · RFC 9858</th><td>HSS/XMSS en X.509; HSS/LMS en CMS; parámetros LMS adicionales</td><td><span class="badge final">2025</span></td></tr>
+            <tr><th>RFC 10033</th><td>Firmas hash: gestión de estado y copias de seguridad</td><td><span class="badge info">Inf. · sep 2026</span></td></tr>
+            <tr><th>draft-ietf-lamps-pq-composite-sigs-19</th><td>Firmas compuestas ML-DSA + RSA/ECDSA/EdDSA en X.509</td><td><span class="badge draft">Cola del RFC Editor</span></td></tr>
+            <tr><th>draft-ietf-lamps-pq-composite-kem-21</th><td>KEM compuesto ML-KEM + ECDH/RSA en X.509</td><td><span class="badge draft">Evaluación IESG</span></td></tr>
+            <tr><th>draft-ietf-hpke-pq-05</th><td>ML-KEM e híbridos para HPKE (RFC 9180)</td><td><span class="badge draft">Borrador</span></td></tr>
+            <tr><th>draft-connolly-cfrg-xwing-kem-11</th><td>X-Wing: KEM híbrido X25519 + ML-KEM-768 de uso general</td><td><span class="badge draft">Borrador (flujo independiente)</span></td></tr>
+            <tr><th>RFC 9794 · RFC 9958</th><td>Terminología de esquemas híbridos; «PQC para ingenieros»</td><td><span class="badge info">Inf. · 2025 / 2026</span></td></tr>
+          </tbody>
+        </table></div>
+        <h3>ISO/IEC y ETSI</h3>
+        <ul>
+          <li><strong>ISO/IEC 18033-2:2006/Amd 2:2026</strong> (junio de 2026) añade ML-KEM, FrodoKEM y Classic McEliece al estándar de cifrado asimétrico [21]. Es el primer estándar internacional que recoge los dos KEM «conservadores» que el NIST no seleccionó.</li>
+          <li><strong>ETSI TS 103 744 V1.2.1</strong> (marzo de 2025) especifica intercambios de claves híbridos (ECDH + ML-KEM) con dos combinadores, conjuntos de parámetros fijos y vectores de prueba; <strong>ETSI TS 104 015</strong> (febrero de 2025) define Covercrypt, un KEM híbrido con políticas de acceso ocultas [24].</li>
+        </ul>
+        <h3>Iniciativas nacionales</h3>
+        <ul>
+          <li><strong>Unión Europea y países miembros.</strong> No hay algoritmos propios: la BSI, la ANSSI, el CCN y otras agencias aceptan los FIPS del NIST (con preferencia por los niveles 3 y 5 e hibridación obligatoria o recomendada) y la BSI y la ANSSI añaden FrodoKEM y, la BSI, Classic McEliece. Los calendarios se tratan en el <a href="../tema5/index.html">Tema 5</a>.</li>
+          <li><strong>China.</strong> En febrero de 2025 el Institute of Commercial Cryptography Standards (ICCS), dependiente de la Administración Estatal de Criptografía, abrió una convocatoria internacional de algoritmos post-cuánticos (cifrado/intercambio de claves, firmas, y también funciones hash y cifrados de bloque). A marzo de 2026 no se había anunciado ninguna selección; expertos chinos han defendido retículos sin estructura frente a los módulo-retículos del NIST [25].</li>
+          <li><strong>Corea del Sur.</strong> La competición nacional KpqC, lanzada en 2021, anunció el 31 de enero de 2025 sus cuatro algoritmos: <strong>HAETAE</strong> (firma de retículos próxima a ML-DSA) y <strong>AIMer</strong> (firma MPC-in-the-head) para firma, <strong>SMAUG-T</strong> (Module-LWE/LWR) y <strong>NTRU+</strong> para KEM [26].</li>
+        </ul>
+
+        <h2 id="comparativa"><span class="sec">4.11</span>Comparativa de tamaños y rendimiento</h2>
+        <p>Las cifras de rendimiento dependen enormemente de la implementación y del procesador. Para que la tabla sea coherente, todas las medidas marcadas [M] las tomamos el 24 de septiembre de 2026 con los programas <code>speed_kem</code> y <code>speed_sig</code> de <strong>liboqs 0.16.0</strong> (gcc 13.3, compilación <code>Release</code> con detección de CPU en tiempo de ejecución) en un AMD Ryzen 9 5900X, y con <code>openssl speed</code> (OpenSSL 3.0.13) para los algoritmos clásicos. Los ciclos son los que informa liboqs a partir del contador de marca de tiempo; en el <a href="../../guias/ml_kem.html">laboratorio L2</a> se reproduce la medida. Los tamaños proceden de los estándares.</p>
+        <div class="table-wrap"><table>
+          <caption>KEM: tamaños (bytes) y tiempo medio por operación (µs; entre paréntesis, miles de ciclos)</caption>
+          <thead><tr><th>Esquema</th><th>Cat.</th><th class="num">ek / pk</th><th class="num">Cifrado</th><th class="num">KeyGen</th><th class="num">Encaps</th><th class="num">Decaps</th><th>Fuente</th></tr></thead>
+          <tbody>
+            <tr><th>X25519 (ECDH)</th><td>—</td><td class="num">32</td><td class="num">32</td><td class="num" colspan="3">≈ 24,7 µs por operación de ECDH</td><td>[M]</td></tr>
+            <tr><th class="nowrap">ML-KEM-512</th><td>1</td><td class="num">800</td><td class="num">768</td><td class="num">6,7 (25)</td><td class="num">7,3 (27)</td><td class="num">8,3 (31)</td><td>[M]</td></tr>
+            <tr><th class="nowrap">ML-KEM-768</th><td>3</td><td class="num">1 184</td><td class="num">1 088</td><td class="num">10,6 (39)</td><td class="num">11,0 (41)</td><td class="num">12,8 (47)</td><td>[M]</td></tr>
+            <tr><th class="nowrap">ML-KEM-1024</th><td>5</td><td class="num">1 568</td><td class="num">1 568</td><td class="num">14,4 (53)</td><td class="num">15,1 (56)</td><td class="num">17,7 (65)</td><td>[M]</td></tr>
+            <tr><th class="nowrap">HQC-1</th><td>1</td><td class="num">2 241</td><td class="num">4 433</td><td class="num">(76)</td><td class="num">(150)</td><td class="num">(353)</td><td>[18] AVX2</td></tr>
+            <tr><th class="nowrap">HQC-3</th><td>3</td><td class="num">4 514</td><td class="num">8 978</td><td class="num">(181)</td><td class="num">(355)</td><td class="num">(732)</td><td>[18] AVX2</td></tr>
+            <tr><th class="nowrap">FrodoKEM-976-AES</th><td>3</td><td class="num">15 632</td><td class="num">15 792</td><td class="num">418 (1 543)</td><td class="num">551 (2 036)</td><td class="num">505 (1 864)</td><td>[M]</td></tr>
+            <tr><th class="nowrap">FrodoKEM-1344-AES</th><td>5</td><td class="num">21 520</td><td class="num">21 696</td><td class="num">722 (2 668)</td><td class="num">901 (3 328)</td><td class="num">857 (3 164)</td><td>[M]</td></tr>
+            <tr><th>Classic McEliece 348864f</th><td>1</td><td class="num">261 120</td><td class="num">96</td><td class="num">22 040 (81 394)</td><td class="num">11,0 (41)</td><td class="num">26,3 (97)</td><td>[M]</td></tr>
+            <tr><th>Classic McEliece 460896f</th><td>3</td><td class="num">524 160</td><td class="num">156</td><td class="num">66 164 (244 349)</td><td class="num">22,6 (84)</td><td class="num">59,7 (220)</td><td>[M]</td></tr>
+            <tr><th>Classic McEliece 6688128f</th><td>5</td><td class="num">1 044 992</td><td class="num">208</td><td class="num">89 434 (330 285)</td><td class="num">42,2 (156)</td><td class="num">70,3 (259)</td><td>[M]</td></tr>
+          </tbody>
+        </table></div>
+        <div class="table-wrap"><table>
+          <caption>Firmas: tamaños (bytes) y tiempo medio por operación (µs; entre paréntesis, miles de ciclos)</caption>
+          <thead><tr><th>Esquema</th><th>Cat.</th><th class="num">pk</th><th class="num">Firma</th><th class="num">KeyGen</th><th class="num">Firma</th><th class="num">Verificación</th><th>Fuente</th></tr></thead>
+          <tbody>
+            <tr><th>Ed25519</th><td>—</td><td class="num">32</td><td class="num">64</td><td class="num">—</td><td class="num">29,4</td><td class="num">81,1</td><td>[M]</td></tr>
+            <tr><th>ECDSA P-256</th><td>—</td><td class="num">64</td><td class="num">≈ 72</td><td class="num">—</td><td class="num">15,6</td><td class="num">46,6</td><td>[M]</td></tr>
+            <tr><th>RSA-2048</th><td>—</td><td class="num">256</td><td class="num">256</td><td class="num">—</td><td class="num">453</td><td class="num">12,8</td><td>[M]</td></tr>
+            <tr><th class="nowrap">ML-DSA-44</th><td>2</td><td class="num">1 312</td><td class="num">2 420</td><td class="num">22,2 (82)</td><td class="num">59,7 (220)</td><td class="num">21,3 (79)</td><td>[M]</td></tr>
+            <tr><th class="nowrap">ML-DSA-65</th><td>3</td><td class="num">1 952</td><td class="num">3 309</td><td class="num">38,3 (141)</td><td class="num">94,3 (348)</td><td class="num">36,0 (133)</td><td>[M]</td></tr>
+            <tr><th class="nowrap">ML-DSA-87</th><td>5</td><td class="num">2 592</td><td class="num">4 627</td><td class="num">59,5 (220)</td><td class="num">113 (418)</td><td class="num">57,1 (211)</td><td>[M]</td></tr>
+            <tr><th class="nowrap">Falcon-512</th><td>1</td><td class="num">897</td><td class="num">666*</td><td class="num">4 794 (17 704)</td><td class="num">159 (586)</td><td class="num">29,2 (108)</td><td>[M]</td></tr>
+            <tr><th class="nowrap">Falcon-1024</th><td>5</td><td class="num">1 793</td><td class="num">1 280*</td><td class="num">13 813 (51 013)</td><td class="num">322 (1 190)</td><td class="num">58,3 (215)</td><td>[M]</td></tr>
+            <tr><th class="nowrap">SLH-DSA-SHA2-128s</th><td>1</td><td class="num">32</td><td class="num">7 856</td><td class="num">45 810</td><td class="num">351 314</td><td class="num">334</td><td>[M]†</td></tr>
+            <tr><th class="nowrap">SLH-DSA-SHA2-128f</th><td>1</td><td class="num">32</td><td class="num">17 088</td><td class="num">717</td><td class="num">16 726</td><td class="num">1 007</td><td>[M]†</td></tr>
+            <tr><th class="nowrap">SLH-DSA-SHAKE-128f</th><td>1</td><td class="num">32</td><td class="num">17 088</td><td class="num">1 251</td><td class="num">28 335</td><td class="num">1 663</td><td>[M]†</td></tr>
+            <tr><th class="nowrap">SLH-DSA-SHA2-256s</th><td>5</td><td class="num">64</td><td class="num">29 792</td><td class="num">48 915</td><td class="num">619 690</td><td class="num">851</td><td>[M]†</td></tr>
+          </tbody>
+        </table></div>
+        <p class="small muted">* Falcon: formato con relleno de longitud fija; la versión comprimida tiene longitud variable (máximo 752 y 1 462 bytes en liboqs). † liboqs 0.16.0 usa para SLH-DSA una implementación portable en C, sin vectorización; las implementaciones AVX2 son bastante más rápidas. Los tiempos de ML-KEM y ML-DSA corresponden a mlkem-native y mldsa-native con código x86-64/AVX2; los de HQC se toman de su equipo porque liboqs 0.16.0 solo incluye su implementación de referencia (unas 20 veces más lenta en nuestra medida).</p>
+        <p>Consecuencias de ingeniería:</p>
+        <ul>
+          <li><strong>ML-KEM no es lento.</strong> Un encapsulamiento de ML-KEM-768 cuesta menos que una operación X25519; el coste de la migración del intercambio de claves es de <em>ancho de banda</em> (≈ 1,1 kB por sentido), no de CPU.</li>
+          <li><strong>Las firmas son el problema difícil.</strong> Una cadena TLS típica transmite dos certificados y firmas adicionales (SCT, <code>CertificateVerify</code>): con ML-DSA-65 cada par clave + firma suma unos 5,3 kB, frente a unos 140 bytes con ECDSA. Esa es la motivación de FN-DSA, de las firmas adicionales y de propuestas como los <em>Merkle Tree Certificates</em>.</li>
+          <li><strong>SLH-DSA encaja donde se firma poco y se verifica mucho</strong> (firmware, raíces de confianza), y aun así conviene la variante «s» o las de SP 800-230; en TLS es inviable.</li>
+          <li><strong>Classic McEliece invierte la ecuación</strong>: generación de claves en decenas de milisegundos y 0,25–1 MB de clave pública, pero cifrados de 100–200 bytes y encapsulamiento tan rápido como ML-KEM. Sirve para claves estáticas de larga vida, no para intercambios efímeros.</li>
+        </ul>
+
+        <h2 id="ejercicios"><span class="sec">4.12</span>Ejercicios</h2>
+        <div class="exercise"><span class="ex-title">Ejercicio 4.1 <span class="level">Básico</span></span>
+          <p>A partir de <var>k</var>, <var>d<sub>u</sub></var> y <var>d<sub>v</sub></var>, calcule los tamaños de ek, dk y del cifrado de ML-KEM-1024 y compruébelos con la tabla. ¿Cuántos bytes envía cada parte en un <em>handshake</em> TLS con <code>X25519MLKEM768</code>?</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>ML-KEM-1024: <var>k</var> = 4, <var>d<sub>u</sub></var> = 11, <var>d<sub>v</sub></var> = 5. |ek| = 384·4 + 32 = 1 568; |dk| = 768·4 + 96 = 3 168; |c| = 32·(11·4 + 5) = 32·49 = 1 568. Coinciden con FIPS 203.</p>
+            <p>En <code>X25519MLKEM768</code> (RFC 10024) el cliente envía ek de ML-KEM-768 ‖ compartición X25519 = 1 184 + 32 = <strong>1 216 bytes</strong>, y el servidor responde con cifrado ‖ compartición X25519 = 1 088 + 32 = <strong>1 120 bytes</strong>. Obsérvese que, por razones históricas, en este grupo la parte ML-KEM va primero.</p>
+          </div></details>
+        </div>
+        <div class="exercise"><span class="ex-title">Ejercicio 4.2 <span class="level">Básico</span></span>
+          <p>Con <var>q</var> = 3329, calcule Compress<sub>10</sub>(2000), descomprima el resultado y compare el error con la cota ⌈<var>q</var>/2<sup><var>d</var>+1</sup>⌋. Repita con <var>d</var> = 4.</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p><var>d</var> = 10: 1024·2000/3329 = 615,20 → 615; Decompress<sub>10</sub>(615) = ⌈3329·615/1024⌋ = ⌈1999,35⌋ = 1999. Error 1 ≤ ⌈3329/2048⌋ = 2.</p>
+            <p><var>d</var> = 4: 16·2000/3329 = 9,61 → 10; Decompress<sub>4</sub>(10) = ⌈3329·10/16⌋ = ⌈2080,6⌋ = 2081. Error 81 ≤ ⌈3329/32⌋ = 104. Por eso un <var>d<sub>v</sub></var> pequeño aporta la mayor parte del ruido de descifrado.</p>
+          </div></details>
+        </div>
+        <div class="exercise"><span class="ex-title">Ejercicio 4.3 <span class="level">Intermedio</span></span>
+          <p>Suponga una implementación de ML-KEM.Decaps que, cuando <var>c</var>′ ≠ <var>c</var>, devuelve un código de error en lugar de <var>K̄</var>. Explique qué información obtiene un adversario que puede enviar cifrados manipulados y por qué el rechazo implícito la elimina. ¿Sigue siendo seguro si la rama de rechazo tarda 3 µs más?</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>Con error explícito, el receptor actúa como un oráculo de validez: el adversario toma un cifrado honesto, perturba un coeficiente de <var>v</var> (o de <b>u</b>) en una cantidad controlada y observa si Decaps acepta. La aceptación indica que el coeficiente correspondiente de <var>w</var> no cruzó la frontera ±<var>q</var>/4, lo que revela información sobre el ruido y, a través de él, sobre los coeficientes de <b>s</b>; con unos miles de consultas se recupera la clave (ataques de reacción, análogos al de Bleichenbacher contra RSA).</p>
+            <p>Con rechazo implícito ambas ramas devuelven 32 bytes pseudoaleatorios indistinguibles, y la FO garantiza que el adversario no puede fabricar un cifrado válido distinto de los honestos. Pero si la rama de rechazo es 3 µs más lenta, el tiempo vuelve a ser un oráculo de validez y el ataque reaparece: la comparación y la selección deben ser de tiempo constante (y, en general, todo Decaps).</p>
+          </div></details>
+        </div>
+        <div class="exercise"><span class="ex-title">Ejercicio 4.4 <span class="level">Intermedio</span></span>
+          <p>Un fabricante firma cada versión de firmware (unas 50 al año durante 15 años) y los dispositivos verifican en un microcontrolador. Compare LMS/HSS, SLH-DSA-SHA2-128s, SLH-DSA-SHA2-128f, la variante SLH-DSA-SHA2-128-24 de SP 800-230 y ML-DSA-44 teniendo en cuenta tamaño de firma, coste de firma y verificación, riesgo operativo y madurez normativa.</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>Se emitirán ≈ 750 firmas, muy por debajo de 2<sup>24</sup> ≈ 1,7·10<sup>7</sup>, así que todas las opciones hash son viables. <strong>LMS/HSS</strong>: firmas de pocos kB y verificación muy barata; aprobado (SP 800-208) y exigido por CNSA 2.0, pero con estado: requiere HSM y un procedimiento estricto para no reutilizar índices. <strong>SLH-DSA-128s</strong>: 7 856 bytes, sin estado, firma lenta (≈ 0,35 s en nuestra medida, irrelevante aquí) y verificación rápida: muy buena opción. <strong>128f</strong>: firma rápida que no necesitamos, a cambio del doble de tamaño y más coste de verificación: peor. <strong>128-24</strong>: 3 856 bytes y verificación aún más rápida, pero es un borrador y obliga a garantizar el límite de firmas por clave. <strong>ML-DSA-44</strong>: 2 420 bytes y verificación rápida, pero añade una suposición de retículos a un artefacto que debe verificarse durante décadas. La recomendación habitual para firmware es LMS/XMSS si se dispone de un HSM que gestione el estado, o SLH-DSA-128s en caso contrario.</p>
+          </div></details>
+        </div>
+        <div class="exercise"><span class="ex-title">Ejercicio 4.5 <span class="level">Intermedio</span></span>
+          <p>Estime cuántos bytes adicionales de autenticación supone pasar una cadena TLS de dos certificados (hoja e intermedio, cada uno con una clave pública y la firma de su emisor) más la firma de <code>CertificateVerify</code> de ECDSA P-256 a ML-DSA-65. Repita con Falcon-512 como referencia.</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>Hay dos claves públicas y tres firmas. ECDSA P-256: 2·65 + 3·72 ≈ 350 bytes. ML-DSA-65: 2·1 952 + 3·3 309 = 3 904 + 9 927 = 13 831 bytes, unos 13,5 kB más. Falcon-512: 2·897 + 3·666 = 3 792 bytes. Con ML-DSA-65 el total, sumado al resto del <em>handshake</em>, supera la ventana inicial de congestión típica de TCP (unos 14 kB), lo que puede añadir un viaje de ida y vuelta.</p>
+          </div></details>
+        </div>
+        <div class="exercise"><span class="ex-title">Ejercicio 4.6 <span class="level">Avanzado</span></span>
+          <p>Para ML-KEM-768, aproxime el ruido de la ecuación (4.1) por una normal. Use Var(CBD<sub>η</sub>) = η/2, trate Δ<b>u</b> y Δ<var>v</var> como uniformes en un intervalo de anchura <var>q</var>/2<sup><var>d</var></sup> y calcule la probabilidad de que un coeficiente supere <var>q</var>/4. Compare con el valor 2<sup>−164,8</sup> de FIPS 203 y explique la discrepancia.</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>Con <var>k</var>·<var>n</var> = 768 y η₁ = η₂ = 2 (varianza 1): Var(<b>e</b><sup>T</sup><b>y</b>) = 768; Var(<b>s</b><sup>T</sup><b>e</b><sub>1</sub>) = 768; Var(<var>e</var><sub>2</sub>) = 1; Var(<b>s</b><sup>T</sup>Δ<b>u</b>) = 768·(3329/1024)<sup>2</sup>/12 ≈ 676; Var(Δ<var>v</var>) = (3329/16)<sup>2</sup>/12 ≈ 3 608. Total ≈ 5 821, σ ≈ 76,3. El umbral 832 está a 10,9σ; la cola bilateral gaussiana es ≈ 2<sup>−89,6</sup> por coeficiente y ≈ 2<sup>−81,6</sup> para los 256 coeficientes.</p>
+            <p>El valor real, 2<sup>−164,8</sup>, es mucho menor: el término dominante Δ<var>v</var> está <em>acotado</em> por 104, y la normal le atribuye colas infinitas. El cálculo de FIPS 203 convoluciona exactamente las distribuciones discretas (scripts del equipo de Kyber) en lugar de aproximarlas. La lección: las aproximaciones gaussianas sirven para intuir, pero sobrestiman mucho las colas lejanas. Puede comprobar empíricamente la forma de la distribución con el <a href="../../ejemplos/ml_kem.html">ejemplo E2</a>.</p>
+          </div></details>
+        </div>
+        <div class="exercise"><span class="ex-title">Ejercicio 4.7 <span class="level">Avanzado</span></span>
+          <p>KyberSlash2 explota una división de tiempo variable en la compresión del cifrado. En Encaps, esa compresión procesa datos que el emisor va a publicar de todos modos. ¿Por qué es entonces un problema? Indique qué paso de Decaps lo convierte en una fuga del secreto y por qué la FO lo agrava.</p>
+          <details><summary>Solución</summary><div class="details-body">
+            <p>En Decaps se ejecuta K-PKE.Encrypt(ek, <var>m</var>′, <var>r</var>′) para reencriptar, y <var>m</var>′ es el resultado de descifrar con <b>s</b> un cifrado <em>elegido por el atacante</em>. Los valores que se comprimen en la reencriptación dependen de <var>m</var>′, y ese cifrado recalculado no se publica cuando la comprobación falla. Midiendo el tiempo de Decaps sobre cifrados manipulados, el atacante aprende propiedades de <var>m</var>′ y, por tanto, de <b>s</b>. La FO obliga a reencriptar en cada desencapsulamiento, así que toda la ruta de cifrado se convierte en código que maneja secretos con entradas del adversario.</p>
+          </div></details>
+        </div>
+
+        <aside class="key-points"><span class="kp-title">Ideas clave</span><ul>
+          <li>A septiembre de 2026 son <strong>estándares finales</strong> FIPS 203 (ML-KEM), 204 (ML-DSA) y 205 (SLH-DSA), junto con SP 800-208 (LMS/XMSS) y SP 800-227 (KEM). FN-DSA (FIPS 206) y HQC-KEM (FIPS 207) siguen <strong>en preparación</strong>; IR 8547 y SP 800-230 son <strong>borradores</strong>.</li>
+          <li>Las categorías 1–5 se definen por comparación con AES-128/192/256 y colisiones de SHA-256/384. El nivel 3 es el punto de equilibrio habitual; CNSA 2.0 exige nivel 5.</li>
+          <li>ML-KEM = K-PKE (Module-LWE con compresión) + FO con <strong>rechazo implícito</strong>. Los tamaños salen de <var>k</var>, <var>d<sub>u</sub></var>, <var>d<sub>v</sub></var>; el fallo de descifrado es ≤ 2<sup>−138,8</sup>. Decaps reencripta y debe ser de tiempo constante de principio a fin (KyberSlash, Clangover).</li>
+          <li>ML-DSA es Fiat–Shamir con abortos: firma aleatorizada por defecto, separación pura/HashML-DSA y contexto. SLH-DSA solo depende del hash: firmas de 8–50 kB, «s» pequeña y lenta, «f» rápida y grande.</li>
+          <li>El coste de migrar el intercambio de claves es de ancho de banda, no de CPU; el reto real está en el tamaño de las firmas y las cadenas de certificados.</li>
+          <li>Fuera del NIST: ISO/IEC 18033-2/Amd 2 (2026) incluye ML-KEM, FrodoKEM y Classic McEliece; la IETF ya ha publicado RFC 10024 (TLS híbrido), RFC 10042 (SSH) y los RFC de ML-KEM/ML-DSA/SLH-DSA en X.509 y CMS. China y Corea siguen procesos propios.</li>
+        </ul></aside>
+
+        <h2 id="referencias">Referencias</h2>
+        <ol class="refs">
+          <li>NIST. <a href="https://csrc.nist.gov/CSRC/media/Projects/Post-Quantum-Cryptography/documents/call-for-proposals-final-dec-2016.pdf">Submission Requirements and Evaluation Criteria for the Post-Quantum Cryptography Standardization Process</a>. <span class="src">Diciembre de 2016.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/projects/post-quantum-cryptography/post-quantum-cryptography-standardization">PQC Standardization Process</a> (incluye NIST IR 8413 y 8545). <span class="src">CSRC, actualizado el 5 de agosto de 2026.</span></li>
+          <li>NIST. <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf">FIPS 203: Module-Lattice-Based Key-Encapsulation Mechanism Standard</a>. <span class="src">13 de agosto de 2024.</span></li>
+          <li>NIST. <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf">FIPS 204: Module-Lattice-Based Digital Signature Standard</a>. <span class="src">13 de agosto de 2024.</span></li>
+          <li>NIST. <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf">FIPS 205: Stateless Hash-Based Digital Signature Standard</a>. <span class="src">13 de agosto de 2024.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/Projects/post-quantum-cryptography/news">Noticias del proyecto PQC</a> (SP 800-227 final, 18 sep 2025; SP 800-230 ipd, 13 abr 2026; ronda 3 de firmas, 14 may 2026). <span class="src">CSRC.</span></li>
+          <li>D. Moody et al. <a href="https://csrc.nist.gov/pubs/ir/8547/ipd">NIST IR 8547 (ipd): Transition to Post-Quantum Cryptography Standards</a>. <span class="src">Borrador, 12 de noviembre de 2024.</span></li>
+          <li>NIST. <a href="https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption">NIST Selects HQC as Fifth Algorithm for Post-Quantum Encryption</a>. <span class="src">11 de marzo de 2025.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/projects/pqc-dig-sig">Post-Quantum Cryptography: Additional Digital Signature Schemes</a> y <a href="https://csrc.nist.gov/projects/pqc-dig-sig/round-3-additional-signatures">Round 3</a> (NIST IR 8528 y 8610). <span class="src">CSRC, actualizado el 22 de septiembre de 2026.</span></li>
+          <li>R. Perlner. <a href="https://csrc.nist.gov/presentations/2025/fips-206-fn-dsa-falcon">FIPS 206: FN-DSA (Falcon) — Status Update</a>. <span class="src">Sexta conferencia PQC del NIST, 25 de septiembre de 2025.</span></li>
+          <li>A. Robinson. <a href="https://csrc.nist.gov/csrc/media/presentations/2025/fips-207-hqc-kem/fips_207-robinson_2.4.pdf">FIPS 207: HQC-KEM</a>. <span class="src">Sexta conferencia PQC del NIST, septiembre de 2025.</span></li>
+          <li>NIST. <a href="https://csrc.nist.gov/pubs/sp/800/230/ipd">SP 800-230 (ipd): Additional SLH-DSA Parameter Sets for Limited Signature Use Cases</a>. <span class="src">13 de abril de 2026.</span></li>
+          <li>Equipo de Hawk. <a href="https://hawk-sign.info/">Hawk</a> (declaración de retirada). <span class="src">29 de julio de 2026.</span></li>
+          <li>NSA. <a href="https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF">Announcing the Commercial National Security Algorithm Suite 2.0</a>. <span class="src">Versión de mayo de 2025.</span></li>
+          <li>D. J. Bernstein et al. <a href="https://eprint.iacr.org/2024/1049">KyberSlash: Exploiting secret-dependent division timings in Kyber implementations</a>. <span class="src">IACR ePrint 2024/1049; TCHES 2025.</span></li>
+          <li>A. Purnal. <a href="https://github.com/antoonpurnal/clangover">clangover</a> y <a href="https://github.com/advisories/GHSA-58rr-w6gv-4p4h">CVE-2024-37880</a>. <span class="src">Junio de 2024.</span></li>
+          <li>T. Pornin. <a href="https://eprint.iacr.org/2019/893">New Efficient, Constant-Time Implementations of Falcon</a>. <span class="src">IACR ePrint 2019/893.</span></li>
+          <li>Equipo HQC. <a href="https://pqc-hqc.org/">HQC — Hamming Quasi-Cyclic</a> (tamaños y rendimiento AVX2, Intel Core i7-11850H). <span class="src">Consultado en septiembre de 2026.</span></li>
+          <li>D. Cooper et al. <a href="https://csrc.nist.gov/pubs/sp/800/208/final">NIST SP 800-208: Recommendation for Stateful Hash-Based Signature Schemes</a>. <span class="src">Octubre de 2020.</span></li>
+          <li>BSI. <a href="https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf?__blob=publicationFile">TR-02102-1: Cryptographic Mechanisms: Recommendations and Key Lengths</a>, versión 2026-01. <span class="src">23 de enero de 2026.</span></li>
+          <li>Equipo Classic McEliece. <a href="https://classic.mceliece.org/iso.html">Classic McEliece: ISO</a> (ISO/IEC 18033-2:2006/Amd 2:2026). <span class="src">Junio de 2026.</span></li>
+          <li>A. Ghoshal, Y. Ishai, A. Jain y N. Sun. <a href="https://eprint.iacr.org/2026/1630">Quasipolynomial Cryptanalysis of the McEliece Cryptosystem</a>. <span class="src">IACR ePrint 2026/1630, agosto de 2026.</span> S. A. Weis. <a href="https://eprint.iacr.org/2026/1984">Improving GIJS Key Recovery for Classic McEliece</a>. <span class="src">IACR ePrint 2026/1984, septiembre de 2026.</span></li>
+          <li>pyca/cryptography. <a href="https://github.com/pyca/cryptography/blob/main/CHANGELOG.rst">Changelog</a> (ML-KEM y ML-DSA con OpenSSL ≥ 3.5 desde la versión 48.0.0; μ externo desde 49.0.0). <span class="src">2026.</span></li>
+          <li>ETSI. <a href="https://www.etsi.org/deliver/etsi_ts/104000_104099/104015/01.01.01_60/ts_104015v010101p.pdf">TS 104 015 V1.1.1</a> (febrero de 2025) y <a href="https://www.etsi.org/newsroom/press-releases/2513-etsi-launches-new-standard-for-quantum-safe-hybrid-key-exchanges-to-secure-future-post-quantum-encryption/">anuncio de TS 103 744 V1.2.1</a> (marzo de 2025).</li>
+          <li>CSO Online. <a href="https://www.csoonline.com/article/4147736/beijing-wants-its-own-quantum-resistant-encryption-standards-rather-than-adopt-nists.html">Beijing wants its own quantum-resistant encryption standards rather than adopt NIST’s</a>. <span class="src">19 de marzo de 2026.</span></li>
+          <li>PQShield. <a href="https://pqshield.com/south-korea-announces-winners-of-kpqc-competition/">South Korea announces winners of KpqC competition</a>. <span class="src">31 de enero de 2025.</span></li>
+          <li>IETF. <a href="https://www.rfc-editor.org/rfc/rfc10024">RFC 10024</a>, <a href="https://www.rfc-editor.org/rfc/rfc9954">RFC 9954</a>, <a href="https://www.rfc-editor.org/rfc/rfc10042">RFC 10042</a>, <a href="https://www.rfc-editor.org/rfc/rfc9935">RFC 9935</a>, <a href="https://www.rfc-editor.org/rfc/rfc9881">RFC 9881</a>, <a href="https://www.rfc-editor.org/rfc/rfc9909">RFC 9909</a>, <a href="https://www.rfc-editor.org/rfc/rfc9802">RFC 9802</a>, <a href="https://www.rfc-editor.org/rfc/rfc10033">RFC 10033</a>; <a href="https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/">draft-ietf-tls-mlkem</a>. <span class="src">RFC Editor y datatracker, consultados el 24 de septiembre de 2026.</span></li>
+          <li>ANSSI. <a href="https://messervices.cyber.gouv.fr/documents-guides/follow_up_position_paper_on_post_quantum_cryptography.pdf">ANSSI views on the Post-Quantum Cryptography transition (2023 follow up)</a>. <span class="src">Finales de 2023.</span></li>
+        </ol>
+      </article>
+
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../../index.html">Inicio</a></li>
-                    <li><a href="../../programa.html">Programa</a></li>
-                    <li><a href="../tema1/index.html">Temas</a></li>
-                    <li><a href="../../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="../../guias/index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Ejemplos</h3>
-                <ul>
-                    <li><a href="../../ejemplos/algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="../../ejemplos/ml_kem.html">ML-KEM</a></li>
-                    <li><a href="../../ejemplos/ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="../../ejemplos/criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="../../ejemplos/qkd_bb84.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../../js/script.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../../glosario.html">Glosario</a>
+        <a href="../../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

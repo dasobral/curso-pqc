@@ -1,661 +1,196 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../" data-page="ej-shor">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algoritmo de Shor - Ejemplos Prácticos - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/prism.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ejemplo E1 · Algoritmo de Shor — Curso PQC</title>
+  <meta name="description" content="Simulación clásica e interactiva de la reducción de Shor para N pequeños: periodo de a^x mod N, picos tras la QFT, fracciones continuas y casos de fallo.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/course-data.js" defer></script>
+  <script src="../js/course.js" defer></script>
+  <script src="../js/shor_interactive.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Inicio</a></li>
-                <li><a href="../programa.html">Programa</a></li>
-                <li><a href="../temas/tema1/index.html">Temas</a></li>
-                <li><a href="index.html" class="active">Ejemplos Prácticos</a></li>
-                <li><a href="../guias/index.html">Guías de Laboratorio</a></li>
-                <li><a href="../recursos/index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../index.html">Inicio</a> &gt; <a href="index.html">Ejemplos Prácticos</a> &gt; Algoritmo de Shor
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../index.html">Inicio</a>
+        <a href="../programa.html">Programa</a>
+        <a href="../temas/index.html">Temas</a>
+        <a href="../ejemplos/index.html" aria-current="page">Ejemplos</a>
+        <a href="../guias/index.html">Laboratorios</a>
+        <a href="../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Algoritmo de Shor</h1>
-        
-        <div class="ejemplo-header">
-            <div class="ejemplo-icon large">🔢</div>
-            <div class="ejemplo-meta">
-                <p class="ejemplo-tema">Tema relacionado: <a href="../temas/tema1/index.html">Tema 1: Fundamentos de Criptografía Moderna</a></p>
-                <p class="ejemplo-guia">Guía de laboratorio: <a href="../guias/algoritmo_shor.html">Guía del Algoritmo de Shor</a></p>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../index.html">Inicio</a></li><li><a href="../ejemplos/index.html">Ejemplos</a></li><li aria-current="page">Algoritmo de Shor</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Ejemplo E1 · Interactivo</p>
+        <h1>Algoritmo de <em>Shor</em>, paso a paso</h1>
+        <p class="lede">Elige un número compuesto pequeño y una base, observa el periodo de <span class="math"><var>a</var><sup><var>x</var></sup> mod <var>N</var></span>, «mide» el registro cuántico según su distribución ideal y recupera el orden con fracciones continuas. Todo es clásico: la página explica qué parte haría un ordenador cuántico y dónde se hace trampa.</p>
+        <dl class="page-meta">
+          <div><dt>Tiempo</dt><dd>30–45 min</dd></div>
+          <div><dt>Nivel</dt><dd>Introductorio</dd></div>
+          <div><dt>Requisitos</dt><dd><a href="../temas/tema1/index.html#shor">Tema 1, §1.6</a></dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
+
+      <article class="prose">
+        <h2 id="que-simula"><span class="sec">E1.1</span>Qué se simula y qué no</h2>
+        <p>El algoritmo de Shor tiene dos mitades. La mitad <strong>clásica</strong> reduce la factorización de <var>N</var> al cálculo del <em>orden</em> de un número módulo <var>N</var> y, al final, convierte ese orden en factores con dos máximos comunes divisores. La mitad <strong>cuántica</strong> es una subrutina de búsqueda de orden (<em>order finding</em>): prepara una superposición de todos los exponentes, calcula <span class="math"><var>a</var><sup><var>x</var></sup> mod <var>N</var></span> de forma reversible, aplica la transformada cuántica de Fourier inversa (QFT<sup>−1</sup>) y mide. La medida devuelve un número aleatorio <var>y</var> concentrado cerca de múltiplos de <span class="math"><var>Q</var>/<var>r</var></span>, del que se extrae <var>r</var> clásicamente.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Qué hace cada paso en esta página frente a un ordenador cuántico real</caption>
+            <thead><tr><th>Paso</th><th>En un CRQC</th><th>En esta simulación</th></tr></thead>
+            <tbody>
+              <tr><th>Comprobar <var>N</var>, elegir <var>a</var>, gcd</th><td>Clásico</td><td>Clásico, idéntico</td></tr>
+              <tr><th>Calcular el orden <var>r</var></th><td>Circuito cuántico: exponenciación modular controlada, QFT<sup>−1</sup> y medida</td><td><strong>Fuerza bruta</strong>: multiplicar por <var>a</var> hasta obtener 1 (hasta <var>r</var> pasos, exponencial en el número de bits de <var>N</var>)</td></tr>
+              <tr><th>Distribución de la medida <var>y</var></th><td>Emerge de la interferencia de 2<sup><var>t</var></sup> amplitudes</td><td>Fórmula cerrada que <strong>usa el <var>r</var> ya conocido</strong>; se muestrea con un generador pseudoaleatorio</td></tr>
+              <tr><th>Fracciones continuas → <var>r</var></th><td>Clásico</td><td>Clásico, idéntico</td></tr>
+              <tr><th><span class="math">gcd(<var>a</var><sup><var>r</var>/2</sup> ± 1, <var>N</var>)</span></th><td>Clásico</td><td>Clásico, idéntico</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout warning"><span class="callout-title">La trampa, dicha explícitamente</span><p>Para dibujar los picos, la página necesita <var>r</var>, que ha calculado por fuerza bruta. Un ordenador cuántico no «conoce» <var>r</var>: la distribución aparece sola por interferencia y solo se accede a ella midiendo. Esta demo sirve para entender <em>qué</em> se mide y <em>cómo</em> se post-procesa, no para factorizar nada que un portátil no factorice ya. Por la misma razón, las «factorizaciones cuánticas» de 15 o 21 con circuitos simplificados que aprovechan el resultado conocido no dicen nada sobre la escala de la amenaza [3].</p></div>
+
+        <h2 id="reduccion"><span class="sec">E1.2</span>De factorizar a hallar un orden</h2>
+        <div class="definition"><span class="def-title"><b>Definición</b>Orden multiplicativo</span><p>Si <span class="math">gcd(<var>a</var>, <var>N</var>) = 1</span>, el orden de <var>a</var> módulo <var>N</var> es el menor entero <span class="math"><var>r</var> &gt; 0</span> con <span class="math"><var>a</var><sup><var>r</var></sup> ≡ 1 (mod <var>N</var>)</span>. La función <span class="math"><var>f</var>(<var>x</var>) = <var>a</var><sup><var>x</var></sup> mod <var>N</var></span> es periódica de periodo exactamente <var>r</var>.</p></div>
+        <p>Si <var>r</var> es par, <span class="math"><var>x</var> = <var>a</var><sup><var>r</var>/2</sup> mod <var>N</var></span> cumple <span class="math"><var>x</var><sup>2</sup> ≡ 1</span>, es decir, <var>N</var> divide a <span class="math">(<var>x</var> − 1)(<var>x</var> + 1)</span>. Como <var>r</var> es el orden, <span class="math"><var>x</var> ≢ 1</span>. Si además <span class="math"><var>x</var> ≢ −1</span>, <var>N</var> no divide a ninguno de los dos factores por separado, así que cada uno comparte con <var>N</var> un divisor no trivial:</p>
+        <div class="equation"><var>p</var> = gcd(<var>a</var><sup><var>r</var>/2</sup> − 1, <var>N</var>),  <var>q</var> = gcd(<var>a</var><sup><var>r</var>/2</sup> + 1, <var>N</var>)<span class="eq-label">(E1.1)</span></div>
+        <p><strong>Ejemplo resuelto (N = 15, a = 7).</strong> Las potencias de 7 módulo 15 son 1, 7, 4, 13, 1, 7, 4, 13, …, luego <span class="math"><var>r</var> = 4</span>. Entonces <span class="math">7<sup>2</sup> mod 15 = 4</span>, <span class="math">gcd(3, 15) = 3</span> y <span class="math">gcd(5, 15) = 5</span>: <span class="math">15 = 3 × 5</span>.</p>
+        <p>Si <var>N</var> es impar con <var>m</var> factores primos distintos y <var>a</var> se elige al azar entre los coprimos con <var>N</var>, la probabilidad de que <var>r</var> sea par y <span class="math"><var>a</var><sup><var>r</var>/2</sup> ≢ −1</span> es al menos <span class="math">1 − 1/2<sup><var>m</var>−1</sup></span>; para un módulo RSA (<span class="math"><var>m</var> = 2</span>), al menos 1/2 por intento. Para <span class="math"><var>N</var> = 21</span> la cota es exacta: de las 12 bases coprimas en [1, 20] funcionan 6 (el panel «Todas las bases» excluye 1 y 20, que siempre fallan, y muestra 6 de 10).</p>
+
+        <h2 id="demo"><span class="sec">E1.3</span>Simulador</h2>
+        <p>Pulsa <b>Ejecutar</b> para calcular el orden y la distribución ideal; después <b>Medir</b> para simular tiradas del registro de fase. Los casos predefinidos muestran un éxito con picos exactos, uno con <var>r</var> que no es potencia de 2, los dos modos de fallo y un <var>N</var> de 10 bits.</p>
+
+        <section class="demo" id="demo-shor" aria-labelledby="demo-shor-t">
+          <div class="demo-head"><p class="demo-title" id="demo-shor-t">Reducción de Shor para N ≤ 1023</p><button class="btn ghost" type="button" id="shor-reset">Reiniciar</button></div>
+          <div class="demo-body">
+            <div class="controls">
+              <label class="field">N (impar, compuesto)<input id="shor-n" type="number" min="15" max="1023" step="1" value="15" inputmode="numeric"></label>
+              <label class="field">Base a<input id="shor-a" type="number" min="2" max="1021" step="1" value="7" inputmode="numeric"></label>
+              <label class="field">Medidas por tanda<input id="shor-shots" type="number" min="1" max="1000" step="1" value="1" inputmode="numeric"></label>
+              <button class="btn" type="button" id="shor-run">Ejecutar</button>
+              <button class="btn" type="button" id="shor-measure">Medir</button>
+              <button class="btn ghost" type="button" id="shor-random">Base aleatoria</button>
             </div>
+            <div class="controls" aria-label="Casos predefinidos">
+              <button class="btn ghost" type="button" data-preset="15,7">15, a = 7 (r = 4)</button>
+              <button class="btn ghost" type="button" data-preset="21,2">21, a = 2 (r = 6)</button>
+              <button class="btn ghost" type="button" data-preset="21,4">21, a = 4 (r impar)</button>
+              <button class="btn ghost" type="button" data-preset="91,12">91, a = 12 (−1)</button>
+              <button class="btn ghost" type="button" data-preset="1003,2">1003, a = 2 (r = 232)</button>
+            </div>
+            <div class="stat-row">
+              <div class="stat"><b id="stat-n">—</b><small>N</small></div>
+              <div class="stat"><b id="stat-t">—</b><small>qubits: fase + trabajo</small></div>
+              <div class="stat"><b id="stat-r">—</b><small>orden r</small></div>
+              <div class="stat"><b id="stat-p">—</b><small>resultado</small></div>
+            </div>
+            <div class="output" id="shor-out" aria-live="polite">Activa JavaScript para usar el simulador.</div>
+            <p class="small"><b>Secuencia <span class="math"><var>f</var>(<var>x</var>) = <var>a</var><sup><var>x</var></sup> mod <var>N</var></span>.</b> Es la función cuyo periodo busca el ordenador cuántico.</p>
+            <div id="shor-seq"></div>
+            <p class="small"><b>Distribución ideal de la medida del registro de fase.</b> Tras la QFT<sup>−1</sup>, la probabilidad se concentra en torno a <span class="math"><var>s</var>·<var>Q</var>/<var>r</var></span>.</p>
+            <div id="shor-peaks"></div>
+            <div class="output" id="shor-cf" aria-live="polite">Pulsa «Medir» para obtener un valor y y recuperar r.</div>
+            <p class="small"><b>Todas las bases.</b> Estadística exacta sobre todas las <var>a</var> en [2, <var>N</var> − 2].</p>
+            <div id="shor-survey"></div>
+          </div>
+        </section>
+
+        <h2 id="picos"><span class="sec">E1.4</span>Por qué aparecen picos en múltiplos de Q/r</h2>
+        <p>El registro de fase tiene <var>t</var> qubits, con <span class="math"><var>Q</var> = 2<sup><var>t</var></sup> ≥ <var>N</var><sup>2</sup></span>; el de trabajo, <span class="math">⌈log<sub>2</sub>(<var>N</var> + 1)⌉</span>. Tras las puertas Hadamard y la exponenciación modular controlada, el estado es</p>
+        <div class="equation">|ψ⟩ = <var>Q</var><sup>−1/2</sup> Σ<sub><var>x</var>=0</sub><sup><var>Q</var>−1</sup> |<var>x</var>⟩ |<var>a</var><sup><var>x</var></sup> mod <var>N</var>⟩<span class="eq-label">(E1.2)</span></div>
+        <p>Si se mide (o simplemente se ignora) el registro de trabajo y sale <span class="math"><var>a</var><sup><var>x</var><sub>0</sub></sup></span>, el registro de fase queda en la superposición uniforme de <span class="math"><var>x</var><sub>0</sub>, <var>x</var><sub>0</sub> + <var>r</var>, <var>x</var><sub>0</sub> + 2<var>r</var>, …</span>: un «peine» de periodo <var>r</var>. La QFT<sup>−1</sup> de un peine de periodo <var>r</var> es otro peine, de periodo <span class="math"><var>Q</var>/<var>r</var></span>, y el desplazamiento <var>x</var><sub>0</sub> solo añade fases que no cambian las probabilidades. Con <var>M</var> dientes,</p>
+        <div class="equation">P(<var>y</var> | <var>x</var><sub>0</sub>) = (1 / <var>MQ</var>) · sin<sup>2</sup>(π<var>M</var><var>r</var><var>y</var>/<var>Q</var>) / sin<sup>2</sup>(π<var>r</var><var>y</var>/<var>Q</var>)<span class="eq-label">(E1.3)</span></div>
+        <p>que vale exactamente <span class="math"><var>M</var>/<var>Q</var> ≈ 1/<var>r</var></span> cuando <span class="math"><var>r</var><var>y</var>/<var>Q</var></span> es entero y es pequeña lejos de esos puntos. Si <var>r</var> divide a <var>Q</var> (caso <span class="math"><var>N</var> = 15</span>, <span class="math"><var>r</var> = 4</span>), los picos son exactos: solo salen <span class="math"><var>y</var> ∈ {0, 64, 128, 192}</span>, con probabilidad 1/4 cada uno. Si no lo divide (caso <span class="math"><var>N</var> = 21</span>, <span class="math"><var>a</var> = 2</span>, <span class="math"><var>r</var> = 6</span>, <span class="math"><var>Q</var> = 512</span>), cada pico cae entre dos enteros y la probabilidad se reparte entre vecinos: <span class="math">P(85) ≈ 0,114</span>, <span class="math">P(86) ≈ 0,029</span>, <span class="math">P(84) ≈ 0,007</span>; los seis enteros más cercanos a los picos suman ≈ 0,79. La demo calcula esta distribución con (E1.3); se ha comprobado contra la suma directa de las 2<sup><var>t</var></sup> amplitudes para varios <var>N</var> (error &lt; 10<sup>−13</sup>).</p>
+
+        <h2 id="fracciones"><span class="sec">E1.5</span>Recuperar r con fracciones continuas</h2>
+        <p>Una medida <var>y</var> en el entero más cercano a <span class="math"><var>s</var>·<var>Q</var>/<var>r</var></span> cumple <span class="math">|<var>y</var>/<var>Q</var> − <var>s</var>/<var>r</var>| ≤ 1/(2<var>Q</var>)</span>. Como <span class="math"><var>Q</var> ≥ <var>N</var><sup>2</sup> &gt; <var>r</var><sup>2</sup></span>, eso implica <span class="math">|<var>y</var>/<var>Q</var> − <var>s</var>/<var>r</var>| &lt; 1/(2<var>r</var><sup>2</sup>)</span> y, por un teorema clásico de Legendre, <span class="math"><var>s</var>/<var>r</var></span> (reducida) es uno de los convergentes de la fracción continua de <span class="math"><var>y</var>/<var>Q</var></span>. Basta recorrer los convergentes con denominador menor que <var>N</var> y comprobar cuál verifica <span class="math"><var>a</var><sup><var>q</var></sup> ≡ 1</span>.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>N = 21, a = 2, Q = 512: medidas típicas y lo que se recupera</caption>
+            <thead><tr><th class="num">y</th><th class="num">y/Q</th><th>Convergentes (q &lt; 21)</th><th>Candidato</th><th>Resultado</th></tr></thead>
+            <tbody>
+              <tr><td class="num">85</td><td class="num">0,16602</td><td>0/1, 1/6</td><td>q = 6</td><td><span class="math">2<sup>6</sup> mod 21 = 1</span> → <var>r</var> = 6</td></tr>
+              <tr><td class="num">427</td><td class="num">0,83398</td><td>0/1, 1/1, 5/6</td><td>q = 6</td><td><var>r</var> = 6</td></tr>
+              <tr><td class="num">171</td><td class="num">0,33398</td><td>0/1, 1/2, 1/3</td><td>q = 2 y 3 fallan; 3·2 = 6</td><td><var>r</var> = 6 (<var>s</var> = 2 compartía factor con <var>r</var>)</td></tr>
+              <tr><td class="num">256</td><td class="num">0,50000</td><td>0/1, 1/2</td><td>q = 2 falla; 3·2 = 6</td><td><var>r</var> = 6 (<var>s</var> = 3)</td></tr>
+              <tr><td class="num">0</td><td class="num">0</td><td>0/1</td><td>—</td><td>Medida inútil (<var>s</var> = 0); repetir</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Cuando <span class="math">gcd(<var>s</var>, <var>r</var>) &gt; 1</span> la fracción aparece simplificada y el denominador es un divisor de <var>r</var>. Hay dos remedios estándar: probar múltiplos pequeños del denominador (lo que hace la demo, hasta ×4) o repetir la medida y tomar el mínimo común múltiplo de los denominadores. En ambos casos, si se obtiene un <var>R</var> con <span class="math"><var>a</var><sup><var>R</var></sup> ≡ 1</span>, el orden divide a <var>R</var> y se reduce quitando factores primos mientras <span class="math"><var>a</var><sup><var>R</var>/<var>p</var></sup> ≡ 1</span> (por ejemplo, <span class="math"><var>y</var> = 128</span> da 1/4 y 3·4 = 12, que se reduce a 6). En promedio basta un número pequeño de repeticiones.</p>
+
+        <h2 id="fallos"><span class="sec">E1.6</span>Casos de fallo</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>Modos de fallo y su remedio (todos se reproducen con los casos predefinidos)</caption>
+            <thead><tr><th>Situación</th><th>Ejemplo</th><th>Qué pasa</th><th>Remedio</th></tr></thead>
+            <tbody>
+              <tr><th><var>r</var> impar</th><td><span class="math"><var>N</var> = 21</span>, <span class="math"><var>a</var> = 4</span>: 4, 16, 1 → <var>r</var> = 3</td><td>No existe <span class="math"><var>a</var><sup><var>r</var>/2</sup></span></td><td>Otra base</td></tr>
+              <tr><th><span class="math"><var>a</var><sup><var>r</var>/2</sup> ≡ −1</span></th><td><span class="math"><var>N</var> = 91</span>, <span class="math"><var>a</var> = 12</span>: <var>r</var> = 6, <span class="math">12<sup>3</sup> mod 91 = 90</span></td><td><span class="math">gcd(89, 91) = 1</span>, <span class="math">gcd(91, 91) = 91</span>: factores triviales</td><td>Otra base</td></tr>
+              <tr><th>Medida sin información</th><td><var>y</var> = 0, o <var>y</var> lejos de un pico</td><td>Ningún convergente válido</td><td>Repetir el circuito</td></tr>
+              <tr><th>Fracción simplificada</th><td><var>y</var> = 256 con <var>r</var> = 6</td><td>Se obtiene un divisor de <var>r</var></td><td>Múltiplos o mcm de varias medidas</td></tr>
+              <tr><th>«Suerte»</th><td><span class="math">gcd(<var>a</var>, <var>N</var>) &gt; 1</span></td><td>Factor sin parte cuántica</td><td>— (probabilidad despreciable para RSA real)</td></tr>
+            </tbody>
+          </table>
         </div>
 
-        <section class="ejemplo-intro">
-            <h2>Introducción</h2>
-            <p>
-                El algoritmo de Shor, desarrollado por Peter Shor en 1994, es uno de los algoritmos cuánticos más importantes 
-                debido a su capacidad para factorizar números enteros grandes en tiempo polinómico. Esta capacidad representa 
-                una amenaza directa para la seguridad de los sistemas criptográficos basados en RSA y otros sistemas que dependen 
-                de la dificultad de factorizar números grandes.
-            </p>
-            <p>
-                En este ejemplo, exploraremos cómo funciona el algoritmo de Shor y demostraremos su impacto en la seguridad 
-                criptográfica mediante una simulación simplificada.
-            </p>
-        </section>
+        <h2 id="escala"><span class="sec">E1.7</span>Del juguete a RSA-2048</h2>
+        <p>La demo llega a 20 qubits de fase y 10 de trabajo, sin ruido. Un ataque a RSA-2048 necesita del orden de 1 400 a 6 200 qubits <em>lógicos</em> según la construcción y miles de millones de puertas Toffoli; cada qubit lógico se construye con cientos o miles de qubits físicos mediante corrección de errores. La estimación de referencia de 2025 es de menos de un millón de qubits físicos durante menos de una semana [4], y las propuestas de 2026 con códigos QLDPC la rebajan sobre el papel. El tema 1 resume cómo han evolucionado estas cifras y qué significan: <a href="../temas/tema1/index.html#recursos">§1.8 Estimaciones de recursos</a>.</p>
+        <p>Para ver el circuito cuántico de verdad (Hadamard, multiplicación modular controlada y QFT<sup>−1</sup>) y ejecutarlo en un simulador, sigue el laboratorio <a href="../guias/algoritmo_shor.html">L1 · Shor y el fin de RSA</a>, que implementa con Qiskit los casos <span class="math"><var>N</var> = 15</span>, <span class="math"><var>a</var> = 7</span> y <span class="math"><var>N</var> = 21</span>, <span class="math"><var>a</var> = 2</span> y reproduce los picos de esta página.</p>
 
-        <section class="ejemplo-teoria">
-            <h2>Fundamento Teórico</h2>
-            
-            <h3>El Problema de la Factorización</h3>
-            <p>
-                La seguridad de RSA se basa en la dificultad computacional de factorizar el producto de dos números primos grandes. 
-                Si N = p × q, donde p y q son primos grandes, encontrar p y q conociendo solo N es computacionalmente difícil 
-                con algoritmos clásicos (complejidad sub-exponencial).
-            </p>
-            
-            <h3>Enfoque del Algoritmo de Shor</h3>
-            <p>
-                El algoritmo de Shor resuelve este problema en dos partes:
-            </p>
-            <ol>
-                <li>
-                    <strong>Reducción a Búsqueda de Período:</strong> Transforma el problema de factorización en el problema 
-                    de encontrar el período de una función modular f(x) = a<sup>x</sup> mod N, donde a es un número coprimo con N.
-                </li>
-                <li>
-                    <strong>Búsqueda Cuántica de Período:</strong> Utiliza la transformada cuántica de Fourier para encontrar 
-                    el período de la función de manera eficiente.
-                </li>
-            </ol>
-            
-            <h3>Pasos del Algoritmo</h3>
-            <ol>
-                <li>Elegir un número aleatorio a &lt; N y verificar que gcd(a, N) = 1 (son coprimos).</li>
-                <li>Preparar un registro cuántico y aplicar la transformada cuántica de Fourier.</li>
-                <li>Medir el registro para obtener una aproximación del período r de la función f(x) = a<sup>x</sup> mod N.</li>
-                <li>Si r es par y a<sup>r/2</sup> ≠ -1 mod N, calcular gcd(a<sup>r/2</sup> ± 1, N) para encontrar un factor de N.</li>
-            </ol>
-            
-            <h3>Complejidad</h3>
-            <p>
-                El algoritmo de Shor tiene una complejidad de tiempo O((log N)<sup>3</sup>), lo que lo hace exponencialmente 
-                más rápido que los mejores algoritmos clásicos conocidos para factorización.
-            </p>
-        </section>
+        <h2 id="prueba"><span class="sec">E1.8</span>Prueba esto</h2>
+        <ol>
+          <li>Con <span class="math"><var>N</var> = 15</span>, <span class="math"><var>a</var> = 7</span>, haz 100 medidas. ¿Qué fracción no sirve? Compárala con la teoría (1/4).</li>
+          <li>Con <span class="math"><var>N</var> = 21</span>, <span class="math"><var>a</var> = 2</span>, haz 1 000 medidas. ¿Qué fracción recupera <span class="math"><var>r</var> = 6</span>? Debería rondar el 83 %. ¿Por qué no es 5/6?</li>
+          <li>Para <span class="math"><var>N</var> = 143</span>, compara en «Todas las bases» el número de bases con <var>r</var> impar y con <span class="math"><var>a</var><sup><var>r</var>/2</sup> ≡ −1</span>. Pista: si <var>a</var> tiene orden impar <var>r</var>, ¿qué vale <span class="math">(<var>N</var> − <var>a</var>)<sup><var>r</var></sup></span> y qué orden tiene <span class="math"><var>N</var> − <var>a</var></span>?</li>
+          <li>Prueba <span class="math"><var>N</var> = 1003 = 17 × 59</span>, <span class="math"><var>a</var> = 2</span>. ¿Cuántos picos hay? ¿Por qué la fuerza bruta es instantánea aquí y no lo sería para un <var>N</var> de 2 048 bits?</li>
+        </ol>
 
-        <section class="ejemplo-simulacion">
-            <h2>Simulación Interactiva</h2>
-            
-            <div class="simulacion-container">
-                <div class="simulacion-controls">
-                    <div class="control-group">
-                        <label for="inputN">Número a factorizar (N):</label>
-                        <input type="number" id="inputN" min="4" max="1000" value="15" step="1">
-                        <small>Para esta simulación, use valores pequeños (4-1000)</small>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label for="inputA">Base (a):</label>
-                        <input type="number" id="inputA" min="2" value="7" step="1">
-                        <small>Debe ser coprimo con N</small>
-                    </div>
-                    
-                    <button id="btnSimular" class="btn">Ejecutar Algoritmo</button>
-                    <button id="btnReset" class="btn btn-outline">Reiniciar</button>
-                </div>
-                
-                <div class="simulacion-output">
-                    <h3>Resultados</h3>
-                    <div id="outputPasos" class="output-pasos">
-                        <p>Configure los parámetros y haga clic en "Ejecutar Algoritmo" para comenzar.</p>
-                    </div>
-                    
-                    <div id="outputFactores" class="output-resultado">
-                        <h4>Factores encontrados:</h4>
-                        <p id="factores">-</p>
-                    </div>
-                </div>
-                
-                <div class="simulacion-visualization">
-                    <h3>Visualización</h3>
-                    <div id="visualization" class="visualization-container">
-                        <!-- La visualización se generará dinámicamente con JavaScript -->
-                    </div>
-                </div>
-            </div>
-        </section>
+        <h2 id="referencias">Referencias</h2>
+        <ol class="refs">
+          <li>P. W. Shor. <a href="https://arxiv.org/abs/quant-ph/9508027">Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer</a>. <span class="src">SIAM Journal on Computing 26(5), 1997.</span></li>
+          <li>M. A. Nielsen, I. L. Chuang. <em>Quantum Computation and Quantum Information</em>, edición del 10.º aniversario, cap. 5 y apéndice 4. <span class="src">Cambridge University Press, 2010.</span></li>
+          <li>J. A. Smolin, G. Smith, A. Vargo. <a href="https://arxiv.org/abs/1301.7007">Pretending to factor large numbers on a quantum computer</a>. <span class="src">Nature 499, 163–165, 2013.</span></li>
+          <li>C. Gidney. <a href="https://arxiv.org/abs/2505.15917">How to factor 2048 bit RSA integers with less than a million noisy qubits</a>. <span class="src">arXiv:2505.15917, mayo de 2025.</span></li>
+        </ol>
+      </article>
 
-        <section class="ejemplo-codigo">
-            <h2>Implementación</h2>
-            
-            <p>
-                A continuación se muestra una implementación simplificada del algoritmo de Shor en Python. 
-                Esta implementación es para fines educativos y simula los aspectos cuánticos del algoritmo.
-            </p>
-            
-            <pre><code class="language-python">import math
-import random
-import numpy as np
-
-def gcd(a, b):
-    """Calcula el máximo común divisor de a y b."""
-    while b:
-        a, b = b, a % b
-    return a
-
-def find_period(a, N):
-    """
-    Simula la parte cuántica del algoritmo de Shor para encontrar
-    el período de f(x) = a^x mod N.
-    
-    En un ordenador cuántico real, esto utilizaría la transformada
-    cuántica de Fourier para encontrar el período eficientemente.
-    """
-    # En esta simulación, calculamos el período directamente
-    x = 1
-    for r in range(1, N):
-        x = (x * a) % N
-        if x == 1:
-            return r
-    return None
-
-def shor_algorithm(N):
-    """
-    Implementación simplificada del algoritmo de Shor para factorizar N.
-    """
-    # Paso 1: Verificar si N es par
-    if N % 2 == 0:
-        return 2, N // 2
-    
-    # Paso 2: Verificar si N es una potencia perfecta
-    k = 2
-    while k**2 <= N:
-        if int(N**(1/k)) ** k == N:
-            return int(N**(1/k)), k
-        k += 1
-    
-    # Paso 3: Elegir un número aleatorio a < N
-    for _ in range(5):  # Intentar varias veces
-        a = random.randint(2, N-1)
-        
-        # Verificar que a y N son coprimos
-        if gcd(a, N) > 1:
-            return gcd(a, N), N // gcd(a, N)
-        
-        # Paso 4: Encontrar el período de a^x mod N
-        r = find_period(a, N)
-        
-        if r is None or r % 2 != 0:
-            continue  # Intentar con otro valor de a
-        
-        # Paso 5: Calcular a^(r/2) mod N
-        x = pow(a, r // 2, N)
-        
-        if x == N - 1:
-            continue  # Intentar con otro valor de a
-        
-        # Paso 6: Calcular los factores
-        factor1 = gcd(x - 1, N)
-        factor2 = gcd(x + 1, N)
-        
-        if factor1 > 1 and factor1 < N:
-            return factor1, N // factor1
-        if factor2 > 1 and factor2 < N:
-            return factor2, N // factor2
-    
-    # Si no se encontraron factores después de varios intentos
-    return None, None
-
-# Ejemplo de uso
-N = 15
-factor1, factor2 = shor_algorithm(N)
-print(f"Factores de {N}: {factor1} × {factor2}")</code></pre>
-            
-            <p>
-                Esta implementación es una simulación clásica del algoritmo de Shor. En un ordenador cuántico real, 
-                la búsqueda del período se realizaría utilizando registros cuánticos y la transformada cuántica de Fourier, 
-                lo que proporcionaría la aceleración exponencial.
-            </p>
-        </section>
-
-        <section class="ejemplo-impacto">
-            <h2>Impacto en la Seguridad Criptográfica</h2>
-            
-            <p>
-                El algoritmo de Shor tiene profundas implicaciones para la seguridad criptográfica:
-            </p>
-            
-            <div class="impacto-grid">
-                <div class="impacto-item">
-                    <h3>RSA</h3>
-                    <p>
-                        La seguridad de RSA depende directamente de la dificultad de factorizar números grandes. 
-                        Un ordenador cuántico que ejecute el algoritmo de Shor podría romper RSA en cuestión de horas o días, 
-                        independientemente de la longitud de la clave.
-                    </p>
-                </div>
-                
-                <div class="impacto-item">
-                    <h3>Diffie-Hellman</h3>
-                    <p>
-                        El algoritmo de Shor también puede resolver eficientemente el problema del logaritmo discreto, 
-                        comprometiendo la seguridad del intercambio de claves Diffie-Hellman y sistemas basados en curvas elípticas.
-                    </p>
-                </div>
-                
-                <div class="impacto-item">
-                    <h3>Criptografía Simétrica</h3>
-                    <p>
-                        Los algoritmos simétricos como AES son menos afectados. El algoritmo de Grover reduce la seguridad 
-                        efectiva a la mitad, pero esto puede contrarrestarse duplicando la longitud de la clave.
-                    </p>
-                </div>
-                
-                <div class="impacto-item">
-                    <h3>Necesidad de PQC</h3>
-                    <p>
-                        La amenaza del algoritmo de Shor es la principal motivación para el desarrollo de la criptografía 
-                        post-cuántica, que utiliza problemas matemáticos que se cree son difíciles incluso para ordenadores cuánticos.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <section class="ejemplo-recursos">
-            <h2>Recursos Adicionales</h2>
-            
-            <ul>
-                <li>
-                    <a href="https://arxiv.org/abs/quant-ph/9508027" target="_blank">
-                        Shor, P. W. (1995). Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer.
-                    </a>
-                </li>
-                <li>
-                    <a href="https://quantum-computing.ibm.com/composer/docs/iqx/guide/shors-algorithm" target="_blank">
-                        IBM Quantum Experience: Guía del Algoritmo de Shor
-                    </a>
-                </li>
-                <li>
-                    <a href="../guias/algoritmo_shor.html">
-                        Guía de Laboratorio: Algoritmo de Shor
-                    </a>
-                </li>
-            </ul>
-        </section>
-
-        <div class="ejemplo-navegacion">
-            <a href="index.html" class="btn btn-outline">
-                <span class="flecha">←</span> Volver a Ejemplos
-            </a>
-            <a href="ml_kem.html" class="btn">
-                Siguiente: ML-KEM <span class="flecha">→</span>
-            </a>
-        </div>
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../index.html">Inicio</a></li>
-                    <li><a href="../programa.html">Programa</a></li>
-                    <li><a href="../temas/tema1/index.html">Temas</a></li>
-                    <li><a href="index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="../guias/index.html">Guías de Laboratorio</a></li>
-                    <li><a href="../recursos/index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Ejemplos</h3>
-                <ul>
-                    <li><a href="algoritmo_shor.html">Algoritmo de Shor</a></li>
-                    <li><a href="ml_kem.html">ML-KEM</a></li>
-                    <li><a href="ml_dsa.html">ML-DSA</a></li>
-                    <li><a href="criptografia_hibrida.html">Criptografía Híbrida</a></li>
-                    <li><a href="qkd_bb84.html">QKD (BB84)</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../js/script.js"></script>
-    <script src="../js/prism.js"></script>
-    <script src="../js/visualizations.js"></script>
-    <script>
-        // Código específico para la simulación del algoritmo de Shor
-        document.addEventListener('DOMContentLoaded', function() {
-            const btnSimular = document.getElementById('btnSimular');
-            const btnReset = document.getElementById('btnReset');
-            const inputN = document.getElementById('inputN');
-            const inputA = document.getElementById('inputA');
-            const outputPasos = document.getElementById('outputPasos');
-            const factores = document.getElementById('factores');
-            const visualization = document.getElementById('visualization');
-            
-            // Función para verificar si dos números son coprimos
-            function gcd(a, b) {
-                while (b) {
-                    [a, b] = [b, a % b];
-                }
-                return a;
-            }
-            
-            // Función para encontrar el período (simulación clásica)
-            function findPeriod(a, N) {
-                let x = 1;
-                let values = [1];
-                let found = false;
-                let r = 0;
-                
-                // Calculamos a^x mod N para valores sucesivos de x
-                for (let i = 1; i < N; i++) {
-                    x = (x * a) % N;
-                    values.push(x);
-                    
-                    if (x === 1) {
-                        found = true;
-                        r = i;
-                        break;
-                    }
-                }
-                
-                return { found, r, values };
-            }
-            
-            // Función para simular el algoritmo de Shor
-            function shorAlgorithm(N, a) {
-                // Paso 1: Verificar si N y a son coprimos
-                const mcd = gcd(a, N);
-                if (mcd > 1) {
-                    return {
-                        success: true,
-                        factor1: mcd,
-                        factor2: N / mcd,
-                        steps: [`El MCD de ${a} y ${N} es ${mcd}, que es un factor trivial.`]
-                    };
-                }
-                
-                // Paso 2: Encontrar el período
-                const { found, r, values } = findPeriod(a, N);
-                
-                if (!found) {
-                    return {
-                        success: false,
-                        steps: [`No se pudo encontrar el período de ${a}^x mod ${N}.`]
-                    };
-                }
-                
-                const steps = [
-                    `Paso 1: Verificamos que gcd(${a}, ${N}) = 1, por lo que son coprimos.`,
-                    `Paso 2: Calculamos la secuencia ${a}^x mod ${N} para x = 0, 1, 2, ...`,
-                    `Secuencia: ${values.join(', ')}`,
-                    `Paso 3: Encontramos que el período es r = ${r}.`
-                ];
-                
-                // Paso 3: Verificar si r es par
-                if (r % 2 !== 0) {
-                    steps.push(`Paso 4: El período ${r} no es par. Necesitamos intentar con otro valor de a.`);
-                    return {
-                        success: false,
-                        steps
-                    };
-                }
-                
-                steps.push(`Paso 4: El período ${r} es par, continuamos.`);
-                
-                // Paso 4: Calcular a^(r/2) mod N
-                const x = Math.pow(a, r/2) % N;
-                steps.push(`Paso 5: Calculamos ${a}^(${r}/2) mod ${N} = ${x}.`);
-                
-                if (x === N - 1) {
-                    steps.push(`Paso 6: ${x} = ${N} - 1, lo que no nos ayuda. Necesitamos intentar con otro valor de a.`);
-                    return {
-                        success: false,
-                        steps
-                    };
-                }
-                
-                // Paso 5: Calcular los factores
-                const factor1 = gcd(x - 1, N);
-                const factor2 = gcd(x + 1, N);
-                
-                steps.push(`Paso 6: Calculamos gcd(${x} - 1, ${N}) = ${factor1} y gcd(${x} + 1, ${N}) = ${factor2}.`);
-                
-                if (factor1 > 1 && factor1 < N) {
-                    steps.push(`Paso 7: Encontramos los factores ${factor1} y ${N / factor1}.`);
-                    return {
-                        success: true,
-                        factor1,
-                        factor2: N / factor1,
-                        steps
-                    };
-                }
-                
-                if (factor2 > 1 && factor2 < N) {
-                    steps.push(`Paso 7: Encontramos los factores ${factor2} y ${N / factor2}.`);
-                    return {
-                        success: true,
-                        factor1: factor2,
-                        factor2: N / factor2,
-                        steps
-                    };
-                }
-                
-                steps.push(`Paso 7: No se encontraron factores no triviales. Necesitamos intentar con otro valor de a.`);
-                return {
-                    success: false,
-                    steps
-                };
-            }
-            
-            // Función para visualizar la secuencia modular
-            function visualizeModularSequence(a, N, values) {
-                visualization.innerHTML = '';
-                
-                // Crear un gráfico circular para visualizar la secuencia modular
-                const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                svg.setAttribute("width", "100%");
-                svg.setAttribute("height", "300");
-                svg.setAttribute("viewBox", "-110 -110 220 220");
-                
-                // Círculo exterior
-                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                circle.setAttribute("cx", "0");
-                circle.setAttribute("cy", "0");
-                circle.setAttribute("r", "100");
-                circle.setAttribute("fill", "none");
-                circle.setAttribute("stroke", "#ccc");
-                circle.setAttribute("stroke-width", "2");
-                svg.appendChild(circle);
-                
-                // Marcas para cada valor posible mod N
-                for (let i = 0; i < N; i++) {
-                    const angle = (i / N) * 2 * Math.PI - Math.PI/2;
-                    const x = 100 * Math.cos(angle);
-                    const y = 100 * Math.sin(angle);
-                    
-                    // Línea de marca
-                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                    line.setAttribute("x1", 0.9 * x);
-                    line.setAttribute("y1", 0.9 * y);
-                    line.setAttribute("x2", 1.1 * x);
-                    line.setAttribute("y2", 1.1 * y);
-                    line.setAttribute("stroke", "#999");
-                    line.setAttribute("stroke-width", "1");
-                    svg.appendChild(line);
-                    
-                    // Etiqueta
-                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                    text.setAttribute("x", 1.2 * x);
-                    text.setAttribute("y", 1.2 * y);
-                    text.setAttribute("text-anchor", "middle");
-                    text.setAttribute("dominant-baseline", "middle");
-                    text.setAttribute("font-size", "12");
-                    text.textContent = i;
-                    svg.appendChild(text);
-                }
-                
-                // Dibujar la secuencia
-                for (let i = 0; i < values.length - 1; i++) {
-                    const value1 = values[i];
-                    const value2 = values[i + 1];
-                    
-                    const angle1 = (value1 / N) * 2 * Math.PI - Math.PI/2;
-                    const angle2 = (value2 / N) * 2 * Math.PI - Math.PI/2;
-                    
-                    const x1 = 80 * Math.cos(angle1);
-                    const y1 = 80 * Math.sin(angle1);
-                    const x2 = 80 * Math.cos(angle2);
-                    const y2 = 80 * Math.sin(angle2);
-                    
-                    // Línea de conexión
-                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                    line.setAttribute("x1", x1);
-                    line.setAttribute("y1", y1);
-                    line.setAttribute("x2", x2);
-                    line.setAttribute("y2", y2);
-                    line.setAttribute("stroke", "#3498db");
-                    line.setAttribute("stroke-width", "2");
-                    line.setAttribute("marker-end", "url(#arrowhead)");
-                    svg.appendChild(line);
-                    
-                    // Punto para el valor
-                    const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                    point.setAttribute("cx", x1);
-                    point.setAttribute("cy", y1);
-                    point.setAttribute("r", "4");
-                    point.setAttribute("fill", "#e74c3c");
-                    svg.appendChild(point);
-                    
-                    // Etiqueta para el exponente
-                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                    text.setAttribute("x", 0.9 * x1);
-                    text.setAttribute("y", 0.9 * y1);
-                    text.setAttribute("text-anchor", "middle");
-                    text.setAttribute("dominant-baseline", "middle");
-                    text.setAttribute("font-size", "10");
-                    text.setAttribute("fill", "#333");
-                    text.textContent = i;
-                    svg.appendChild(text);
-                }
-                
-                // Punto final
-                const lastValue = values[values.length - 1];
-                const lastAngle = (lastValue / N) * 2 * Math.PI - Math.PI/2;
-                const lastX = 80 * Math.cos(lastAngle);
-                const lastY = 80 * Math.sin(lastAngle);
-                
-                const lastPoint = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                lastPoint.setAttribute("cx", lastX);
-                lastPoint.setAttribute("cy", lastY);
-                lastPoint.setAttribute("r", "4");
-                lastPoint.setAttribute("fill", "#e74c3c");
-                svg.appendChild(lastPoint);
-                
-                // Etiqueta para el último exponente
-                const lastText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                lastText.setAttribute("x", 0.9 * lastX);
-                lastText.setAttribute("y", 0.9 * lastY);
-                lastText.setAttribute("text-anchor", "middle");
-                lastText.setAttribute("dominant-baseline", "middle");
-                lastText.setAttribute("font-size", "10");
-                lastText.setAttribute("fill", "#333");
-                lastText.textContent = values.length - 1;
-                svg.appendChild(lastText);
-                
-                // Definir marcador de flecha
-                const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-                const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
-                marker.setAttribute("id", "arrowhead");
-                marker.setAttribute("markerWidth", "10");
-                marker.setAttribute("markerHeight", "7");
-                marker.setAttribute("refX", "10");
-                marker.setAttribute("refY", "3.5");
-                marker.setAttribute("orient", "auto");
-                
-                const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-                polygon.setAttribute("points", "0 0, 10 3.5, 0 7");
-                polygon.setAttribute("fill", "#3498db");
-                
-                marker.appendChild(polygon);
-                defs.appendChild(marker);
-                svg.appendChild(defs);
-                
-                // Título
-                const title = document.createElement("h4");
-                title.textContent = `Visualización de la secuencia ${a}^x mod ${N}`;
-                visualization.appendChild(title);
-                
-                // Leyenda
-                const legend = document.createElement("div");
-                legend.className = "visualization-legend";
-                legend.innerHTML = `
-                    <p>El gráfico muestra la secuencia de valores ${a}^x mod ${N} para x = 0, 1, 2, ...</p>
-                    <p>El período r = ${values.length - 1} es la longitud del ciclo antes de que la secuencia vuelva a 1.</p>
-                `;
-                
-                visualization.appendChild(svg);
-                visualization.appendChild(legend);
-            }
-            
-            // Manejador para el botón de simulación
-            btnSimular.addEventListener('click', function() {
-                const N = parseInt(inputN.value);
-                const a = parseInt(inputA.value);
-                
-                if (isNaN(N) || isNaN(a) || N < 4 || a < 2 || a >= N) {
-                    alert("Por favor, ingrese valores válidos: N ≥ 4 y 2 ≤ a < N");
-                    return;
-                }
-                
-                // Ejecutar el algoritmo
-                const result = shorAlgorithm(N, a);
-                
-                // Mostrar los pasos
-                outputPasos.innerHTML = result.steps.map(step => `<p>${step}</p>`).join('');
-                
-                // Mostrar los factores
-                if (result.success) {
-                    factores.textContent = `${result.factor1} × ${result.factor2}`;
-                } else {
-                    factores.textContent = "No se encontraron factores";
-                }
-                
-                // Visualizar la secuencia modular
-                const { values } = findPeriod(a, N);
-                visualizeModularSequence(a, N, values);
-            });
-            
-            // Manejador para el botón de reinicio
-            btnReset.addEventListener('click', function() {
-                inputN.value = "15";
-                inputA.value = "7";
-                outputPasos.innerHTML = "<p>Configure los parámetros y haga clic en \"Ejecutar Algoritmo\" para comenzar.</p>";
-                factores.textContent = "-";
-                visualization.innerHTML = "";
-            });
-        });
-    </script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../glosario.html">Glosario</a>
+        <a href="../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

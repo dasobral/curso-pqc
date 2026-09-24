@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es" data-root="../" data-page="temas">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Temas — Curso PQC</title>
+  <meta name="description" content="El núcleo teórico del curso. Cada tema es autocontenido, pero siguen un orden pensado para construir sobre lo anterior.">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/course-data.js" defer></script>
+  <script src="../js/course.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../index.html">Inicio</a>
+        <a href="../programa.html">Programa</a>
+        <a href="../temas/index.html" aria-current="page">Temas</a>
+        <a href="../ejemplos/index.html">Ejemplos</a>
+        <a href="../guias/index.html">Laboratorios</a>
+        <a href="../recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
+    </div>
+  </header>
+
+  <div class="layout no-toc">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../index.html">Inicio</a></li><li aria-current="page">Temas</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Temas · 16 horas</p>
+        <h1>Seis temas, de la <em>amenaza</em> a la migración</h1>
+        <p class="lede">El núcleo teórico del curso. Cada tema es autocontenido, pero siguen un orden pensado para construir sobre lo anterior.</p>
+      </header>
+      <div class="card-grid">
+        <a class="card" href="../temas/tema1/index.html"><span class="card-kicker">Tema 01</span><h3 class="card-title">Criptografía moderna y la amenaza cuántica</h3><p>Primitivas simétricas y asimétricas, los problemas difíciles en que se apoyan y cómo los algoritmos de Shor y Grover los rompen o los debilitan. Mosca, HNDL y estimaciones de recursos actualizadas.</p><span class="card-foot"><span>2 h</span><span>Introductorio</span></span></a>
+        <a class="card" href="../temas/tema2/index.html"><span class="card-kicker">Tema 02</span><h3 class="card-title">PKI, TLS y la infraestructura de Internet</h3><p>Certificados X.509, TLS 1.3, SSH, IPsec, DNSSEC y firma de código: dónde vive la criptografía vulnerable, qué cuesta sustituirla y en qué punto está la migración.</p><span class="card-foot"><span>2 h</span><span>Intermedio</span></span></a>
+        <a class="card" href="../temas/tema3/index.html"><span class="card-kicker">Tema 03</span><h3 class="card-title">Fundamentos matemáticos de la PQC</h3><p>Retículos, LWE y sus variantes en anillos y módulos, códigos correctores, firmas basadas en hash, sistemas multivariantes e isogenias. Por qué resisten a Shor y cómo se mide su seguridad.</p><span class="card-foot"><span>4 h</span><span>Intermedio–avanzado</span></span></a>
+        <a class="card" href="../temas/tema4/index.html"><span class="card-kicker">Tema 04</span><h3 class="card-title">Estándares: ML-KEM, ML-DSA, SLH-DSA y más</h3><p>El proceso del NIST, FIPS 203, 204 y 205, FN-DSA y HQC, firmas con estado, parámetros, tamaños y rendimiento, y el trabajo de IETF, ISO y ETSI.</p><span class="card-foot"><span>3 h</span><span>Intermedio</span></span></a>
+        <a class="card" href="../temas/tema5/index.html"><span class="card-kicker">Tema 05</span><h3 class="card-title">Migración, hibridación e implementación</h3><p>Calendarios regulatorios, inventario criptográfico, agilidad, intercambio de claves híbrido, canales laterales, validación y casos reales de despliegue.</p><span class="card-foot"><span>3 h</span><span>Intermedio</span></span></a>
+        <a class="card" href="../temas/tema6/index.html"><span class="card-kicker">Tema 06</span><h3 class="card-title">Distribución cuántica de claves (QKD)</h3><p>BB84, QBER y tasa de clave, posprocesado, ataques a implementaciones, redes con nodos de confianza, normalización y una comparación honesta entre QKD y PQC.</p><span class="card-foot"><span>2 h</span><span>Intermedio</span></span></a>
+      </div>
+      <article class="prose">
+        <h2 id="recorrido">Recorrido recomendado</h2>
+        <p>Los temas 1 y 2 plantean el problema: qué criptografía usamos, dónde está desplegada y por qué un ordenador cuántico la rompe. El tema 3 da las herramientas matemáticas y el tema 4 las convierte en los algoritmos estandarizados. El tema 5 trata la parte más difícil en la práctica, la migración. El tema 6 presenta la alternativa física, la distribución cuántica de claves, y la compara con la post-cuántica.</p>
+        <div class="table-wrap"><table>
+          <caption>Dependencias entre temas, ejemplos y laboratorios</caption>
+          <thead><tr><th>Tema</th><th>Necesita</th><th>Ejemplo</th><th>Laboratorio</th></tr></thead>
+          <tbody>
+            <tr><th>1 · Amenaza cuántica</th><td>—</td><td><a href="../ejemplos/algoritmo_shor.html">E1 Shor</a></td><td><a href="../guias/algoritmo_shor.html">L1</a></td></tr>
+            <tr><th>2 · PKI y TLS</th><td>1</td><td>—</td><td><a href="../guias/criptografia_hibrida.html">L4</a></td></tr>
+            <tr><th>3 · Matemáticas</th><td>1</td><td><a href="../ejemplos/ml_kem.html">E2</a>, <a href="../ejemplos/ml_dsa.html">E3</a></td><td><a href="../guias/ml_kem.html">L2</a>, <a href="../guias/ml_dsa.html">L3</a></td></tr>
+            <tr><th>4 · Estándares</th><td>3</td><td><a href="../ejemplos/ml_kem.html">E2</a>, <a href="../ejemplos/ml_dsa.html">E3</a></td><td><a href="../guias/ml_kem.html">L2</a>, <a href="../guias/ml_dsa.html">L3</a></td></tr>
+            <tr><th>5 · Migración</th><td>2, 4</td><td><a href="../ejemplos/criptografia_hibrida.html">E4</a></td><td><a href="../guias/criptografia_hibrida.html">L4</a></td></tr>
+            <tr><th>6 · QKD</th><td>1</td><td><a href="../ejemplos/qkd_bb84.html">E5</a></td><td><a href="../guias/qkd.html">L5</a></td></tr>
+          </tbody>
+        </table></div>
+      </article>
+      <nav class="pager" aria-label="Paginación"></nav>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../glosario.html">Glosario</a>
+        <a href="../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

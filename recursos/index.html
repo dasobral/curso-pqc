@@ -1,300 +1,397 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es" data-root="../" data-page="recursos">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recursos - Curso de Criptografía Post-Cuántica</title>
-    <link rel="stylesheet" href="../css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recursos y bibliografía — Curso PQC</title>
+  <meta name="description" content="Bibliografía comentada y verificada del curso de criptografía post-cuántica: libros, artículos fundacionales, estándares con su estado, guías de agencias, bibliotecas, cursos, blogs, datos y comunidad (septiembre de 2026).">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/course-data.js" defer></script>
+  <script src="../js/course.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Curso de Criptografía Post-Cuántica</h1>
-        <p>Un enfoque introductorio a la seguridad en la era cuántica</p>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar en el curso...">
-            <button onclick="search()">🔍</button>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="../index.html">Inicio</a></li>
-                <li><a href="../programa.html">Programa</a></li>
-                <li><a href="../temas/tema1/index.html">Temas</a></li>
-                <li><a href="../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                <li><a href="../guias/index.html">Guías de Laboratorio</a></li>
-                <li><a href="index.html">Recursos</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="breadcrumbs">
-        <a href="../index.html">Inicio</a> &gt; Recursos
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="../index.html">Inicio</a>
+        <a href="../programa.html">Programa</a>
+        <a href="../temas/index.html">Temas</a>
+        <a href="../ejemplos/index.html">Ejemplos</a>
+        <a href="../guias/index.html">Laboratorios</a>
+        <a href="../recursos/index.html" aria-current="page">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="../busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
+  </header>
 
-    <main>
-        <h1>Recursos y Bibliografía</h1>
+  <div class="layout">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="../index.html">Inicio</a></li><li aria-current="page">Recursos</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Consulta · bibliografía comentada</p>
+        <h1>Recursos y <em>bibliografía</em></h1>
+        <p class="lede">Una selección corta y comprobada de lo que merece la pena leer, consultar o instalar para seguir el curso y para trabajar después en la migración post-cuántica. Cada entrada dice qué es, para qué sirve y con qué tema encaja.</p>
+        <dl class="page-meta">
+          <div><dt>Contenido</dt><dd>Libros, artículos, estándares, guías, software</dd></div>
+          <div><dt>Verificación</dt><dd>Enlaces y estados comprobados el 24/09/2026</dd></div>
+          <div><dt>Idioma</dt><dd>Mayoritariamente inglés</dd></div>
+          <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
+        </dl>
+      </header>
 
-        <section class="resource-section">
-            <h2>Libros Recomendados</h2>
-            <div class="resource-list">
-                <div class="resource-item">
-                    <h3>Post-Quantum Cryptography</h3>
-                    <p><strong>Autores:</strong> Daniel J. Bernstein, Johannes Buchmann, Erik Dahmen</p>
-                    <p><strong>Editorial:</strong> Springer</p>
-                    <p><strong>Año:</strong> 2009</p>
-                    <p><strong>Descripción:</strong> Obra fundamental que introduce los conceptos básicos de criptografía post-cuántica y analiza las principales familias de algoritmos resistentes a ataques cuánticos.</p>
-                    <p><strong>Enlace:</strong> <a href="https://link.springer.com/book/10.1007/978-3-540-88702-7" target="_blank">Springer Link</a></p>
-                </div>
+      <article class="prose">
 
-                <div class="resource-item">
-                    <h3>Quantum Computing: A Gentle Introduction</h3>
-                    <p><strong>Autores:</strong> Eleanor G. Rieffel, Wolfgang H. Polak</p>
-                    <p><strong>Editorial:</strong> MIT Press</p>
-                    <p><strong>Año:</strong> 2011</p>
-                    <p><strong>Descripción:</strong> Excelente introducción a la computación cuántica, con explicaciones claras de los algoritmos de Shor y Grover y sus implicaciones para la criptografía.</p>
-                    <p><strong>Enlace:</strong> <a href="https://mitpress.mit.edu/books/quantum-computing" target="_blank">MIT Press</a></p>
-                </div>
+        <h2 id="como-usar">Cómo usar estos recursos</h2>
+        <p>La literatura sobre criptografía post-cuántica (PQC) crece muy deprisa y envejece de forma desigual: los artículos fundacionales (Shor, Regev, BB84) no caducan, pero el estado de un estándar, la versión de una biblioteca o una estimación de recursos cuánticos pueden cambiar en meses. Por eso esta página separa tres tipos de fuente:</p>
+        <ul>
+          <li><strong>Fuentes estables</strong> (libros, artículos, RFC publicados, FIPS finales). Se citan con su referencia bibliográfica y un enlace persistente (DOI, arXiv, IACR ePrint, RFC Editor).</li>
+          <li><strong>Fuentes con estado</strong> (borradores de NIST, <em>Internet-Drafts</em>, guías de agencias). Llevan una etiqueta de estado y la fecha en que se comprobó. Antes de citarlas en un trabajo, vuelve a abrir el enlace.</li>
+          <li><strong>Fuentes vivas</strong> (bibliotecas, paneles de datos, blogs). La versión indicada es la última publicada a 24 de septiembre de 2026; úsala como referencia, no como requisito.</li>
+        </ul>
+        <p>Etiquetas de estado: <span class="badge final">Final</span> documento normativo publicado; <span class="badge draft">Borrador</span> en consulta o en tramitación; <span class="badge info">Informativo</span> documento no normativo, guía o material docente; <span class="badge broken">Roto</span> esquema con ataque práctico conocido. En las listas, el tipo de recurso aparece en una etiqueta gris al principio de la entrada, y la flecha final (→) indica el tema o la práctica con que se relaciona.</p>
+        <div class="callout">
+          <span class="callout-title">Consejo de lectura</span>
+          <p>No intentes leerlo todo. Para cada tema hay una ruta de tres pasos en la tabla siguiente: <strong>primero</strong> una fuente introductoria, <strong>después</strong> la fuente primaria que el tema resume y, <strong>para profundizar</strong>, algo que ya exige soltura. Los apuntes de cada tema citan sus referencias concretas; esta página es el mapa general.</p>
+        </div>
+        <div class="callout note">
+          <span class="callout-title">Para el trabajo del curso</span>
+          <p>Cita siempre la fuente primaria (el FIPS, el RFC, el artículo) y no un blog que la resume. Si un dato puede envejecer (fechas, versiones, porcentajes de despliegue, número de cúbits), indica la fecha de consulta.</p>
+        </div>
 
-                <div class="resource-item">
-                    <h3>Introduction to Modern Cryptography</h3>
-                    <p><strong>Autores:</strong> Jonathan Katz, Yehuda Lindell</p>
-                    <p><strong>Editorial:</strong> Chapman and Hall/CRC</p>
-                    <p><strong>Año:</strong> 2020 (3ª edición)</p>
-                    <p><strong>Descripción:</strong> Referencia completa sobre criptografía moderna con un enfoque riguroso pero accesible. La última edición incluye secciones sobre criptografía post-cuántica.</p>
-                    <p><strong>Enlace:</strong> <a href="https://www.routledge.com/Introduction-to-Modern-Cryptography/Katz-Lindell/p/book/9780815354369" target="_blank">Routledge</a></p>
-                </div>
+        <h2 id="rutas">Rutas de lectura por tema</h2>
+        <div class="table-wrap">
+          <table>
+            <caption>Ruta sugerida por tema. Los detalles de cada fuente están en las secciones siguientes.</caption>
+            <thead><tr><th>Tema</th><th>Primero</th><th>Después</th><th>Para profundizar</th></tr></thead>
+            <tbody>
+              <tr><th><a href="../temas/tema1/index.html">1 · Amenaza cuántica</a></th><td>Bernstein y Lange, <a href="https://www.nature.com/articles/nature23461">«Post-quantum cryptography»</a> (Nature, 2017); Mosca, <a href="https://eprint.iacr.org/2015/1075">«Cybersecurity in an era with quantum computers»</a>.</td><td>Shor (1997) y Grover (1996), en <a href="#articulos">Artículos</a>; Nielsen y Chuang, cap. 5 y 6.</td><td>Gidney (2025), <a href="https://arxiv.org/abs/2505.15917">RSA-2048 con menos de un millón de cúbits</a>, y las estimaciones de 2026 sobre curvas elípticas.</td></tr>
+              <tr><th><a href="../temas/tema2/index.html">2 · PKI y TLS</a></th><td>Wong, <em>Real-World Cryptography</em>, capítulos de TLS y PKI.</td><td><a href="https://www.rfc-editor.org/info/rfc9846">RFC 9846</a> (TLS 1.3), <a href="https://www.rfc-editor.org/info/rfc9954">RFC 9954</a> y <a href="https://www.rfc-editor.org/info/rfc10024">RFC 10024</a> (híbridos).</td><td><a href="https://www.rfc-editor.org/info/rfc9881">RFC 9881</a> y <a href="https://www.rfc-editor.org/info/rfc9935">RFC 9935</a> (certificados ML-DSA/ML-KEM) y el borrador de firmas compuestas.</td></tr>
+              <tr><th><a href="../temas/tema3/index.html">3 · Fundamentos matemáticos</a></th><td>Lyubashevsky, <a href="https://eprint.iacr.org/2024/1287">«Basic Lattice Cryptography»</a> (2024).</td><td>Regev (2005/2009), Lyubashevsky–Peikert–Regev (2010); Peikert, <em>A Decade of Lattice Cryptography</em>.</td><td>Micciancio y Goldwasser (2002); apuntes de Peikert y Regev; <a href="https://github.com/malb/lattice-estimator">lattice-estimator</a>.</td></tr>
+              <tr><th><a href="../temas/tema4/index.html">4 · Estándares</a></th><td><a href="https://www.rfc-editor.org/info/rfc9958">RFC 9958</a>, <em>Post-Quantum Cryptography for Engineers</em>.</td><td><a href="https://csrc.nist.gov/pubs/fips/203/final">FIPS 203</a>, <a href="https://csrc.nist.gov/pubs/fips/204/final">204</a> y <a href="https://csrc.nist.gov/pubs/fips/205/final">205</a>; <a href="https://csrc.nist.gov/pubs/sp/800/227/final">SP 800-227</a>.</td><td>Artículos de Kyber, Dilithium, SPHINCS<sup>+</sup> y Falcon; <a href="https://csrc.nist.gov/pubs/ir/8545/final">IR 8545</a> (HQC) e <a href="https://csrc.nist.gov/pubs/ir/8610/final">IR 8610</a> (firmas adicionales).</td></tr>
+              <tr><th><a href="../temas/tema5/index.html">5 · Migración e implementación</a></th><td>NCSC, <a href="https://www.ncsc.gov.uk/guidance/pqc-migration-timelines">calendario de migración</a>; hoja de ruta de la UE.</td><td><a href="https://csrc.nist.gov/pubs/ir/8547/ipd">NIST IR 8547</a> (borrador); CCN-STIC 221; BSI TR-02102-1.</td><td>KyberSlash (<a href="https://eprint.iacr.org/2024/1049">ePrint 2024/1049</a>); código de mlkem-native y liboqs; <a href="https://csrc.nist.gov/pubs/cswp/39/considerations-for-achieving-cryptographic-agility/final">CSWP 39</a> (agilidad).</td></tr>
+              <tr><th><a href="../temas/tema6/index.html">6 · QKD</a></th><td>Bennett y Brassard (1984), BB84; <a href="https://www.ncsc.gov.uk/whitepaper/quantum-security-technologies">postura del NCSC</a>.</td><td>Shor y Preskill (2000); Lo, Ma y Chen (2005); Scarani <em>et al.</em> (2009).</td><td>Pirandola <em>et al.</em> (2020); ETSI GS QKD 014 y 016; <a href="https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/Quantum_Positionspapier.html">posición conjunta ANSSI–BSI–NLNCSA–Suecia</a> (2024).</td></tr>
+            </tbody>
+          </table>
+        </div>
 
-                <div class="resource-item">
-                    <h3>Lattice-Based Cryptography for Beginners</h3>
-                    <p><strong>Autores:</strong> Jintai Ding, Zheng Zhang</p>
-                    <p><strong>Editorial:</strong> Springer</p>
-                    <p><strong>Año:</strong> 2022</p>
-                    <p><strong>Descripción:</strong> Introducción accesible a la criptografía basada en retículos, explicando los fundamentos matemáticos y las construcciones criptográficas más importantes.</p>
-                    <p><strong>Enlace:</strong> <a href="https://link.springer.com/book/10.1007/978-981-19-3802-2" target="_blank">Springer Link</a></p>
-                </div>
-            </div>
-        </section>
+        <h2 id="libros">Libros y monografías</h2>
+        <p>Libros de texto de referencia; los de acceso libre lo indican. Ninguno cubre todavía con detalle los FIPS de 2024: para eso están las <a href="#estandares">especificaciones</a> y el RFC 9958.</p>
 
-        <section class="resource-section">
-            <h2>Artículos y Publicaciones Científicas</h2>
-            <div class="resource-list">
-                <div class="resource-item">
-                    <h3>CRYSTALS-Kyber: A CCA-Secure Module-Lattice-Based KEM</h3>
-                    <p><strong>Autores:</strong> Joppe Bos, Léo Ducas, Eike Kiltz, Tancrède Lepoint, Vadim Lyubashevsky, John M. Schanck, Peter Schwabe, Gregor Seiler, Damien Stehlé</p>
-                    <p><strong>Conferencia:</strong> IEEE European Symposium on Security and Privacy (EuroS&P)</p>
-                    <p><strong>Año:</strong> 2018</p>
-                    <p><strong>Descripción:</strong> Artículo original que describe Kyber, el algoritmo seleccionado por el NIST como estándar para encapsulamiento de claves post-cuántico (ML-KEM).</p>
-                    <p><strong>Enlace:</strong> <a href="https://eprint.iacr.org/2017/634" target="_blank">Cryptology ePrint Archive</a></p>
-                </div>
+        <h3>Criptografía post-cuántica y retículos</h3>
+        <ol class="refs">
+          <li><span class="badge info">Libro</span> D. J. Bernstein, J. Buchmann y E. Dahmen (eds.). <a href="https://doi.org/10.1007/978-3-540-88702-7"><em>Post-Quantum Cryptography</em></a>. <span class="src">Springer, 2009.</span> Primer libro colectivo del campo: un capítulo por familia (hash, códigos, retículos, multivariante) escrito por sus autores de referencia. Los parámetros están desfasados, pero las ideas de cada familia se explican con una claridad difícil de encontrar en otro sitio. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+          <li><span class="badge info">Monografía</span> C. Peikert. <a href="https://doi.org/10.1561/0400000074"><em>A Decade of Lattice Cryptography</em></a>. <span class="src">Foundations and Trends in Theoretical Computer Science, 2016. Versión libre en <a href="https://eprint.iacr.org/2015/939">IACR ePrint 2015/939</a>.</span> Panorámica rigurosa de SIS, LWE, Ring-LWE, trampillas y firmas. Es la lectura natural después del tema 3 si quieres entender las reducciones del peor caso al caso medio. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+          <li><span class="badge info">Libro</span> D. Micciancio y S. Goldwasser. <a href="https://doi.org/10.1007/978-1-4615-0897-7"><em>Complexity of Lattice Problems: A Cryptographic Perspective</em></a>. <span class="src">Kluwer/Springer, 2002.</span> Referencia clásica sobre SVP, CVP, LLL y la dureza de los problemas de retículos. Anterior a LWE, pero sigue siendo la base para entender por qué los retículos son difíciles. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+          <li><span class="badge info">Libro</span> J. Hoffstein, J. Pipher y J. H. Silverman. <a href="https://doi.org/10.1007/978-1-4939-1711-2"><em>An Introduction to Mathematical Cryptography</em></a>, 2.ª ed. <span class="src">Springer, 2014.</span> El capítulo de retículos (NTRU, GGH, LLL con ejemplos numéricos pequeños) es la introducción más amable para quien viene del álgebra lineal. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+        </ol>
 
-                <div class="resource-item">
-                    <h3>CRYSTALS-Dilithium: A Lattice-Based Digital Signature Scheme</h3>
-                    <p><strong>Autores:</strong> Léo Ducas, Eike Kiltz, Tancrède Lepoint, Vadim Lyubashevsky, Peter Schwabe, Gregor Seiler, Damien Stehlé</p>
-                    <p><strong>Conferencia:</strong> IACR Transactions on Cryptographic Hardware and Embedded Systems</p>
-                    <p><strong>Año:</strong> 2018</p>
-                    <p><strong>Descripción:</strong> Artículo original que describe Dilithium, el algoritmo seleccionado por el NIST como estándar para firmas digitales post-cuánticas (ML-DSA).</p>
-                    <p><strong>Enlace:</strong> <a href="https://eprint.iacr.org/2017/633" target="_blank">Cryptology ePrint Archive</a></p>
-                </div>
+        <h3>Criptografía moderna (base del curso)</h3>
+        <ol class="refs">
+          <li><span class="badge info">Libro</span> J. Katz e Y. Lindell. <a href="https://doi.org/10.1201/9781351133036"><em>Introduction to Modern Cryptography</em></a>, 3.ª ed. <span class="src">CRC Press, 2020. <a href="https://www.cs.umd.edu/~jkatz/imc.html">Página del libro y erratas</a>.</span> El texto de referencia para definiciones formales (IND-CPA, IND-CCA, EUF-CMA), cifrado híbrido y KEM, y reducciones. Consúltalo cuando los temas 1 y 4 hablen de «seguridad IND-CCA2». <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a>, <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+          <li><span class="badge info">Libro · libre</span> D. Boneh y V. Shoup. <a href="https://toc.cryptobook.us/"><em>A Graduate Course in Applied Cryptography</em></a>, versión 0.6. <span class="src">Enero de 2023, última versión a septiembre de 2026. <a href="https://crypto.stanford.edu/~dabo/cryptobook/BonehShoup_0_6.pdf">PDF</a>.</span> Gratuito y muy completo en KEM, transformación de Fujisaki–Okamoto y firmas. El cap. 16 trata los ataques cuánticos; el cap. 17 (retículos) figura en el índice pero no está redactado en la v0.6. <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a>, <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+          <li><span class="badge info">Libro</span> J.-P. Aumasson. <a href="https://nostarch.com/serious-cryptography-2nd-edition"><em>Serious Cryptography</em></a>, 2.ª ed. <span class="src">No Starch Press, agosto de 2024.</span> Orientado a ingeniería; su capítulo 14, «Quantum and Post-Quantum», es un buen resumen para una tarde. <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a></span></li>
+          <li><span class="badge info">Libro</span> D. Wong. <a href="https://www.manning.com/books/real-world-cryptography"><em>Real-World Cryptography</em></a>. <span class="src">Manning, 2021.</span> TLS, PKI, mensajería segura y PQC tal como las usa un ingeniero. Es anterior a los FIPS, pero su visión de los protocolos es la que necesita el tema 2. <span class="muted">→ <a href="../temas/tema2/index.html">Tema 2</a></span></li>
+        </ol>
 
-                <div class="resource-item">
-                    <h3>SPHINCS+: Robust Post-Quantum Signatures</h3>
-                    <p><strong>Autores:</strong> Daniel J. Bernstein, Andreas Hülsing, Stefan Kölbl, Ruben Niederhagen, Joost Rijneveld, Peter Schwabe</p>
-                    <p><strong>Conferencia:</strong> IACR Cryptology ePrint Archive</p>
-                    <p><strong>Año:</strong> 2019</p>
-                    <p><strong>Descripción:</strong> Artículo que describe SPHINCS+, el algoritmo seleccionado por el NIST como estándar alternativo para firmas digitales post-cuánticas (SLH-DSA).</p>
-                    <p><strong>Enlace:</strong> <a href="https://eprint.iacr.org/2019/1086" target="_blank">Cryptology ePrint Archive</a></p>
-                </div>
+        <h3>Computación e información cuántica</h3>
+        <ol class="refs">
+          <li><span class="badge info">Libro</span> M. A. Nielsen e I. L. Chuang. <a href="https://doi.org/10.1017/CBO9780511976667"><em>Quantum Computation and Quantum Information</em></a>, ed. del 10.º aniversario. <span class="src">Cambridge University Press, 2010.</span> La referencia estándar. Para el curso bastan el cap. 5 (transformada cuántica de Fourier, estimación de fase y Shor), el 6 (Grover) y la sección 12.6 (criptografía cuántica y seguridad de BB84). <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a>, <a href="../temas/tema6/index.html">Tema 6</a></span></li>
+          <li><span class="badge info">Curso · libre</span> J. Watrous. <a href="https://quantum.cloud.ibm.com/learning/en/courses/fundamentals-of-quantum-algorithms"><em>Fundamentals of Quantum Algorithms</em></a>. <span class="src">IBM Quantum Learning.</span> Curso en línea con notación cuidada: modelo de consultas, estimación de fase, búsqueda de orden y Grover, con código Qiskit. Alternativa gratuita a Nielsen–Chuang para el tema 1. <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a>, <a href="../guias/algoritmo_shor.html">Lab. L1</a></span></li>
+        </ol>
 
-                <div class="resource-item">
-                    <h3>Quantum Key Distribution: A Networking Perspective</h3>
-                    <p><strong>Autores:</strong> Chip Elliott</p>
-                    <p><strong>Revista:</strong> New Journal of Physics</p>
-                    <p><strong>Año:</strong> 2019</p>
-                    <p><strong>Descripción:</strong> Revisión completa de los aspectos prácticos de implementar QKD en redes de comunicación reales.</p>
-                    <p><strong>Enlace:</strong> <a href="https://iopscience.iop.org/article/10.1088/1367-2630/4/1/346" target="_blank">IOP Science</a></p>
-                </div>
-            </div>
-        </section>
+        <h2 id="articulos">Artículos fundacionales</h2>
+        <p>Artículos que cualquier especialista conoce de primera mano. Cuando existe versión libre (arXiv o IACR ePrint), el enlace principal va a ella; la referencia de la revista va detrás.</p>
 
-        <section class="resource-section">
-            <h2>Estándares y Documentación Técnica</h2>
-            <div class="resource-list">
-                <div class="resource-item">
-                    <h3>FIPS 203: Module-Lattice-Based Key-Encapsulation Mechanism Standard</h3>
-                    <p><strong>Organización:</strong> NIST (National Institute of Standards and Technology)</p>
-                    <p><strong>Año:</strong> 2023</p>
-                    <p><strong>Descripción:</strong> Estándar oficial que especifica ML-KEM (anteriormente CRYSTALS-Kyber), el mecanismo de encapsulamiento de claves post-cuántico seleccionado por el NIST.</p>
-                    <p><strong>Enlace:</strong> <a href="https://csrc.nist.gov/publications/detail/fips/203/draft" target="_blank">NIST CSRC</a></p>
-                </div>
+        <h3>La amenaza cuántica</h3>
+        <ol class="refs">
+          <li><span class="badge info">Artículo</span> P. W. Shor. <a href="https://arxiv.org/abs/quant-ph/9508027">«Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer»</a>. <span class="src">SIAM J. Computing 26(5), 1997, <a href="https://doi.org/10.1137/S0097539795293172">doi:10.1137/S0097539795293172</a>; versión de congreso en FOCS 1994, <a href="https://doi.org/10.1109/SFCS.1994.365700">doi:10.1109/SFCS.1994.365700</a>.</span> El resultado que motiva todo el curso: factorización y logaritmo discreto en tiempo polinómico. La reducción a la búsqueda de orden se lee bien con el tema 1 delante. <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a>, <a href="../ejemplos/algoritmo_shor.html">Ejemplo E1</a></span></li>
+          <li><span class="badge info">Artículo</span> L. K. Grover. <a href="https://arxiv.org/abs/quant-ph/9605043">«A fast quantum mechanical algorithm for database search»</a>. <span class="src">STOC 1996, <a href="https://doi.org/10.1145/237814.237866">doi:10.1145/237814.237866</a>.</span> Búsqueda en <span class="math">O(√<var>N</var>)</span> consultas. Explica por qué AES-128 ofrecería unos 64 bits frente a un adversario cuántico ideal, y sirve para discutir por qué la dificultad de paralelizar Grover limita mucho esa ganancia. <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a></span></li>
+          <li><span class="badge info">Artículo</span> M. Mosca. <a href="https://eprint.iacr.org/2015/1075">«Cybersecurity in an era with quantum computers: will we be ready?»</a>. <span class="src">IACR ePrint 2015/1075; IEEE Security &amp; Privacy, 2018.</span> Origen de la «desigualdad de Mosca» (<span class="math"><var>x</var> + <var>y</var> &gt; <var>z</var></span>) con la que se razona sobre «almacenar ahora, descifrar después». <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a>, <a href="../temas/tema5/index.html">Tema 5</a></span></li>
+          <li><span class="badge info">Artículo</span> D. J. Bernstein y T. Lange. <a href="https://www.nature.com/articles/nature23461">«Post-quantum cryptography»</a>. <span class="src">Nature 549, 2017.</span> Revisión breve de las familias post-cuánticas y de sus costes. La mejor primera lectura del curso. <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a>, <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+          <li><span class="badge info">Artículo</span> C. Gidney y M. Ekerå. <a href="https://arxiv.org/abs/1905.09749">«How to factor 2048 bit RSA integers in 8 hours using 20 million noisy qubits»</a>. <span class="src">Quantum 5, 433, 2021, <a href="https://doi.org/10.22331/q-2021-04-15-433">doi:10.22331/q-2021-04-15-433</a> (arXiv, 2019).</span> La estimación de referencia entre 2019 y 2025: 20 millones de cúbits físicos con tasa de error 10<sup>−3</sup> y código de superficie. <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a></span></li>
+          <li><span class="badge info">Preprint</span> C. Gidney. <a href="https://arxiv.org/abs/2505.15917">«How to factor 2048 bit RSA integers with less than a million noisy qubits»</a>. <span class="src">arXiv:2505.15917, mayo de 2025.</span> Rebaja la estimación anterior en un factor 20: menos de un millón de cúbits ruidosos y menos de una semana de cálculo, con los mismos supuestos de hardware. <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a></span></li>
+        </ol>
+        <div class="callout update">
+          <span class="callout-title">Novedad · 2026</span>
+          <p>Tres preprints de 2026 han vuelto a bajar las estimaciones, con supuestos de hardware distintos: P. Webster <em>et al.</em>, <a href="https://arxiv.org/abs/2602.11457">«The Pinnacle Architecture»</a> (arXiv:2602.11457, febrero), RSA-2048 con unos 100 000 cúbits físicos usando códigos qLDPC; M. Cain <em>et al.</em>, <a href="https://arxiv.org/abs/2603.28627">«Shor’s algorithm is possible with as few as 10,000 reconfigurable atomic qubits»</a> (arXiv:2603.28627, marzo); y R. Babbush <em>et al.</em> (Google Quantum AI), <a href="https://arxiv.org/abs/2603.28846">«Securing Elliptic Curve Cryptocurrencies against Quantum Vulnerabilities»</a> (arXiv:2603.28846, marzo), que resuelve el logaritmo discreto en curvas de 256 bits con menos de 1 200 cúbits lógicos y menos de 90 millones de puertas Toffoli. Son preprints: léelos como tendencia (las curvas elípticas caerían antes que RSA), no como fechas. <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a></span></p>
+        </div>
 
-                <div class="resource-item">
-                    <h3>FIPS 204: Module-Lattice-Based Digital Signature Standard</h3>
-                    <p><strong>Organización:</strong> NIST (National Institute of Standards and Technology)</p>
-                    <p><strong>Año:</strong> 2023</p>
-                    <p><strong>Descripción:</strong> Estándar oficial que especifica ML-DSA (anteriormente CRYSTALS-Dilithium), el esquema de firma digital post-cuántico seleccionado por el NIST.</p>
-                    <p><strong>Enlace:</strong> <a href="https://csrc.nist.gov/publications/detail/fips/204/draft" target="_blank">NIST CSRC</a></p>
-                </div>
+        <h3>Retículos: los problemas de base</h3>
+        <ol class="refs">
+          <li><span class="badge info">Artículo</span> O. Regev. <a href="https://doi.org/10.1145/1060590.1060603">«On lattices, learning with errors, random linear codes, and cryptography»</a>. <span class="src">STOC 2005; versión completa en J. ACM 56(6), 2009, <a href="https://doi.org/10.1145/1568318.1568324">doi:10.1145/1568318.1568324</a>.</span> Define LWE, da la reducción cuántica desde problemas de retículos en el peor caso y construye el primer cifrado basado en él. Premio Gödel 2018. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+          <li><span class="badge info">Artículo</span> V. Lyubashevsky, C. Peikert y O. Regev. <a href="https://doi.org/10.1007/978-3-642-13190-5_1">«On Ideal Lattices and Learning with Errors over Rings»</a>. <span class="src">EUROCRYPT 2010; versión completa en J. ACM 60(6), 2013, <a href="https://doi.org/10.1145/2535925">doi:10.1145/2535925</a>.</span> Introduce Ring-LWE: la estructura de anillo <span class="math">ℤ<sub><var>q</var></sub>[<var>x</var>]/(<var>x</var><sup><var>n</var></sup>+1)</span> que, en su versión modular, usan ML-KEM y ML-DSA. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+          <li><span class="badge info">Tutorial</span> V. Lyubashevsky. <a href="https://eprint.iacr.org/2024/1287">«Basic Lattice Cryptography: The concepts behind Kyber (ML-KEM) and Dilithium (ML-DSA)»</a>. <span class="src">IACR ePrint 2024/1287.</span> Escrito por uno de los autores de ambos esquemas para quien empieza: de LWE a Kyber y de Fiat–Shamir con abortos a Dilithium, sin demostraciones pesadas. Muy recomendable antes de los ejemplos E2 y E3. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a>, <a href="../ejemplos/ml_kem.html">E2</a>, <a href="../ejemplos/ml_dsa.html">E3</a></span></li>
+          <li><span class="badge info">Tutorial</span> D. P. Chi, J. W. Choi, J. S. Kim y T. Kim. <a href="https://eprint.iacr.org/2015/938">«Lattice Based Cryptography for Beginners»</a>. <span class="src">IACR ePrint 2015/938.</span> Apuntes introductorios con muchos detalles de cálculo. Anteriores a Kyber, pero útiles para repasar conceptos básicos. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+          <li><span class="badge info">Artículo</span> M. R. Albrecht, R. Player y S. Scott. <a href="https://doi.org/10.1515/jmc-2015-0016">«On the concrete hardness of Learning with Errors»</a>. <span class="src">J. Mathematical Cryptology 9(3), 2015.</span> Cómo se estima la seguridad concreta de unos parámetros LWE (ataques primal, dual, BKW). Es la base teórica del <a href="#herramientas">lattice-estimator</a>. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+        </ol>
 
-                <div class="resource-item">
-                    <h3>FIPS 205: Stateless Hash-Based Digital Signature Standard</h3>
-                    <p><strong>Organización:</strong> NIST (National Institute of Standards and Technology)</p>
-                    <p><strong>Año:</strong> 2023</p>
-                    <p><strong>Descripción:</strong> Estándar oficial que especifica SLH-DSA (anteriormente SPHINCS+), el esquema alternativo de firma digital post-cuántico seleccionado por el NIST.</p>
-                    <p><strong>Enlace:</strong> <a href="https://csrc.nist.gov/publications/detail/fips/205/draft" target="_blank">NIST CSRC</a></p>
-                </div>
+        <h3>Los esquemas estandarizados</h3>
+        <ol class="refs">
+          <li><span class="badge info">Artículo</span> J. Bos, L. Ducas, E. Kiltz, T. Lepoint, V. Lyubashevsky, J. M. Schanck, P. Schwabe, G. Seiler y D. Stehlé. <a href="https://eprint.iacr.org/2017/634">«CRYSTALS-Kyber: a CCA-secure module-lattice-based KEM»</a>. <span class="src">IEEE EuroS&amp;P 2018, <a href="https://doi.org/10.1109/EuroSP.2018.00032">doi:10.1109/EuroSP.2018.00032</a>. Especificaciones y código en <a href="https://pq-crystals.org/kyber/">pq-crystals.org/kyber</a>.</span> Diseño original de lo que hoy es ML-KEM (FIPS 203). Útil para entender las decisiones (compresión, NTT, transformación FO); los detalles normativos están en el FIPS, que difiere en varios puntos del envío de la 3.ª ronda. <span class="muted">→ <a href="../temas/tema4/index.html">Tema 4</a>, <a href="../ejemplos/ml_kem.html">E2</a></span></li>
+          <li><span class="badge info">Artículo</span> L. Ducas, E. Kiltz, T. Lepoint, V. Lyubashevsky, P. Schwabe, G. Seiler y D. Stehlé. <a href="https://eprint.iacr.org/2017/633">«CRYSTALS-Dilithium: A Lattice-Based Digital Signature Scheme»</a>. <span class="src">IACR TCHES 2018(1), <a href="https://doi.org/10.13154/tches.v2018.i1.238-268">doi:10.13154/tches.v2018.i1.238-268</a>. <a href="https://pq-crystals.org/dilithium/">pq-crystals.org/dilithium</a>.</span> Origen de ML-DSA (FIPS 204): firmas Fiat–Shamir con abortos sobre retículos modulares, sin muestreo gaussiano. <span class="muted">→ <a href="../temas/tema4/index.html">Tema 4</a>, <a href="../ejemplos/ml_dsa.html">E3</a></span></li>
+          <li><span class="badge info">Artículo</span> D. J. Bernstein, A. Hülsing, S. Kölbl, R. Niederhagen, J. Rijneveld y P. Schwabe. <a href="https://eprint.iacr.org/2019/1086">«The SPHINCS<sup>+</sup> Signature Framework»</a>. <span class="src">ACM CCS 2019, <a href="https://doi.org/10.1145/3319535.3363229">doi:10.1145/3319535.3363229</a>. <a href="https://sphincs.org/">sphincs.org</a>.</span> Base de SLH-DSA (FIPS 205): firmas sin estado cuya seguridad depende solo de la función hash. Explica el hiperárbol, WOTS<sup>+</sup> y FORS. <span class="muted">→ <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+          <li><span class="badge info">Especificación</span> P.-A. Fouque, J. Hoffstein, P. Kirchner, V. Lyubashevsky, T. Pornin, T. Prest, T. Ricosset, G. Seiler, W. Whyte y Z. Zhang. <a href="https://falcon-sign.info/"><em>Falcon: Fast-Fourier Lattice-based Compact Signatures over NTRU</em></a>. <span class="src">Especificación de la 3.ª ronda, falcon-sign.info.</span> Base del futuro FN-DSA (FIPS 206). Firmas muy compactas con muestreo gaussiano en coma flotante, que es precisamente lo que complica su implementación segura. <span class="muted">→ <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+          <li><span class="badge info">Especificación</span> Equipo HQC. <a href="https://pqc-hqc.org/"><em>Hamming Quasi-Cyclic (HQC)</em></a>. <span class="src">Especificación y código en pqc-hqc.org (revisión de agosto de 2025).</span> KEM basado en códigos seleccionado por NIST en marzo de 2025 como alternativa no reticular a ML-KEM. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a>, <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+        </ol>
 
-                <div class="resource-item">
-                    <h3>ETSI GR QSC 001: Quantum-Safe Cryptography; Quantum-Safe Algorithmic Framework</h3>
-                    <p><strong>Organización:</strong> ETSI (European Telecommunications Standards Institute)</p>
-                    <p><strong>Año:</strong> 2022</p>
-                    <p><strong>Descripción:</strong> Marco de referencia para la implementación de criptografía segura ante amenazas cuánticas en sistemas de telecomunicaciones.</p>
-                    <p><strong>Enlace:</strong> <a href="https://www.etsi.org/deliver/etsi_gr/QSC/001_099/001/01.01.01_60/gr_QSC001v010101p.pdf" target="_blank">ETSI</a></p>
-                </div>
-            </div>
-        </section>
+        <h3>Criptoanálisis y rupturas</h3>
+        <ol class="refs">
+          <li><span class="badge broken">Roto</span> W. Castryck y T. Decru. <a href="https://eprint.iacr.org/2022/975">«An efficient key recovery attack on SIDH»</a>. <span class="src">EUROCRYPT 2023, <a href="https://doi.org/10.1007/978-3-031-30589-4_15">doi:10.1007/978-3-031-30589-4_15</a> (ePrint, julio de 2022).</span> Recupera la clave de SIKE, candidato de la 4.ª ronda, en horas con un ordenador corriente. El ejemplo de por qué la diversidad de supuestos importa. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a>, <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+          <li><span class="badge broken">Roto</span> W. Beullens. <a href="https://eprint.iacr.org/2022/214">«Breaking Rainbow Takes a Weekend on a Laptop»</a>. <span class="src">CRYPTO 2022.</span> Recuperación de clave de Rainbow, finalista de firmas multivariantes, para el nivel de seguridad NIST 1. Ayuda a entender por qué NIST abrió una convocatoria adicional de firmas. <span class="muted">→ <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+          <li><span class="badge info">Artículo</span> D. J. Bernstein, K. Bhargavan, S. Bhasin, A. Chattopadhyay, T. K. Chia, M. J. Kannwischer, F. Kiefer, T. Paiva, P. Ravi y G. Tamvada. <a href="https://eprint.iacr.org/2024/1049">«KyberSlash: Exploiting secret-dependent division timings in Kyber implementations»</a>. <span class="src">IACR TCHES 2025(2); mejor artículo de CHES 2025. <a href="https://kyberslash.cr.yp.to/">kyberslash.cr.yp.to</a>.</span> Una división cuyo dividendo depende del secreto, en el código de referencia, filtra la clave por tiempos. Lección para el tema 5: un algoritmo seguro no garantiza una implementación segura. <span class="muted">→ <a href="../temas/tema5/index.html">Tema 5</a></span></li>
+        </ol>
 
-        <section class="resource-section">
-            <h2>Sitios Web y Recursos en Línea</h2>
-            <div class="resource-list">
-                <div class="resource-item">
-                    <h3>NIST Post-Quantum Cryptography Standardization</h3>
-                    <p><strong>Organización:</strong> NIST (National Institute of Standards and Technology)</p>
-                    <p><strong>Descripción:</strong> Sitio oficial del proceso de estandarización de criptografía post-cuántica del NIST, con información actualizada sobre el estado de los algoritmos candidatos y los estándares seleccionados.</p>
-                    <p><strong>Enlace:</strong> <a href="https://csrc.nist.gov/projects/post-quantum-cryptography" target="_blank">NIST CSRC</a></p>
-                </div>
+        <h3>Distribución cuántica de claves</h3>
+        <ol class="refs">
+          <li><span class="badge info">Artículo</span> C. H. Bennett y G. Brassard. <a href="https://arxiv.org/abs/2003.06557">«Quantum cryptography: Public key distribution and coin tossing»</a>. <span class="src">Proc. IEEE Int. Conf. on Computers, Systems and Signal Processing, Bangalore, 1984; reimpreso en Theoretical Computer Science 560, 2014, <a href="https://doi.org/10.1016/j.tcs.2014.05.025">doi:10.1016/j.tcs.2014.05.025</a>.</span> El protocolo BB84 tal como se presentó. Corto y legible. <span class="muted">→ <a href="../temas/tema6/index.html">Tema 6</a>, <a href="../ejemplos/qkd_bb84.html">E5</a></span></li>
+          <li><span class="badge info">Artículo</span> P. W. Shor y J. Preskill. <a href="https://arxiv.org/abs/quant-ph/0003004">«Simple Proof of Security of the BB84 Quantum Key Distribution Protocol»</a>. <span class="src">Phys. Rev. Lett. 85, 441, 2000, <a href="https://doi.org/10.1103/PhysRevLett.85.441">doi:10.1103/PhysRevLett.85.441</a>.</span> Prueba mediante códigos CSS; de aquí salen la tasa <span class="math">1 − 2<var>h</var>(<var>Q</var>)</span> y el umbral de QBER de aproximadamente el 11 %. <span class="muted">→ <a href="../temas/tema6/index.html">Tema 6</a></span></li>
+          <li><span class="badge info">Artículo</span> H.-K. Lo, X. Ma y K. Chen. <a href="https://arxiv.org/abs/quant-ph/0411004">«Decoy State Quantum Key Distribution»</a>. <span class="src">Phys. Rev. Lett. 94, 230504, 2005, <a href="https://doi.org/10.1103/PhysRevLett.94.230504">doi:10.1103/PhysRevLett.94.230504</a>.</span> Estados señuelo contra el ataque de separación de fotones (PNS) con fuentes láser atenuadas: lo que hace viable la QKD real. <span class="muted">→ <a href="../temas/tema6/index.html">Tema 6</a></span></li>
+          <li><span class="badge info">Revisión</span> V. Scarani, H. Bechmann-Pasquinucci, N. J. Cerf, M. Dušek, N. Lütkenhaus y M. Peev. <a href="https://doi.org/10.1103/RevModPhys.81.1301">«The security of practical quantum key distribution»</a>. <span class="src">Rev. Mod. Phys. 81, 1301, 2009.</span> Revisión de referencia sobre seguridad con dispositivos reales: tasas, pérdidas y ataques. <span class="muted">→ <a href="../temas/tema6/index.html">Tema 6</a></span></li>
+          <li><span class="badge info">Revisión</span> S. Pirandola <em>et al.</em> <a href="https://doi.org/10.1364/AOP.361502">«Advances in quantum cryptography»</a>. <span class="src">Advances in Optics and Photonics 12(4), 2020.</span> Panorámica extensa y más reciente: MDI-QKD, variable continua, enlaces por satélite, límites fundamentales de tasa frente a distancia. <span class="muted">→ <a href="../temas/tema6/index.html">Tema 6</a></span></li>
+          <li><span class="badge info">Artículo</span> C. Elliott. <a href="https://doi.org/10.1088/1367-2630/4/1/346">«Building the quantum network»</a>. <span class="src">New Journal of Physics 4, 46, 2002.</span> Diseño de la red QKD de DARPA/BBN, la primera con nodos de confianza. Muestra pronto los problemas de red que siguen abiertos. <span class="muted">→ <a href="../temas/tema6/index.html">Tema 6</a></span></li>
+        </ol>
 
-                <div class="resource-item">
-                    <h3>PQC Lounge</h3>
-                    <p><strong>Organización:</strong> BSI (Bundesamt für Sicherheit in der Informationstechnik)</p>
-                    <p><strong>Descripción:</strong> Repositorio de información sobre criptografía post-cuántica mantenido por la Oficina Federal Alemana para la Seguridad de la Información, con recursos educativos y técnicos.</p>
-                    <p><strong>Enlace:</strong> <a href="https://pqc-lounge.info/" target="_blank">PQC Lounge</a></p>
-                </div>
+        <h2 id="estandares">Estándares y especificaciones</h2>
+        <p>Estado comprobado el 24 de septiembre de 2026 en las páginas oficiales (NIST CSRC, RFC Editor, IETF Datatracker, ETSI). Los <em>Internet-Drafts</em> caducan y cambian de versión; se enlaza siempre la página del Datatracker, que muestra la última.</p>
 
-                <div class="resource-item">
-                    <h3>Open Quantum Safe Project</h3>
-                    <p><strong>Organización:</strong> Open Quantum Safe</p>
-                    <p><strong>Descripción:</strong> Proyecto de código abierto que desarrolla y mantiene libtack, una biblioteca de implementaciones de algoritmos post-cuánticos, y prototipos de integración con protocolos de seguridad como TLS.</p>
-                    <p><strong>Enlace:</strong> <a href="https://openquantumsafe.org/" target="_blank">Open Quantum Safe</a></p>
-                </div>
+        <h3>NIST</h3>
+        <div class="table-wrap">
+          <table>
+            <caption>Publicaciones de NIST relevantes para el curso</caption>
+            <thead><tr><th>Documento</th><th>Contenido</th><th>Estado</th><th>Tema</th></tr></thead>
+            <tbody>
+              <tr><th><a href="https://csrc.nist.gov/pubs/fips/203/final">FIPS 203</a></th><td>ML-KEM-512/768/1024 (antes Kyber).</td><td><span class="badge final">Final</span> 13/08/2024</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+              <tr><th><a href="https://csrc.nist.gov/pubs/fips/204/final">FIPS 204</a></th><td>ML-DSA-44/65/87 (antes Dilithium).</td><td><span class="badge final">Final</span> 13/08/2024</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+              <tr><th><a href="https://csrc.nist.gov/pubs/fips/205/final">FIPS 205</a></th><td>SLH-DSA (antes SPHINCS<sup>+</sup>), 12 conjuntos de parámetros.</td><td><span class="badge final">Final</span> 13/08/2024</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+              <tr><th>FIPS 206 (FN-DSA)</th><td>Falcon. En la 6.ª Conferencia de Estandarización (septiembre de 2025) NIST describió el borrador como «básicamente escrito, pendiente de aprobación» (<a href="https://csrc.nist.gov/csrc/media/presentations/2025/fips-206-fn-dsa-(falcon)/images-media/fips_206-perlner_2.1.pdf">presentación de R. Perlner</a>).</td><td><span class="badge draft">En preparación</span> sin borrador público en CSRC a 24/09/2026</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+              <tr><th>HQC (FIPS futuro)</th><td>KEM basado en códigos, seleccionado el 11/03/2025. NIST lo presentó como «FIPS 207: HQC-KEM» (<a href="https://csrc.nist.gov/presentations/2025/fips-207-hqc-kem">presentación, septiembre de 2025</a>).</td><td><span class="badge draft">En preparación</span> sin borrador público a 24/09/2026</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+              <tr><th><a href="https://csrc.nist.gov/pubs/ir/8545/final">IR 8545</a></th><td>Informe de la 4.ª ronda: por qué HQC y no BIKE ni Classic McEliece.</td><td><span class="badge info">Informativo</span> marzo de 2025</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+              <tr><th><a href="https://csrc.nist.gov/pubs/sp/800/227/final">SP 800-227</a></th><td>Recomendaciones para KEM: definiciones, uso seguro y combinación de secretos en esquemas híbridos.</td><td><span class="badge final">Final</span> septiembre de 2025</td><td><a href="../temas/tema4/index.html">4</a>, <a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://csrc.nist.gov/pubs/ir/8547/ipd">IR 8547</a></th><td>Plan de transición: algoritmos vulnerables con seguridad de 112 bits obsoletos (<em>deprecated</em>) tras 2030; todos los vulnerables, no permitidos tras 2035.</td><td><span class="badge draft">Borrador</span> ipd del 12/11/2024, sin versión final</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://csrc.nist.gov/pubs/sp/800/208/final">SP 800-208</a></th><td>Firmas con estado LMS/HSS y XMSS/XMSS<sup>MT</sup>; perfila RFC 8554 y RFC 8391.</td><td><span class="badge final">Final</span> octubre de 2020</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+              <tr><th><a href="https://csrc.nist.gov/pubs/sp/800/230/ipd">SP 800-230</a></th><td>Seis conjuntos adicionales de SLH-DSA limitados a 2<sup>24</sup> firmas por clave (firmware, certificados).</td><td><span class="badge draft">Borrador</span> ipd del 13/04/2026</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+              <tr><th><a href="https://csrc.nist.gov/pubs/ir/8610/final">IR 8610</a></th><td>Firmas adicionales: nueve candidatos pasan a la 3.ª ronda (FAEST, HAWK, MAYO, MQOM, QR-UOV, SDitH, SNOVA, SQIsign, UOV).</td><td><span class="badge info">Informativo</span> 14/05/2026</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+              <tr><th><a href="https://csrc.nist.gov/pubs/cswp/39/considerations-for-achieving-cryptographic-agility/final">CSWP 39</a></th><td>Consideraciones para lograr agilidad criptográfica: estrategias y prácticas.</td><td><span class="badge info">Informativo</span> 19/12/2025</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://csrc.nist.gov/pubs/sp/1800/38/iprd">SP 1800-38</a></th><td>Guía práctica del NCCoE para preparar la migración (inventario, dependencias).</td><td><span class="badge draft">Borrador</span> volúmenes preliminares de 2023</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+            </tbody>
+          </table>
+        </div>
 
-                <div class="resource-item">
-                    <h3>Quantum Computing Report</h3>
-                    <p><strong>Organización:</strong> Quantum Computing Report</p>
-                    <p><strong>Descripción:</strong> Portal de noticias y recursos sobre computación cuántica y criptografía post-cuántica, con actualizaciones regulares sobre avances en el campo.</p>
-                    <p><strong>Enlace:</strong> <a href="https://quantumcomputingreport.com/" target="_blank">Quantum Computing Report</a></p>
-                </div>
-            </div>
-        </section>
+        <h3>IETF e IRTF</h3>
+        <div class="table-wrap">
+          <table>
+            <caption>RFC y borradores de la IETF/IRTF. Número y fecha de cada RFC según el RFC Editor.</caption>
+            <thead><tr><th>Documento</th><th>Contenido</th><th>Estado</th><th>Tema</th></tr></thead>
+            <tbody>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc8554">RFC 8554</a></th><td>Firmas de Leighton–Micali (LMS/HSS).</td><td><span class="badge final">RFC</span> informativo (IRTF), abr. 2019</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc8391">RFC 8391</a></th><td>XMSS: eXtended Merkle Signature Scheme.</td><td><span class="badge final">RFC</span> informativo (IRTF), may. 2018</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc9846">RFC 9846</a></th><td>TLS 1.3, revisión que sustituye a RFC 8446.</td><td><span class="badge final">RFC</span> jul. 2026</td><td><a href="../temas/tema2/index.html">2</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc9954">RFC 9954</a></th><td>Diseño del intercambio de claves híbrido en TLS 1.3 (concatenación de <code>key_share</code> y de secretos compartidos).</td><td><span class="badge final">RFC</span> informativo, jul. 2026</td><td><a href="../temas/tema2/index.html">2</a>, <a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc10024">RFC 10024</a></th><td>Grupos híbridos X25519MLKEM768 (0x11EC), SecP256r1MLKEM768 (0x11EB) y SecP384r1MLKEM1024 para TLS 1.3.</td><td><span class="badge final">RFC</span> Standards Track, ago. 2026</td><td><a href="../temas/tema2/index.html">2</a>, <a href="../ejemplos/criptografia_hibrida.html">E4</a></td></tr>
+              <tr><th><a href="https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/">draft-ietf-tls-mlkem</a></th><td>ML-KEM solo, sin componente clásico, en TLS 1.3.</td><td><span class="badge draft">Borrador</span> en cola del RFC Editor</td><td><a href="../temas/tema2/index.html">2</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc10042">RFC 10042</a></th><td>Intercambio híbrido con ML-KEM en SSH (<code>mlkem768x25519-sha256</code>, <code>mlkem768nistp256-sha256</code>…).</td><td><span class="badge final">RFC</span> informativo, ago. 2026</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc9881">RFC 9881</a> · <a href="https://www.rfc-editor.org/info/rfc9909">9909</a> · <a href="https://www.rfc-editor.org/info/rfc9935">9935</a></th><td>Identificadores X.509 para ML-DSA (oct. 2025), SLH-DSA (dic. 2025) y ML-KEM (mar. 2026).</td><td><span class="badge final">RFC</span> Standards Track</td><td><a href="../temas/tema2/index.html">2</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc9802">RFC 9802</a></th><td>HSS y XMSS en certificados X.509.</td><td><span class="badge final">RFC</span> jun. 2025</td><td><a href="../temas/tema2/index.html">2</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc9629">RFC 9629</a> · <a href="https://www.rfc-editor.org/info/rfc9936">9936</a> · <a href="https://www.rfc-editor.org/info/rfc9882">9882</a> · <a href="https://www.rfc-editor.org/info/rfc9814">9814</a></th><td>CMS/S-MIME: KEM en general (2024), ML-KEM (2026), ML-DSA (2025) y SLH-DSA (2025).</td><td><span class="badge final">RFC</span> Standards Track</td><td><a href="../temas/tema2/index.html">2</a></td></tr>
+              <tr><th><a href="https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/">draft-ietf-lamps-pq-composite-sigs</a> · <a href="https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/">-kem</a></th><td>Firmas compuestas (ML-DSA + RSA/ECDSA/EdDSA) y KEM compuestos (ML-KEM + ECDH/RSA) en X.509.</td><td><span class="badge draft">Borrador</span> firmas en cola del RFC Editor; KEM en evaluación del IESG</td><td><a href="../temas/tema2/index.html">2</a>, <a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/">draft-ietf-ipsecme-ikev2-mlkem</a></th><td>ML-KEM en IKEv2, sobre los intercambios múltiples de <a href="https://www.rfc-editor.org/info/rfc9370">RFC 9370</a>.</td><td><span class="badge draft">Borrador</span> en cola del RFC Editor</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://datatracker.ietf.org/doc/draft-ietf-hpke-pq/">draft-ietf-hpke-pq</a></th><td>KEM post-cuánticos e híbridos para HPKE (RFC 9180).</td><td><span class="badge draft">Borrador</span> del grupo de trabajo</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc9980">RFC 9980</a></th><td>PQC en OpenPGP (ML-KEM combinado con X25519/X448; ML-DSA combinado con Ed25519/Ed448; SLH-DSA).</td><td><span class="badge final">RFC</span> jun. 2026</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc9964">RFC 9964</a></th><td>ML-DSA en JOSE y COSE.</td><td><span class="badge final">RFC</span> may. 2026</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc9958">RFC 9958</a></th><td><em>Post-Quantum Cryptography for Engineers</em>: guía práctica de la IETF (KEM frente a Diffie–Hellman, tamaños, híbridos).</td><td><span class="badge info">Informativo</span> jun. 2026</td><td><a href="../temas/tema4/index.html">4</a>, <a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc9794">RFC 9794</a> · <a href="https://www.rfc-editor.org/info/rfc9955">9955</a></th><td>Terminología de esquemas híbridos PQ/T (2025) y espectro de las firmas híbridas (2026).</td><td><span class="badge info">Informativo</span></td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://www.rfc-editor.org/info/rfc10033">RFC 10033</a></th><td>Firmas basadas en hash: gestión del estado y copias de seguridad.</td><td><span class="badge info">Informativo</span> sept. 2026</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+            </tbody>
+          </table>
+        </div>
 
-        <section class="resource-section">
-            <h2>Herramientas y Bibliotecas</h2>
-            <div class="resource-list">
-                <div class="resource-item">
-                    <h3>liboqs (Open Quantum Safe)</h3>
-                    <p><strong>Tipo:</strong> Biblioteca de código abierto</p>
-                    <p><strong>Lenguaje:</strong> C</p>
-                    <p><strong>Descripción:</strong> Biblioteca que implementa algoritmos de criptografía post-cuántica, incluyendo todos los finalistas del proceso de estandarización del NIST.</p>
-                    <p><strong>Enlace:</strong> <a href="https://github.com/open-quantum-safe/liboqs" target="_blank">GitHub</a></p>
-                </div>
+        <h3>ETSI e ISO/IEC</h3>
+        <div class="table-wrap">
+          <table>
+            <caption>Especificaciones europeas e internacionales</caption>
+            <thead><tr><th>Documento</th><th>Contenido</th><th>Estado</th><th>Tema</th></tr></thead>
+            <tbody>
+              <tr><th>ETSI TS 103 744 (<a href="https://www.etsi.org/deliver/etsi_ts/103700_103799/103744/01.01.01_60/ts_103744v010101p.pdf">v1.1.1</a>)</th><td>Establecimiento de claves híbrido: combinadores de ECDH y KEM. La v1.2.1 (marzo de 2025) incorpora ML-KEM.</td><td><span class="badge final">Especificación técnica</span></td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://www.etsi.org/deliver/etsi_tr/103600_103699/103619/01.01.01_60/tr_103619v010101p.pdf">ETSI TR 103 619</a></th><td>Estrategias de migración: inventario, planificación y ejecución.</td><td><span class="badge info">Informe técnico</span> 2020</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th><a href="https://www.etsi.org/deliver/etsi_gs/QKD/001_099/014/01.01.01_60/gs_qkd014v010101p.pdf">ETSI GS QKD 014</a></th><td>API REST (HTTPS y JSON) con la que una aplicación obtiene claves del gestor de claves QKD. Es la interfaz que implementan casi todos los equipos comerciales.</td><td><span class="badge final">Especificación</span> v1.1.1, 2019</td><td><a href="../temas/tema6/index.html">6</a></td></tr>
+              <tr><th><a href="https://www.etsi.org/deliver/etsi_gs/QKD/001_099/016/02.01.01_60/gs_QKD016v020101p.pdf">ETSI GS QKD 016</a></th><td>Perfil de protección Common Criteria para pares de módulos QKD, certificado por el BSI.</td><td><span class="badge final">Especificación</span> v2.1.1, 2024</td><td><a href="../temas/tema6/index.html">6</a></td></tr>
+              <tr><th><a href="https://www.etsi.org/technical-groups/qkd/">ETSI ISG QKD</a></th><td>Portal del grupo: GS QKD 004 (API de aplicación), GS QKD 020 (2026) y el resto de la serie.</td><td><span class="badge info">Portal</span></td><td><a href="../temas/tema6/index.html">6</a></td></tr>
+              <tr><th><a href="https://www.iso.org/standard/80492.html">ISO/IEC 14888-4:2024</a></th><td>Firmas basadas en hash con estado (XMSS, LMS) y requisitos de gestión del estado.</td><td><span class="badge final">Norma</span> 2024</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+              <tr><th>ISO/IEC 18033-2 (enmienda 2)</th><td>KEM post-cuánticos: Classic McEliece, FrodoKEM y ML-KEM. Según el <a href="https://classic.mceliece.org/iso.html">equipo de Classic McEliece</a>, ISO lo estandarizó en junio de 2026.</td><td><span class="badge final">Norma</span> 2026</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+            </tbody>
+          </table>
+        </div>
 
-                <div class="resource-item">
-                    <h3>PQClean</h3>
-                    <p><strong>Tipo:</strong> Biblioteca de código abierto</p>
-                    <p><strong>Lenguaje:</strong> C</p>
-                    <p><strong>Descripción:</strong> Colección de implementaciones limpias y auditadas de algoritmos post-cuánticos, diseñada para ser integrada en otras bibliotecas criptográficas.</p>
-                    <p><strong>Enlace:</strong> <a href="https://github.com/PQClean/PQClean" target="_blank">GitHub</a></p>
-                </div>
+        <h2 id="normativa">Guías de gobiernos y agencias</h2>
+        <p>Lo que dicen las autoridades sobre plazos, algoritmos e hibridación. Las posiciones no coinciden en todo: la NSA no exige hibridación, mientras que el BSI y la ANSSI la recomiendan; casi todas desaconsejan la QKD para uso general. El tema 5 compara estas posturas.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Guías oficiales, con la fecha de la última versión comprobada</caption>
+            <thead><tr><th>Organismo</th><th>Documento</th><th>Qué aporta</th><th>Tema</th></tr></thead>
+            <tbody>
+              <tr><th>UE · Grupo de Cooperación NIS</th><td><a href="https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography"><em>A Coordinated Implementation Roadmap for the Transition to Post-Quantum Cryptography</em></a> (11/06/2025)</td><td>Hitos comunes: primeros pasos y estrategias nacionales antes de finales de 2026; casos de uso de alto riesgo migrados antes de finales de 2030; el resto, en la medida de lo posible, antes de 2035.</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th>España · CCN</th><td><a href="https://www.ccn-cert.cni.es/es/guias-de-acceso-publico-ccn-stic/6954-ccn-stic-221-guia-de-mecanismos-criptograficos-autorizados-por-el-ccn-1/file.html">CCN-STIC 221</a>, <em>Guía de mecanismos criptográficos autorizados por el CCN</em> (noviembre de 2025)</td><td>Catálogo de mecanismos autorizados en el ámbito del ENS, con un capítulo de PQC (ML-KEM, FrodoKEM, ML-DSA, SLH-DSA, XMSS).</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th>España · CCN-CERT</th><td><a href="https://www.ccn-cert.cni.es/es/informes/informes-de-buenas-practicas-bp/7476-ccn-cert-bp-37-transicionpqc/file.html">CCN-TEC 009 / BP-37</a>, <em>Recomendaciones para una transición post-cuántica segura</em> (julio de 2026)</td><td>Fases de la migración (descubrimiento, adquisición, despliegue), gobernanza y plazos de 2030 o 2035 según la criticidad del sistema.</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th>Alemania · BSI</th><td><a href="https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.html">TR-02102-1</a>, versión 2026-01</td><td>Algoritmos y longitudes de clave recomendados. KEM: ML-KEM, FrodoKEM y Classic McEliece, en modo híbrido; el acuerdo de claves solo clásico se recomienda únicamente hasta finales de 2031. Las partes 2 a 4 tratan TLS, IPsec y SSH.</td><td><a href="../temas/tema4/index.html">4</a>, <a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th>Francia · ANSSI</th><td><a href="https://cyber.gouv.fr/en/publications/follow-position-paper-post-quantum-cryptography"><em>ANSSI views on the Post-Quantum Cryptography transition</em> (2023 follow up)</a></td><td>Transición progresiva con hibridación, especialmente en productos que deban ofrecer protección a largo plazo; calendario por fases.</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th>Reino Unido · NCSC</th><td><a href="https://www.ncsc.gov.uk/guidance/pqc-migration-timelines"><em>Timelines for migration to post-quantum cryptography</em></a> (marzo de 2025)</td><td>Tres hitos: 2028, inventario y plan; 2031, migraciones prioritarias; 2035, migración completa.</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th>EE. UU. · NSA</th><td><a href="https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF">CNSA 2.0 Algorithms</a> (actualizado en mayo de 2025) y <a href="https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF">preguntas frecuentes</a></td><td>Para sistemas de seguridad nacional: ML-KEM-1024, ML-DSA-87, LMS/XMSS, AES-256 y SHA-384/512. Firma de software y firmware exclusivamente con CNSA 2.0 en 2030; transición completa hacia 2035.</td><td><a href="../temas/tema4/index.html">4</a>, <a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th>UE · ENISA</th><td><a href="https://www.enisa.europa.eu/publications/post-quantum-cryptography-current-state-and-quantum-mitigation"><em>Post-Quantum Cryptography: Current state and quantum mitigation</em></a> (2021) e <a href="https://www.enisa.europa.eu/publications/post-quantum-cryptography-integration-study"><em>Integration study</em></a> (2022)</td><td>Panorámica de familias y dos mitigaciones: hibridación y mezcla de claves precompartidas. Anteriores a los FIPS; útiles como contexto.</td><td><a href="../temas/tema5/index.html">5</a></td></tr>
+              <tr><th>ANSSI · BSI · NLNCSA · Suecia</th><td><a href="https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Crypto/Quantum_Positionspapier.html"><em>Position Paper on Quantum Key Distribution</em></a> (enero de 2024)</td><td>Analiza las limitaciones de la QKD: solo aceptable en nichos y combinada con criptografía clásica o post-cuántica; la PQC es la vía principal.</td><td><a href="../temas/tema6/index.html">6</a></td></tr>
+              <tr><th>Reino Unido · NCSC</th><td><a href="https://www.ncsc.gov.uk/whitepaper/quantum-security-technologies"><em>Quantum networking technologies</em></a></td><td>Por qué el NCSC no recomienda la QKD para sistemas gubernamentales o militares.</td><td><a href="../temas/tema6/index.html">6</a></td></tr>
+              <tr><th>EE. UU. · NIST</th><td><a href="https://csrc.nist.gov/projects/post-quantum-cryptography">Proyecto PQC del CSRC</a> y su <a href="https://csrc.nist.gov/projects/post-quantum-cryptography/news">página de noticias</a></td><td>Punto de partida para comprobar el estado de cualquier documento de NIST.</td><td><a href="../temas/tema4/index.html">4</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="small muted">Un resumen de terceros que agrupa las hojas de ruta de muchos países: <a href="https://pqshield.com/pqc-transition-roadmaps-and-guidance/">PQShield, <em>Regulatory Landscape</em></a>. Úsalo para orientarte y cita siempre el documento oficial.</p>
 
-                <div class="resource-item">
-                    <h3>PALISADE</h3>
-                    <p><strong>Tipo:</strong> Biblioteca de código abierto</p>
-                    <p><strong>Lenguaje:</strong> C++</p>
-                    <p><strong>Descripción:</strong> Biblioteca para criptografía basada en retículos, que implementa esquemas como BGV, BFV, CKKS y FHEW, con soporte para computación homomórfica.</p>
-                    <p><strong>Enlace:</strong> <a href="https://palisade-crypto.org/" target="_blank">PALISADE</a></p>
-                </div>
+        <h2 id="herramientas">Herramientas y bibliotecas</h2>
+        <p>Versiones publicadas a 24 de septiembre de 2026, según GitHub, los sitios oficiales y las notas de versión. Los laboratorios fijan sus propias versiones; aquí interesa saber qué existe y para qué sirve.</p>
+        <div class="callout warning">
+          <span class="callout-title">Prototipo frente a producción</span>
+          <p>liboqs y oqs-provider son herramientas de investigación y docencia; sus autores desaconsejan usarlas en producción. Para producción, usa implementaciones mantenidas y, si aplica, validadas FIPS 140-3: OpenSSL 3.5 o posterior, AWS-LC, BoringSSL o las bibliotecas estándar de Go, Java y .NET.</p>
+        </div>
 
-                <div class="resource-item">
-                    <h3>Qiskit</h3>
-                    <p><strong>Tipo:</strong> Framework de código abierto</p>
-                    <p><strong>Lenguaje:</strong> Python</p>
-                    <p><strong>Descripción:</strong> Framework para computación cuántica desarrollado por IBM, que incluye módulos para simular algoritmos cuánticos como Shor y Grover, y para experimentar con protocolos QKD.</p>
-                    <p><strong>Enlace:</strong> <a href="https://qiskit.org/" target="_blank">Qiskit</a></p>
-                </div>
-            </div>
-        </section>
+        <h3>Bibliotecas criptográficas</h3>
+        <div class="table-wrap">
+          <table>
+            <caption>Bibliotecas con algoritmos post-cuánticos</caption>
+            <thead><tr><th>Nombre</th><th>Lenguaje</th><th>Algoritmos PQ</th><th>Licencia</th><th>Versión · uso en el curso</th></tr></thead>
+            <tbody>
+              <tr><th><a href="https://github.com/open-quantum-safe/liboqs">liboqs</a></th><td>C</td><td>ML-KEM, ML-DSA, SLH-DSA, Falcon, HQC, FrodoKEM, Classic McEliece, BIKE, NTRU; candidatos a firmas adicionales (MAYO, CROSS, UOV, SNOVA, MQOM); LMS y XMSS</td><td>MIT</td><td>0.16.0 (jul. 2026) · labs <a href="../guias/ml_kem.html">L2</a> y <a href="../guias/ml_dsa.html">L3</a></td></tr>
+              <tr><th><a href="https://github.com/open-quantum-safe/liboqs-python">liboqs-python</a></th><td>Python</td><td>Todo lo de liboqs</td><td>MIT</td><td>0.16.0.1 (sept. 2026) · labs L2 y L3</td></tr>
+              <tr><th><a href="https://github.com/open-quantum-safe/oqs-provider">oqs-provider</a></th><td>C</td><td>Proveedor de OpenSSL 3 con los algoritmos de liboqs, incluidos los no estandarizados</td><td>MIT</td><td>0.11.0 (dic. 2025); 0.12.0 en fase de candidata</td></tr>
+              <tr><th><a href="https://openssl-library.org/news/openssl-3.5-notes/index.html">OpenSSL</a></th><td>C</td><td>ML-KEM, ML-DSA y SLH-DSA nativos desde 3.5, con <code>X25519MLKEM768</code> en la oferta de TLS por defecto; verificación LMS desde 3.6</td><td>Apache-2.0</td><td>3.5 LTS (soporte hasta 08/04/2030; última 3.5.8) · 4.0 (14/04/2026; última 4.0.2) · lab <a href="../guias/criptografia_hibrida.html">L4</a></td></tr>
+              <tr><th><a href="https://boringssl.googlesource.com/boringssl/">BoringSSL</a></th><td>C/C++</td><td>ML-KEM, ML-DSA, SLH-DSA y X-Wing; X25519MLKEM768 en TLS (lo usa Chrome)</td><td>Apache-2.0</td><td>Etiquetas por fecha (0.20260813.0)</td></tr>
+              <tr><th><a href="https://github.com/aws/aws-lc">AWS-LC</a></th><td>C</td><td>ML-KEM y ML-DSA dentro del módulo FIPS</td><td>Apache-2.0 / ISC</td><td>v5.10.0 (sept. 2026)</td></tr>
+              <tr><th><a href="https://github.com/rustls/rustls">rustls</a></th><td>Rust</td><td>X25519MLKEM768 con el proveedor <code>aws-lc-rs</code>; ML-KEM solo, disponible pero desactivado por defecto</td><td>Apache-2.0 / ISC / MIT</td><td>0.23.45 (sept. 2026)</td></tr>
+              <tr><th><a href="https://www.bouncycastle.org/resources/new-release-bouncy-castle-java-1-86/">Bouncy Castle</a></th><td>Java, C#</td><td>ML-KEM, ML-DSA, SLH-DSA, LMS/HSS, XMSS, FrodoKEM, Classic McEliece, esquemas compuestos; KEM en CMS (RFC 9629)</td><td>MIT</td><td>Java 1.86 (15/09/2026)</td></tr>
+              <tr><th><a href="https://github.com/pq-code-package/mlkem-native">mlkem-native</a> · <a href="https://github.com/pq-code-package/mldsa-native">mldsa-native</a></th><td>C90 y ensamblador</td><td>ML-KEM · ML-DSA, con verificación formal (CBMC para el C; ensamblador AArch64 y x86-64 demostrado correcto)</td><td>Apache-2.0 / ISC / MIT</td><td>v2.0.0 (ago. 2026) · PQ Code Package; liboqs lo usa para ML-KEM y ML-DSA</td></tr>
+              <tr><th><a href="https://github.com/cryspen/libcrux">libcrux</a></th><td>Rust</td><td>ML-KEM, ML-DSA y X-Wing; código verificado con hax y HACL*</td><td>Apache-2.0</td><td>Crates &lt; 0.1 (preliminares)</td></tr>
+              <tr><th><a href="https://github.com/cloudflare/circl">CIRCL</a></th><td>Go</td><td>ML-KEM, ML-DSA, SLH-DSA, X-Wing; Kyber y Dilithium de la 3.ª ronda</td><td>BSD-3-Clause</td><td>v1.6.5 (ago. 2026)</td></tr>
+              <tr><th><a href="https://github.com/PQClean/PQClean">PQClean</a></th><td>C</td><td>Implementaciones «limpias» de los candidatos de NIST</td><td>Varias, por esquema</td><td><strong>Archivado</strong> (solo lectura); sus autores remiten a PQ Code Package y liboqs</td></tr>
+            </tbody>
+          </table>
+        </div>
 
-        <section class="resource-section">
-            <h2>Cursos y Material Educativo</h2>
-            <div class="resource-list">
-                <div class="resource-item">
-                    <h3>Quantum Computing and Quantum Cryptography</h3>
-                    <p><strong>Plataforma:</strong> edX</p>
-                    <p><strong>Institución:</strong> MIT</p>
-                    <p><strong>Descripción:</strong> Curso introductorio sobre computación cuántica y sus implicaciones para la criptografía, incluyendo secciones sobre algoritmos cuánticos y criptografía post-cuántica.</p>
-                    <p><strong>Enlace:</strong> <a href="https://www.edx.org/learn/quantum-computing" target="_blank">edX</a></p>
-                </div>
+        <h3>Soporte en lenguajes y plataformas</h3>
+        <div class="table-wrap">
+          <table>
+            <caption>PQC en bibliotecas estándar y entornos de ejecución</caption>
+            <thead><tr><th>Plataforma</th><th>Qué incluye</th><th>Desde</th><th>Fuente</th></tr></thead>
+            <tbody>
+              <tr><th>Go</th><td><code>crypto/mlkem</code> (ML-KEM-768 y 1024) y X25519MLKEM768 por defecto en <code>crypto/tls</code> (1.24); <code>crypto/hpke</code> con KEM híbridos (1.26); <code>crypto/mldsa</code> y ML-DSA en TLS 1.3 y X.509 (1.27)</td><td>Go 1.24 (feb. 2025); actual 1.27.1</td><td><a href="https://pkg.go.dev/crypto/mlkem">crypto/mlkem</a>, <a href="https://pkg.go.dev/crypto/mldsa">crypto/mldsa</a></td></tr>
+              <tr><th>Java (OpenJDK)</th><td>ML-KEM (JEP 496) y ML-DSA (JEP 497) en la JCA; intercambio híbrido en TLS 1.3 activado por defecto para <code>javax.net.ssl</code> (JEP 527)</td><td>JDK 24 (mar. 2025); JEP 527 en JDK 27 (disponible desde el 15/09/2026)</td><td><a href="https://openjdk.org/jeps/496">JEP 496</a>, <a href="https://openjdk.org/jeps/497">497</a>, <a href="https://openjdk.org/jeps/527">527</a></td></tr>
+              <tr><th>.NET</th><td>Clases <code>MLKem</code>, <code>MLDsa</code>, <code>SlhDsa</code> y <code>CompositeMLDsa</code>; las de firma, marcadas como experimentales (SYSLIB5006). Dependen del proveedor del sistema (OpenSSL 3.5+ en Linux, CNG en Windows)</td><td>.NET 10 (nov. 2025)</td><td><a href="https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10/libraries">Novedades de .NET 10</a></td></tr>
+              <tr><th>OpenSSH</th><td><code>mlkem768x25519-sha256</code> como intercambio de claves por defecto; versión actual 10.5</td><td>OpenSSH 10.0 (abr. 2025)</td><td><a href="https://www.openssh.com/pq.html">openssh.com/pq.html</a></td></tr>
+            </tbody>
+          </table>
+        </div>
 
-                <div class="resource-item">
-                    <h3>Post-Quantum Cryptography: Lattice-based Cryptography</h3>
-                    <p><strong>Plataforma:</strong> Coursera</p>
-                    <p><strong>Institución:</strong> University of Waterloo</p>
-                    <p><strong>Descripción:</strong> Curso especializado en criptografía basada en retículos, con explicaciones detalladas de los fundamentos matemáticos y las construcciones criptográficas.</p>
-                    <p><strong>Enlace:</strong> <a href="https://www.coursera.org/learn/lattice-based-cryptography" target="_blank">Coursera</a></p>
-                </div>
+        <h3>Herramientas de análisis y simulación</h3>
+        <div class="table-wrap">
+          <table>
+            <caption>Herramientas para experimentar</caption>
+            <thead><tr><th>Nombre</th><th>Lenguaje</th><th>Para qué</th><th>Licencia</th><th>Versión · uso</th></tr></thead>
+            <tbody>
+              <tr><th><a href="https://quantum.cloud.ibm.com/docs/en/api/qiskit/release-notes">Qiskit</a></th><td>Python</td><td>Circuitos cuánticos; primitivas V2 (<code>StatevectorSampler</code>) para simular Shor a escala de juguete y BB84</td><td>Apache-2.0</td><td>2.5.2 (ago. 2026) · labs <a href="../guias/algoritmo_shor.html">L1</a> y <a href="../guias/qkd.html">L5</a></td></tr>
+              <tr><th><a href="https://github.com/malb/lattice-estimator">lattice-estimator</a></th><td>Sage (Python)</td><td>Estimar el coste de los ataques primal, dual y combinatorios contra parámetros LWE y NTRU</td><td>LGPL-3.0+</td><td>Sin versiones numeradas; rama principal activa · <a href="../temas/tema3/index.html">Tema 3</a></td></tr>
+              <tr><th><a href="https://www.sagemath.org/">SageMath</a></th><td>Python</td><td>Álgebra computacional: anillos de polinomios, LLL y BKZ, cuerpos finitos</td><td>GPL</td><td>10.9 (may. 2026) · <a href="../temas/tema3/index.html">Tema 3</a></td></tr>
+              <tr><th><a href="https://www.wireshark.org/docs/relnotes/">Wireshark</a></th><td>C</td><td>Ver el <em>handshake</em> híbrido: nombra X25519MLKEM768, SecP256r1MLKEM768 y MLKEM768 en <code>supported_groups</code> y <code>key_share</code> (desde 4.4) y las firmas <code>mldsa44/65/87</code> (4.6)</td><td>GPL-2.0</td><td>4.6.9 · lab <a href="../guias/criptografia_hibrida.html">L4</a></td></tr>
+            </tbody>
+          </table>
+        </div>
 
-                <div class="resource-item">
-                    <h3>Introduction to Quantum Computing</h3>
-                    <p><strong>Plataforma:</strong> Qiskit Textbook</p>
-                    <p><strong>Institución:</strong> IBM Quantum</p>
-                    <p><strong>Descripción:</strong> Libro de texto interactivo que introduce los conceptos de computación cuántica, incluyendo capítulos sobre algoritmos de Shor y Grover y sus implicaciones para la criptografía.</p>
-                    <p><strong>Enlace:</strong> <a href="https://qiskit.org/textbook/preface.html" target="_blank">Qiskit Textbook</a></p>
-                </div>
+        <h2 id="datos">Datos, paneles y comparativas</h2>
+        <ol class="refs">
+          <li><span class="badge info">Panel</span> Cloudflare. <a href="https://radar.cloudflare.com/post-quantum">Cloudflare Radar: Post-Quantum Encryption</a>. <span class="src">Datos actualizados de forma continua.</span> Porcentaje del tráfico HTTPS humano hacia Cloudflare protegido con intercambio híbrido post-cuántico, por país, navegador y sistema operativo. Cloudflare Radar lo situó en torno al 67 % en abril de 2026 (32 % en enero de 2025); consulta el valor actual antes de citarlo. <span class="muted">→ <a href="../temas/tema5/index.html">Tema 5</a></span></li>
+          <li><span class="badge info">Informe</span> Cloudflare. <a href="https://blog.cloudflare.com/pq-2025/">«State of the post-quantum Internet in 2025»</a>. <span class="src">Cloudflare Blog, 2025.</span> Estado del despliegue en navegadores, servidores de origen, SSH y certificados, con cifras y los cuellos de botella de cada uno. <span class="muted">→ <a href="../temas/tema2/index.html">Tema 2</a>, <a href="../temas/tema5/index.html">Tema 5</a></span></li>
+          <li><span class="badge info">Comparativa</span> Open Quantum Safe. <a href="https://openquantumsafe.org/benchmarking/">Benchmarking</a>. <span class="src">openquantumsafe.org.</span> Tiempos y memoria de todos los algoritmos de liboqs en varias plataformas. Útil para comparar ML-KEM con HQC o Classic McEliece. <span class="muted">→ <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+          <li><span class="badge info">Comparativa</span> M. J. Kannwischer <em>et al.</em> <a href="https://github.com/mupq/pqm4">pqm4</a>. <span class="src">GitHub.</span> Implementaciones y medidas (ciclos, pila, tamaño de código) en ARM Cortex-M4: el dato relevante para IoT. <span class="muted">→ <a href="../temas/tema5/index.html">Tema 5</a></span></li>
+          <li><span class="badge info">Comparativa</span> D. J. Bernstein y T. Lange (eds.). <a href="https://bench.cr.yp.to/">eBACS / SUPERCOP</a>. <span class="src">bench.cr.yp.to.</span> Banco de pruebas de referencia, en ciclos, para primitivas criptográficas en muchas CPU. <span class="muted">→ <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+          <li><span class="badge info">Tabla</span> PQShield. <a href="https://pqshield.github.io/nist-sigs-zoo/">NIST PQC Signature Zoo</a>. <span class="src">GitHub Pages.</span> Tamaños de clave y de firma de los candidatos a firmas adicionales, con gráficas. Muy útil para seguir la 3.ª ronda. <span class="muted">→ <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+          <li><span class="badge info">Encuesta</span> M. Mosca y M. Piani. <a href="https://globalriskinstitute.org/publication/2024-quantum-threat-timeline-report/"><em>Quantum Threat Timeline Report 2024</em></a>. <span class="src">Global Risk Institute, 2024.</span> Encuesta a expertos sobre la probabilidad de que exista un CRQC en distintos horizontes temporales. La <a href="https://globalriskinstitute.org/publication/2025-quantum-threat-timeline-report/">edición de 2025</a> recoge la visión de directivos del sector financiero. <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a></span></li>
+        </ol>
 
-                <div class="resource-item">
-                    <h3>Cryptography I</h3>
-                    <p><strong>Plataforma:</strong> Coursera</p>
-                    <p><strong>Institución:</strong> Stanford University</p>
-                    <p><strong>Descripción:</strong> Curso fundamental sobre criptografía moderna impartido por Dan Boneh, con una sección sobre amenazas cuánticas y criptografía post-cuántica.</p>
-                    <p><strong>Enlace:</strong> <a href="https://www.coursera.org/learn/crypto" target="_blank">Coursera</a></p>
-                </div>
-            </div>
-        </section>
+        <h2 id="cursos">Cursos, apuntes y vídeos</h2>
+        <ol class="refs">
+          <li><span class="badge info">Apuntes</span> C. Peikert. <a href="https://web.eecs.umich.edu/~cpeikert/lic15/">EECS 598: Lattices in Cryptography</a>. <span class="src">Universidad de Míchigan, 2015.</span> Apuntes por sesiones: LLL, Coppersmith, SIS, LWE, trampillas y reducciones. El complemento natural de su monografía. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+          <li><span class="badge info">Apuntes</span> O. Regev. <a href="https://cims.nyu.edu/~regev/teaching/lattices_fall_2009/">Lattices in Computer Science</a>. <span class="src">NYU, 2009 (basado en su curso de Tel Aviv de 2004).</span> Apuntes breves y cuidados: LLL, teoremas de Minkowski, transferencia y dureza. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+          <li><span class="badge info">Apuntes</span> D. Micciancio. <a href="https://cseweb.ucsd.edu/classes/sp14/cse206A-a/">CSE 206A: Lattice Algorithms and Applications</a>. <span class="src">UC San Diego, 2014.</span> Curso de posgrado sobre algoritmos de retículos y su uso en criptografía. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+          <li><span class="badge info">Vídeos</span> Simons Institute. <a href="https://simons.berkeley.edu/programs/lattices2020">Lattices: Algorithms, Complexity, and Cryptography</a>. <span class="src">Programa de enero a mayo de 2020; <a href="https://www.youtube.com/playlist?list=PLgKuh-lKre10rqiTYqJi6P4UlBRMQtPn0">vídeos del <em>boot camp</em></a>.</span> Clases introductorias de Micciancio (matemática de retículos), Heninger (criptoanálisis con retículos) y otros. El mejor material en vídeo sobre retículos. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a></span></li>
+          <li><span class="badge info">Curso</span> D. Boneh. <a href="https://www.coursera.org/learn/crypto">Cryptography I</a>. <span class="src">Stanford / Coursera.</span> Criptografía simétrica y fundamentos de clave pública. Buen repaso si el tema 1 se te hace cuesta arriba. <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a></span></li>
+          <li><span class="badge info">Tutorial</span> IBM Quantum. <a href="https://quantum.cloud.ibm.com/docs/en/tutorials/shors-algorithm">Shor’s algorithm</a>. <span class="src">Documentación de IBM Quantum.</span> Búsqueda de orden con Qiskit y <code>SamplerV2</code>, a escala de juguete. Referencia de API para el laboratorio L1. <span class="muted">→ <a href="../guias/algoritmo_shor.html">Lab. L1</a></span></li>
+          <li><span class="badge info">Congreso</span> NIST. <a href="https://csrc.nist.gov/projects/post-quantum-cryptography/workshops-and-timeline">Conferencias de estandarización PQC</a>. <span class="src">Seis ediciones; la 6.ª, del 24 al 26 de septiembre de 2025.</span> Presentaciones de NIST y de los equipos de cada esquema; en ellas se anuncian los plazos de FIPS 206 y del estándar de HQC. <span class="muted">→ <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+          <li><span class="badge info">Congreso</span> <a href="https://pqcrypto.org/conferences.html">Serie PQCrypto</a>. <span class="src">17.ª edición: Saint-Malo, 14–16 de abril de 2026.</span> Congreso académico central del área; la página enlaza actas y programas de todas las ediciones. <span class="muted">→ <a href="../temas/tema3/index.html">Tema 3</a>, <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+        </ol>
+
+        <h2 id="blogs">Blogs y boletines</h2>
+        <p>Pocos y con mucha señal. Son opiniones de expertos, no fuentes normativas: sirven para entender el porqué de las decisiones.</p>
+        <ol class="refs">
+          <li><span class="badge info">Blog</span> Cloudflare. <a href="https://blog.cloudflare.com/tag/post-quantum/">Etiqueta «Post-Quantum»</a>. Informes de despliegue con datos reales: tamaño del <em>handshake</em>, osificación de <em>middleboxes</em>, certificados. <span class="muted">→ <a href="../temas/tema2/index.html">Tema 2</a>, <a href="../temas/tema5/index.html">Tema 5</a></span></li>
+          <li><span class="badge info">Blog</span> F. Valsorda. <a href="https://words.filippo.io/">words.filippo.io</a>. Notas técnicas de quien mantuvo durante años la criptografía de Go: ML-KEM, X-Wing y diseño de API criptográficas. <span class="muted">→ <a href="../temas/tema5/index.html">Tema 5</a></span></li>
+          <li><span class="badge info">Blog</span> D. J. Bernstein. <a href="https://blog.cr.yp.to/">blog.cr.yp.to</a>. Crítico con el proceso de NIST y defensor de la hibridación; léelo para conocer los argumentos contrarios, con espíritu crítico. <span class="muted">→ <a href="../temas/tema4/index.html">Tema 4</a>, <a href="../temas/tema5/index.html">Tema 5</a></span></li>
+          <li><span class="badge info">Blog</span> M. Green. <a href="https://blog.cryptographyengineering.com/">A Few Thoughts on Cryptographic Engineering</a>. Explicaciones accesibles de protocolos reales (mensajería, TLS) y de ataques de implementación. <span class="muted">→ <a href="../temas/tema2/index.html">Tema 2</a></span></li>
+          <li><span class="badge info">Blog</span> S. Aaronson. <a href="https://scottaaronson.blog/">Shtetl-Optimized</a>. Comentario experto, y escéptico con las exageraciones, sobre los avances en computación cuántica. <span class="muted">→ <a href="../temas/tema1/index.html">Tema 1</a></span></li>
+        </ol>
+
+        <h2 id="comunidad">Comunidad y foros</h2>
+        <ol class="refs">
+          <li><span class="badge info">Lista</span> NIST. <a href="https://groups.google.com/a/list.nist.gov/g/pqc-forum">pqc-forum</a>. Lista oficial del proceso de estandarización: anuncios de NIST, ataques a candidatos y debates públicos. Casi todo lo importante aparece aquí primero. <span class="muted">→ <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+          <li><span class="badge info">Grupo</span> IETF. <a href="https://datatracker.ietf.org/wg/pquip/about/">PQUIP</a> (<em>Post-Quantum Use In Protocols</em>). Grupo de trabajo que coordina el uso de PQC en protocolos; de él salen RFC 9794, 9955, 9958 y 10033. <span class="muted">→ <a href="../temas/tema5/index.html">Tema 5</a></span></li>
+          <li><span class="badge info">Grupo</span> IRTF. <a href="https://datatracker.ietf.org/rg/cfrg/about/">CFRG</a> (<em>Crypto Forum Research Group</em>). Donde se especifican primitivas para la IETF (X-Wing, combinadores de KEM, firmas basadas en hash). <span class="muted">→ <a href="../temas/tema4/index.html">Tema 4</a></span></li>
+          <li><span class="badge info">Consorcio</span> Linux Foundation. <a href="https://pqca.org/">Post-Quantum Cryptography Alliance (PQCA)</a>. Paraguas de Open Quantum Safe y PQ Code Package: implementaciones abiertas, auditadas y mantenidas. <span class="muted">→ <a href="../temas/tema5/index.html">Tema 5</a></span></li>
+          <li><span class="badge info">Proyecto</span> <a href="https://openquantumsafe.org/">Open Quantum Safe</a>. Proyecto detrás de liboqs, oqs-provider y sus <em>bindings</em>; documentación y guías de integración. <span class="muted">→ <a href="../guias/ml_kem.html">Lab. L2</a></span></li>
+          <li><span class="badge info">Consorcio</span> PKI Consortium. <a href="https://pkic.org/events/">Eventos y conferencias PQC</a>. Conferencias orientadas a la industria sobre migración de PKI, con vídeos. <span class="muted">→ <a href="../temas/tema2/index.html">Tema 2</a>, <a href="../temas/tema5/index.html">Tema 5</a></span></li>
+          <li><span class="badge info">Archivo</span> IACR. <a href="https://eprint.iacr.org/">Cryptology ePrint Archive</a>. Donde aparecen primero casi todos los artículos del área, y también los ataques. <span class="muted">→ todos los temas</span></li>
+        </ol>
+
+        <h2 id="mantenimiento">Criterios y cambios</h2>
+        <p>Solo figuran recursos cuyo enlace se ha abierto o cuya existencia se ha confirmado en la fuente oficial (DOI, RFC Editor, NIST CSRC, IETF Datatracker, repositorio del proyecto) el 24 de septiembre de 2026. Si encuentras un enlace roto o un estado desactualizado, avisa al profesorado.</p>
+        <details>
+          <summary>Correcciones respecto a la versión anterior de esta página (2025)</summary>
+          <div class="details-body">
+            <ul>
+              <li>Retirado «<em>Lattice-Based Cryptography for Beginners</em>, J. Ding y Z. Zhang, Springer 2022»: no se ha encontrado ningún libro con ese título y autores, y su DOI no resuelve. Existen unos apuntes de título casi igual de Chi, Choi, Kim y Kim (<a href="https://eprint.iacr.org/2015/938">ePrint 2015/938</a>), incluidos arriba.</li>
+              <li>Corregido «<em>Quantum Key Distribution: A Networking Perspective</em>, C. Elliott, NJP 2019»: el DOI citado corresponde a C. Elliott, «Building the quantum network», <em>New Journal of Physics</em> 4, 46 (2002).</li>
+              <li>FIPS 203, 204 y 205 enlazaban a los borradores de 2023; ahora enlazan a las versiones finales del 13/08/2024.</li>
+              <li>SPHINCS<sup>+</sup> se citaba con un título inexistente («Robust Post-Quantum Signatures») y como publicado en ePrint; el artículo es «The SPHINCS<sup>+</sup> Signature Framework», ACM CCS 2019.</li>
+              <li>Retirados por no poder verificarse o por estar obsoletos: el curso de edX «Quantum Computing and Quantum Cryptography» (MIT), el curso de Coursera «Lattice-based Cryptography» (Waterloo), el antiguo <em>Qiskit Textbook</em> (URL retirada), PALISADE (sin mantenimiento), «PQC Lounge» (atribuido por error al BSI) y el portal comercial Quantum Computing Report.</li>
+              <li>PQClean figura ahora como archivado; liboqs ya no «implementa todos los finalistas», sino los estándares y una selección de candidatos.</li>
+            </ul>
+          </div>
+        </details>
+
+      </article>
+
+      <nav class="pager" aria-label="Paginación"></nav>
     </main>
+    <aside class="toc" aria-label="En esta página"></aside>
+  </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Mapa del Sitio</h3>
-                <ul>
-                    <li><a href="../index.html">Inicio</a></li>
-                    <li><a href="../programa.html">Programa</a></li>
-                    <li><a href="../temas/tema1/index.html">Temas</a></li>
-                    <li><a href="../ejemplos/index.html">Ejemplos Prácticos</a></li>
-                    <li><a href="../guias/index.html">Guías de Laboratorio</a></li>
-                    <li><a href="index.html">Recursos</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Temas</h3>
-                <ul>
-                    <li><a href="../temas/tema1/index.html">Fundamentos de Criptografía Moderna</a></li>
-                    <li><a href="../temas/tema2/index.html">Infraestructura de Seguridad en Internet</a></li>
-                    <li><a href="../temas/tema3/index.html">Fundamentos de Criptografía Post-Cuántica</a></li>
-                    <li><a href="../temas/tema4/index.html">Estandarización de Criptografía Post-Cuántica</a></li>
-                    <li><a href="../temas/tema5/index.html">Implementaciones y Desafíos</a></li>
-                    <li><a href="../temas/tema6/index.html">Distribución Cuántica de Claves</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Para consultas sobre el curso, contacte al profesor.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Curso de Criptografía Post-Cuántica</p>
-        </div>
-    </footer>
-
-    <script src="../js/script.js"></script>
-    <script src="../js/navigation.js"></script>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="../glosario.html">Glosario</a>
+        <a href="../recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

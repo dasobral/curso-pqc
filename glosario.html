@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="es" data-root="" data-page="glosario">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Glosario — Curso PQC</title>
+  <meta name="description" content="Glosario del Curso de Criptografía Post-Cuántica: definiciones breves de ML-KEM, ML-DSA, LWE, retículos, QKD, QBER y otros términos.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/course-data.js" defer></script>
+  <script src="js/course.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html" aria-label="Inicio del curso">
+        <span class="brand-mark">pqc<span>.</span></span>
+        <span class="brand-name">Criptografía<br>post-cuántica</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="index.html">Inicio</a>
+        <a href="programa.html">Programa</a>
+        <a href="temas/index.html">Temas</a>
+        <a href="ejemplos/index.html">Ejemplos</a>
+        <a href="guias/index.html">Laboratorios</a>
+        <a href="recursos/index.html">Recursos</a>
+      </nav>
+      <form class="header-search" role="search" action="busqueda.html">
+        <label class="visually-hidden" for="q">Buscar en el curso</label>
+        <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
+      </form>
+      <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
+    </div>
+  </header>
+
+  <div class="layout no-toc">
+    <nav class="course-nav" aria-label="Índice del curso"></nav>
+    <main id="contenido" class="content">
+      <nav class="breadcrumb" aria-label="Ruta">
+        <ol><li><a href="index.html">Inicio</a></li><li aria-current="page">Glosario</li></ol>
+      </nav>
+      <header class="page-head">
+        <p class="eyebrow">Consulta</p>
+        <h1><em>Glosario</em></h1>
+        <p class="lede">54 términos del curso con una definición breve y enlaces a la sección donde se desarrollan.</p>
+        <p class="small glossary-jump" aria-label="Saltar a una letra"><a href="#letra-a">A</a> <a href="#letra-b">B</a> <a href="#letra-c">C</a> <a href="#letra-d">D</a> <a href="#letra-e">E</a> <a href="#letra-f">F</a> <a href="#letra-g">G</a> <a href="#letra-h">H</a> <a href="#letra-i">I</a> <a href="#letra-k">K</a> <a href="#letra-l">L</a> <a href="#letra-m">M</a> <a href="#letra-n">N</a> <a href="#letra-p">P</a> <a href="#letra-q">Q</a> <a href="#letra-r">R</a> <a href="#letra-s">S</a> <a href="#letra-t">T</a> <a href="#letra-u">U</a> <a href="#letra-x">X</a></p>
+      </header>
+      <article class="prose">
+        <h2 id="letra-a">A</h2>
+        <dl class="glossary">
+          <dt id="aead">AEAD <span class="muted">(Authenticated Encryption with Associated Data)</span></dt>
+          <dd>Cifrado autenticado que protege la confidencialidad del mensaje y la integridad del mensaje y de unos datos asociados en claro. AES-GCM y ChaCha20-Poly1305 son los ejemplos habituales; con claves de 256 bits se consideran adecuados frente a ataques cuánticos. <span class="small muted">→ <a href="temas/tema1/index.html#simetrica">Tema 1</a></span></dd>
+          <dt id="agilidad-criptografica">Agilidad criptográfica</dt>
+          <dd>Capacidad de un sistema para cambiar de algoritmo, parámetros o implementación sin rediseñarse: algoritmos identificados y negociados, no fijados en el código, y procedimientos para desplegar el cambio. <span class="small muted">→ <a href="temas/tema5/index.html#metodologia">Tema 5</a></span></dd>
+          <dt id="almacenar-ahora-descifrar-despues">Almacenar ahora, descifrar después <span class="muted">(harvest now, decrypt later (HNDL))</span></dt>
+          <dd>Ataque en el que un adversario graba hoy tráfico o datos cifrados con criptografía vulnerable para descifrarlos cuando disponga de un ordenador cuántico criptográficamente relevante. Afecta a la confidencialidad ya, aunque la autenticación solo quede en riesgo cuando exista ese ordenador. <span class="small muted">→ <a href="temas/tema1/index.html#mosca">Tema 1</a> · <a href="temas/tema2/index.html#hndl">Tema 2</a></span></dd>
+          <dt id="amplificacion-de-privacidad">Amplificación de privacidad <span class="muted">(privacy amplification)</span></dt>
+          <dd>Paso final del postprocesado de QKD: se comprime la clave corregida con una función hash universal (por ejemplo, una matriz de Toeplitz) para eliminar la información que el espía pueda tener. <span class="small muted">→ <a href="temas/tema6/index.html#postprocesado">Tema 6</a> · <a href="ejemplos/qkd_bb84.html">E5</a></span></dd>
+        </dl>
+        <h2 id="letra-b">B</h2>
+        <dl class="glossary">
+          <dt id="bb84">BB84</dt>
+          <dd>Primer protocolo de distribución cuántica de claves (Bennett y Brassard, 1984). Codifica bits en fotones preparados en una de dos bases conjugadas; tras la medida, las partes conservan solo las posiciones en que coincidieron las bases. <span class="small muted">→ <a href="temas/tema6/index.html#bb84">Tema 6</a> · <a href="ejemplos/qkd_bb84.html">E5</a></span></dd>
+          <dt id="bkz">BKZ <span class="muted">(Block Korkine–Zolotarev)</span></dt>
+          <dd>Algoritmo de reducción de bases de retículos que generaliza LLL resolviendo SVP en bloques de tamaño β. El coste de BKZ con el β necesario determina la seguridad concreta de los esquemas basados en retículos. <span class="small muted">→ <a href="temas/tema3/index.html#seguridad-concreta">Tema 3</a></span></dd>
+        </dl>
+        <h2 id="letra-c">C</h2>
+        <dl class="glossary">
+          <dt id="canal-lateral">Canal lateral <span class="muted">(side channel)</span></dt>
+          <dd>Fuga de información secreta a través del tiempo de ejecución, el consumo, las emisiones electromagnéticas o los accesos a caché de una implementación. KyberSlash (2024) es un ejemplo de fuga por tiempo en implementaciones de Kyber. <span class="small muted">→ <a href="temas/tema5/index.html#implementacion">Tema 5</a></span></dd>
+          <dt id="cbom">CBOM <span class="muted">(Cryptography Bill of Materials)</span></dt>
+          <dd>Inventario de los activos criptográficos (algoritmos, claves, certificados, bibliotecas, protocolos) de un sistema, en un formato legible por máquinas como CycloneDX. Es el punto de partida de un plan de migración. <span class="small muted">→ <a href="temas/tema5/index.html#metodologia">Tema 5</a></span></dd>
+          <dt id="certificado-compuesto">Certificado compuesto <span class="muted">(composite certificate)</span></dt>
+          <dd>Certificado X.509 cuya clave y firma combinan un algoritmo clásico y uno post-cuántico como una sola entidad, de modo que la verificación exige ambas firmas. <span class="small muted">→ <a href="temas/tema5/index.html#certificados">Tema 5</a></span></dd>
+          <dt id="classic-mceliece">Classic McEliece</dt>
+          <dd>KEM basado en códigos de Goppa binarios, derivado del criptosistema de McEliece (1978). Tiene más de cuarenta años de análisis y cifrados muy pequeños, pero claves públicas de cientos de kilobytes a más de un megabyte. <span class="small muted">→ <a href="temas/tema3/index.html#codigos">Tema 3</a> · <a href="temas/tema4/index.html#mceliece-frodokem">Tema 4</a></span></dd>
+          <dt id="cnsa-2-0">CNSA 2.0 <span class="muted">(Commercial National Security Algorithm Suite 2.0)</span></dt>
+          <dd>Conjunto de algoritmos y calendario de la NSA para los sistemas de seguridad nacional de EE. UU.: ML-KEM-1024, ML-DSA-87, LMS/XMSS para firma de firmware, AES-256 y SHA-384/512. <span class="small muted">→ <a href="temas/tema5/index.html#calendarios">Tema 5</a></span></dd>
+          <dt id="core-svp">Core-SVP</dt>
+          <dd>Metodología para estimar la seguridad de un esquema de retículos: se calcula el tamaño de bloque β de BKZ necesario para el ataque y se toma como coste el de un único oráculo SVP en dimensión β (unos 2<sup>0,292β</sup> clásico). <span class="small muted">→ <a href="temas/tema3/index.html#seguridad-concreta">Tema 3</a></span></dd>
+          <dt id="crqc">CRQC <span class="muted">(ordenador cuántico criptográficamente relevante)</span></dt>
+          <dd>Ordenador cuántico capaz de ejecutar el algoritmo de Shor sobre tamaños criptográficos reales, como RSA-2048 o P-256, en un tiempo útil para un atacante. No existe a septiembre de 2026. <span class="small muted">→ <a href="temas/tema1/index.html#cuando">Tema 1</a></span></dd>
+          <dt id="cvp">CVP <span class="muted">(Closest Vector Problem)</span></dt>
+          <dd>Problema del vector más cercano: dado un retículo y un punto del espacio, encontrar el punto del retículo más próximo. Descifrar LWE sin la clave equivale a resolver una instancia de CVP. <span class="small muted">→ <a href="temas/tema3/index.html#reticulos">Tema 3</a></span></dd>
+        </dl>
+        <h2 id="letra-d">D</h2>
+        <dl class="glossary">
+          <dt id="decapsulacion">Decapsulación <span class="muted">(desencapsular)</span></dt>
+          <dd>Operación de un KEM que, con la clave privada, recupera el secreto compartido a partir del texto cifrado. En ML-KEM incluye volver a cifrar y comparar (transformación FO con rechazo implícito). <span class="small muted">→ <a href="temas/tema4/index.html#ml-kem">Tema 4</a> · <a href="ejemplos/ml_kem.html">E2</a></span></dd>
+          <dt id="desigualdad-de-mosca">Desigualdad de Mosca</dt>
+          <dd>Regla de decisión: si <var>x</var> + <var>y</var> &gt; <var>z</var>, donde <var>x</var> es el tiempo que los datos deben seguir secretos, <var>y</var> el tiempo necesario para migrar y <var>z</var> el tiempo hasta que exista un CRQC, ya se llega tarde. <span class="small muted">→ <a href="temas/tema1/index.html#mosca">Tema 1</a></span></dd>
+        </dl>
+        <h2 id="letra-e">E</h2>
+        <dl class="glossary">
+          <dt id="encapsulacion">Encapsulación <span class="muted">(encapsular)</span></dt>
+          <dd>Operación de un KEM que, con la clave pública, genera a la vez un secreto compartido aleatorio y un texto cifrado que solo el titular de la clave privada puede desencapsular. <span class="small muted">→ <a href="temas/tema4/index.html#ml-kem">Tema 4</a> · <a href="ejemplos/ml_kem.html">E2</a></span></dd>
+          <dt id="euf-cma">EUF-CMA</dt>
+          <dd>Infalsificabilidad existencial bajo ataque de mensaje elegido: el nivel de seguridad estándar para firmas. El atacante, que puede pedir firmas de mensajes a su elección, no debe poder firmar ningún mensaje nuevo. <span class="small muted">→ <a href="temas/tema1/index.html#modelos">Tema 1</a></span></dd>
+        </dl>
+        <h2 id="letra-f">F</h2>
+        <dl class="glossary">
+          <dt id="fiat-shamir-con-abortos">Fiat–Shamir con abortos <span class="muted">(Fiat–Shamir with aborts)</span></dt>
+          <dd>Técnica de Lyubashevsky para construir firmas en retículos: se descarta y repite cada intento de firma cuya respuesta pueda filtrar información sobre la clave secreta (muestreo por rechazo). Es la base de ML-DSA. <span class="small muted">→ <a href="temas/tema3/index.html#sis-firmas">Tema 3</a> · <a href="ejemplos/ml_dsa.html#rechazo">E3</a></span></dd>
+          <dt id="fips-203-204-y-205">FIPS 203, 204 y 205</dt>
+          <dd>Estándares federales del NIST publicados el 13 de agosto de 2024: ML-KEM (FIPS 203), ML-DSA (FIPS 204) y SLH-DSA (FIPS 205). <span class="small muted">→ <a href="temas/tema4/index.html#proceso-nist">Tema 4</a></span></dd>
+          <dt id="fn-dsa">FN-DSA <span class="muted">(Falcon)</span></dt>
+          <dd>Firma basada en retículos NTRU con el paradigma «hash-and-sign» de GPV. Firmas y claves compactas, pero con muestreo gaussiano en coma flotante, difícil de implementar de forma segura. El NIST la publicará como FIPS 206; a septiembre de 2026 no hay borrador público. <span class="small muted">→ <a href="temas/tema3/index.html#ntru">Tema 3</a> · <a href="temas/tema4/index.html#fn-dsa">Tema 4</a></span></dd>
+        </dl>
+        <h2 id="letra-g">G</h2>
+        <dl class="glossary">
+          <dt id="grover-algoritmo-de">Grover, algoritmo de</dt>
+          <dd>Algoritmo cuántico de búsqueda no estructurada con aceleración cuadrática: encuentra una preimagen entre 2<sup><var>n</var></sup> candidatos con unas 2<sup><var>n</var>/2</sup> evaluaciones. Se paraleliza mal, por lo que AES-128 conserva un margen práctico y AES-256 uno holgado. <span class="small muted">→ <a href="temas/tema1/index.html#grover">Tema 1</a></span></dd>
+        </dl>
+        <h2 id="letra-h">H</h2>
+        <dl class="glossary">
+          <dt id="hqc">HQC <span class="muted">(Hamming Quasi-Cyclic)</span></dt>
+          <dd>KEM basado en códigos cuasicíclicos, elegido por el NIST en marzo de 2025 como alternativa a ML-KEM con una base matemática distinta. Su estándar (previsto como FIPS 207) no tiene aún borrador público. <span class="small muted">→ <a href="temas/tema3/index.html#codigos">Tema 3</a> · <a href="temas/tema4/index.html#hqc">Tema 4</a></span></dd>
+        </dl>
+        <h2 id="letra-i">I</h2>
+        <dl class="glossary">
+          <dt id="ind-cca2">IND-CCA2</dt>
+          <dd>Indistinguibilidad frente a ataques de texto cifrado elegido adaptativos: el nivel de seguridad exigido a un KEM de propósito general. ML-KEM lo alcanza aplicando la transformación FO a un cifrado IND-CPA. <span class="small muted">→ <a href="temas/tema1/index.html#modelos">Tema 1</a></span></dd>
+          <dt id="intercambio-de-claves-hibrido">Intercambio de claves híbrido</dt>
+          <dd>Establecimiento de claves que combina un algoritmo clásico (por ejemplo, X25519) y uno post-cuántico (por ejemplo, ML-KEM-768) mediante una función de derivación, de modo que la clave es segura mientras lo sea cualquiera de los dos. <span class="small muted">→ <a href="temas/tema5/index.html#hibrido">Tema 5</a> · <a href="ejemplos/criptografia_hibrida.html">E4</a></span></dd>
+          <dt id="isogenia">Isogenia</dt>
+          <dd>Aplicación racional entre curvas elípticas que conserva la estructura de grupo. La criptografía de isogenias se apoya en la dificultad de encontrar una isogenia entre dos curvas dadas; SIKE se rompió en 2022, pero CSIDH y SQIsign se basan en problemas distintos. <span class="small muted">→ <a href="temas/tema3/index.html#isogenias">Tema 3</a></span></dd>
+        </dl>
+        <h2 id="letra-k">K</h2>
+        <dl class="glossary">
+          <dt id="kem">KEM <span class="muted">(mecanismo de encapsulamiento de claves)</span></dt>
+          <dd>Primitiva de clave pública con tres algoritmos, generación de claves, encapsulación y desencapsulación, que establece un secreto compartido. Sustituye al intercambio Diffie–Hellman en los protocolos post-cuánticos. <span class="small muted">→ <a href="temas/tema4/index.html#ml-kem">Tema 4</a> · <a href="ejemplos/ml_kem.html">E2</a></span></dd>
+        </dl>
+        <h2 id="letra-l">L</h2>
+        <dl class="glossary">
+          <dt id="lamport-firma-de">Lamport, firma de</dt>
+          <dd>Firma de un solo uso basada únicamente en una función hash: la clave privada son pares de valores aleatorios y firmar revela uno de cada par según los bits del resumen. Firmar dos mensajes con la misma clave permite falsificar. <span class="small muted">→ <a href="temas/tema3/index.html#hash">Tema 3</a></span></dd>
+          <dt id="lll">LLL <span class="muted">(Lenstra–Lenstra–Lovász)</span></dt>
+          <dd>Algoritmo polinómico de reducción de bases de retículos (1982). Encuentra vectores cortos con un factor de aproximación exponencial en la dimensión: rompe instancias pequeñas, no los parámetros estándar. <span class="small muted">→ <a href="temas/tema3/index.html#reticulos">Tema 3</a></span></dd>
+          <dt id="lms-y-xmss">LMS y XMSS</dt>
+          <dd>Firmas basadas en hash con estado, normalizadas en RFC 8554 y RFC 8391 y aprobadas por el NIST en SP 800-208. Muy conservadoras, pero exigen no reutilizar nunca un índice de clave de un solo uso; se usan para firmar firmware. <span class="small muted">→ <a href="temas/tema3/index.html#hash">Tema 3</a> · <a href="temas/tema4/index.html#lms-xmss">Tema 4</a></span></dd>
+          <dt id="lwe">LWE <span class="muted">(Learning With Errors)</span></dt>
+          <dd>Problema de Regev (2005): recuperar un vector secreto <var>s</var> a partir de muestras (<b>A</b>, <b>A</b><var>s</var> + <var>e</var> mod <var>q</var>) con un error pequeño <var>e</var>. Es tan difícil en el caso medio como problemas de retículos en el peor caso. <span class="small muted">→ <a href="temas/tema3/index.html#lwe">Tema 3</a></span></dd>
+        </dl>
+        <h2 id="letra-m">M</h2>
+        <dl class="glossary">
+          <dt id="mayo">MAYO</dt>
+          <dd>Firma multivariante derivada de UOV con claves mucho menores gracias a la técnica de «oil and vinegar» extendida («whipping»). Candidata en la ronda adicional de firmas del NIST. <span class="small muted">→ <a href="temas/tema3/index.html#multivariante">Tema 3</a></span></dd>
+          <dt id="merkle-arbol-de">Merkle, árbol de</dt>
+          <dd>Árbol binario de hashes cuya raíz resume todas las hojas; permite probar que una hoja pertenece al conjunto con log<sub>2</sub>(<var>n</var>) hashes. Convierte muchas claves de un solo uso en una sola clave pública. <span class="small muted">→ <a href="temas/tema3/index.html#hash">Tema 3</a></span></dd>
+          <dt id="ml-dsa">ML-DSA <span class="muted">(Module-Lattice-Based Digital Signature Algorithm)</span></dt>
+          <dd>Firma digital normalizada en FIPS 204, derivada de CRYSTALS-Dilithium. Se basa en Module-LWE y Module-SIS con Fiat–Shamir con abortos. Conjuntos de parámetros ML-DSA-44, 65 y 87 (niveles 2, 3 y 5). <span class="small muted">→ <a href="temas/tema4/index.html#ml-dsa">Tema 4</a> · <a href="ejemplos/ml_dsa.html">E3</a></span></dd>
+          <dt id="ml-kem">ML-KEM <span class="muted">(Module-Lattice-Based Key-Encapsulation Mechanism)</span></dt>
+          <dd>KEM normalizado en FIPS 203, derivado de CRYSTALS-Kyber. Se basa en Module-LWE sobre el anillo Z<sub>3329</sub>[X]/(X<sup>256</sup>+1). Conjuntos ML-KEM-512, 768 y 1024 (niveles 1, 3 y 5). <span class="small muted">→ <a href="temas/tema4/index.html#ml-kem">Tema 4</a> · <a href="ejemplos/ml_kem.html">E2</a></span></dd>
+          <dt id="module-lwe">Module-LWE <span class="muted">(MLWE)</span></dt>
+          <dd>Variante de LWE en la que los elementos son vectores de polinomios de un anillo. Equilibra la eficiencia de Ring-LWE con la flexibilidad de LWE: el nivel de seguridad se ajusta cambiando la dimensión del módulo <var>k</var>. <span class="small muted">→ <a href="temas/tema3/index.html#ring-module-lwe">Tema 3</a></span></dd>
+        </dl>
+        <h2 id="letra-n">N</h2>
+        <dl class="glossary">
+          <dt id="nivel-de-seguridad-nist">Nivel de seguridad NIST <span class="muted">(categorías 1–5)</span></dt>
+          <dd>Escala del NIST para comparar parámetros: las categorías 1, 3 y 5 equivalen a buscar una clave de AES-128, AES-192 y AES-256; las 2 y 4, a encontrar una colisión en SHA-256 y SHA-384. <span class="small muted">→ <a href="temas/tema4/index.html#niveles-seguridad">Tema 4</a></span></dd>
+          <dt id="no-clonacion-teorema-de">No clonación, teorema de</dt>
+          <dd>Resultado de la mecánica cuántica que impide copiar un estado cuántico desconocido. Es la razón por la que un espía no puede duplicar los fotones de QKD sin perturbarlos. <span class="small muted">→ <a href="temas/tema6/index.html#fundamentos">Tema 6</a></span></dd>
+          <dt id="ntru">NTRU</dt>
+          <dd>Familia de criptosistemas de retículos (Hoffstein, Pipher y Silverman, 1996) basada en cocientes de polinomios cortos. Los retículos NTRU sustentan FN-DSA. <span class="small muted">→ <a href="temas/tema3/index.html#ntru">Tema 3</a></span></dd>
+          <dt id="ntt">NTT <span class="muted">(Number Theoretic Transform)</span></dt>
+          <dd>Transformada de Fourier sobre un cuerpo finito que multiplica polinomios en O(<var>n</var> log <var>n</var>). Por eso ML-KEM y ML-DSA eligen <var>q</var> con raíces de la unidad adecuadas (3329 y 8 380 417). <span class="small muted">→ <a href="temas/tema3/index.html#ring-module-lwe">Tema 3</a></span></dd>
+        </dl>
+        <h2 id="letra-p">P</h2>
+        <dl class="glossary">
+          <dt id="pki">PKI <span class="muted">(infraestructura de clave pública)</span></dt>
+          <dd>Conjunto de autoridades, certificados X.509, políticas y mecanismos de revocación que vinculan claves públicas a identidades. Su migración es lenta porque depende de raíces de confianza y de muchos actores. <span class="small muted">→ <a href="temas/tema2/index.html#pki-x509">Tema 2</a></span></dd>
+        </dl>
+        <h2 id="letra-q">Q</h2>
+        <dl class="glossary">
+          <dt id="qber">QBER <span class="muted">(Quantum Bit Error Rate)</span></dt>
+          <dd>Tasa de error de bit observada en QKD tras la criba. Un espía que intercepta y reenvía todos los fotones en BB84 introduce un QBER del 25 %; por encima de un 11 %, BB84 con postprocesado unidireccional no puede extraer clave segura. <span class="small muted">→ <a href="temas/tema6/index.html#seguridad">Tema 6</a> · <a href="ejemplos/qkd_bb84.html">E5</a></span></dd>
+          <dt id="qkd">QKD <span class="muted">(distribución cuántica de claves)</span></dt>
+          <dd>Establecimiento de claves cuya seguridad se apoya en leyes físicas: cualquier medida de un espía perturba el estado cuántico y se detecta. Necesita hardware específico y un canal clásico autenticado. <span class="small muted">→ <a href="temas/tema6/index.html">Tema 6</a></span></dd>
+        </dl>
+        <h2 id="letra-r">R</h2>
+        <dl class="glossary">
+          <dt id="rechazo-implicito">Rechazo implícito <span class="muted">(implicit rejection)</span></dt>
+          <dd>Comportamiento de ML-KEM ante un texto cifrado inválido: en lugar de devolver un error, devuelve un secreto pseudoaleatorio derivado de un valor secreto, lo que impide ataques de texto cifrado elegido. <span class="small muted">→ <a href="temas/tema4/index.html#ml-kem">Tema 4</a></span></dd>
+          <dt id="reticulo">Retículo <span class="muted">(lattice)</span></dt>
+          <dd>Conjunto de todas las combinaciones enteras de <var>n</var> vectores linealmente independientes de ℝ<sup><var>n</var></sup>. Un mismo retículo tiene infinitas bases; con una base «mala» los problemas SVP y CVP son difíciles. <span class="small muted">→ <a href="temas/tema3/index.html#reticulos">Tema 3</a></span></dd>
+          <dt id="ring-lwe">Ring-LWE <span class="muted">(RLWE)</span></dt>
+          <dd>Variante de LWE sobre un anillo de polinomios como Z<sub>q</sub>[X]/(X<sup>n</sup>+1); reduce el tamaño de las claves de cuadrático a lineal en <var>n</var>. <span class="small muted">→ <a href="temas/tema3/index.html#ring-module-lwe">Tema 3</a></span></dd>
+        </dl>
+        <h2 id="letra-s">S</h2>
+        <dl class="glossary">
+          <dt id="shor-algoritmo-de">Shor, algoritmo de</dt>
+          <dd>Algoritmo cuántico (1994) que encuentra el periodo de una función en tiempo polinómico. Con él se factorizan enteros y se calculan logaritmos discretos, lo que rompe RSA, Diffie–Hellman y la criptografía de curva elíptica. <span class="small muted">→ <a href="temas/tema1/index.html#shor">Tema 1</a> · <a href="ejemplos/algoritmo_shor.html">E1</a></span></dd>
+          <dt id="sis">SIS <span class="muted">(Short Integer Solution)</span></dt>
+          <dd>Problema de encontrar un vector entero corto no nulo <var>z</var> con <b>A</b><var>z</var> = 0 mod <var>q</var>. Su versión en módulos sustenta la infalsificabilidad de ML-DSA. <span class="small muted">→ <a href="temas/tema3/index.html#sis-firmas">Tema 3</a></span></dd>
+          <dt id="slh-dsa">SLH-DSA <span class="muted">(SPHINCS+)</span></dt>
+          <dd>Firma basada en hash sin estado, normalizada en FIPS 205. Combina firmas de pocos usos (FORS) con un hiperárbol de firmas de un solo uso. Su seguridad depende solo de la función hash; las firmas son grandes, de 7 856 a 49 856 bytes. <span class="small muted">→ <a href="temas/tema3/index.html#hash">Tema 3</a> · <a href="temas/tema4/index.html#slh-dsa">Tema 4</a></span></dd>
+          <dt id="svp">SVP <span class="muted">(Shortest Vector Problem)</span></dt>
+          <dd>Problema del vector más corto: encontrar el vector no nulo más corto de un retículo. Sus versiones aproximadas son la base de la seguridad de LWE y SIS. <span class="small muted">→ <a href="temas/tema3/index.html#reticulos">Tema 3</a></span></dd>
+        </dl>
+        <h2 id="letra-t">T</h2>
+        <dl class="glossary">
+          <dt id="tls-1-3">TLS 1.3</dt>
+          <dd>Versión actual del protocolo de seguridad de la web (RFC 8446). Su intercambio de claves efímero en el primer mensaje es donde se introduce el grupo híbrido X25519MLKEM768; la autenticación con certificados es la parte de migración más lenta. <span class="small muted">→ <a href="temas/tema2/index.html#tls13">Tema 2</a></span></dd>
+          <dt id="transformacion-fo">Transformación FO <span class="muted">(Fujisaki–Okamoto)</span></dt>
+          <dd>Construcción genérica que convierte un cifrado de clave pública IND-CPA en un KEM IND-CCA2 volviendo a cifrar durante la desencapsulación y comparando el resultado. <span class="small muted">→ <a href="temas/tema4/index.html#ml-kem">Tema 4</a> · <a href="ejemplos/ml_kem.html">E2</a></span></dd>
+        </dl>
+        <h2 id="letra-u">U</h2>
+        <dl class="glossary">
+          <dt id="uov">UOV <span class="muted">(Unbalanced Oil and Vinegar)</span></dt>
+          <dd>Esquema de firma multivariante (1999) cuya versión desequilibrada ha resistido el criptoanálisis. Firmas muy cortas y claves públicas grandes; candidato en la ronda adicional de firmas del NIST. <span class="small muted">→ <a href="temas/tema3/index.html#multivariante">Tema 3</a></span></dd>
+        </dl>
+        <h2 id="letra-x">X</h2>
+        <dl class="glossary">
+          <dt id="x25519mlkem768">X25519MLKEM768</dt>
+          <dd>Grupo híbrido de TLS 1.3 (código 0x11EC) que concatena un intercambio X25519 y un ML-KEM-768. Es el intercambio post-cuántico negociado por defecto en los principales navegadores y en OpenSSL desde la versión 3.5. <span class="small muted">→ <a href="temas/tema2/index.html#tls13">Tema 2</a> · <a href="temas/tema5/index.html#hibrido">Tema 5</a></span></dd>
+        </dl>
+      </article>
+      <nav class="pager" aria-label="Paginación"></nav>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <div class="footer-links">
+        <a href="glosario.html">Glosario</a>
+        <a href="recursos/index.html">Recursos</a>
+        <a href="https://github.com/dasobral/curso-pqc">Código fuente</a>
+        <a href="https://dasobral.github.io/">dasobral.github.io</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

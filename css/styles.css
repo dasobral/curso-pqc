@@ -69,6 +69,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 3rem 0; }
 /* ---------- Layout: course nav · content · on-this-page ---------- */
 .layout { max-width: var(--frame); margin-inline: auto; padding-inline: clamp(1rem, 3vw, 3rem); display: grid; grid-template-columns: clamp(230px, 16vw, 290px) minmax(0, 1fr) clamp(210px, 14vw, 260px); gap: clamp(1.5rem, 3.2vw, 4.5rem); }
 .layout.no-toc { grid-template-columns: clamp(230px, 16vw, 290px) minmax(0, 1fr); }
+.layout.no-toc { --wide: none; --measure: none; }
 .layout.wide { grid-template-columns: minmax(0, 1fr); max-width: 1320px; }
 .course-nav, .toc { position: sticky; top: var(--header-h); align-self: start; max-height: calc(100vh - var(--header-h)); overflow-y: auto; padding-block: 2.5rem 3rem; font-size: .86rem; line-height: 1.45; scrollbar-width: thin; }
 .course-nav:empty, .toc:empty { visibility: hidden; }
@@ -93,7 +94,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 3rem 0; }
 .content { min-width: 0; padding-block: 2.5rem 5rem; }
 .content > * { max-width: var(--measure); }
 .content > .prose, .content > .pager, .content > .page-head { max-width: var(--wide); }
-.content > .full, .content > .card-grid, .content > .hero-home, .content > .section-intro + .card-grid, .layout.wide .content > * { max-width: none; }
+.layout.wide .content > * { max-width: none; }
 .prose > * { max-width: var(--wide); }
 
 /* ---------- Page head ---------- */

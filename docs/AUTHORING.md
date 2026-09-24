@@ -38,9 +38,9 @@ del elemento en `course-data.js`. Sustituye `{R}` por la misma ruta relativa. Ma
   <title>Tema 1 · Criptografía moderna y la amenaza cuántica — Curso PQC</title>
   <meta name="description" content="Una frase que resuma la página.">
   <link rel="icon" href="{R}assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{R}css/styles.css?v=2026092403">
-  <script src="{R}js/course-data.js?v=2026092403" defer></script>
-  <script src="{R}js/course.js?v=2026092403" defer></script>
+  <link rel="stylesheet" href="{R}css/styles.css?v=2026092404">
+  <script src="{R}js/course-data.js?v=2026092404" defer></script>
+  <script src="{R}js/course.js?v=2026092404" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>

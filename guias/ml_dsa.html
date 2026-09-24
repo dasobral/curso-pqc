@@ -6,9 +6,9 @@
   <title>L3 · Firmas ML-DSA y SLH-DSA — Curso PQC</title>
   <meta name="description" content="Laboratorio de firmas post-cuánticas: Fiat–Shamir con abortos en Python, ML-DSA y SLH-DSA con OpenSSL 3.5 y liboqs-python, firmas de Lamport y árboles de Merkle, falsificación por reutilización de claves de un solo uso y comparativa de tamaños y rendimiento.">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/styles.css">
-  <script src="../js/course-data.js" defer></script>
-  <script src="../js/course.js" defer></script>
+  <link rel="stylesheet" href="../css/styles.css?v=2026092402">
+  <script src="../js/course-data.js?v=2026092402" defer></script>
+  <script src="../js/course.js?v=2026092402" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -45,7 +45,7 @@
         <h1>Firmas <em>ML-DSA y SLH-DSA</em></h1>
         <p class="lede">Del mecanismo a la herramienta: medirás la tasa de rechazo de Fiat–Shamir con abortos, firmarás con ML-DSA y SLH-DSA reales en OpenSSL y liboqs, construirás firmas de Lamport y un árbol de Merkle para entender las firmas basadas en hash, y falsificarás una firma reutilizando una clave de un solo uso.</p>
         <dl class="page-meta">
-          <div><dt>Duración</dt><dd>3 h (+ memoria)</dd></div>
+          <div><dt>Duración</dt><dd>3 h (+ redacción de tus notas)</dd></div>
           <div><dt>Nivel</dt><dd>Intermedio</dd></div>
           <div><dt>Requisitos</dt><dd>Python 3.12+, OpenSSL ≥ 3.5, línea de órdenes</dd></div>
           <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
@@ -55,7 +55,7 @@
       <article class="prose">
         <h2 id="objetivos"><span class="sec">L3.0</span>Objetivos</h2>
         <ul>
-          <li>Relacionar los parámetros de un esquema Fiat–Shamir con abortos (<var>γ</var><sub>1</sub>, <var>γ</var><sub>2</sub>, <var>β</var>) con su tasa de rechazo, midiéndola.</li>
+          <li>Relacionar los parámetros de un esquema Fiat–Shamir con abortos (\(\gamma_1\), \(\gamma_2\), \(\beta\)) con su tasa de rechazo, midiéndola.</li>
           <li>Generar claves, firmar y verificar con ML-DSA (FIPS 204) y SLH-DSA (FIPS 205) usando OpenSSL 3.5 y liboqs-python, incluidos contextos, firma determinista y claves en formato semilla.</li>
           <li>Implementar firmas de Lamport y un árbol de Merkle, y demostrar por qué reutilizar una clave de un solo uso es catastrófico.</li>
           <li>Comparar tamaños y tiempos de ML-DSA, SLH-DSA, Falcon/FN-DSA, Ed25519, ECDSA y RSA, y razonar sobre su impacto en certificados y protocolos.</li>
@@ -87,7 +87,7 @@ $ export PATH=$HOME/ossl35/bin:$PATH LD_LIBRARY_PATH=$HOME/ossl35/lib</code></pr
         <div class="callout"><span class="callout-title">Punto de control 0</span><p><code>openssl list -signature-algorithms</code> muestra <code>ML-DSA-44/65/87</code> y las doce variantes de SLH-DSA, y la importación de <code>oqs</code> imprime <code>0.16.0 0.16.0.1</code> (o versiones posteriores).</p></div>
 
         <h2 id="parte-a"><span class="sec">L3.2</span>Parte A · Fiat–Shamir con abortos en miniatura</h2>
-        <p>El programa siguiente implementa el núcleo de ML-DSA sin compresión de <var>t</var> ni pistas: la clave pública es <var>t</var> = <b>A</b><var>s</var><sub>1</sub> + <var>s</var><sub>2</sub> completa y el verificador comprueba <span class="math">HighBits(<b>A</b><var>z</var> − <var>c</var><var>t</var>) = <var>w</var><sub>1</sub></span>, que es correcto gracias al segundo rechazo. Usa <var>q</var> real, <var>n</var> = 64 (para que Python puro sea rápido) y SHAKE-256 de <code>hashlib</code>. La versión con <code>Power2Round</code> y pistas está en el ejemplo <a href="../ejemplos/ml_dsa.html">E3</a>.</p>
+        <p>El programa siguiente implementa el núcleo de ML-DSA sin compresión de \(\mathbf{t}\) ni pistas: la clave pública es \(\mathbf{t} = \mathbf{A}\mathbf{s}_1 + \mathbf{s}_2\) completa y el verificador comprueba \(\operatorname{HighBits}(\mathbf{A}\mathbf{z} - c\mathbf{t}) = \mathbf{w}_1\), que es correcto gracias al segundo rechazo. Usa \(q\) real, \(n = 64\) (para que Python puro sea rápido) y SHAKE-256 de <code>hashlib</code>. La versión con <code>Power2Round</code> y pistas está en el ejemplo <a href="../ejemplos/ml_dsa.html">E3</a>.</p>
         <pre data-lang="python"><code>"""Fiat–Shamir con abortos en miniatura (estructura de ML-DSA sin compresión de t ni pistas).
 
 Mide cuántos intentos necesita la firma en función de γ1, γ2 y β = τ·η,
@@ -237,12 +237,12 @@ if __name__ == "__main__":
         <h3>Tareas</h3>
         <ol>
           <li>Ejecuta el programa y comprueba que todas las firmas verifican y que el mensaje alterado no.</li>
-          <li>Añade una fila con <span class="math"><var>γ</var><sub>1</sub> = 2<sup>11</sup></span>. Predice primero el número de intentos con <span class="math">exp(<var>n</var><var>β</var>(<var>ℓ</var>/<var>γ</var><sub>1</sub> + <var>k</var>/<var>γ</var><sub>2</sub>))</span>. ¿Qué pasa con el tiempo de ejecución?</li>
-          <li>Instrumenta <code>sign</code> para contar por separado los rechazos por <span class="math">‖<var>z</var>‖<sub>∞</sub></span> y por bits bajos. Compara cada tasa con <span class="math">1 − e<sup>−<var>n</var><var>β</var><var>ℓ</var>/<var>γ</var><sub>1</sub></sup></span> y <span class="math">1 − e<sup>−<var>n</var><var>β</var><var>k</var>/<var>γ</var><sub>2</sub></sup></span>.</li>
-          <li>Con 100 firmas, la media observada se desvía del modelo hasta un 15 %. Calcula el intervalo de confianza al 95 % de la media de una geométrica de parámetro <span class="math"><var>p</var> = 1/predicho</span> con 100 muestras y comprueba si las desviaciones son compatibles. Repite con 1 000 firmas en una fila.</li>
-          <li>Elimina el primer rechazo (publica siempre <var>z</var>) y guarda 2 000 firmas. Para un coeficiente fijo <var>i</var> de <var>z</var><sub>0</sub>, calcula el máximo de <span class="math">|<var>z<sub>i</sub></var>|</span> y compáralo con <var>γ</var><sub>1</sub>. Explica en la memoria qué información revela sobre <span class="math">(<var>c</var><var>s</var><sub>1</sub>)<sub><var>i</var></sub></span> (el experimento 1D de <a href="../ejemplos/ml_dsa.html">E3</a> es la versión simplificada).</li>
+          <li>Añade una fila con \(\gamma_1 = 2^{11}\). Predice primero el número de intentos con \(\exp\bigl(n\beta(\ell/\gamma_1 + k/\gamma_2)\bigr)\). ¿Qué pasa con el tiempo de ejecución?</li>
+          <li>Instrumenta <code>sign</code> para contar por separado los rechazos por \(\lVert \mathbf{z} \rVert_\infty\) y por bits bajos. Compara cada tasa con \(1 - e^{-n\beta\ell/\gamma_1}\) y \(1 - e^{-n\beta k/\gamma_2}\).</li>
+          <li>Con 100 firmas, la media observada se desvía del modelo hasta un 15 %. Calcula el intervalo de confianza al 95 % de la media de una geométrica de parámetro \(p = 1/\text{predicho}\) con 100 muestras y comprueba si las desviaciones son compatibles. Repite con 1 000 firmas en una fila.</li>
+          <li>Elimina el primer rechazo (publica siempre \(\mathbf{z}\)) y guarda 2 000 firmas. Para un coeficiente fijo \(i\) de \(z_0\), calcula el máximo de \(\lvert z_i \rvert\) y compáralo con \(\gamma_1\). Explica en tu cuaderno qué información revela sobre \((c\mathbf{s}_1)_i\) (el experimento 1D de <a href="../ejemplos/ml_dsa.html">E3</a> es la versión simplificada).</li>
         </ol>
-        <div class="callout"><span class="callout-title">Punto de control A</span><p>Tabla con al menos siete configuraciones (las seis dadas y <span class="math"><var>γ</var><sub>1</sub> = 2<sup>11</sup></span>), intentos observados frente a predichos, y una frase que explique por qué <span class="math"><var>γ</var><sub>2</sub> = (<var>q</var>−1)/32</span> rechaza menos que <span class="math">(<var>q</var>−1)/88</span> y qué se paga a cambio.</p></div>
+        <div class="callout"><span class="callout-title">Punto de control A</span><p>Tabla con al menos siete configuraciones (las seis dadas y \(\gamma_1 = 2^{11}\)), intentos observados frente a predichos, y una frase que explique por qué \(\gamma_2 = (q-1)/32\) rechaza menos que \((q-1)/88\) y qué se paga a cambio.</p></div>
 
         <h2 id="parte-b"><span class="sec">L3.3</span>Parte B · ML-DSA y SLH-DSA con OpenSSL</h2>
         <h3>B.1 Claves, firma y verificación</h3>
@@ -303,8 +303,8 @@ $ wc -c semilla.key seedonly.key
         <ul>
           <li><code>-pkeyopt context-string:…</code> fija la cadena de contexto (hasta 255 bytes) de FIPS 204; el verificador debe usar la misma.</li>
           <li><code>-pkeyopt deterministic:1</code> activa la variante determinista (rnd = 32 bytes a cero): dos firmas del mismo mensaje son idénticas. Sin ella (por defecto, <em>hedged</em>), cada firma es distinta.</li>
-          <li><code>-pkeyopt hexseed:…</code> deriva la clave de una semilla <var>ξ</var> dada. Con la semilla del ejemplo, el SHA-256 de tu clave pública PEM debe empezar por <code>e8c997db</code>: es un vector de prueba reproducible.</li>
-          <li><code>-provparam ml-dsa.output_formats=seed-only</code> guarda solo la semilla (128 bytes de PEM frente a 3 613): la clave expandida se recalcula al cargarla. OpenSSL documenta además el parámetro <code>mu</code> (firmar un <var>μ</var> calculado fuera) y <code>message-encoding:0</code> (firmar <var>M</var>′ sin formatear, solo para pruebas) [4].</li>
+          <li><code>-pkeyopt hexseed:…</code> deriva la clave de una semilla \(\xi\) dada. Con la semilla del ejemplo, el SHA-256 de tu clave pública PEM debe empezar por <code>e8c997db</code>: es un vector de prueba reproducible.</li>
+          <li><code>-provparam ml-dsa.output_formats=seed-only</code> guarda solo la semilla (128 bytes de PEM frente a 3 613): la clave expandida se recalcula al cargarla. OpenSSL documenta además el parámetro <code>mu</code> (firmar un \(\mu\) calculado fuera) y <code>message-encoding:0</code> (firmar \(M'\) sin formatear, solo para pruebas) [4].</li>
         </ul>
 
         <h3>B.3 SLH-DSA y certificados</h3>
@@ -404,7 +404,7 @@ SLH_DSA_PURE_SHA2_128F: pk 32 B, firma 17088 B
             <text x="260" y="222" text-anchor="middle" class="svg-muted">hoja usada (índice 1)</text>
             <text x="360" y="242" text-anchor="middle" class="svg-muted">firma = (1, firma de Lamport con sk1, pk1, camino [n0, H(n2 ‖ n3)]) · verde: recalculado · ámbar: camino enviado</text>
           </svg>
-          <figcaption><b>Figura L3.1.</b> Esquema de Merkle con 2<sup><var>h</var></sup> = 4 claves de un solo uso. El verificador recalcula la hoja a partir de <var>pk</var><sub>1</sub>, sube con los hermanos del camino de autenticación y compara con la raíz. El firmante debe recordar qué índices ha usado: ese es el <em>estado</em>.</figcaption>
+          <figcaption><b>Figura L3.1.</b> Esquema de Merkle con \(2^{h} = 4\) claves de un solo uso. El verificador recalcula la hoja a partir de \(\mathit{pk}_1\), sube con los hermanos del camino de autenticación y compara con la raíz. El firmante debe recordar qué índices ha usado: ese es el <em>estado</em>.</figcaption>
         </figure>
         <pre data-lang="python"><code>"""Firmas de un solo uso de Lamport, árbol de Merkle y falsificación por reutilización.
 
@@ -543,7 +543,7 @@ Reutilizar UNA clave de Lamport k veces:
   k=4:  32 bits fijados (esperado ≈ 32) → sin éxito en 200000 intentos (coste esperado ≈ 2^32)
   k=5:  17 bits fijados (esperado ≈ 16) → FALSIFICADA en 79424 intentos (1.57 s): 'Transferir 1000000 EUR a Mallory #79423' · verifica: True
   k=6:   8 bits fijados (esperado ≈ 8) → FALSIFICADA en 72 intentos (0.00 s): 'Transferir 1000000 EUR a Mallory #71' · verifica: True</code></pre>
-        <p>Tras <var>k</var> firmas con la misma clave, una posición queda «fijada» (solo se conoce una preimagen) si los <var>k</var> resúmenes coinciden en ese bit, lo que ocurre con probabilidad <span class="math">2<sup>1−<var>k</var></sup></span>; en media quedan <span class="math">256·2<sup>1−<var>k</var></sup></span> bits fijados y el coste de falsificar es <span class="math">≈ 2<sup>256·2<sup>1−<var>k</var></sup></sup></span> hashes. Con cinco firmas, 2<sup>17</sup>: segundos en un portátil. Los mensajes legítimos del programa son fijos, así que el número de bits fijados es reproducible; el mensaje falsificado verifica con la clave pública original.</p>
+        <p>Tras \(k\) firmas con la misma clave, una posición queda «fijada» (solo se conoce una preimagen) si los \(k\) resúmenes coinciden en ese bit, lo que ocurre con probabilidad \(2^{1-k}\); en media quedan \(256 \cdot 2^{1-k}\) bits fijados y el coste de falsificar es \(\approx 2^{256 \cdot 2^{1-k}}\) hashes. Con cinco firmas, \(2^{17}\): segundos en un portátil. Los mensajes legítimos del programa son fijos, así que el número de bits fijados es reproducible; el mensaje falsificado verifica con la clave pública original.</p>
 
         <h3>El estado en un esquema real: XMSS con liboqs</h3>
         <pre data-lang="python"><code>"""XMSS (RFC 8391) con liboqs-python: el estado de la clave privada en acción."""
@@ -569,9 +569,9 @@ clave privada exportada: 1377 B</code></pre>
 
         <h3>Tareas</h3>
         <ol>
-          <li>Ejecuta <code>lamport_merkle.py</code> y explica en la memoria la columna «bits fijados» a partir del razonamiento anterior.</li>
+          <li>Ejecuta <code>lamport_merkle.py</code> y explica en tu cuaderno la columna «bits fijados» a partir del razonamiento anterior.</li>
           <li>Modifica <code>MerkleSigner</code> para simular una restauración de copia de seguridad: guarda <code>self.next</code>, firma dos mensajes, restaura el valor guardado y firma otros dos. Demuestra con <code>forge</code> que las firmas repetidas sobre la misma hoja reducen la seguridad como en la tabla.</li>
-          <li>Sustituye Lamport por Winternitz con <var>w</var> = 16 (cadenas de hash de longitud 15 sobre dígitos hexadecimales, más una suma de control). Mide el tamaño de firma y explica por qué una sola reutilización ya permite falsificar dígitos mayores que los firmados si se omite la suma de control.</li>
+          <li>Sustituye Lamport por Winternitz con \(w = 16\) (cadenas de hash de longitud 15 sobre dígitos hexadecimales, más una suma de control). Mide el tamaño de firma y explica por qué una sola reutilización ya permite falsificar dígitos mayores que los firmados si se omite la suma de control.</li>
           <li>Calcula cuántas firmas por segundo durante cuántos años permite XMSS de altura 20, y por qué SLH-DSA, que no tiene estado, necesita firmas mucho mayores (hiperárbol de altura 63–68 y la firma de pocos usos FORS).</li>
         </ol>
         <div class="callout danger"><span class="callout-title">Firmas con estado en producción</span><p>En LMS y XMSS, firmar dos mensajes con el mismo índice rompe la seguridad del esquema. El estado se pierde de formas banales: restaurar una copia de seguridad o una instantánea de máquina virtual, clonar un contenedor con la clave, ejecutar dos firmantes en paralelo sin repartir los índices, o que el proceso caiga entre firmar y guardar el contador. Por eso NIST SP 800-208 [9] limita su uso a casos con pocas firmas y control estricto de la clave (típicamente, firma de firmware), y exige generar las claves y firmar dentro de módulos criptográficos hardware validados FIPS 140 de nivel 3 o superior, que no permitan exportar la clave privada ni siquiera cifrada. La regla de implementación es: actualizar el estado en almacenamiento no volátil <em>antes</em> de devolver la firma.</p></div>
@@ -687,43 +687,45 @@ SLH-DSA-SHA2-128f        50  17371  17088</code></pre>
         <h3>Tareas</h3>
         <ol>
           <li>Repite E.1–E.3 en tu máquina y construye la misma tabla. Añade ML-DSA con <code>openssl speed -multi 4</code> y comenta la escalabilidad.</li>
-          <li>Estima el aumento de bytes en un <em>handshake</em> TLS 1.3 que envía certificado de hoja + intermedio y una firma CertificateVerify, al pasar de ECDSA P-256 a ML-DSA-44 y a ML-DSA-65. (Con las cifras de la tabla: <span class="math">2·3 987 + 2 420 − (2·392 + 72) ≈ 9,5</span> kB para ML-DSA-44; los certificados reales llevan extensiones y SCT que añaden más). ¿Cuántos segmentos TCP adicionales supone con MSS = 1 460 y una ventana inicial de 10 segmentos?</li>
+          <li>Estima el aumento de bytes en un <em>handshake</em> TLS 1.3 que envía certificado de hoja + intermedio y una firma CertificateVerify, al pasar de ECDSA P-256 a ML-DSA-44 y a ML-DSA-65. (Con las cifras de la tabla: \(2 \cdot 3\,987 + 2\,420 - (2 \cdot 392 + 72) \approx 9{,}5\) kB para ML-DSA-44; los certificados reales llevan extensiones y SCT que añaden más). ¿Cuántos segmentos TCP adicionales supone con MSS = 1 460 y una ventana inicial de 10 segmentos?</li>
           <li>Un servidor TLS firma una vez por conexión. ¿Cuántas conexiones por segundo por núcleo soporta con ML-DSA-65 frente a Ed25519, contando solo la firma? ¿Y un sistema de actualizaciones de firmware que firma un fichero al día con SLH-DSA-SHA2-128s?</li>
         </ol>
 
         <h2 id="parte-f"><span class="sec">L3.7</span>Parte F · Preguntas de diseño</h2>
         <p>Responde razonadamente (entre 100 y 250 palabras cada una), citando la sección de FIPS 204/205 o SP 800-208 que corresponda.</p>
         <ol>
-          <li><strong>Puro frente a <em>pre-hash</em>.</strong> FIPS 204 define ML-DSA (firma <span class="math"><var>M</var>′ = 0 ‖ |ctx| ‖ ctx ‖ <var>M</var></span>) y HashML-DSA (firma <span class="math">1 ‖ |ctx| ‖ ctx ‖ OID ‖ PH(<var>M</var>)</span>), y dice que en general es preferible la versión pura (§5.4). ¿Qué propiedad de seguridad añade el hash de la clave pública <var>tr</var> dentro de <var>μ</var>, y cuál se pierde al pre-resumir con PH? ¿Para qué sirve el primer byte, 0 o 1? ¿Qué alternativa ofrece el cálculo externo de <var>μ</var> (algoritmo 7, línea 6; parámetro <code>mu</code> de OpenSSL) para un HSM que no puede recibir el mensaje entero?</li>
+          <li><strong>Puro frente a <em>pre-hash</em>.</strong> FIPS 204 define ML-DSA (firma \(M' = 0 \parallel \lvert \mathit{ctx} \rvert \parallel \mathit{ctx} \parallel M\)) y HashML-DSA (firma \(1 \parallel \lvert \mathit{ctx} \rvert \parallel \mathit{ctx} \parallel \mathrm{OID} \parallel \mathrm{PH}(M)\)), y dice que en general es preferible la versión pura (§5.4). ¿Qué propiedad de seguridad añade el hash de la clave pública \(\mathit{tr}\) dentro de \(\mu\), y cuál se pierde al pre-resumir con PH? ¿Para qué sirve el primer byte, 0 o 1? ¿Qué alternativa ofrece el cálculo externo de \(\mu\) (algoritmo 7, línea 6; parámetro <code>mu</code> de OpenSSL) para un HSM que no puede recibir el mensaje entero?</li>
           <li><strong>Cadenas de contexto.</strong> Propón un esquema de contextos para una organización que usa la misma clave ML-DSA para firmar documentos PDF y tokens de autenticación. ¿Qué ataque evita? ¿Por qué FIPS 204 recomienda, aun así, no usar una misma clave para ML-DSA y HashML-DSA?</li>
           <li><strong>Determinista frente a <em>hedged</em>.</strong> Resume los argumentos de FIPS 204 §3.4. ¿En qué plataforma elegirías la variante determinista? ¿Por qué la variante <em>hedged</em> no depende de que el generador aleatorio sea bueno para ser segura?</li>
           <li><strong>Estado en LMS/XMSS.</strong> Diseña el procedimiento de firma de firmware de un fabricante con LMS o XMSS: dónde se guarda la clave, cómo se reserva el índice, qué pasa con las copias de seguridad y cómo se recupera un fallo a mitad de firma. ¿Cuándo preferirías SLH-DSA pese a su tamaño?</li>
           <li><strong>Elección de algoritmo.</strong> Para cada caso, elige esquema y conjunto de parámetros y justifícalo con las medidas de la parte E: (a) certificados de servidores web, (b) raíz de una PKI con 25 años de vida, (c) firma de paquetes de una distribución Linux, (d) tarjeta inteligente con 8 KiB de RAM.</li>
         </ol>
 
-        <h2 id="entregables"><span class="sec">L3.8</span>Entregables</h2>
+        <h2 id="entregables"><span class="sec">L3.8</span>Resultado final</h2>
+        <p>Al terminar deberías tener reunido lo siguiente, en tu propio cuaderno de laboratorio (Markdown, Jupyter o PDF) y en una carpeta de trabajo:</p>
         <ul>
-          <li>Memoria en PDF (8–12 páginas) con: tabla y análisis de la parte A (incluido el experimento sin rechazo), transcripciones de las partes B y C con los puntos de control, análisis de la falsificación de Lamport y de la restauración de estado (parte D), tabla de rendimiento y tamaños de tu máquina con el cálculo del <em>handshake</em> (parte E), y respuestas a la parte F.</li>
-          <li>Repositorio o ZIP con el código modificado (<code>fs_aborts.py</code>, <code>lamport_merkle.py</code> con la restauración de estado y, opcionalmente, Winternitz), los scripts de OpenSSL y un <code>README</code> con las versiones exactas (<code>openssl version</code>, <code>python --version</code>, <code>oqs.oqs_version()</code>).</li>
-          <li>Los ficheros <code>msg.txt</code>, <code>mldsa65.pub</code>, <code>msg.sig</code> y <code>ctx.sig</code> de la parte B, para que el profesor pueda verificarlos.</li>
+          <li>Notas con: tabla y análisis de la parte A (incluido el experimento sin rechazo), transcripciones de las partes B y C con los puntos de control, análisis de la falsificación de Lamport y de la restauración de estado (parte D), tabla de rendimiento y tamaños de tu máquina con el cálculo del <em>handshake</em> (parte E), y respuestas a la parte F.</li>
+          <li>Un repositorio o carpeta con el código modificado (<code>fs_aborts.py</code>, <code>lamport_merkle.py</code> con la restauración de estado y, opcionalmente, Winternitz), los scripts de OpenSSL y un <code>README</code> con las versiones exactas (<code>openssl version</code>, <code>python --version</code>, <code>oqs.oqs_version()</code>).</li>
+          <li>Los ficheros <code>msg.txt</code>, <code>mldsa65.pub</code>, <code>msg.sig</code> y <code>ctx.sig</code> de la parte B, para que puedas volver a verificarlos más adelante (o con otra herramienta).</li>
         </ul>
 
-        <h2 id="rubrica"><span class="sec">L3.9</span>Rúbrica de evaluación</h2>
+        <h2 id="rubrica"><span class="sec">L3.9</span>Autoevaluación</h2>
+        <p>Usa esta tabla para revisar tu propio trabajo: localiza en qué columna queda cada parte y, si alguna cae en «Revisar», vuelve a la sección correspondiente (L3.2 a L3.7), repite sus tareas y comprueba de nuevo los puntos de control.</p>
         <div class="table-wrap"><table>
-          <caption>Evaluación sobre 10 puntos</caption>
-          <thead><tr><th>Criterio</th><th class="num">Peso</th><th>Excelente</th><th>Suficiente</th><th>Insuficiente</th></tr></thead>
+          <caption>Criterios de autoevaluación</caption>
+          <thead><tr><th>Criterio</th><th>Dominado</th><th>Suficiente</th><th>Revisar</th></tr></thead>
           <tbody>
-            <tr><th>A · Rechazo</th><td class="num">2,0</td><td>Tabla completa, tasas separadas por causa, intervalo de confianza correcto y fuga sin rechazo explicada con datos</td><td>Tabla completa y comparación con el modelo</td><td>Faltan configuraciones o no se compara con el modelo</td></tr>
-            <tr><th>B/C · Herramientas</th><td class="num">2,0</td><td>Todos los puntos de control, cadena de certificados e interoperabilidad OpenSSL–liboqs comprobada</td><td>Firma, verificación, contexto y firma determinista correctos</td><td>Transcripciones incompletas o sin comprobar fallos</td></tr>
-            <tr><th>D · Hash y estado</th><td class="num">2,5</td><td>Falsificación reproducida y explicada, restauración de estado demostrada, Winternitz implementado</td><td>Falsificación reproducida y bits fijados explicados</td><td>Solo se ejecuta el código dado</td></tr>
-            <tr><th>E · Medidas</th><td class="num">1,5</td><td>Tabla propia, cálculo del <em>handshake</em> con segmentos TCP y discusión de escalabilidad</td><td>Tabla propia y cálculo de bytes</td><td>Se copian las cifras de la guía</td></tr>
-            <tr><th>F · Diseño</th><td class="num">1,5</td><td>Respuestas precisas, con referencias a secciones concretas de los estándares</td><td>Respuestas correctas sin referencias</td><td>Respuestas vagas o erróneas</td></tr>
-            <tr><th>Presentación</th><td class="num">0,5</td><td>Memoria clara, versiones documentadas, código reproducible</td><td>Memoria legible</td><td>Desordenada o sin versiones</td></tr>
+            <tr><th>A · Rechazo</th><td>Tabla completa, tasas separadas por causa, intervalo de confianza correcto y fuga sin rechazo explicada con datos</td><td>Tabla completa y comparación con el modelo</td><td>Faltan configuraciones o no se compara con el modelo</td></tr>
+            <tr><th>B/C · Herramientas</th><td>Todos los puntos de control, cadena de certificados e interoperabilidad OpenSSL–liboqs comprobada</td><td>Firma, verificación, contexto y firma determinista correctos</td><td>Transcripciones incompletas o sin comprobar fallos</td></tr>
+            <tr><th>D · Hash y estado</th><td>Falsificación reproducida y explicada, restauración de estado demostrada, Winternitz implementado</td><td>Falsificación reproducida y bits fijados explicados</td><td>Solo se ejecuta el código dado</td></tr>
+            <tr><th>E · Medidas</th><td>Tabla propia, cálculo del <em>handshake</em> con segmentos TCP y discusión de escalabilidad</td><td>Tabla propia y cálculo de bytes</td><td>Se copian las cifras de la guía</td></tr>
+            <tr><th>F · Diseño</th><td>Respuestas precisas, con referencias a secciones concretas de los estándares</td><td>Respuestas correctas sin referencias</td><td>Respuestas vagas o erróneas</td></tr>
+            <tr><th>Presentación</th><td>Notas claras, versiones documentadas, código reproducible</td><td>Notas legibles</td><td>Desordenada o sin versiones</td></tr>
           </tbody>
         </table></div>
 
         <aside class="key-points"><span class="kp-title">Ideas clave</span><ul>
-          <li>La tasa de rechazo de ML-DSA sigue el modelo <span class="math">exp(<var>n</var><var>β</var>(<var>ℓ</var>/<var>γ</var><sub>1</sub> + <var>k</var>/<var>γ</var><sub>2</sub>))</span>: agrandar <var>γ</var> reduce intentos pero agranda la firma o reduce la seguridad.</li>
+          <li>La tasa de rechazo de ML-DSA sigue el modelo \(\exp\bigl(n\beta(\ell/\gamma_1 + k/\gamma_2)\bigr)\): agrandar \(\gamma\) reduce intentos pero agranda la firma o reduce la seguridad.</li>
           <li>OpenSSL 3.5 LTS firma y verifica ML-DSA y SLH-DSA con <code>pkeyutl -rawin</code>, y admite contexto, firma determinista, claves en formato semilla y certificados X.509.</li>
           <li>ML-DSA firma y verifica a velocidades comparables a RSA/ECDSA, pero sus firmas son unas 40 veces mayores que las de Ed25519; SLH-DSA es mucho más lento al firmar y aún mayor, con la ventaja de depender solo de funciones hash.</li>
           <li>Reutilizar una clave de un solo uso es catastrófico: cada firma adicional reduce a la mitad el exponente del coste de falsificación. En LMS/XMSS eso convierte la gestión del estado en un requisito de seguridad.</li>
@@ -753,7 +755,7 @@ SLH-DSA-SHA2-128f        50  17371  17088</code></pre>
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
       <div class="footer-links">
         <a href="../glosario.html">Glosario</a>
         <a href="../recursos/index.html">Recursos</a>

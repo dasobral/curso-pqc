@@ -6,9 +6,9 @@
   <title>Tema 2 · PKI, TLS y la infraestructura de Internet — Curso PQC</title>
   <meta name="description" content="PKI X.509, revocación, Certificate Transparency y TLS 1.3 en detalle; qué primitiva es vulnerable en SSH, IPsec, DNSSEC, mensajería, firma de código y WebAuthn; y por qué los certificados post-cuánticos pesan tanto en el handshake.">
   <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../../css/styles.css">
-  <script src="../../js/course-data.js" defer></script>
-  <script src="../../js/course.js" defer></script>
+  <link rel="stylesheet" href="../../css/styles.css?v=2026092402">
+  <script src="../../js/course-data.js?v=2026092402" defer></script>
+  <script src="../../js/course.js?v=2026092402" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -239,12 +239,12 @@
 
         <h3>El key schedule</h3>
         <p>TLS 1.3 deriva todas las claves con HKDF (RFC 5869) a partir de una cadena de secretos. Sin PSK y con SHA-256:</p>
-        <div class="equation">ES = HKDF-Extract(0<sup>32</sup>, 0<sup>32</sup>)<span class="eq-label">(2.1)</span></div>
-        <div class="equation">HS = HKDF-Extract(Derive-Secret(ES, "derived", ""), <var>ss</var>)<span class="eq-label">(2.2)</span></div>
-        <div class="equation">s_hs_traffic = Derive-Secret(HS, "s hs traffic", CH‖SH)<span class="eq-label">(2.3)</span></div>
-        <div class="equation">MS = HKDF-Extract(Derive-Secret(HS, "derived", ""), 0<sup>32</sup>)<span class="eq-label">(2.4)</span></div>
-        <p>ES, HS y MS son el <em>Early</em>, <em>Handshake</em> y <em>Master Secret</em>; CH‖SH son los mensajes de ClientHello a ServerHello, cuyo hash (el <em>transcript hash</em>) usa Derive-Secret. Las claves de tráfico de aplicación salen de MS con el transcript hasta el Finished del servidor.</p>
-        <p>En un handshake clásico, <var>ss</var> es el secreto ECDHE. En X25519MLKEM768, <var>ss</var> = <var>ss</var><sub>ML-KEM</sub> ‖ <var>ss</var><sub>X25519</sub>: 64 bytes, con el secreto de ML-KEM primero para que la derivación sea aprobable bajo FIPS [3]. Nada más cambia en el protocolo: el híbrido es «un grupo más» con un <code>key_share</code> grande. Ese es el marco general de RFC 9954 (<em>Hybrid Key Exchange in TLS 1.3</em>, julio de 2026): cada combinación se negocia como un único <code>NamedGroup</code>, las claves y textos cifrados se concatenan y los secretos, de longitud fija, se concatenan antes de entrar en el key schedule [3]. Que la simple concatenación sea segura se apoya en que HKDF-Extract actúa como combinador y en que ambos <code>key_share</code> entran en el transcript; el análisis está en el <a href="../tema5/index.html">Tema 5</a>. El laboratorio L4 reproduce en Python este cálculo y comprueba los valores intermedios con los vectores de prueba de RFC 8448.</p>
+        <div class="equation">\[ \mathrm{ES} = \mathsf{HKDF\text{-}Extract}(0^{32}, 0^{32}) \tag{2.1} \]</div>
+        <div class="equation">\[ \mathrm{HS} = \mathsf{HKDF\text{-}Extract}(\mathsf{Derive\text{-}Secret}(\mathrm{ES}, \texttt{"derived"}, \texttt{""}), \mathit{ss}) \tag{2.2} \]</div>
+        <div class="equation">\[ \mathit{s\_hs\_traffic} = \mathsf{Derive\text{-}Secret}(\mathrm{HS}, \texttt{"s hs traffic"}, \mathrm{CH} \parallel \mathrm{SH}) \tag{2.3} \]</div>
+        <div class="equation">\[ \mathrm{MS} = \mathsf{HKDF\text{-}Extract}(\mathsf{Derive\text{-}Secret}(\mathrm{HS}, \texttt{"derived"}, \texttt{""}), 0^{32}) \tag{2.4} \]</div>
+        <p>ES, HS y MS son el <em>Early</em>, <em>Handshake</em> y <em>Master Secret</em>; \(\mathrm{CH} \parallel \mathrm{SH}\) son los mensajes de ClientHello a ServerHello, cuyo hash (el <em>transcript hash</em>) usa Derive-Secret. Las claves de tráfico de aplicación salen de MS con el transcript hasta el Finished del servidor.</p>
+        <p>En un handshake clásico, \(\mathit{ss}\) es el secreto ECDHE. En X25519MLKEM768, \(\mathit{ss} = \mathit{ss}_{\text{ML-KEM}} \parallel \mathit{ss}_{\text{X25519}}\): 64 bytes, con el secreto de ML-KEM primero para que la derivación sea aprobable bajo FIPS [3]. Nada más cambia en el protocolo: el híbrido es «un grupo más» con un <code>key_share</code> grande. Ese es el marco general de RFC 9954 (<em>Hybrid Key Exchange in TLS 1.3</em>, julio de 2026): cada combinación se negocia como un único <code>NamedGroup</code>, las claves y textos cifrados se concatenan y los secretos, de longitud fija, se concatenan antes de entrar en el key schedule [3]. Que la simple concatenación sea segura se apoya en que HKDF-Extract actúa como combinador y en que ambos <code>key_share</code> entran en el transcript; el análisis está en el <a href="../tema5/index.html">Tema 5</a>. El laboratorio L4 reproduce en Python este cálculo y comprueba los valores intermedios con los vectores de prueba de RFC 8448.</p>
 
         <div class="table-wrap"><table>
           <caption>Grupos de TLS 1.3 relevantes y tamaño de sus key_share (bytes)</caption>
@@ -264,11 +264,11 @@
         </div>
 
         <h2 id="hndl"><span class="sec">2.5</span>HNDL: confidencialidad hoy, autenticación mañana</h2>
-        <p>Supongamos un adversario que graba hoy el tráfico cifrado y obtiene un CRQC en el año <var>T</var>. ¿Qué puede hacer con la grabación?</p>
+        <p>Supongamos un adversario que graba hoy el tráfico cifrado y obtiene un CRQC en el año \(T\). ¿Qué puede hacer con la grabación?</p>
         <ul>
-          <li><strong>Con ECDHE clásico:</strong> los dos <code>key_share</code> van en claro en la grabación. Con Shor calcula el logaritmo discreto de uno de ellos, recupera <var>ss</var>, reconstruye el key schedule completo (2.1–2.4), porque todo lo demás es público o está en el transcript, y descifra la sesión. La «confidencialidad directa» (<em>forward secrecy</em>) no ayuda: protege frente al robo futuro de claves de largo plazo, no frente a la rotura del problema matemático.</li>
+          <li><strong>Con ECDHE clásico:</strong> los dos <code>key_share</code> van en claro en la grabación. Con Shor calcula el logaritmo discreto de uno de ellos, recupera \(\mathit{ss}\), reconstruye el key schedule completo (2.1–2.4), porque todo lo demás es público o está en el transcript, y descifra la sesión. La «confidencialidad directa» (<em>forward secrecy</em>) no ayuda: protege frente al robo futuro de claves de largo plazo, no frente a la rotura del problema matemático.</li>
           <li><strong>Con intercambio RSA de TLS 1.2</strong> (sin confidencialidad directa) es peor: factorizar <em>una</em> clave RSA del servidor descifra <em>todas</em> las sesiones grabadas con ella.</li>
-          <li><strong>Con X25519MLKEM768:</strong> tras romper X25519 le falta <var>ss</var><sub>ML-KEM</sub>. Mientras ML-KEM-768 resista, la grabación no sirve.</li>
+          <li><strong>Con X25519MLKEM768:</strong> tras romper X25519 le falta \(\mathit{ss}_{\text{ML-KEM}}\). Mientras ML-KEM-768 resista, la grabación no sirve.</li>
           <li><strong>La autenticación grabada no sirve de nada.</strong> Falsificar hoy una firma ECDSA de una sesión de 2026 no cambia lo que ocurrió en 2026. Una firma rota solo es útil para suplantar en una conexión <em>en curso</em> (ataque de intermediario activo), y eso exige tener el CRQC en ese momento.</li>
         </ul>
         <p>De ahí la prioridad que siguen navegadores, NIST y agencias: <strong>primero el intercambio de claves (ya), después las firmas</strong>. Pero «después» no significa «tarde», por cuatro razones:</p>
@@ -299,12 +299,12 @@
         <p class="small">* Sin riesgo HNDL de confidencialidad, pero con anclas de confianza y firmas de vida muy larga (§2.5): la urgencia práctica es alta.</p>
 
         <h3>SSH</h3>
-        <p>SSH fue el primer protocolo de uso masivo que activó por defecto un intercambio post-cuántico: OpenSSH 9.0 (abril de 2022) pasó a usar <code>sntrup761x25519-sha512</code>, y OpenSSH 10.0 (abril de 2025) cambió el valor por defecto a <code>mlkem768x25519-sha256</code>, que el IETF publicó como RFC 10042 en agosto de 2026 (informativo). El secreto se combina como <var>K</var> = HASH(<var>K</var><sub>PQ</sub> ‖ <var>K</var><sub>CL</sub>) [19]. Desde OpenSSH 10.1 el cliente avisa cuando la conexión negocia un intercambio no post-cuántico. La autenticación (claves de host y de usuario) sigue siendo Ed25519, ECDSA o RSA; OpenSSH 10.5 (agosto de 2026) añadió de forma experimental una firma compuesta ML-DSA-44 + Ed25519. Las claves SSH no tienen caducidad ni revocación centralizada, así que la migración de claves de host se parece más a la de raíces que a la de certificados TLS.</p>
+        <p>SSH fue el primer protocolo de uso masivo que activó por defecto un intercambio post-cuántico: OpenSSH 9.0 (abril de 2022) pasó a usar <code>sntrup761x25519-sha512</code>, y OpenSSH 10.0 (abril de 2025) cambió el valor por defecto a <code>mlkem768x25519-sha256</code>, que el IETF publicó como RFC 10042 en agosto de 2026 (informativo). El secreto se combina como \(K = \mathrm{HASH}(K_{\mathrm{PQ}} \parallel K_{\mathrm{CL}})\) [19]. Desde OpenSSH 10.1 el cliente avisa cuando la conexión negocia un intercambio no post-cuántico. La autenticación (claves de host y de usuario) sigue siendo Ed25519, ECDSA o RSA; OpenSSH 10.5 (agosto de 2026) añadió de forma experimental una firma compuesta ML-DSA-44 + Ed25519. Las claves SSH no tienen caducidad ni revocación centralizada, así que la migración de claves de host se parece más a la de raíces que a la de certificados TLS.</p>
 
         <h3>IPsec / IKEv2</h3>
         <p>IKEv2 negocia el intercambio Diffie-Hellman en <code>IKE_SA_INIT</code>, que viaja sobre UDP sin cifrar y no puede usar la fragmentación de IKE (RFC 7383), porque esta requiere claves ya establecidas. Una clave de encapsulado ML-KEM-768 de 1 184 bytes, más cabeceras y propuestas, empuja el datagrama por encima de la MTU y provoca fragmentación IP, que muchos cortafuegos descartan. RFC 9370 (mayo de 2023) lo resuelve así: el <code>IKE_SA_INIT</code> lleva el (EC)DH clásico, y hasta siete intercambios adicionales (<em>Additional Key Exchange</em> 1–7) se ejecutan en mensajes <code>IKE_INTERMEDIATE</code> (RFC 9242), ya protegidos y fragmentables. Tras cada uno las claves se actualizan en cadena:</p>
-        <div class="equation">SKEYSEED(<var>n</var>) = prf(SK_d(<var>n</var>−1), SK(<var>n</var>) | Ni | Nr)<span class="eq-label">(2.5)</span></div>
-        <p>donde SK(<var>n</var>) es el secreto del <var>n</var>-ésimo intercambio. El borrador draft-ietf-ipsecme-ikev2-mlkem-09 asigna a ML-KEM-512/768/1024 los identificadores de transformación 35/36/37 y está en la cola del RFC Editor [20]. La autenticación con ML-DSA y SLH-DSA se define en draft-ietf-ipsecme-ikev2-pqc-auth. Muchas VPN corporativas usan además PSK, que no es vulnerable a Shor si la clave tiene entropía suficiente: RFC 8784 ya permitía mezclar una PSK post-cuántica como medida provisional.</p>
+        <div class="equation">\[ \mathrm{SKEYSEED}(n) = \mathsf{prf}\bigl(\mathrm{SK}_d(n-1),\ \mathrm{SK}(n) \mid \mathrm{Ni} \mid \mathrm{Nr}\bigr) \tag{2.5} \]</div>
+        <p>donde \(\mathrm{SK}(n)\) es el secreto del \(n\)-ésimo intercambio. El borrador draft-ietf-ipsecme-ikev2-mlkem-09 asigna a ML-KEM-512/768/1024 los identificadores de transformación 35/36/37 y está en la cola del RFC Editor [20]. La autenticación con ML-DSA y SLH-DSA se define en draft-ietf-ipsecme-ikev2-pqc-auth. Muchas VPN corporativas usan además PSK, que no es vulnerable a Shor si la clave tiene entropía suficiente: RFC 8784 ya permitía mezclar una PSK post-cuántica como medida provisional.</p>
 
         <h3>DNSSEC</h3>
         <p>DNSSEC solo aporta autenticidad e integridad; no hay nada que descifrar después, así que no hay HNDL. El problema es de tamaño: las respuestas DNS van por UDP con un búfer EDNS recomendado de 1 232 bytes, y una respuesta con registros RRSIG de 2 420 bytes (ML-DSA-44) o 7 856 bytes (SLH-DSA-SHA2-128s) obliga a pasar a TCP. Los análisis de 2026 concluyen que, entre los algoritmos estandarizados o en vías de estandarización, solo FN-DSA-512 (firma de ≈ 666 bytes y clave de 897 bytes) encaja casi sin cambios de protocolo, e incluso así fuerza más respuestas por TCP [21]. Se investigan modos como <em>Merkle Tree Ladder</em> (MTL), que amortiza una firma grande sobre muchos registros, y el uso de algoritmos distintos para ZSK y KSK. En septiembre de 2026 no hay ningún algoritmo DNSSEC post-cuántico estandarizado.</p>
@@ -335,11 +335,11 @@
             <tr><td>SLH-DSA-SHA2-128s</td><td class="num">32</td><td class="num">7 856</td><td class="num">39 344</td><td class="num">80</td></tr>
           </tbody>
         </table></div>
-        <p>Cálculo para ML-DSA-44: 2 × 1 312 + 5 × 2 420 = 2 624 + 12 100 = 14 724 bytes, frente a 2 × 65 + 5 × 72 ≈ 490. Es decir, unos <strong>14 kB adicionales</strong> en cada handshake completo, más que todo lo que envía hoy un servidor típico en su primer vuelo. FN-DSA aparece solo como referencia: en septiembre de 2026 FIPS 206 no tiene todavía ni borrador público y su firma exige aritmética en coma flotante muy difícil de implementar en tiempo constante (<a href="../tema4/index.html">Tema 4</a>).</p>
+        <p>Cálculo para ML-DSA-44: \(2 \times 1\,312 + 5 \times 2\,420 = 2\,624 + 12\,100 = 14\,724\) bytes, frente a \(2 \times 65 + 5 \times 72 \approx 490\). Es decir, unos <strong>14 kB adicionales</strong> en cada handshake completo, más que todo lo que envía hoy un servidor típico en su primer vuelo. FN-DSA aparece solo como referencia: en septiembre de 2026 FIPS 206 no tiene todavía ni borrador público y su firma exige aritmética en coma flotante muy difícil de implementar en tiempo constante (<a href="../tema4/index.html">Tema 4</a>).</p>
 
         <h3>Por qué 14 kB son un problema: TCP y QUIC</h3>
         <ul>
-          <li><strong>Ventana inicial de TCP.</strong> Un servidor TCP puede enviar sin esperar ACK como máximo su ventana de congestión inicial, típicamente 10 segmentos (RFC 6928): 10 × 1 460 ≈ 14 600 bytes. Si el primer vuelo del servidor (ServerHello + EncryptedExtensions + Certificate + CertificateVerify + Finished) supera ese límite, el resto espera a un ACK: <strong>un viaje de ida y vuelta más</strong>. Con ECDSA el primer vuelo ocupa 2–5 kB; con ML-DSA-44 y SCT también post-cuánticos se pasa del umbral.</li>
+          <li><strong>Ventana inicial de TCP.</strong> Un servidor TCP puede enviar sin esperar ACK como máximo su ventana de congestión inicial, típicamente 10 segmentos (RFC 6928): \(10 \times 1\,460 \approx 14\,600\) bytes. Si el primer vuelo del servidor (ServerHello + EncryptedExtensions + Certificate + CertificateVerify + Finished) supera ese límite, el resto espera a un ACK: <strong>un viaje de ida y vuelta más</strong>. Con ECDSA el primer vuelo ocupa 2–5 kB; con ML-DSA-44 y SCT también post-cuánticos se pasa del umbral.</li>
           <li><strong>Límite antiamplificación de QUIC.</strong> Antes de validar la dirección del cliente, un servidor QUIC no puede enviar más de 3 veces los bytes recibidos (RFC 9000, §8.1). El cliente rellena sus datagramas Initial hasta al menos 1 200 bytes; con un ClientHello híbrido de ≈ 1,5 kB envía dos (≈ 2 400 bytes), así que el servidor dispone de ≈ 7 200 bytes. Una cadena ML-DSA no cabe: RTT adicional o recurso a tokens de validación.</li>
           <li><strong>Mediciones.</strong> Cloudflare estima que añadir unos 9 kB supone una regresión de ≈ 15 % en el tiempo de handshake, mientras que Chrome se ha fijado como máximo tolerable un 10 % [14]. La compresión de certificados (RFC 8879) no ayuda: claves y firmas post-cuánticas son indistinguibles de datos aleatorios.</li>
         </ul>
@@ -410,7 +410,7 @@
         <div class="exercise"><span class="ex-title">Ejercicio 2.2 <span class="level">Básico</span></span>
           <p>Calcula el tamaño de los <code>key_share</code> de cliente y servidor para SecP256r1MLKEM768 sabiendo que un punto P-256 sin comprimir ocupa 65 bytes. ¿Cabe un ClientHello de 300 bytes más ese <code>key_share</code> y otro de X25519 en un único segmento TCP de 1 460 bytes?</p>
           <details><summary>Solución</summary><div class="details-body">
-            <p>Cliente: 65 + 1 184 = 1 249 bytes. Servidor: 65 + 1 088 = 1 153 bytes (coinciden con RFC 10024). El ClientHello ocuparía unos 300 + (4 + 1 249) + (4 + 32) ≈ 1 589 bytes, más 5 de cabecera de registro: no cabe en un segmento de 1 460 bytes y viaja en dos. Por eso hubo middleboxes que fallaron cuando Chrome activó el híbrido: asumían que el ClientHello llega completo en el primer paquete.</p>
+            <p>Cliente: \(65 + 1\,184 = 1\,249\) bytes. Servidor: \(65 + 1\,088 = 1\,153\) bytes (coinciden con RFC 10024). El ClientHello ocuparía unos \(300 + (4 + 1\,249) + (4 + 32) \approx 1\,589\) bytes, más 5 de cabecera de registro: no cabe en un segmento de 1 460 bytes y viaja en dos. Por eso hubo middleboxes que fallaron cuando Chrome activó el híbrido: asumían que el ClientHello llega completo en el primer paquete.</p>
           </div></details>
         </div>
 
@@ -424,21 +424,21 @@
         <div class="exercise"><span class="ex-title">Ejercicio 2.4 <span class="level">Intermedio</span></span>
           <p>Un cliente QUIC envía un ClientHello híbrido de 1 480 bytes. Los datagramas Initial deben tener al menos 1 200 bytes y cada uno admite unos 1 150 bytes de datos CRYPTO. ¿Cuántos bytes puede enviar el servidor antes de validar la dirección? ¿Cabe la cadena ECDSA de L4 (2 352 bytes recibidos)? ¿Y la ML-DSA-44 (11 915)?</p>
           <details><summary>Solución</summary><div class="details-body">
-            <p>El ClientHello necesita 2 datagramas, cada uno de al menos 1 200 bytes: ≈ 2 400 bytes recibidos. Límite: 3 × 2 400 ≈ 7 200 bytes (RFC 9000, §8.1). La cadena ECDSA cabe con holgura. La ML-DSA-44 no: el servidor envía ≈ 7 200 bytes y espera a que el cliente responda, lo que valida la dirección, antes de mandar el resto. Paradoja curiosa: el ClientHello híbrido, más grande, <em>aumenta</em> el crédito del servidor.</p>
+            <p>El ClientHello necesita 2 datagramas, cada uno de al menos 1 200 bytes: ≈ 2 400 bytes recibidos. Límite: \(3 \times 2\,400 \approx 7\,200\) bytes (RFC 9000, §8.1). La cadena ECDSA cabe con holgura. La ML-DSA-44 no: el servidor envía ≈ 7 200 bytes y espera a que el cliente responda, lo que valida la dirección, antes de mandar el resto. Paradoja curiosa: el ClientHello híbrido, más grande, <em>aumenta</em> el crédito del servidor.</p>
           </div></details>
         </div>
 
         <div class="exercise"><span class="ex-title">Ejercicio 2.5 <span class="level">Intermedio</span></span>
           <p>Con certificados de 47 días (a partir de marzo de 2029) y renovación automática al alcanzar dos tercios de la vida útil, ¿cuántas emisiones al año necesita cada nombre? ¿Por qué este régimen favorece a los MTC frente a firmar cada certificado con ML-DSA?</p>
           <details><summary>Solución</summary><div class="details-body">
-            <p>2/3 × 47 ≈ 31 días, así que unas 365 / 31 ≈ 12 emisiones al año, frente a ≈ 1 con 398 días. Con firma individual, cada emisión añade una firma ML-DSA en el certificado y varias en los SCT, además de 4–5 kB de almacenamiento en cada log CT. Con MTC, la CA firma una vez por lote, las entradas del log guardan solo hashes de claves y el coste por certificado es una prueba de inclusión. La emisión frecuente amortiza precisamente lo que MTC hace barato, y la espera hasta el siguiente lote es tolerable si se renueva con semanas de margen.</p>
+            <p>\(2/3 \times 47 \approx 31\) días, así que unas \(365 / 31 \approx 12\) emisiones al año, frente a ≈ 1 con 398 días. Con firma individual, cada emisión añade una firma ML-DSA en el certificado y varias en los SCT, además de 4–5 kB de almacenamiento en cada log CT. Con MTC, la CA firma una vez por lote, las entradas del log guardan solo hashes de claves y el coste por certificado es una prueba de inclusión. La emisión frecuente amortiza precisamente lo que MTC hace barato, y la espera hasta el siguiente lote es tolerable si se renueva con semanas de margen.</p>
           </div></details>
         </div>
 
         <div class="exercise"><span class="ex-title">Ejercicio 2.6 <span class="level">Avanzado</span></span>
-          <p>En X25519MLKEM768 el secreto es <var>ss</var><sub>ML-KEM</sub> ‖ <var>ss</var><sub>X25519</sub> y entra directamente como IKM en HKDF-Extract (ecuación 2.2). (a) Un combinador KEM genérico como X-Wing mete además en su hash el texto cifrado y la clave pública de X25519. ¿Por qué TLS no lo necesita? (b) ¿Por qué RFC 10024 pone el secreto de ML-KEM primero en X25519MLKEM768 y el de ECDH primero en SecP256r1MLKEM768?</p>
+          <p>En X25519MLKEM768 el secreto es \(\mathit{ss}_{\text{ML-KEM}} \parallel \mathit{ss}_{\text{X25519}}\) y entra directamente como IKM en HKDF-Extract (ecuación 2.2). (a) Un combinador KEM genérico como X-Wing mete además en su hash el texto cifrado y la clave pública de X25519. ¿Por qué TLS no lo necesita? (b) ¿Por qué RFC 10024 pone el secreto de ML-KEM primero en X25519MLKEM768 y el de ECDH primero en SecP256r1MLKEM768?</p>
           <details><summary>Solución</summary><div class="details-body">
-            <p>(a) Un combinador genérico debe producir un KEM IND-CCA por sí solo, sin ayuda del protocolo, y para ello tiene que ligar el secreto Diffie-Hellman a los valores públicos que lo generaron. En TLS 1.3 esa ligadura ya la aporta el protocolo: todas las claves de tráfico se derivan con Derive-Secret sobre el hash del transcript, que contiene ambos <code>key_share</code> completos, y el transcript se autentica con <code>CertificateVerify</code> y <code>Finished</code>. El análisis formal está en el <a href="../tema5/index.html">Tema 5</a>. (b) Por la validación FIPS: NIST SP 800-56C permite derivar claves de un secreto <var>Z</var> ‖ <var>T</var> en el que <var>Z</var> procede de un esquema aprobado y va delante. En X25519MLKEM768 el único componente aprobado es ML-KEM, así que debe ir primero. En SecP256r1MLKEM768 ambos están aprobados, y el RFC coloca primero el ECDH por la trayectoria de certificación más larga de las implementaciones de curvas NIST [3].</p>
+            <p>(a) Un combinador genérico debe producir un KEM IND-CCA por sí solo, sin ayuda del protocolo, y para ello tiene que ligar el secreto Diffie-Hellman a los valores públicos que lo generaron. En TLS 1.3 esa ligadura ya la aporta el protocolo: todas las claves de tráfico se derivan con Derive-Secret sobre el hash del transcript, que contiene ambos <code>key_share</code> completos, y el transcript se autentica con <code>CertificateVerify</code> y <code>Finished</code>. El análisis formal está en el <a href="../tema5/index.html">Tema 5</a>. (b) Por la validación FIPS: NIST SP 800-56C permite derivar claves de un secreto \(Z \parallel T\) en el que \(Z\) procede de un esquema aprobado y va delante. En X25519MLKEM768 el único componente aprobado es ML-KEM, así que debe ir primero. En SecP256r1MLKEM768 ambos están aprobados, y el RFC coloca primero el ECDH por la trayectoria de certificación más larga de las implementaciones de curvas NIST [3].</p>
           </div></details>
         </div>
 
@@ -452,7 +452,7 @@
         <div class="exercise"><span class="ex-title">Ejercicio 2.8 <span class="level">Avanzado</span></span>
           <p>Explica por qué RFC 9370 no transporta la clave ML-KEM en <code>IKE_SA_INIT</code>. Estima el tamaño de un <code>IKE_SA_INIT</code> del iniciador con un KE X25519 más una clave ML-KEM-768, suponiendo 400 bytes de cabecera, SA, nonces y notificaciones, y compáralo con una MTU de 1 500 bytes y con los 1 280 bytes mínimos de IPv6.</p>
           <details><summary>Solución</summary><div class="details-body">
-            <p>≈ 400 + (8 + 32) + (8 + 1 184) ≈ 1 632 bytes, más 28 de UDP/IPv4: supera 1 500 y, con más razón, 1 280. Habría fragmentación IP, que muchos equipos descartan, y además <code>IKE_SA_INIT</code> no está protegido, así que no puede usar la fragmentación de IKE (RFC 7383), que requiere claves. RFC 9370 mantiene el <code>IKE_SA_INIT</code> pequeño (solo ECDH) y hace el intercambio ML-KEM en <code>IKE_INTERMEDIATE</code>, ya cifrado y fragmentable. Coste: un viaje de ida y vuelta adicional por cada intercambio extra.</p>
+            <p>\(\approx 400 + (8 + 32) + (8 + 1\,184) \approx 1\,632\) bytes, más 28 de UDP/IPv4: supera 1 500 y, con más razón, 1 280. Habría fragmentación IP, que muchos equipos descartan, y además <code>IKE_SA_INIT</code> no está protegido, así que no puede usar la fragmentación de IKE (RFC 7383), que requiere claves. RFC 9370 mantiene el <code>IKE_SA_INIT</code> pequeño (solo ECDH) y hace el intercambio ML-KEM en <code>IKE_INTERMEDIATE</code>, ya cifrado y fragmentable. Coste: un viaje de ida y vuelta adicional por cada intercambio extra.</p>
           </div></details>
         </div>
 
@@ -507,7 +507,7 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
       <div class="footer-links">
         <a href="../../glosario.html">Glosario</a>
         <a href="../../recursos/index.html">Recursos</a>

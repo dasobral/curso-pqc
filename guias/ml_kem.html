@@ -6,9 +6,9 @@
   <title>L2 · ML-KEM en la práctica — Curso PQC</title>
   <meta name="description" content="Laboratorio de ML-KEM: K-PKE de juguete en NumPy, ML-KEM real con pyca/cryptography, liboqs-python y OpenSSL 3.5, comparación con X25519, validación con vectores ACVP de NIST y preguntas sobre rechazo implícito y canales laterales.">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/styles.css">
-  <script src="../js/course-data.js" defer></script>
-  <script src="../js/course.js" defer></script>
+  <link rel="stylesheet" href="../css/styles.css?v=2026092402">
+  <script src="../js/course-data.js?v=2026092402" defer></script>
+  <script src="../js/course.js?v=2026092402" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -41,11 +41,11 @@
         <ol><li><a href="../index.html">Inicio</a></li><li><a href="../guias/index.html">Laboratorios</a></li><li aria-current="page">L2 · ML-KEM</li></ol>
       </nav>
       <header class="page-head">
-        <p class="eyebrow">Laboratorio L2 · 2 sesiones</p>
+        <p class="eyebrow">Laboratorio L2 · ≈ 4 horas</p>
         <h1>ML-KEM <em>en la práctica</em></h1>
-        <p class="lede">Primero construirá un K-PKE de juguete con NumPy para entender de dónde sale el ruido; después usará ML-KEM de verdad con tres bibliotecas, comprobará los tamaños de FIPS 203, lo comparará con X25519 y validará las implementaciones con los vectores oficiales de NIST.</p>
+        <p class="lede">Primero construirás un K-PKE de juguete con NumPy para entender de dónde sale el ruido; después usarás ML-KEM de verdad con tres bibliotecas, comprobarás los tamaños de FIPS 203, lo compararás con X25519 y validarás las implementaciones con los vectores oficiales de NIST.</p>
         <dl class="page-meta">
-          <div><dt>Duración</dt><dd>2 × 2 h</dd></div>
+          <div><dt>Duración</dt><dd>≈ 4 h</dd></div>
           <div><dt>Nivel</dt><dd>Intermedio</dd></div>
           <div><dt>Requisitos</dt><dd>Tema 4, Python, terminal Linux/macOS</dd></div>
           <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
@@ -55,7 +55,7 @@
       <article class="prose">
         <h2 id="objetivos"><span class="sec">L2.0</span>Objetivos</h2>
         <ul>
-          <li>Implementar K-PKE (la capa IND-CPA de ML-KEM) con aritmética en ℤ<sub>q</sub>[<var>X</var>]/(<var>X</var><sup>256</sup> + 1) y medir su ruido de descifrado.</li>
+          <li>Implementar K-PKE (la capa IND-CPA de ML-KEM) con aritmética en \(\Z_q[X]/(X^{256}+1)\) y medir su ruido de descifrado.</li>
           <li>Usar ML-KEM con <strong>pyca/cryptography</strong>, <strong>liboqs-python</strong> y la línea de órdenes de <strong>OpenSSL 3.5</strong>, y conocer sus diferencias de API y de formato de clave.</li>
           <li>Verificar los tamaños de FIPS 203 y medir el coste de ML-KEM frente a X25519.</li>
           <li>Validar implementaciones con los vectores <strong>ACVP</strong> de NIST.</li>
@@ -82,7 +82,7 @@ $ python -c "import cryptography; print(cryptography.__version__)"
 $ python -c "from cryptography.hazmat.backends.openssl import backend as b; print(b.openssl_version_text())"
 OpenSSL 4.0.2 25 Aug 2026</code></pre>
         <h3>liboqs</h3>
-        <p>liboqs-python es solo un envoltorio: necesita la biblioteca C. Si no la encuentra, la descarga y compila automáticamente en el primer <code>import oqs</code>. Es preferible compilarla de forma explícita, porque así obtendrá también los programas de medida:</p>
+        <p>liboqs-python es solo un envoltorio: necesita la biblioteca C. Si no la encuentra, la descarga y compila automáticamente en el primer <code>import oqs</code>. Es preferible compilarla de forma explícita, porque así obtendrás también los programas de medida:</p>
         <pre class="terminal" data-lang="shell"><code>$ git clone --depth 1 --branch 0.16.0 https://github.com/open-quantum-safe/liboqs.git
 $ cmake -S liboqs -B liboqs/build -GNinja -DBUILD_SHARED_LIBS=ON \
         -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/_oqs
@@ -91,7 +91,7 @@ $ export OQS_INSTALL_PATH=$HOME/_oqs
 $ python -c "import oqs; print(oqs.oqs_version(), oqs.oqs_python_version())"
 0.16.0 0.16.0.1</code></pre>
         <h3>OpenSSL 3.5 (opcional)</h3>
-        <p>Si <code>openssl version</code> muestra una versión anterior a 3.5, compile una copia local sin tocar la del sistema:</p>
+        <p>Si <code>openssl version</code> muestra una versión anterior a 3.5, compila una copia local sin tocar la del sistema:</p>
         <pre class="terminal" data-lang="shell"><code>$ curl -LO https://github.com/openssl/openssl/releases/download/openssl-3.5.8/openssl-3.5.8.tar.gz
 $ tar xzf openssl-3.5.8.tar.gz &amp;&amp; cd openssl-3.5.8
 $ ./Configure --prefix=$HOME/ossl35 --libdir=lib no-docs &amp;&amp; make -j8 &amp;&amp; make install_sw
@@ -101,9 +101,9 @@ OpenSSL 3.5.8 25 Aug 2026 (Library: OpenSSL 3.5.8 25 Aug 2026)</code></pre>
         <div class="callout"><span class="callout-title">Punto de control 1</span><p>Las tres órdenes de verificación anteriores funcionan. Si <code>import oqs</code> tarda varios minutos la primera vez, está compilando liboqs por su cuenta: es normal.</p></div>
 
         <h2 id="parte-a"><span class="sec">L2.2</span>Parte A · K-PKE de juguete con NumPy</h2>
-        <p>Implementará el cifrado subyacente de ML-KEM con los parámetros reales (<var>n</var> = 256, <var>q</var> = 3329, <var>k</var>, η₁, η₂, <var>d<sub>u</sub></var>, <var>d<sub>v</sub></var>), pero con dos simplificaciones deliberadas: multiplicación de polinomios ingenua en lugar de NTT y aleatoriedad de NumPy en lugar de SHAKE. No hay transformación FO: es solo la capa IND-CPA.</p>
+        <p>Implementarás el cifrado subyacente de ML-KEM con los parámetros reales (\(n = 256\), \(q = 3329\), \(k\), \(\eta_1\), \(\eta_2\), \(d_u\), \(d_v\)), pero con dos simplificaciones deliberadas: multiplicación de polinomios ingenua en lugar de NTT y aleatoriedad de NumPy en lugar de SHAKE. No hay transformación FO: es solo la capa IND-CPA.</p>
         <h3>A.1 · Aritmética en el anillo</h3>
-        <p>El producto en ℤ<sub>q</sub>[<var>X</var>]/(<var>X</var><sup><var>n</var></sup> + 1) es una convolución seguida de un plegado <em>negacíclico</em>: como <var>X</var><sup><var>n</var></sup> = −1, el coeficiente de grado <var>n</var> + <var>i</var> se <strong>resta</strong> del de grado <var>i</var>.</p>
+        <p>El producto en \(\Z_q[X]/(X^n + 1)\) es una convolución seguida de un plegado <em>negacíclico</em>: como \(X^n = -1\), el coeficiente de grado \(n + i\) se <strong>resta</strong> del de grado \(i\).</p>
         <pre data-lang="python"><code><span class="tok-k">import</span> numpy <span class="tok-k">as</span> np
 
 Q, N = <span class="tok-n">3329</span>, <span class="tok-n">256</span>
@@ -124,7 +124,7 @@ rng = np.random.default_rng()
 
 <span class="tok-k">def</span> <span class="tok-f">dot</span>(a, b):
     <span class="tok-k">return</span> <span class="tok-f">sum</span>(polymul(x, y) <span class="tok-k">for</span> x, y <span class="tok-k">in</span> <span class="tok-f">zip</span>(a, b)) % Q</code></pre>
-        <p><strong>Tarea A.1.</strong> Compruebe con <code>assert</code> que <var>X</var>·<var>X</var><sup>255</sup> = −1 ≡ 3328 y que el producto es conmutativo y distributivo sobre polinomios aleatorios.</p>
+        <p><strong>Tarea A.1.</strong> Comprueba con <code>assert</code> que \(X \cdot X^{255} = -1 \equiv 3328\) y que el producto es conmutativo y distributivo sobre polinomios aleatorios.</p>
 
         <h3>A.2 · Ruido, compresión y K-PKE</h3>
         <pre data-lang="python"><code><span class="tok-k">def</span> <span class="tok-f">cbd</span>(eta, shape):
@@ -160,7 +160,7 @@ rng = np.random.default_rng()
     u, v = decompress(cu, du), decompress(cv, dv)
     w = (v - dot(s, u)) % Q
     <span class="tok-k">return</span> compress(w, <span class="tok-n">1</span>), w</code></pre>
-        <p><strong>Tarea A.2.</strong> Para los tres conjuntos de parámetros de FIPS 203, ejecute 200 cifrados/descifrados, cuente los fallos y registre el máximo |ruido| = |centered(<var>w</var> − 1665·<var>m</var>)|. Salida de referencia (la suya variará ligeramente):</p>
+        <p><strong>Tarea A.2.</strong> Para los tres conjuntos de parámetros de FIPS 203, ejecuta 200 cifrados/descifrados, cuenta los fallos y registra el máximo \(|\text{ruido}| = |\mathrm{centered}(w - 1665 \cdot m)|\). Salida de referencia (la tuya variará ligeramente):</p>
         <pre class="terminal" data-lang="salida"><code>ML-KEM-512: 200 ejecuciones, 0 fallos, máx |ruido| = 320 (umbral 832), |c| = 768 B
 ML-KEM-768: 200 ejecuciones, 0 fallos, máx |ruido| = 271 (umbral 832), |c| = 1088 B
 ML-KEM-1024: 200 ejecuciones, 0 fallos, máx |ruido| = 231 (umbral 832), |c| = 1568 B</code></pre>
@@ -176,8 +176,8 @@ ML-KEM-1024: 200 ejecuciones, 0 fallos, máx |ruido| = 231 (umbral 832), |c| = 1
         worst = <span class="tok-f">max</span>(worst, <span class="tok-f">int</span>(np.abs(centered(w - decompress(m, <span class="tok-n">1</span>))).max()))
     <span class="tok-f">print</span>(<span class="tok-s">f"</span>{name}<span class="tok-s">: 200 ejecuciones, </span>{fails}<span class="tok-s"> fallos, máx |ruido| = </span>{worst}<span class="tok-s">"</span>)</code></pre>
         </div></details>
-        <p><strong>Tarea A.3 (experimento).</strong> Fije ML-KEM-768 y repita con η₁ = η₂ ∈ {4, 8, 12, 16} y, por separado, con <var>d<sub>v</sub></var> ∈ {4, 3, 2, 1}. Represente el histograma de los coeficientes del ruido (matplotlib, si lo tiene) y la proporción de ejecuciones con fallo. Explique qué término de la ecuación (4.1) del Tema 4 domina en cada caso.</p>
-        <div class="callout"><span class="callout-title">Punto de control 2</span><p>Con parámetros reales, 0 fallos y máximo |ruido| entre 200 y 350. Si obtiene fallos con ML-KEM-768, revise el signo del plegado en <code>polymul</code> (un error típico es sumar en lugar de restar, que corresponde a <var>X</var><sup><var>n</var></sup> − 1) o el uso de <b>A</b><sup>T</sup> en el cifrado.</p></div>
+        <p><strong>Tarea A.3 (experimento).</strong> Fija ML-KEM-768 y repite con \(\eta_1 = \eta_2 \in \{4, 8, 12, 16\}\) y, por separado, con \(d_v \in \{4, 3, 2, 1\}\). Representa el histograma de los coeficientes del ruido (matplotlib, si lo tienes) y la proporción de ejecuciones con fallo. Explica qué término de la ecuación (4.1) del Tema 4 domina en cada caso.</p>
+        <div class="callout"><span class="callout-title">Punto de control 2</span><p>Con parámetros reales, 0 fallos y máximo \(|\text{ruido}|\) entre 200 y 350. Si obtienes fallos con ML-KEM-768, revisa el signo del plegado en <code>polymul</code> (un error típico es sumar en lugar de restar, que corresponde a \(X^n - 1\)) o el uso de \(\mathbf{A}^{\mathsf{T}}\) en el cifrado.</p></div>
 
         <h2 id="parte-b"><span class="sec">L2.3</span>Parte B · ML-KEM real</h2>
         <h3>B.1 · Tres API, tres convenciones</h3>
@@ -197,7 +197,7 @@ same = mlkem.MLKEM768PrivateKey.from_seed_bytes(seed)
     ct2, ss2 = tx.encap_secret(pk)
     <span class="tok-k">assert</span> rx.decap_secret(ct2) == ss2
     dk = rx.export_secret_key()                <span class="tok-c"># 2400 bytes: clave expandida de FIPS 203</span></code></pre>
-        <p><strong>Tarea B.1.</strong> Escriba <code>tamanos.py</code> que imprima, para cada conjunto y cada biblioteca, los tamaños de ek, dk (o semilla), cifrado y secreto, y los compare con la tabla de FIPS 203. Añada el tamaño de la clave pública en <code>SubjectPublicKeyInfo</code> DER (RFC 9935) con <code>public_bytes(Encoding.DER, PublicFormat.SubjectPublicKeyInfo)</code>. Salida esperada:</p>
+        <p><strong>Tarea B.1.</strong> Escribe <code>tamanos.py</code> que imprima, para cada conjunto y cada biblioteca, los tamaños de ek, dk (o semilla), cifrado y secreto, y los compare con la tabla de FIPS 203. Añade el tamaño de la clave pública en <code>SubjectPublicKeyInfo</code> DER (RFC 9935) con <code>public_bytes(Encoding.DER, PublicFormat.SubjectPublicKeyInfo)</code>. Salida esperada:</p>
         <pre class="terminal" data-lang="salida"><code>[pyca] ML-KEM-768: ek=1184 ct=1088 ss=32 semilla=64
         SubjectPublicKeyInfo DER (RFC 9935): 1206 bytes
 [pyca] ML-KEM-1024: ek=1568 ct=1568 ss=32 semilla=64
@@ -208,7 +208,7 @@ same = mlkem.MLKEM768PrivateKey.from_seed_bytes(seed)
         <div class="callout warning"><span class="callout-title">Errores frecuentes</span><ul>
           <li>Confundir el orden de la tupla: pyca devuelve <code>(secreto, cifrado)</code> y liboqs <code>(cifrado, secreto)</code>.</li>
           <li>Suponer que ML-KEM-512 está en pyca/cryptography: no lo está (solo 768 y 1024).</li>
-          <li>Intentar importar en pyca una clave expandida de 2 400 bytes: solo acepta la semilla de 64 bytes. Para interoperar con quien guarde la clave expandida, use liboqs u OpenSSL.</li>
+          <li>Intentar importar en pyca una clave expandida de 2 400 bytes: solo acepta la semilla de 64 bytes. Para interoperar con quien guarde la clave expandida, usa liboqs u OpenSSL.</li>
         </ul></div>
 
         <h3>B.2 · OpenSSL 3.5 desde la línea de órdenes</h3>
@@ -233,10 +233,10 @@ $ openssl pkey -in mlkem768.pem -noout -text | head -3
 ML-KEM-768 Private-Key:
 seed:
     33:5d:22:…</code></pre>
-        <p><strong>Tarea B.2.</strong> Explique por qué el fichero PEM de la clave privada contiene tanto <code>seed</code> como <code>dk</code>, qué ocupa cada uno y cuál preferiría almacenar en un HSM. Pista: FIPS 203 §3.3 y RFC 9935.</p>
+        <p><strong>Tarea B.2.</strong> Explica por qué el fichero PEM de la clave privada contiene tanto <code>seed</code> como <code>dk</code>, qué ocupa cada uno y cuál preferirías almacenar en un HSM. Pista: FIPS 203 §3.3 y RFC 9935.</p>
 
         <h3>B.3 · ¿Es caro ML-KEM?</h3>
-        <p><strong>Tarea B.3.</strong> Mida con <code>timeit</code> (mediana de 7 repeticiones de 2000 operaciones) generación de claves, encapsulamiento y desencapsulamiento de ML-KEM-768 en pyca y en liboqs, y la generación y el intercambio de X25519 en pyca. Complete con los programas nativos:</p>
+        <p><strong>Tarea B.3.</strong> Mide con <code>timeit</code> (mediana de 7 repeticiones de 2000 operaciones) generación de claves, encapsulamiento y desencapsulamiento de ML-KEM-768 en pyca y en liboqs, y la generación y el intercambio de X25519 en pyca. Completa con los programas nativos:</p>
         <pre class="terminal" data-lang="shell"><code>$ liboqs/build/tests/speed_kem -d 3 ML-KEM-768
 $ openssl speed -seconds 2 ML-KEM-512 ML-KEM-768 ML-KEM-1024 X25519</code></pre>
         <p>Resultados de referencia en un AMD Ryzen 9 5900X (µs por operación):</p>
@@ -251,10 +251,10 @@ $ openssl speed -seconds 2 ML-KEM-512 ML-KEM-768 ML-KEM-1024 X25519</code></pre>
             <tr><th>pyca, X25519 (generación / intercambio)</th><td class="num">24,2</td><td class="num" colspan="2">23,8 (intercambio)</td></tr>
           </tbody>
         </table></div>
-        <p>Interprete: ¿cuánto pesa la sobrecarga de Python? ¿Por qué liboqs, que usa código AVX2 de mlkem-native, es más rápido que OpenSSL 3.5? ¿Cuántos bytes más viajan en <code>X25519MLKEM768</code> frente a X25519 solo, y cuántos milisegundos añade eso en un enlace de 10 Mbit/s?</p>
+        <p>Interpreta: ¿cuánto pesa la sobrecarga de Python? ¿Por qué liboqs, que usa código AVX2 de mlkem-native, es más rápido que OpenSSL 3.5? ¿Cuántos bytes más viajan en <code>X25519MLKEM768</code> frente a X25519 solo, y cuántos milisegundos añade eso en un enlace de 10 Mbit/s?</p>
 
         <h2 id="parte-c"><span class="sec">L2.4</span>Parte C · Validación con vectores ACVP de NIST</h2>
-        <p>El programa de validación de algoritmos criptográficos de NIST (CAVP) publica sus vectores de prueba en formato JSON en el repositorio <code>usnistgov/ACVP-Server</code>. El fichero <code>internalProjection.json</code> de cada conjunto contiene entradas y resultados esperados. Para ML-KEM hay dos: generación de claves (entradas <var>d</var>, <var>z</var>; salidas ek, dk) y encapsulamiento/desencapsulamiento (incluye cifrados modificados que deben producir la clave de rechazo implícito, y comprobaciones de claves mal formadas).</p>
+        <p>El programa de validación de algoritmos criptográficos de NIST (CAVP) publica sus vectores de prueba en formato JSON en el repositorio <code>usnistgov/ACVP-Server</code>. El fichero <code>internalProjection.json</code> de cada conjunto contiene entradas y resultados esperados. Para ML-KEM hay dos: generación de claves (entradas \(d\), \(z\); salidas ek, dk) y encapsulamiento/desencapsulamiento (incluye cifrados modificados que deben producir la clave de rechazo implícito, y comprobaciones de claves mal formadas).</p>
         <pre class="terminal" data-lang="shell"><code>$ B=https://raw.githubusercontent.com/usnistgov/ACVP-Server/master/gen-val/json-files
 $ for d in ML-KEM-keyGen-FIPS203 ML-KEM-encapDecap-FIPS203; do
     mkdir -p acvp/$d &amp;&amp; curl -s -o acvp/$d/internalProjection.json $B/$d/internalProjection.json
@@ -293,8 +293,8 @@ ok = fail = <span class="tok-n">0</span>
 <span class="tok-f">print</span>(<span class="tok-s">f"decaps: </span>{ok}<span class="tok-s"> correctos, </span>{fail}<span class="tok-s"> fallos"</span>)</code></pre>
         <pre class="terminal" data-lang="salida"><code>keyGen: 125 correctos, 0 fallos
 decaps: 105 correctos, 0 fallos</code></pre>
-        <p><strong>Tarea C.1.</strong> Ejecute el script y explique los recuentos (¿cuántos casos hay por conjunto de parámetros y por qué pyca aporta menos?). <strong>Tarea C.2.</strong> Localice un caso de desencapsulamiento con <code>"reason": "modified ciphertext"</code> y demuestre que la clave esperada es <span class="math">J(<var>z</var> ‖ <var>c</var>) = SHAKE256(<var>z</var> ‖ <var>c</var>, 32)</span>, extrayendo <var>z</var> de los últimos 32 bytes de dk y usando solo <code>hashlib.shake_256</code>. <strong>Tarea C.3 (avanzada).</strong> Los casos de encapsulamiento incluyen el mensaje <var>m</var>. Ninguna de las dos bibliotecas expone Encaps con <var>m</var> fijo; ¿por qué es razonable esa decisión de API? ¿Cómo validaría entonces el encapsulamiento de su propia implementación?</p>
-        <details><summary>Pista para C.2</summary><div class="details-body"><p>Para ML-KEM con parámetro <var>k</var>, dk = dk<sub>PKE</sub> (384<var>k</var> bytes) ‖ ek (384<var>k</var> + 32) ‖ H(ek) (32) ‖ <var>z</var> (32). <code>hashlib.shake_256(z + c).digest(32)</code> debe coincidir con <code>t["k"]</code>. Para un cifrado válido, en cambio, no coincidirá.</p></div></details>
+        <p><strong>Tarea C.1.</strong> Ejecuta el script y explica los recuentos (¿cuántos casos hay por conjunto de parámetros y por qué pyca aporta menos?). <strong>Tarea C.2.</strong> Localiza un caso de desencapsulamiento con <code>"reason": "modified ciphertext"</code> y demuestra que la clave esperada es \(J(z \parallel c) = \mathrm{SHAKE256}(z \parallel c, 32)\), extrayendo \(z\) de los últimos 32 bytes de dk y usando solo <code>hashlib.shake_256</code>. <strong>Tarea C.3 (avanzada).</strong> Los casos de encapsulamiento incluyen el mensaje \(m\). Ninguna de las dos bibliotecas expone Encaps con \(m\) fijo; ¿por qué es razonable esa decisión de API? ¿Cómo validarías entonces el encapsulamiento de tu propia implementación?</p>
+        <details><summary>Pista para C.2</summary><div class="details-body"><p>Para ML-KEM con parámetro \(k\), \(\mathsf{dk} = \mathsf{dk}_{\mathrm{PKE}}\ (384k \text{ bytes}) \parallel \mathsf{ek}\ (384k + 32) \parallel H(\mathsf{ek})\ (32) \parallel z\ (32)\). <code>hashlib.shake_256(z + c).digest(32)</code> debe coincidir con <code>t["k"]</code>. Para un cifrado válido, en cambio, no coincidirá.</p></div></details>
 
         <h2 id="parte-d"><span class="sec">L2.5</span>Parte D · Rechazo implícito y canales laterales</h2>
         <pre data-lang="python"><code><span class="tok-k">import</span> statistics, time
@@ -312,42 +312,44 @@ bad = bytearray(ct); bad[<span class="tok-n">100</span>] ^= <span class="tok-n">
         t0 = time.perf_counter_ns(); sk.decapsulate(c); out.append(time.perf_counter_ns() - t0)
     <span class="tok-k">return</span> out
 <span class="tok-f">print</span>(statistics.median(muestras(ct)), statistics.median(muestras(bad)))</code></pre>
-        <p>En nuestra ejecución: medianas de 22 934 ns (válido) y 22 783 ns (alterado). Responda por escrito:</p>
+        <p>En nuestra ejecución: medianas de 22 934 ns (válido) y 22 783 ns (alterado). Responde por escrito:</p>
         <ol>
           <li><strong>D.1.</strong> ¿Por qué Decaps no lanza una excepción con el cifrado alterado? ¿Qué ataque concreto se evitaría así y cuál seguiría siendo posible si la rama de rechazo fuese mensurablemente más lenta?</li>
-          <li><strong>D.2.</strong> ¿Demuestra la diferencia de 150 ns que la implementación es de tiempo constante, o que no lo es? Proponga un test estadístico adecuado (por ejemplo, la prueba <em>t</em> de Welch al estilo de <em>dudect</em>) y qué ruido del sistema debería controlar.</li>
-          <li><strong>D.3.</strong> Lea el resumen de KyberSlash [4]. ¿En qué dos funciones estaba la división de tiempo variable? ¿Por qué la segunda (compresión del cifrado) es explotable aunque en Encaps procese datos públicos?</li>
-          <li><strong>D.4.</strong> Clangover (CVE-2024-37880) no estaba en el código fuente, sino en el binario. ¿Qué implica esto para la validación de una implementación «de tiempo constante»? ¿Qué herramientas conoce que trabajen sobre binarios?</li>
-          <li><strong>D.5.</strong> Si su implementación de la parte A fallase con probabilidad 2<sup>−20</sup> por cifrado, ¿qué problema de seguridad tendría el KEM que se construyera encima con la FO, aunque esta esté bien implementada?</li>
+          <li><strong>D.2.</strong> ¿Demuestra la diferencia de 150 ns que la implementación es de tiempo constante, o que no lo es? Propón un test estadístico adecuado (por ejemplo, la prueba <em>t</em> de Welch al estilo de <em>dudect</em>) y qué ruido del sistema deberías controlar.</li>
+          <li><strong>D.3.</strong> Lee el resumen de KyberSlash [4]. ¿En qué dos funciones estaba la división de tiempo variable? ¿Por qué la segunda (compresión del cifrado) es explotable aunque en Encaps procese datos públicos?</li>
+          <li><strong>D.4.</strong> Clangover (CVE-2024-37880) no estaba en el código fuente, sino en el binario. ¿Qué implica esto para la validación de una implementación «de tiempo constante»? ¿Qué herramientas conoces que trabajen sobre binarios?</li>
+          <li><strong>D.5.</strong> Si tu implementación de la parte A fallase con probabilidad \(2^{-20}\) por cifrado, ¿qué problema de seguridad tendría el KEM que se construyera encima con la FO, aunque esta esté bien implementada?</li>
         </ol>
-        <details><summary>Orientación para el profesorado</summary><div class="details-body">
-          <p>D.1: ataques de reacción / oráculo de validez; con fuga temporal el oráculo reaparece. D.2: una diferencia de medianas en un sistema multitarea no prueba nada en ninguno de los dos sentidos; hay que aislar el núcleo, fijar frecuencia, intercalar clases y usar un contraste sobre muchas muestras. D.3: <code>poly_tomsg</code> (KyberSlash1) y <code>poly_compress</code>/<code>polyvec_compress</code> (KyberSlash2); la reencriptación en Decaps procesa <var>m</var>′, derivado del secreto. D.4: hay que verificar el código máquina (p. ej., herramientas tipo Valgrind con memoria «secreta» marcada, como la que usaron los autores de KyberSlash, o verificación formal). D.5: fallos de descifrado frecuentes permiten ataques que buscan cifrados con más probabilidad de fallar y aprenden el secreto de las respuestas; por eso FIPS 203 exige ≤ 2<sup>−138,8</sup>.</p>
+        <details><summary>Orientación para comprobar tus respuestas</summary><div class="details-body">
+          <p>D.1: ataques de reacción / oráculo de validez; con fuga temporal el oráculo reaparece. D.2: una diferencia de medianas en un sistema multitarea no prueba nada en ninguno de los dos sentidos; hay que aislar el núcleo, fijar frecuencia, intercalar clases y usar un contraste sobre muchas muestras. D.3: <code>poly_tomsg</code> (KyberSlash1) y <code>poly_compress</code>/<code>polyvec_compress</code> (KyberSlash2); la reencriptación en Decaps procesa \(m'\), derivado del secreto. D.4: hay que verificar el código máquina (p. ej., herramientas tipo Valgrind con memoria «secreta» marcada, como la que usaron los autores de KyberSlash, o verificación formal). D.5: fallos de descifrado frecuentes permiten ataques que buscan cifrados con más probabilidad de fallar y aprenden el secreto de las respuestas; por eso FIPS 203 exige \(\le 2^{-138{,}8}\).</p>
         </div></details>
 
-        <h2 id="entrega"><span class="sec">L2.6</span>Entregables y evaluación</h2>
-        <p>Entregue un único archivo comprimido con:</p>
+        <h2 id="entrega"><span class="sec">L2.6</span>Resultado final</h2>
+        <p>Al terminar deberías tener, en una carpeta de trabajo y en tu propio cuaderno de laboratorio (Markdown, Jupyter o PDF):</p>
         <ol>
           <li><code>kpke_toy.py</code> (partes A.1–A.3) con sus pruebas <code>assert</code>, y las figuras o tablas del experimento A.3.</li>
           <li><code>tamanos.py</code> y <code>bench.py</code> (partes B.1 y B.3) y la salida de las órdenes de OpenSSL de B.2.</li>
           <li><code>acvp_mlkem.py</code> con su salida y la demostración de C.2.</li>
-          <li>Un informe de 4–6 páginas con las respuestas razonadas de B.2, B.3, C.1–C.3 y D.1–D.5, indicando versión de cada biblioteca y procesador usado.</li>
+          <li>Tus respuestas razonadas a B.2, B.3, C.1–C.3 y D.1–D.5, anotando la versión de cada biblioteca y procesador usado.</li>
         </ol>
+        <h3 id="autoevaluacion">Autoevaluación</h3>
+        <p>Usa esta tabla para revisar tu propio trabajo: localiza en qué columna queda cada parte y, si alguna cae en «Revisar», vuelve a la sección correspondiente (L2.2 a L2.5), repite sus tareas y comprueba de nuevo los puntos de control.</p>
         <div class="table-wrap"><table>
-          <caption>Rúbrica (10 puntos)</caption>
-          <thead><tr><th>Criterio</th><th class="num">Peso</th><th>Excelente</th><th>Suficiente</th><th>Insuficiente</th></tr></thead>
+          <caption>Criterios de autoevaluación</caption>
+          <thead><tr><th>Criterio</th><th>Dominado</th><th>Suficiente</th><th>Revisar</th></tr></thead>
           <tbody>
-            <tr><th>Parte A: corrección del K-PKE</th><td class="num">2,5</td><td>Anillo, compresión y CBD correctos y probados; 0 fallos con parámetros reales; experimento A.3 bien diseñado y explicado con la ec. (4.1)</td><td>Funciona con parámetros reales; experimento incompleto o sin interpretar</td><td>Fallos de descifrado con parámetros reales o aritmética del anillo incorrecta</td></tr>
-            <tr><th>Parte B: uso de bibliotecas y medidas</th><td class="num">2,5</td><td>Tres bibliotecas, tamaños cotejados con FIPS 203 y RFC 9935, medidas con metodología explícita y discusión crítica</td><td>Dos bibliotecas y medidas sin análisis de sobrecargas</td><td>Una sola biblioteca o cifras sin procedimiento</td></tr>
-            <tr><th>Parte C: validación ACVP</th><td class="num">2</td><td>Todos los vectores pasan; C.2 demostrado con <code>hashlib</code>; C.3 bien argumentado</td><td>Script funcionando sin C.2 o C.3</td><td>No ejecuta o no interpreta los resultados</td></tr>
-            <tr><th>Parte D: análisis de seguridad</th><td class="num">2</td><td>Respuestas precisas, con referencias a FIPS 203 y a los artículos citados</td><td>Respuestas correctas pero superficiales</td><td>Errores conceptuales (p. ej., confundir IND-CPA e IND-CCA2)</td></tr>
-            <tr><th>Calidad del código y del informe</th><td class="num">1</td><td>Código legible y reproducible (versiones fijadas), informe claro</td><td>Reproducible con esfuerzo</td><td>No reproducible</td></tr>
+            <tr><th>Parte A: corrección del K-PKE</th><td>Anillo, compresión y CBD correctos y probados; 0 fallos con parámetros reales; experimento A.3 bien diseñado y explicado con la ec. (4.1)</td><td>Funciona con parámetros reales; experimento incompleto o sin interpretar</td><td>Fallos de descifrado con parámetros reales o aritmética del anillo incorrecta</td></tr>
+            <tr><th>Parte B: uso de bibliotecas y medidas</th><td>Tres bibliotecas, tamaños cotejados con FIPS 203 y RFC 9935, medidas con metodología explícita y discusión crítica</td><td>Dos bibliotecas y medidas sin análisis de sobrecargas</td><td>Una sola biblioteca o cifras sin procedimiento</td></tr>
+            <tr><th>Parte C: validación ACVP</th><td>Todos los vectores pasan; C.2 demostrado con <code>hashlib</code>; C.3 bien argumentado</td><td>Script funcionando sin C.2 o C.3</td><td>No ejecuta o no interpreta los resultados</td></tr>
+            <tr><th>Parte D: análisis de seguridad</th><td>Respuestas precisas, con referencias a FIPS 203 y a los artículos citados</td><td>Respuestas correctas pero superficiales</td><td>Errores conceptuales (p. ej., confundir IND-CPA e IND-CCA2)</td></tr>
+            <tr><th>Calidad del código y de las notas</th><td>Código legible y reproducible (versiones fijadas), notas claras</td><td>Reproducible con esfuerzo</td><td>No reproducible</td></tr>
           </tbody>
         </table></div>
 
         <div class="callout note"><span class="callout-title">Qué se ha comprobado al redactar esta guía</span><p>Todas las órdenes y scripts de esta página se ejecutaron el 24 de septiembre de 2026 en Linux (Python 3.12.7, NumPy 2.5.3, pyca/cryptography 50.0.1, liboqs 0.16.0 compilada desde el código fuente con liboqs-python 0.16.0.1, y OpenSSL 3.5.8 compilado localmente). Las salidas mostradas son las obtenidas, salvo los valores aleatorios.</p></div>
 
         <aside class="key-points"><span class="kp-title">Ideas clave</span><ul>
-          <li>K-PKE cabe en unas decenas de líneas; lo que lo hace correcto es el margen entre el ruido (unos cientos) y <var>q</var>/4 ≈ 832.</li>
+          <li>K-PKE cabe en unas decenas de líneas; lo que lo hace correcto es el margen entre el ruido (unos cientos) y \(q/4 \approx 832\).</li>
           <li>Las bibliotecas difieren en detalles que rompen la interoperabilidad: orden de la tupla, formato de clave (semilla de 64 bytes o clave expandida) y conjuntos disponibles.</li>
           <li>ML-KEM-768 cuesta decenas de microsegundos, comparable a X25519; su coste real es el tamaño (1 184 + 1 088 bytes).</li>
           <li>Los vectores ACVP permiten validar una implementación bit a bit, incluido el rechazo implícito; la ausencia de canales laterales, en cambio, hay que comprobarla sobre el binario.</li>
@@ -373,7 +375,7 @@ bad = bytearray(ct); bad[<span class="tok-n">100</span>] ^= <span class="tok-n">
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
       <div class="footer-links">
         <a href="../glosario.html">Glosario</a>
         <a href="../recursos/index.html">Recursos</a>

@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Programa y calendario — Curso PQC</title>
-  <meta name="description" content="Programa del Curso de Criptografía Post-Cuántica: resultados de aprendizaje, calendario de ocho sesiones, metodología, evaluación y proyecto final.">
+  <title>Programa y plan de estudio — Curso PQC</title>
+  <meta name="description" content="Programa del Curso de Criptografía Post-Cuántica: resultados de aprendizaje, plan de estudio de ocho semanas, organización del material y autoevaluación.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/styles.css">
-  <script src="js/course-data.js" defer></script>
-  <script src="js/course.js" defer></script>
+  <link rel="stylesheet" href="css/styles.css?v=2026092402">
+  <script src="js/course-data.js?v=2026092402" defer></script>
+  <script src="js/course.js?v=2026092402" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -42,11 +42,12 @@
       </nav>
       <header class="page-head">
         <p class="eyebrow">Programa · Edición 2026</p>
-        <h1>Programa y <em>calendario</em></h1>
-        <p class="lede">Qué se aprende, en qué orden, con qué actividades y cómo se evalúa. Pensado para ocho sesiones presenciales de dos horas, con trabajo práctico entre sesiones.</p>
+        <h1>Programa y <em>plan de estudio</em></h1>
+        <p class="lede">Qué se aprende, en qué orden y cómo comprobar que lo has aprendido. El curso es en línea y a tu ritmo: aquí tienes un plan orientativo de ocho semanas, pero puedes seguirlo como prefieras.</p>
         <dl class="page-meta">
-          <div><dt>Duración</dt><dd>16 h lectivas</dd></div>
-          <div><dt>Formato</dt><dd>8 sesiones de 2 h</dd></div>
+          <div><dt>Lectura</dt><dd>≈ 16 h</dd></div>
+          <div><dt>Laboratorios</dt><dd>≈ 15 h</dd></div>
+          <div><dt>Formato</dt><dd>En línea, a tu ritmo</dd></div>
           <div><dt>Idioma</dt><dd>Español</dd></div>
           <div><dt>Actualizado</dt><dd>Septiembre 2026</dd></div>
         </dl>
@@ -57,7 +58,7 @@
         <p>El curso recorre el problema completo: la amenaza y su calendario, dónde está desplegada la criptografía vulnerable, las matemáticas de las nuevas familias, los estándares publicados por el NIST desde 2024, cómo se migra un sistema real y qué aporta la distribución cuántica de claves. Mantiene el equilibrio entre la intuición y el detalle técnico: cada tema explica los mecanismos con ejemplos resueltos y se acompaña de un ejemplo interactivo o un laboratorio.</p>
 
         <h2 id="objetivos"><span class="sec">2</span>Resultados de aprendizaje</h2>
-        <p>Al terminar el curso, el alumno será capaz de:</p>
+        <p>Al terminar el curso, serás capaz de:</p>
         <ol>
           <li><strong>Explicar</strong> por qué los algoritmos de Shor y Grover afectan de forma distinta a la criptografía asimétrica y a la simétrica, y estimar el riesgo de unos datos concretos con la desigualdad de Mosca.</li>
           <li><strong>Localizar</strong> la criptografía vulnerable en protocolos e infraestructuras reales (TLS, PKI, SSH, IPsec, firma de código) y razonar el impacto de sustituirla.</li>
@@ -76,23 +77,24 @@
         </ul>
         <p>No hace falta saber mecánica ni computación cuántica: el tema 1 introduce lo imprescindible y el tema 6 lo amplía para QKD.</p>
 
-        <h2 id="calendario"><span class="sec">4</span>Calendario de sesiones</h2>
+        <h2 id="calendario"><span class="sec">4</span>Plan de estudio orientativo</h2>
+        <p>Una propuesta para completar el curso en ocho semanas con unas cuatro horas semanales. Si vas más rápido, junta semanas; si un tema te cuesta, dedícale más tiempo antes de seguir: los temas 3 y 4 se apoyan en todo lo anterior.</p>
         <div class="table-wrap"><table>
-          <caption>Propuesta para ocho sesiones de dos horas. Los laboratorios se inician en clase y se terminan como trabajo autónomo.</caption>
-          <thead><tr><th>Sesión</th><th>Contenido</th><th>Práctica</th><th>Trabajo autónomo</th></tr></thead>
+          <caption>Cada fila es una semana. Las horas incluyen lectura, ejercicios y laboratorio.</caption>
+          <thead><tr><th>Semana</th><th>Lectura</th><th>Práctica</th><th class="num">Horas</th></tr></thead>
           <tbody>
-            <tr><th>1</th><td><a href="temas/tema1/index.html">Tema 1</a>. Primitivas actuales, computación cuántica mínima, Shor y Grover, Mosca y HNDL.</td><td><a href="ejemplos/algoritmo_shor.html">E1</a> en clase</td><td><a href="guias/algoritmo_shor.html">L1</a></td></tr>
-            <tr><th>2</th><td><a href="temas/tema2/index.html">Tema 2</a>. PKI, TLS 1.3, SSH, IPsec, DNSSEC y firma de código; coste de los tamaños post-cuánticos.</td><td>Análisis de un handshake real</td><td>Lectura: ejercicios del tema 2</td></tr>
-            <tr><th>3</th><td><a href="temas/tema3/index.html">Tema 3</a> (I). Retículos, SVP y CVP, reducción de bases, LWE, Ring-LWE y Module-LWE.</td><td>Ejercicios de LWE a mano</td><td>Ejercicios 3.1–3.4</td></tr>
-            <tr><th>4</th><td><a href="temas/tema3/index.html">Tema 3</a> (II). Firmas en retículos, NTRU, códigos, hash, multivariante e isogenias.</td><td><a href="ejemplos/ml_kem.html">E2</a> y <a href="ejemplos/ml_dsa.html">E3</a></td><td>Resto de ejercicios del tema 3</td></tr>
-            <tr><th>5</th><td><a href="temas/tema4/index.html">Tema 4</a> (I). Proceso del NIST, ML-KEM y ML-DSA en detalle.</td><td>Inicio de <a href="guias/ml_kem.html">L2</a></td><td><a href="guias/ml_kem.html">L2</a></td></tr>
-            <tr><th>6</th><td><a href="temas/tema4/index.html">Tema 4</a> (II). SLH-DSA, FN-DSA, HQC, firmas con estado y normalización internacional. <a href="temas/tema5/index.html">Tema 5</a> (I): calendarios y regulación.</td><td>Inicio de <a href="guias/ml_dsa.html">L3</a></td><td><a href="guias/ml_dsa.html">L3</a></td></tr>
-            <tr><th>7</th><td><a href="temas/tema5/index.html">Tema 5</a> (II). Inventario, agilidad, hibridación, implementación segura y casos reales.</td><td><a href="ejemplos/criptografia_hibrida.html">E4</a> e inicio de <a href="guias/criptografia_hibrida.html">L4</a></td><td><a href="guias/criptografia_hibrida.html">L4</a>; propuesta de proyecto</td></tr>
-            <tr><th>8</th><td><a href="temas/tema6/index.html">Tema 6</a>. QKD: BB84, tasa de clave, ataques, redes y comparación con PQC. Cierre del curso.</td><td><a href="ejemplos/qkd_bb84.html">E5</a> e inicio de <a href="guias/qkd.html">L5</a></td><td><a href="guias/qkd.html">L5</a>; proyecto final</td></tr>
+            <tr><th>1</th><td><a href="temas/tema1/index.html">Tema 1</a>. Primitivas actuales, computación cuántica mínima, Shor y Grover, Mosca y HNDL.</td><td><a href="ejemplos/algoritmo_shor.html">E1</a> y <a href="guias/algoritmo_shor.html">L1</a></td><td class="num">4–5</td></tr>
+            <tr><th>2</th><td><a href="temas/tema2/index.html">Tema 2</a>. PKI, TLS 1.3, SSH, IPsec, DNSSEC y firma de código; coste de los tamaños post-cuánticos.</td><td>Ejercicios del tema 2</td><td class="num">3</td></tr>
+            <tr><th>3</th><td><a href="temas/tema3/index.html">Tema 3</a> (I). Retículos, SVP y CVP, reducción de bases, LWE, Ring-LWE y Module-LWE.</td><td>Ejercicios de LWE a mano</td><td class="num">3–4</td></tr>
+            <tr><th>4</th><td><a href="temas/tema3/index.html">Tema 3</a> (II). Firmas en retículos, NTRU, códigos, hash, multivariante e isogenias.</td><td><a href="ejemplos/ml_kem.html">E2</a> y <a href="ejemplos/ml_dsa.html">E3</a></td><td class="num">3–4</td></tr>
+            <tr><th>5</th><td><a href="temas/tema4/index.html">Tema 4</a> (I). Proceso del NIST, ML-KEM y ML-DSA en detalle.</td><td><a href="guias/ml_kem.html">L2</a></td><td class="num">5–6</td></tr>
+            <tr><th>6</th><td><a href="temas/tema4/index.html">Tema 4</a> (II). SLH-DSA, FN-DSA, HQC, firmas con estado y normalización internacional.</td><td><a href="guias/ml_dsa.html">L3</a></td><td class="num">4–5</td></tr>
+            <tr><th>7</th><td><a href="temas/tema5/index.html">Tema 5</a>. Calendarios, inventario, agilidad, hibridación, implementación segura y casos reales.</td><td><a href="ejemplos/criptografia_hibrida.html">E4</a> y <a href="guias/criptografia_hibrida.html">L4</a></td><td class="num">5–6</td></tr>
+            <tr><th>8</th><td><a href="temas/tema6/index.html">Tema 6</a>. QKD: BB84, tasa de clave, ataques, redes y comparación con PQC.</td><td><a href="ejemplos/qkd_bb84.html">E5</a> y <a href="guias/qkd.html">L5</a></td><td class="num">3–4</td></tr>
           </tbody>
         </table></div>
         <div class="table-wrap"><table>
-          <caption>Carga lectiva por tema</caption>
+          <caption>Tiempo de lectura estimado por tema, sin laboratorios</caption>
           <thead><tr><th>Tema</th><th class="num">Horas</th><th>Nivel</th></tr></thead>
           <tbody>
             <tr><td>1 · Criptografía moderna y la amenaza cuántica</td><td class="num">2</td><td>Introductorio</td></tr>
@@ -105,25 +107,23 @@
           </tbody>
         </table></div>
 
-        <h2 id="metodologia"><span class="sec">5</span>Metodología</h2>
+        <h2 id="metodologia"><span class="sec">5</span>Cómo está organizado el material</h2>
         <dl>
-          <dt>Clases expositivas con pizarra</dt><dd>Conceptos y ejemplos resueltos a mano; las páginas de cada tema son el material de referencia.</dd>
-          <dt>Demostraciones interactivas</dt><dd>Los <a href="ejemplos/index.html">ejemplos</a> se usan en clase para explorar parámetros y fallos.</dd>
-          <dt>Laboratorios</dt><dd>Cinco <a href="guias/index.html">guías</a> con herramientas reales, iniciadas en clase y completadas de forma autónoma.</dd>
-          <dt>Discusión de casos</dt><dd>Despliegues reales, decisiones de diseño y posiciones de distintas agencias.</dd>
-          <dt>Proyecto final</dt><dd>Un trabajo aplicado, individual o en pareja, con informe y defensa breve.</dd>
+          <dt>Temas</dt><dd>El material de referencia: explicación con ejemplos resueltos a mano, diagramas, ejercicios con solución desplegable, ideas clave y referencias primarias.</dd>
+          <dt>Ejemplos interactivos</dt><dd>Los <a href="ejemplos/index.html">ejemplos</a> se ejecutan en el navegador. Úsalos al terminar la sección correspondiente para cambiar parámetros y ver qué se rompe.</dd>
+          <dt>Laboratorios</dt><dd>Cinco <a href="guias/index.html">guías</a> con herramientas reales, pasos con la salida esperada y una tabla de autoevaluación.</dd>
+          <dt>Glosario, recursos y búsqueda</dt><dd>Para volver a un concepto: el <a href="glosario.html">glosario</a> enlaza cada término con la sección donde se desarrolla, y los <a href="recursos/index.html">recursos</a> proponen lecturas por tema.</dd>
         </dl>
 
-        <h2 id="evaluacion"><span class="sec">6</span>Evaluación</h2>
-        <div class="table-wrap"><table>
-          <thead><tr><th>Componente</th><th class="num">Peso</th><th>Qué se valora</th></tr></thead>
-          <tbody>
-            <tr><th>Participación</th><td class="num">10 %</td><td>Asistencia activa, resolución de ejercicios en clase y discusión de casos.</td></tr>
-            <tr><th>Laboratorios</th><td class="num">40 %</td><td>Informes de L1–L5 según la rúbrica de cada guía (8 % cada uno).</td></tr>
-            <tr><th>Proyecto final</th><td class="num">50 %</td><td>Implementación o análisis, informe técnico y defensa de 10 minutos.</td></tr>
-          </tbody>
-        </table></div>
-        <h3 id="proyecto">Propuestas de proyecto final</h3>
+        <h2 id="evaluacion"><span class="sec">6</span>Comprobar lo aprendido</h2>
+        <p>El curso no tiene exámenes ni calificaciones. Para saber si dominas un tema:</p>
+        <ul>
+          <li><strong>Ejercicios.</strong> Cada tema trae entre seis y ocho, de nivel básico a avanzado. Resuélvelos antes de abrir la solución; si fallas uno de nivel básico, repasa la sección que cita.</li>
+          <li><strong>Laboratorios.</strong> Cada guía termina con un «Resultado final», que dice qué deberías tener al acabar, y una tabla de autoevaluación que indica qué repasar si un criterio no se cumple.</li>
+          <li><strong>Objetivos.</strong> Vuelve a la lista de objetivos del principio de cada tema: deberías poder explicar cada punto sin mirar el texto.</li>
+        </ul>
+        <h3 id="proyecto">Proyecto final (opcional)</h3>
+        <p>Si quieres consolidar lo aprendido, elige uno de estos proyectos y documéntalo como un informe técnico breve: objetivos, diseño, resultados reproducibles, análisis de seguridad y limitaciones.</p>
         <ul>
           <li><strong>Plan de migración</strong> para una organización ficticia pero realista: inventario (CBOM), priorización con Mosca, calendario alineado con la hoja de ruta europea y plan de pruebas.</li>
           <li><strong>Medición de TLS post-cuántico</strong>: latencia y bytes del handshake con distintos grupos y cadenas de certificados, en red local y con pérdidas simuladas.</li>
@@ -132,7 +132,6 @@
           <li><strong>Criptoanálisis de juguete</strong>: ataque con reducción de bases (LLL/BKZ) a instancias pequeñas de LWE y extrapolación con el estimador de retículos.</li>
           <li><strong>QKD y PQC combinadas</strong>: derivar claves de una API de entrega de claves simulada y de un KEM post-cuántico en una aplicación.</li>
         </ul>
-        <p>El informe (8–12 páginas) debe incluir objetivos, diseño, resultados reproducibles, análisis de seguridad y limitaciones. Se valoran la corrección técnica (40 %), la calidad del análisis (30 %), la reproducibilidad (15 %) y la claridad de la presentación (15 %).</p>
 
         <h2 id="bibliografia"><span class="sec">7</span>Bibliografía básica</h2>
         <p>Cada tema cierra con sus referencias primarias. La lista comentada completa, con estándares, guías de agencias y herramientas, está en <a href="recursos/index.html">Recursos</a>; para empezar, basta con los estándares FIPS 203, 204 y 205 del NIST y un texto general de criptografía moderna.</p>
@@ -144,7 +143,7 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
       <div class="footer-links">
         <a href="glosario.html">Glosario</a>
         <a href="recursos/index.html">Recursos</a>

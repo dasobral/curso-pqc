@@ -6,10 +6,10 @@
   <title>E2 · ML-KEM paso a paso — Curso PQC</title>
   <meta name="description" content="Demo interactiva de ML-KEM en el navegador: K-PKE de juguete con n, k, η, du y dv configurables, ruido de descifrado, fallos, transformación FO con rechazo implícito y una implementación FIPS 203 verificada con vectores ACVP.">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/styles.css">
-  <script src="../js/course-data.js" defer></script>
-  <script src="../js/course.js" defer></script>
-  <script src="../js/ml_kem_interactive.js" defer></script>
+  <link rel="stylesheet" href="../css/styles.css?v=2026092402">
+  <script src="../js/course-data.js?v=2026092402" defer></script>
+  <script src="../js/course.js?v=2026092402" defer></script>
+  <script src="../js/ml_kem_interactive.js?v=2026092402" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -61,41 +61,41 @@
           <caption>Qué es fiel al estándar y qué no</caption>
           <thead><tr><th>Aspecto</th><th>Modelo de juguete (secciones 1–3)</th><th>FIPS 203 (y sección 4)</th></tr></thead>
           <tbody>
-            <tr><th>Anillo</th><td>ℤ<sub>3329</sub>[<var>X</var>]/(<var>X</var><sup><var>n</var></sup> + 1), <var>n</var> ∈ {8, …, 256}</td><td><var>n</var> = 256 fijo</td></tr>
-            <tr><th>Multiplicación</th><td>Ingenua, O(<var>n</var><sup>2</sup>), en el dominio de coeficientes</td><td>NTT incompleta de 7 niveles</td></tr>
-            <tr><th>Matriz A</th><td>SHAKE128(ρ ‖ <var>j</var> ‖ <var>i</var>) con muestreo por rechazo de 12 bits, como coeficientes</td><td>Igual, pero interpretada directamente en el dominio NTT (SampleNTT)</td></tr>
-            <tr><th>Ruido</th><td>CBD<sub>η</sub> a partir de SHAKE256 (PRF), η₁ y η₂ configurables de 1 a 64</td><td>η₁ ∈ {2, 3}, η₂ = 2</td></tr>
-            <tr><th>Compresión</th><td>Fórmulas exactas de FIPS 203; <var>d<sub>u</sub></var>, <var>d<sub>v</sub></var> configurables</td><td>(<var>d<sub>u</sub></var>, <var>d<sub>v</sub></var>) = (10, 4) u (11, 5)</td></tr>
-            <tr><th>G, H, J</th><td>SHA3-512, SHA3-256, SHAKE256</td><td>Idénticas</td></tr>
-            <tr><th>Codificación</th><td>ByteEncode generalizado a <var>n</var> coeficientes; G(<var>d</var> ‖ <var>k</var> ‖ <var>n</var>)</td><td>ByteEncode<sub>12</sub>, <sub>du</sub>, <sub>dv</sub>, <sub>1</sub>; G(<var>d</var> ‖ <var>k</var>)</td></tr>
+            <tr><th>Anillo</th><td>\(\Z_{3329}[X]/(X^n + 1)\), \(n \in \{8, \dots, 256\}\)</td><td>\(n = 256\) fijo</td></tr>
+            <tr><th>Multiplicación</th><td>Ingenua, \(O(n^2)\), en el dominio de coeficientes</td><td>NTT incompleta de 7 niveles</td></tr>
+            <tr><th>Matriz \(\mathbf{A}\)</th><td>\(\mathrm{SHAKE128}(\rho \parallel j \parallel i)\) con muestreo por rechazo de 12 bits, como coeficientes</td><td>Igual, pero interpretada directamente en el dominio NTT (\(\mathsf{SampleNTT}\))</td></tr>
+            <tr><th>Ruido</th><td>\(\mathrm{CBD}_\eta\) a partir de SHAKE256 (PRF), \(\eta_1\) y \(\eta_2\) configurables de 1 a 64</td><td>\(\eta_1 \in \{2, 3\}\), \(\eta_2 = 2\)</td></tr>
+            <tr><th>Compresión</th><td>Fórmulas exactas de FIPS 203; \(d_u\), \(d_v\) configurables</td><td>\((d_u, d_v) = (10, 4)\) u \((11, 5)\)</td></tr>
+            <tr><th>\(G\), \(H\), \(J\)</th><td>SHA3-512, SHA3-256, SHAKE256</td><td>Idénticas</td></tr>
+            <tr><th>Codificación</th><td>\(\mathsf{ByteEncode}\) generalizado a \(n\) coeficientes; \(G(d \parallel k \parallel n)\)</td><td>\(\mathsf{ByteEncode}_{12}\), \(\mathsf{ByteEncode}_{d_u}\), \(\mathsf{ByteEncode}_{d_v}\), \(\mathsf{ByteEncode}_1\); \(G(d \parallel k)\)</td></tr>
             <tr><th>Comprobaciones de entrada</th><td>No</td><td>Sí (§7.2, §7.3)</td></tr>
           </tbody>
         </table></div>
 
         <h2 id="kpke"><span class="sec">E2.1</span>K-PKE: ruido y redondeo</h2>
-        <p>Cada ejecución genera un par de claves, cifra un mensaje aleatorio de <var>n</var> bits y lo descifra. El receptor calcula <span class="math"><var>w</var> = <var>v</var>′ − <b>s</b><sup>T</sup><b>u</b>′</span>, que es <span class="math">⌈<var>q</var>/2⌋·<var>m</var> + ruido</span>, y decide cada bit por proximidad a 0 o a 1665:</p>
-        <div class="equation">ruido = <b>e</b><sup>T</sup><b>y</b> + <var>e</var><sub>2</sub> − <b>s</b><sup>T</sup><b>e</b><sub>1</sub> + Δ<var>v</var> − <b>s</b><sup>T</sup>Δ<b>u</b>,&nbsp;&nbsp;&nbsp; descifrado correcto ⇔ |ruido<sub><var>i</var></sub>| &lt; <var>q</var>/4 ≈ 832 para todo <var>i</var><span class="eq-label">(E2.1)</span></div>
+        <p>Cada ejecución genera un par de claves, cifra un mensaje aleatorio de \(n\) bits y lo descifra. El receptor calcula \(w = v' - \mathbf{s}^{\mathsf{T}}\mathbf{u}'\), que es \(\lceil q/2 \rfloor \cdot m + \text{ruido}\), y decide cada bit por proximidad a 0 o a 1665:</p>
+        <div class="equation">\[ \begin{gathered} \text{ruido} = \mathbf{e}^{\mathsf{T}}\mathbf{y} + e_2 - \mathbf{s}^{\mathsf{T}}\mathbf{e}_1 + \Delta v - \mathbf{s}^{\mathsf{T}}\Delta\mathbf{u}, \\ \text{descifrado correcto} \iff |\text{ruido}_i| &lt; q/4 \approx 832 \ \text{para todo } i \end{gathered} \tag{E2.1} \]</div>
 
         <section class="demo" id="demo-kpke" aria-labelledby="demo-kpke-t">
           <div class="demo-head"><p class="demo-title" id="demo-kpke-t">K-PKE de juguete</p><button class="btn ghost" type="button" id="mk-reset">Reiniciar</button></div>
           <div class="demo-body">
             <div class="controls">
-              <label class="field">n (grado)
+              <label class="field"><span>\(n\) (grado)</span>
                 <select id="mk-n"><option>8</option><option selected>16</option><option>32</option><option>64</option><option>128</option><option>256</option></select></label>
-              <label class="field">k (rango)
+              <label class="field"><span>\(k\) (rango)</span>
                 <select id="mk-k"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
-              <label class="field"><span>η₁ = <b id="mk-eta1-v">3</b></span>
+              <label class="field"><span>\(\eta_1\) = <b id="mk-eta1-v">3</b></span>
                 <input id="mk-eta1" type="range" min="1" max="64" value="3"></label>
-              <label class="field"><span>η₂ = <b id="mk-eta2-v">2</b></span>
+              <label class="field"><span>\(\eta_2\) = <b id="mk-eta2-v">2</b></span>
                 <input id="mk-eta2" type="range" min="1" max="64" value="2"></label>
-              <label class="field"><span>d<sub>u</sub></span>
+              <label class="field"><span>\(d_u\)</span>
                 <select id="mk-du"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option selected>10</option><option>11</option><option>12</option></select></label>
-              <label class="field"><span>d<sub>v</sub></span>
+              <label class="field"><span>\(d_v\)</span>
                 <select id="mk-dv"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></label>
               <button class="btn" type="button" id="mk-run">Generar, cifrar y descifrar</button>
             </div>
             <div class="controls">
-              <span class="small muted">Parámetros reales (n = 256):</span>
+              <span class="small muted">Parámetros reales (\(n = 256\)):</span>
               <button class="btn ghost" type="button" data-mk-preset="ML-KEM-512">ML-KEM-512</button>
               <button class="btn ghost" type="button" data-mk-preset="ML-KEM-768">ML-KEM-768</button>
               <button class="btn ghost" type="button" data-mk-preset="ML-KEM-1024">ML-KEM-1024</button>
@@ -104,17 +104,17 @@
             <div class="grid-2">
               <figure class="demo-figure">
                 <svg id="mk-circle" viewBox="0 0 300 310" role="img" aria-labelledby="mk-circle-t"><title id="mk-circle-t">Coeficientes de w sobre el círculo Z_q y zonas de decisión</title></svg>
-                <figcaption><b>Círculo ℤ<sub>q</sub>.</b> Cada punto es un coeficiente de <var>w</var>: verde si se envió un 0, ámbar si se envió un 1, rojo y grande si se descifró mal. El arco verde se descodifica como 0 y el ámbar como 1.</figcaption>
+                <figcaption><b>Círculo \(\Z_q\).</b> Cada punto es un coeficiente de \(w\): verde si se envió un 0, ámbar si se envió un 1, rojo y grande si se descifró mal. El arco verde se descodifica como 0 y el ámbar como 1.</figcaption>
               </figure>
               <div class="table-wrap"><table>
-                <caption>Primeros 16 coeficientes: w = v′ − sᵀu′ en [0, q) y ruido centrado</caption>
-                <thead><tr><th class="num">i</th><th class="num">m</th><th class="num">w</th><th class="num">ruido</th><th class="num">m′</th></tr></thead>
+                <caption>Primeros 16 coeficientes: \(w = v' - \mathbf{s}^{\mathsf{T}}\mathbf{u}'\) en \([0, q)\) y ruido centrado</caption>
+                <thead><tr><th class="num">\(i\)</th><th class="num">\(m\)</th><th class="num">\(w\)</th><th class="num">ruido</th><th class="num">\(m'\)</th></tr></thead>
                 <tbody id="mk-coefs"></tbody>
               </table></div>
             </div>
             <figure class="demo-figure">
               <svg id="mk-hist1" viewBox="0 0 600 190" role="img" aria-labelledby="mk-hist1-t"><title id="mk-hist1-t">Histograma del ruido de esta ejecución</title></svg>
-              <figcaption><b>Ruido de esta ejecución.</b> Barras rojas: coeficientes que cruzan ±q/4 y producen un bit erróneo.</figcaption>
+              <figcaption><b>Ruido de esta ejecución.</b> Barras rojas: coeficientes que cruzan \(\pm q/4\) y producen un bit erróneo.</figcaption>
             </figure>
             <div class="output" id="mk-log" aria-live="polite">Pulse «Generar, cifrar y descifrar».</div>
           </div>
@@ -122,14 +122,14 @@
 
         <h3>Qué observar</h3>
         <ul>
-          <li><strong>La clave pública parece uniforme.</strong> En el registro, <b>s</b> y <b>e</b> tienen coeficientes en [−η₁, η₁], pero <b>t</b> = <b>A</b><b>s</b> + <b>e</b> parece ruido uniforme en ℤ<sub>q</sub>: esa es la hipótesis Module-LWE.</li>
-          <li><strong>Con los parámetros reales el margen es enorme.</strong> Pulse «ML-KEM-768»: el máximo |ruido| suele quedar por debajo de 300, frente a la frontera de 832. El resto del margen es lo que hace que la probabilidad de fallo sea ≤ 2<sup>−164,8</sup>.</li>
-          <li><strong>La compresión es ruido.</strong> Deje η₁ = η₂ = 1 y baje <var>d<sub>v</sub></var> a 2 o 1: el error de redondeo de <var>v</var> (hasta <var>q</var>/2<sup><var>d<sub>v</sub></var>+1</sup>, es decir 416 u 832) domina y aparecen fallos aunque el ruido LWE sea mínimo.</li>
-          <li><strong>El ruido crece con √(k·n)·η.</strong> Con <var>n</var> = 256 y <var>k</var> = 3, suba η₁ y η₂ hacia 12–16: la campana del histograma se ensancha hasta tocar ±<var>q</var>/4 y empiezan los bits erróneos. Con <var>n</var> = 16 hace falta un η mucho mayor para el mismo efecto, porque cada coeficiente del ruido suma 2<var>kn</var> productos.</li>
+          <li><strong>La clave pública parece uniforme.</strong> En el registro, \(\mathbf{s}\) y \(\mathbf{e}\) tienen coeficientes en \([-\eta_1, \eta_1]\), pero \(\mathbf{t} = \mathbf{A}\mathbf{s} + \mathbf{e}\) parece ruido uniforme en \(\Z_q\): esa es la hipótesis Module-LWE.</li>
+          <li><strong>Con los parámetros reales el margen es enorme.</strong> Pulse «ML-KEM-768»: el máximo \(|\text{ruido}|\) suele quedar por debajo de 300, frente a la frontera de 832. El resto del margen es lo que hace que la probabilidad de fallo sea \(\le 2^{-164{,}8}\).</li>
+          <li><strong>La compresión es ruido.</strong> Deje \(\eta_1 = \eta_2 = 1\) y baje \(d_v\) a 2 o 1: el error de redondeo de \(v\) (hasta \(q/2^{d_v+1}\), es decir 416 u 832) domina y aparecen fallos aunque el ruido LWE sea mínimo.</li>
+          <li><strong>El ruido crece con \(\sqrt{k \cdot n} \cdot \eta\).</strong> Con \(n = 256\) y \(k = 3\), suba \(\eta_1\) y \(\eta_2\) hacia 12–16: la campana del histograma se ensancha hasta tocar \(\pm q/4\) y empiezan los bits erróneos. Con \(n = 16\) hace falta un \(\eta\) mucho mayor para el mismo efecto, porque cada coeficiente del ruido suma \(2kn\) productos.</li>
         </ul>
 
         <h2 id="fallos"><span class="sec">E2.2</span>Tasa de fallo empírica</h2>
-        <p>Repite muchas veces la ejecución anterior con los parámetros actuales, acumula todos los coeficientes del ruido y cuenta los descifrados fallidos. Es la manera más directa de ver por qué los diseñadores eligen η, <var>d<sub>u</sub></var> y <var>d<sub>v</sub></var> con cuidado: más ruido significa más seguridad LWE, pero también más fallos, y los fallos frecuentes son explotables.</p>
+        <p>Repite muchas veces la ejecución anterior con los parámetros actuales, acumula todos los coeficientes del ruido y cuenta los descifrados fallidos. Es la manera más directa de ver por qué los diseñadores eligen \(\eta\), \(d_u\) y \(d_v\) con cuidado: más ruido significa más seguridad LWE, pero también más fallos, y los fallos frecuentes son explotables.</p>
         <section class="demo" id="demo-fallos" aria-labelledby="demo-fallos-t">
           <div class="demo-head"><p class="demo-title" id="demo-fallos-t">Muchas ejecuciones</p></div>
           <div class="demo-body">
@@ -146,10 +146,10 @@
             <div class="output" id="mk-trials-out" aria-live="polite">Sin ejecutar.</div>
           </div>
         </section>
-        <p>Pruebe, por ejemplo, <var>n</var> = 256, <var>k</var> = 3, <var>d<sub>u</sub></var> = 10, <var>d<sub>v</sub></var> = 4 con η = 2 (ML-KEM-768: cero fallos) frente a η = 20 (fallos frecuentes). Con <var>n</var> = 16 y <var>d<sub>v</sub></var> = 1 obtendrá del orden de un 10 % de descifrados fallidos incluso con el ruido por defecto.</p>
+        <p>Pruebe, por ejemplo, \(n = 256\), \(k = 3\), \(d_u = 10\), \(d_v = 4\) con \(\eta = 2\) (ML-KEM-768: cero fallos) frente a \(\eta = 20\) (fallos frecuentes). Con \(n = 16\) y \(d_v = 1\) obtendrá del orden de un 10 % de descifrados fallidos incluso con el ruido por defecto.</p>
 
         <h2 id="fo"><span class="sec">E2.3</span>Transformación FO y rechazo implícito</h2>
-        <p>Con los mismos parámetros, la demo envuelve K-PKE como en FIPS 203 (Alg. 16–18): <span class="math">(<var>K</var>, <var>r</var>) = G(<var>m</var> ‖ H(ek))</span>, el cifrado es determinista a partir de <var>m</var>, y el receptor reencripta y compara. Pulse «Alterar un bit del cifrado» para comportarse como un adversario que manipula <var>c</var>: el receptor no devuelve un error, sino <span class="math"><var>K̄</var> = J(<var>z</var> ‖ <var>c</var>)</span>, una clave pseudoaleatoria que no revela nada sobre si el descifrado «casi» funcionó.</p>
+        <p>Con los mismos parámetros, la demo envuelve K-PKE como en FIPS 203 (Alg. 16–18): \((K, r) = G(m \parallel H(\mathsf{ek}))\), el cifrado es determinista a partir de \(m\), y el receptor reencripta y compara. Pulse «Alterar un bit del cifrado» para comportarse como un adversario que manipula \(c\): el receptor no devuelve un error, sino \(\bar{K} = J(z \parallel c)\), una clave pseudoaleatoria que no revela nada sobre si el descifrado «casi» funcionó.</p>
         <section class="demo" id="demo-fo" aria-labelledby="demo-fo-t">
           <div class="demo-head"><p class="demo-title" id="demo-fo-t">Encaps / Decaps</p></div>
           <div class="demo-body">
@@ -160,7 +160,7 @@
             <div class="output" id="mk-fo-out" aria-live="polite">Sin ejecutar.</div>
           </div>
         </section>
-        <div class="callout note"><span class="callout-title">Observe</span><p>Al alterar un bit de <b>u</b> comprimido, lo habitual es que <var>m</var>′ = <var>m</var> (el ruido extra es pequeño), y aun así <var>c</var>′ ≠ <var>c</var>: la reencriptación detecta <em>cualquier</em> cambio, no solo los que alteran el mensaje. Esa es precisamente la propiedad que impide los ataques de reacción: el adversario no puede distinguir «perturbé el ruido pero el mensaje sobrevivió» de «rompí el mensaje».</p></div>
+        <div class="callout note"><span class="callout-title">Observe</span><p>Al alterar un bit de \(\mathbf{u}\) comprimido, lo habitual es que \(m' = m\) (el ruido extra es pequeño), y aun así \(c' \ne c\): la reencriptación detecta <em>cualquier</em> cambio, no solo los que alteran el mensaje. Esa es precisamente la propiedad que impide los ataques de reacción: el adversario no puede distinguir «perturbé el ruido pero el mensaje sobrevivió» de «rompí el mensaje».</p></div>
 
         <h2 id="fips203"><span class="sec">E2.4</span>ML-KEM real (FIPS 203) en JavaScript</h2>
         <p>La misma biblioteca contiene una implementación completa de FIPS 203 con NTT, SampleNTT, codificaciones oficiales y comprobaciones de entrada. La comprobamos en Node.js contra los <strong>240 vectores ACVP</strong> de NIST para ML-KEM (generación de claves, encapsulamiento, desencapsulamiento con cifrados válidos y modificados, y comprobaciones de claves), con resultado bit a bit correcto. El botón «Verificar vector ACVP» repite en su navegador uno de ellos (ML-KEM-512, generación de claves, caso 1) comparando el hash SHA3-256 de las claves obtenidas con el de las esperadas.</p>
@@ -181,26 +181,26 @@
 
         <h2 id="ejercicios"><span class="sec">E2.5</span>Experimentos guiados</h2>
         <div class="exercise"><span class="ex-title">Experimento 1 <span class="level">Básico</span></span>
-          <p>Con el ajuste ML-KEM-512, anote el tamaño del cifrado que muestra la demo y compruébelo con la fórmula <span class="math">|c| = <var>n</var>(<var>d<sub>u</sub></var><var>k</var> + <var>d<sub>v</sub></var>)/8</span>. ¿Por qué el tamaño de ek de la demo coincide con el de FIPS 203?</p>
-          <details><summary>Solución</summary><div class="details-body"><p>|c| = 256·(10·2 + 4)/8 = 768 bytes, igual que FIPS 203. ek = 12·256·2/8 + 32 = 800 bytes: la demo usa la misma codificación de 12 bits por coeficiente más la semilla ρ, aunque su contenido no es interoperable (A se interpreta en otro dominio y G incluye <var>n</var>).</p></div></details>
+          <p>Con el ajuste ML-KEM-512, anote el tamaño del cifrado que muestra la demo y compruébelo con la fórmula \(|c| = n(d_u k + d_v)/8\). ¿Por qué el tamaño de ek de la demo coincide con el de FIPS 203?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>\(|c| = 256 \cdot (10 \cdot 2 + 4)/8 = 768\) bytes, igual que FIPS 203. \(|\mathsf{ek}| = 12 \cdot 256 \cdot 2/8 + 32 = 800\) bytes: la demo usa la misma codificación de 12 bits por coeficiente más la semilla \(\rho\), aunque su contenido no es interoperable (\(\mathbf{A}\) se interpreta en otro dominio y \(G\) incluye \(n\)).</p></div></details>
         </div>
         <div class="exercise"><span class="ex-title">Experimento 2 <span class="level">Intermedio</span></span>
-          <p>Fije <var>n</var> = 256, <var>k</var> = 2, <var>d<sub>u</sub></var> = 10 y <var>d<sub>v</sub></var> = 4, y aumente η₁ = η₂ desde 2. ¿A partir de qué valor observa fallos en 500 ejecuciones? Relacione el resultado con la desviación típica aproximada del ruido.</p>
-          <details><summary>Solución</summary><div class="details-body"><p>En nuestras pruebas (300 ejecuciones por valor) aparecen los primeros fallos hacia η ≈ 10–12, un 14 % de ejecuciones fallidas con η = 14 y un 76 % con η = 18. Con η₁ = η₂ = η, las dos contribuciones LWE (<b>e</b><sup>T</sup><b>y</b> y <b>s</b><sup>T</sup><b>e</b><sub>1</sub>) suman cada una <var>kn</var> = 512 productos de varianza (η/2)<sup>2</sup>, es decir 256η<sup>2</sup> en total; la compresión añade ≈ 3 600 (Δ<var>v</var>) + 225η (<b>s</b><sup>T</sup>Δ<b>u</b>). Para η = 18, σ ≈ √(82 944 + 4 050 + 3 600) ≈ 301 y la frontera 832 queda a 2,8σ: una cola bilateral de ≈ 0,6 % por coeficiente, y con 256 coeficientes 1 − 0,994<sup>256</sup> ≈ 77 % de ejecuciones con algún error, en buen acuerdo con lo observado. Para η = 12, σ ≈ 208 y 832 ≈ 4σ: ≈ 1,6 % de ejecuciones fallidas. Lo importante es que σ crece linealmente con η.</p></div></details>
+          <p>Fije \(n = 256\), \(k = 2\), \(d_u = 10\) y \(d_v = 4\), y aumente \(\eta_1 = \eta_2\) desde 2. ¿A partir de qué valor observa fallos en 500 ejecuciones? Relacione el resultado con la desviación típica aproximada del ruido.</p>
+          <details><summary>Solución</summary><div class="details-body"><p>En nuestras pruebas (300 ejecuciones por valor) aparecen los primeros fallos hacia \(\eta \approx 10\text{–}12\), un 14 % de ejecuciones fallidas con \(\eta = 14\) y un 76 % con \(\eta = 18\). Con \(\eta_1 = \eta_2 = \eta\), las dos contribuciones LWE (\(\mathbf{e}^{\mathsf{T}}\mathbf{y}\) y \(\mathbf{s}^{\mathsf{T}}\mathbf{e}_1\)) suman cada una \(kn = 512\) productos de varianza \((\eta/2)^2\), es decir \(256\eta^2\) en total; la compresión añade \(\approx 3\,600\) (\(\Delta v\)) \(+\, 225\eta\) (\(\mathbf{s}^{\mathsf{T}}\Delta\mathbf{u}\)). Para \(\eta = 18\), \(\sigma \approx \sqrt{82\,944 + 4\,050 + 3\,600} \approx 301\) y la frontera 832 queda a \(2{,}8\sigma\): una cola bilateral de ≈ 0,6 % por coeficiente, y con 256 coeficientes \(1 - 0{,}994^{256} \approx 77\,\%\) de ejecuciones con algún error, en buen acuerdo con lo observado. Para \(\eta = 12\), \(\sigma \approx 208\) y \(832 \approx 4\sigma\): ≈ 1,6 % de ejecuciones fallidas. Lo importante es que \(\sigma\) crece linealmente con \(\eta\).</p></div></details>
         </div>
         <div class="exercise"><span class="ex-title">Experimento 3 <span class="level">Intermedio</span></span>
-          <p>Con η₁ = η₂ = 1, compare <var>d<sub>v</sub></var> = 4, 3, 2 y 1 (<var>n</var> = 16, <var>k</var> = 2, 1000 ejecuciones). Explique el salto que observa en <var>d<sub>v</sub></var> = 1.</p>
-          <details><summary>Solución</summary><div class="details-body"><p>El error de redondeo de <var>v</var> está acotado por ⌈<var>q</var>/2<sup><var>d<sub>v</sub></var>+1</sup>⌋: 104, 208, 416 y 832. Hasta <var>d<sub>v</sub></var> = 2 queda holgura; con <var>d<sub>v</sub></var> = 1 el propio redondeo puede llevar el coeficiente justo a la frontera ±<var>q</var>/4 y cualquier ruido adicional, por pequeño que sea, provoca el error. Por eso FIPS 203 usa <var>d<sub>v</sub></var> ≥ 4.</p></div></details>
+          <p>Con \(\eta_1 = \eta_2 = 1\), compare \(d_v = 4\), 3, 2 y 1 (\(n = 16\), \(k = 2\), 1000 ejecuciones). Explique el salto que observa en \(d_v = 1\).</p>
+          <details><summary>Solución</summary><div class="details-body"><p>El error de redondeo de \(v\) está acotado por \(\lceil q/2^{d_v+1} \rfloor\): 104, 208, 416 y 832. Hasta \(d_v = 2\) queda holgura; con \(d_v = 1\) el propio redondeo puede llevar el coeficiente justo a la frontera \(\pm q/4\) y cualquier ruido adicional, por pequeño que sea, provoca el error. Por eso FIPS 203 usa \(d_v \ge 4\).</p></div></details>
         </div>
         <div class="exercise"><span class="ex-title">Experimento 4 <span class="level">Avanzado</span></span>
-          <p>En la sección E2.3, altere varias veces un bit del cifrado y observe cuándo <var>m</var>′ = <var>m</var>. Suponga ahora que Decaps devolviera «error» cuando <var>m</var>′ ≠ <var>m</var> (algo que la FO no hace). Diseñe, a grandes rasgos, cómo usaría ese oráculo para averiguar el signo de un coeficiente del ruido.</p>
-          <details><summary>Solución</summary><div class="details-body"><p>Tome un cifrado honesto y sume a <var>v</var> una constante δ en el coeficiente <var>i</var> (tras descomprimir, el receptor ve <var>w<sub>i</sub></var> + δ). Aumentando δ paso a paso, el bit <var>i</var> cambia cuando <var>w<sub>i</sub></var> + δ cruza <var>q</var>/4; el valor de δ en el que ocurre revela el ruido de ese coeficiente, que es una combinación lineal conocida de coeficientes secretos de <b>s</b> y <b>e</b>. Repitiendo con muchos cifrados se obtiene un sistema lineal y se recupera <b>s</b>. La FO elimina el oráculo porque cualquier alteración produce <var>c</var>′ ≠ <var>c</var> y una clave <var>K̄</var> indistinguible, tanto si el mensaje sobrevivió como si no.</p></div></details>
+          <p>En la sección E2.3, altere varias veces un bit del cifrado y observe cuándo \(m' = m\). Suponga ahora que Decaps devolviera «error» cuando \(m' \ne m\) (algo que la FO no hace). Diseñe, a grandes rasgos, cómo usaría ese oráculo para averiguar el signo de un coeficiente del ruido.</p>
+          <details><summary>Solución</summary><div class="details-body"><p>Tome un cifrado honesto y sume a \(v\) una constante \(\delta\) en el coeficiente \(i\) (tras descomprimir, el receptor ve \(w_i + \delta\)). Aumentando \(\delta\) paso a paso, el bit \(i\) cambia cuando \(w_i + \delta\) cruza \(q/4\); el valor de \(\delta\) en el que ocurre revela el ruido de ese coeficiente, que es una combinación lineal conocida de coeficientes secretos de \(\mathbf{s}\) y \(\mathbf{e}\). Repitiendo con muchos cifrados se obtiene un sistema lineal y se recupera \(\mathbf{s}\). La FO elimina el oráculo porque cualquier alteración produce \(c' \ne c\) y una clave \(\bar{K}\) indistinguible, tanto si el mensaje sobrevivió como si no.</p></div></details>
         </div>
 
         <aside class="key-points"><span class="kp-title">Ideas clave</span><ul>
-          <li>El descifrado de K-PKE es correcto si cada coeficiente del ruido cae en (−<var>q</var>/4, <var>q</var>/4); los parámetros de FIPS 203 dejan un margen enorme.</li>
-          <li>La compresión es una fuente de ruido tan importante como el ruido LWE: <var>d<sub>v</sub></var> = 4 aporta errores de hasta 104.</li>
-          <li>La FO hace el cifrado determinista y reencripta en Decaps; ante cualquier manipulación devuelve <var>K̄</var> = J(<var>z</var> ‖ <var>c</var>) sin señal de error.</li>
+          <li>El descifrado de K-PKE es correcto si cada coeficiente del ruido cae en \((-q/4, q/4)\); los parámetros de FIPS 203 dejan un margen enorme.</li>
+          <li>La compresión es una fuente de ruido tan importante como el ruido LWE: \(d_v = 4\) aporta errores de hasta 104.</li>
+          <li>La FO hace el cifrado determinista y reencripta en Decaps; ante cualquier manipulación devuelve \(\bar{K} = J(z \parallel c)\) sin señal de error.</li>
           <li>Implementar ML-KEM bit a bit es factible en unas pocas centenas de líneas y verificable con los vectores ACVP; implementarlo de forma segura (tiempo constante, sin fugas) es otra cosa.</li>
         </ul></aside>
 
@@ -219,7 +219,7 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
       <div class="footer-links">
         <a href="../glosario.html">Glosario</a>
         <a href="../recursos/index.html">Recursos</a>

@@ -6,10 +6,10 @@
   <title>Ejemplo E4 · Intercambio de claves híbrido — Curso PQC</title>
   <meta name="description" content="Demo en el navegador de X25519MLKEM768: X25519 real de WebCrypto, ML-KEM de FIPS 203 en JavaScript, key schedule de TLS 1.3, ataques a combinadores y calculadora de tamaños.">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/styles.css">
-  <script src="../js/course-data.js" defer></script>
-  <script src="../js/course.js" defer></script>
-  <script src="../js/criptografia_hibrida_interactive.js" defer></script>
+  <link rel="stylesheet" href="../css/styles.css?v=2026092402">
+  <script src="../js/course-data.js?v=2026092402" defer></script>
+  <script src="../js/course.js?v=2026092402" defer></script>
+  <script src="../js/criptografia_hibrida_interactive.js?v=2026092402" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -74,9 +74,9 @@
 
         <h2 id="handshake"><span class="sec">2</span>Handshake híbrido tipo TLS 1.3</h2>
         <p>En TLS 1.3 un grupo híbrido es un <code>NamedGroup</code> más (RFC 9954). El cliente envía en <code>key_share</code> la concatenación de su clave de encapsulado ML-KEM y su clave pública efímera clásica. El servidor responde con el texto cifrado ML-KEM concatenado con su clave pública efímera. Los dos secretos se concatenan y entran en el key schedule como si fueran un único secreto (EC)DHE:</p>
-        <div class="equation">ss = ss<sub>ML-KEM</sub> ‖ ss<sub>X25519</sub>   (orden de X25519MLKEM768, RFC 10024)<span class="eq-label">(E4.1)</span></div>
-        <div class="equation">handshake_secret = HKDF-Extract(derived, ss)   ;   c_hs_traffic = Derive-Secret(handshake_secret, "c hs traffic", ClientHello‖ServerHello)<span class="eq-label">(E4.2)</span></div>
-        <p>Observa el orden: en X25519MLKEM768 va primero ML-KEM, y en SecP256r1MLKEM768 y SecP384r1MLKEM1024 va primero la curva NIST. RFC 10024 lo justifica por FIPS: el secreto que va en primera posición debe proceder de una implementación certificada (el esquema «Z ‖ T» de NIST SP 800-56C Rev. 2). En X25519MLKEM768 ese papel lo cumple ML-KEM, porque X25519 no es un esquema aprobado de acuerdo de claves; en las variantes con curvas NIST lo cumple ECDH, cuyas implementaciones certificadas son hoy más comunes.</p>
+        <div class="equation">\[ \mathit{ss} = \mathit{ss}_{\text{ML-KEM}} \parallel \mathit{ss}_{\text{X25519}} \qquad \text{(orden de X25519MLKEM768, RFC 10024)} \tag{E4.1} \]</div>
+        <div class="equation">\[ \begin{aligned} \mathit{handshake\_secret} &amp;= \mathsf{HKDF\text{-}Extract}(\mathit{derived}, \mathit{ss}) \\ \mathit{c\_hs\_traffic} &amp;= \mathsf{Derive\text{-}Secret}\bigl(\mathit{handshake\_secret},\ \texttt{"c hs traffic"}, \\ &amp;\qquad \mathit{ClientHello} \parallel \mathit{ServerHello}\bigr) \end{aligned} \tag{E4.2} \]</div>
+        <p>Observa el orden: en X25519MLKEM768 va primero ML-KEM, y en SecP256r1MLKEM768 y SecP384r1MLKEM1024 va primero la curva NIST. RFC 10024 lo justifica por FIPS: el secreto que va en primera posición debe proceder de una implementación certificada (el esquema «\(Z \parallel T\)» de NIST SP 800-56C Rev. 2). En X25519MLKEM768 ese papel lo cumple ML-KEM, porque X25519 no es un esquema aprobado de acuerdo de claves; en las variantes con curvas NIST lo cumple ECDH, cuyas implementaciones certificadas son hoy más comunes.</p>
 
         <section class="demo" id="demo-handshake" aria-labelledby="demo-handshake-t">
           <div class="demo-head"><p class="demo-title" id="demo-handshake-t">Handshake híbrido</p><button class="btn ghost" type="button" id="hs-reset">Reiniciar</button></div>
@@ -118,19 +118,19 @@
         </ol>
 
         <h2 id="combinadores"><span class="sec">3</span>Por qué el combinador debe ser IND-CCA</h2>
-        <p>Fuera de TLS, un KEM híbrido se usa a menudo con una clave estática del receptor (HPKE, cifrado de ficheros, ECH). El juego IND-CCA da al atacante un <strong>oráculo de desencapsulado</strong>: puede pedir la clave de cualquier par (ct<sub>M</sub>, ct<sub>X</sub>) salvo el reto exacto (ct<sub>M</sub>*, ct<sub>X</sub>*). Un combinador es bueno si el KEM combinado es IND-CCA siempre que <em>uno</em> de los componentes lo sea.</p>
+        <p>Fuera de TLS, un KEM híbrido se usa a menudo con una clave estática del receptor (HPKE, cifrado de ficheros, ECH). El juego IND-CCA da al atacante un <strong>oráculo de desencapsulado</strong>: puede pedir la clave de cualquier par \((\mathit{ct}_M, \mathit{ct}_X)\) salvo el reto exacto \((\mathit{ct}_M^*, \mathit{ct}_X^*)\). Un combinador es bueno si el KEM combinado es IND-CCA siempre que <em>uno</em> de los componentes lo sea.</p>
         <div class="grid-2">
           <div class="callout note"><span class="callout-title">Combinadores de la demo</span><ul>
-            <li><b>XOR</b>: K = ss<sub>M</sub> ⊕ ss<sub>X</sub>.</li>
-            <li><b>Concatenar sin contexto</b>: K = SHA3-256(ss<sub>M</sub> ‖ ss<sub>X</sub>).</li>
-            <li><b>X-Wing</b>: K = SHA3-256(ss<sub>M</sub> ‖ ss<sub>X</sub> ‖ ct<sub>X</sub> ‖ pk<sub>X</sub> ‖ etiqueta).</li>
-            <li><b>Universal</b>: K = SHA3-256(ss<sub>M</sub> ‖ ss<sub>X</sub> ‖ ct<sub>M</sub> ‖ ct<sub>X</sub> ‖ ek<sub>M</sub> ‖ pk<sub>X</sub> ‖ etiqueta).</li>
+            <li><b>XOR</b>: \(K = \mathit{ss}_M \oplus \mathit{ss}_X\).</li>
+            <li><b>Concatenar sin contexto</b>: \(K = \mathrm{SHA3\text{-}256}(\mathit{ss}_M \parallel \mathit{ss}_X)\).</li>
+            <li><b>X-Wing</b>: \(K = \mathrm{SHA3\text{-}256}(\mathit{ss}_M \parallel \mathit{ss}_X \parallel \mathit{ct}_X \parallel \mathit{pk}_X \parallel \text{etiqueta})\).</li>
+            <li><b>Universal</b>: \(K = \mathrm{SHA3\text{-}256}(\mathit{ss}_M \parallel \mathit{ss}_X \parallel \mathit{ct}_M \parallel \mathit{ct}_X \parallel \mathit{ek}_M \parallel \mathit{pk}_X \parallel \text{etiqueta})\).</li>
           </ul></div>
           <div class="callout note"><span class="callout-title">Ataques de la demo</span><ul>
-            <li><b>A</b>: invertir el bit 255 de ct<sub>X</sub>. X25519 lo ignora (RFC 7748 § 5): mismo ss<sub>X</sub>, texto cifrado distinto. No rompe nada.</li>
-            <li><b>B</b>: con un CRQC (ss<sub>X</sub>* conocido), pedir (ct<sub>M</sub>*, ct<sub>X</sub>′) con ct<sub>X</sub>′ propio.</li>
-            <li><b>C</b>: con ML-KEM roto (ss<sub>M</sub>* conocido), pedir (ct<sub>M</sub>′, ct<sub>X</sub>*) con ct<sub>M</sub>′ propio.</li>
-            <li><b>D</b>: invertir un bit de ct<sub>M</sub>. No rompe nada.</li>
+            <li><b>A</b>: invertir el bit 255 de \(\mathit{ct}_X\). X25519 lo ignora (RFC 7748 § 5): mismo \(\mathit{ss}_X\), texto cifrado distinto. No rompe nada.</li>
+            <li><b>B</b>: con un CRQC (\(\mathit{ss}_X^*\) conocido), pedir \((\mathit{ct}_M^*, \mathit{ct}_X')\) con \(\mathit{ct}_X'\) propio.</li>
+            <li><b>C</b>: con ML-KEM roto (\(\mathit{ss}_M^*\) conocido), pedir \((\mathit{ct}_M', \mathit{ct}_X^*)\) con \(\mathit{ct}_M'\) propio.</li>
+            <li><b>D</b>: invertir un bit de \(\mathit{ct}_M\). No rompe nada.</li>
           </ul></div>
         </div>
 
@@ -176,13 +176,13 @@
             <thead><tr><th>Combinador</th><th>A</th><th>B</th><th>C</th><th>D</th><th>Motivo</th></tr></thead>
             <tbody>
               <tr><th scope="row">XOR</th><td><span class="badge broken">roto</span></td><td><span class="badge broken">roto</span></td><td><span class="badge broken">roto</span></td><td><span class="badge final">resiste</span></td><td>La respuesta del oráculo es lineal en cada secreto: basta romper <em>uno</em> para despejar el otro (Giacon, Heuer y Poettering [2]).</td></tr>
-              <tr><th scope="row">SHA3(ss_M ‖ ss_X)</th><td><span class="badge broken">roto</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td>X25519 visto como KEM no es IND-CCA (ct maleable). Sin ct<sub>X</sub> en el hash, dos textos cifrados distintos dan la misma clave.</td></tr>
-              <tr><th scope="row">X-Wing</th><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td>Hashea ct<sub>X</sub> y pk<sub>X</sub>. Omite ct<sub>M</sub> porque ML-KEM es resistente a segundas preimágenes de texto cifrado (C2PRI) [3].</td></tr>
+              <tr><th scope="row">\(\mathrm{SHA3}(\mathit{ss}_M \parallel \mathit{ss}_X)\)</th><td><span class="badge broken">roto</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td>X25519 visto como KEM no es IND-CCA (ct maleable). Sin \(\mathit{ct}_X\) en el hash, dos textos cifrados distintos dan la misma clave.</td></tr>
+              <tr><th scope="row">X-Wing</th><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td>Hashea \(\mathit{ct}_X\) y \(\mathit{pk}_X\). Omite \(\mathit{ct}_M\) porque ML-KEM es resistente a segundas preimágenes de texto cifrado (C2PRI) [3].</td></tr>
               <tr><th scope="row">Universal</th><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td><span class="badge final">resiste</span></td><td>Liga todos los textos cifrados y claves públicas; solo exige IND-CCA de un componente, a costa de hashear ~2,3 kB más.</td></tr>
             </tbody>
           </table>
         </div>
-        <p>El ataque D fracasa con todos: ML-KEM aplica <em>rechazo implícito</em> y, ante un texto cifrado alterado, devuelve J(z ‖ ct′), un valor pseudoaleatorio sin relación con K*. Ese es precisamente el trabajo de la transformación de Fujisaki–Okamoto de FIPS 203.</p>
+        <p>El ataque D fracasa con todos: ML-KEM aplica <em>rechazo implícito</em> y, ante un texto cifrado alterado, devuelve \(J(z \parallel \mathit{ct}')\), un valor pseudoaleatorio sin relación con \(K^*\). Ese es precisamente el trabajo de la transformación de Fujisaki–Okamoto de FIPS 203.</p>
         <p>Con P-256 el ataque A no se aplica: WebCrypto valida el punto y no existe un bit ignorado. Eso no hace seguro al combinador sin contexto en general; solo elimina esta maleabilidad concreta.</p>
 
         <h2 id="tamanos"><span class="sec">4</span>Calculadora de tamaños del handshake</h2>
@@ -245,15 +245,15 @@
             </tbody>
           </table>
         </div>
-        <p>Con ML-DSA-44 en toda la cadena y 2 SCT el modelo da 2 × 1312 + 5 × 2420 = <b>14 724 bytes</b>, frente a 490 con ECDSA P-256. Cloudflare estima unos 15 kB adicionales por handshake si todas las firmas pasan a ML-DSA-44 [6]; por eso Chrome y Cloudflare ensayan los <em>Merkle Tree Certificates</em> [9]. El intercambio de claves híbrido añade poco más de 2 kB por handshake; las firmas post-cuánticas en la cadena, un orden de magnitud más.</p>
+        <p>Con ML-DSA-44 en toda la cadena y 2 SCT el modelo da \(2 \times 1312 + 5 \times 2420 =\) <b>14 724 bytes</b>, frente a 490 con ECDSA P-256. Cloudflare estima unos 15 kB adicionales por handshake si todas las firmas pasan a ML-DSA-44 [6]; por eso Chrome y Cloudflare ensayan los <em>Merkle Tree Certificates</em> [9]. El intercambio de claves híbrido añade poco más de 2 kB por handshake; las firmas post-cuánticas en la cadena, un orden de magnitud más.</p>
 
         <h2 id="preguntas"><span class="sec">5</span>Preguntas</h2>
         <div class="exercise"><span class="ex-title">Pregunta E4.1 <span class="level">Básico</span></span><p>Con SecP384r1MLKEM1024, ¿por qué el secreto combinado mide 80 bytes y no 64?</p>
-          <details><summary>Solución</summary><div class="details-body"><p>ECDH sobre P-384 produce la coordenada x del punto compartido, de 48 bytes; ML-KEM-1024 produce 32. La concatenación mide 48 + 32 = 80 bytes. HKDF-Extract admite una entrada de cualquier longitud, así que no hace falta truncar.</p></div></details></div>
+          <details><summary>Solución</summary><div class="details-body"><p>ECDH sobre P-384 produce la coordenada x del punto compartido, de 48 bytes; ML-KEM-1024 produce 32. La concatenación mide \(48 + 32 = 80\) bytes. HKDF-Extract admite una entrada de cualquier longitud, así que no hace falta truncar.</p></div></details></div>
         <div class="exercise"><span class="ex-title">Pregunta E4.2 <span class="level">Intermedio</span></span><p>En TLS 1.3 se concatenan los secretos sin hashear los textos cifrados junto a ellos. ¿Por qué eso no reproduce el fallo del combinador «SHA3(ss_M ‖ ss_X)» ante el ataque A?</p>
-          <details><summary>Solución</summary><div class="details-body"><p>En TLS las claves de tráfico se derivan con <code>Derive-Secret(·, etiqueta, transcript)</code> y el transcript incluye ClientHello y ServerHello completos, es decir, ambas shares. Si el atacante invierte el bit 255 de la share X25519 del servidor, el transcript cambia y las claves derivadas son otras, aunque ss<sub>X</sub> sea el mismo. Además, la conexión se autentica con <code>CertificateVerify</code> y <code>Finished</code> sobre ese transcript. El análisis de RFC 9954 se apoya en esta ligadura.</p></div></details></div>
-        <div class="exercise"><span class="ex-title">Pregunta E4.3 <span class="level">Avanzado</span></span><p>X-Wing omite ct<sub>M</sub> del hash pero no ct<sub>X</sub>. Si se sustituyera ML-KEM por un KEM IND-CCA que no fuese C2PRI, ¿qué ataque de la demo habría que reconsiderar?</p>
-          <details><summary>Solución</summary><div class="details-body"><p>El análogo de D: si fuera fácil encontrar ct<sub>M</sub>′ ≠ ct<sub>M</sub>* que desencapsule al mismo ss<sub>M</sub>*, la consulta (ct<sub>M</sub>′, ct<sub>X</sub>*) devolvería exactamente K*, porque ct<sub>M</sub> no entra en el hash. Ser IND-CCA no basta para excluir eso; hace falta C2PRI, que X-Wing asume para ML-KEM-768. Por eso el borrador de combinadores del CFRG distingue marcos que exigen C2PRI del componente PQ y marcos «universales» que no lo exigen [4].</p></div></details></div>
+          <details><summary>Solución</summary><div class="details-body"><p>En TLS las claves de tráfico se derivan con <code>Derive-Secret(·, etiqueta, transcript)</code> y el transcript incluye ClientHello y ServerHello completos, es decir, ambas shares. Si el atacante invierte el bit 255 de la share X25519 del servidor, el transcript cambia y las claves derivadas son otras, aunque \(\mathit{ss}_X\) sea el mismo. Además, la conexión se autentica con <code>CertificateVerify</code> y <code>Finished</code> sobre ese transcript. El análisis de RFC 9954 se apoya en esta ligadura.</p></div></details></div>
+        <div class="exercise"><span class="ex-title">Pregunta E4.3 <span class="level">Avanzado</span></span><p>X-Wing omite \(\mathit{ct}_M\) del hash pero no \(\mathit{ct}_X\). Si se sustituyera ML-KEM por un KEM IND-CCA que no fuese C2PRI, ¿qué ataque de la demo habría que reconsiderar?</p>
+          <details><summary>Solución</summary><div class="details-body"><p>El análogo de D: si fuera fácil encontrar \(\mathit{ct}_M' \ne \mathit{ct}_M^*\) que desencapsule al mismo \(\mathit{ss}_M^*\), la consulta \((\mathit{ct}_M', \mathit{ct}_X^*)\) devolvería exactamente \(K^*\), porque \(\mathit{ct}_M\) no entra en el hash. Ser IND-CCA no basta para excluir eso; hace falta C2PRI, que X-Wing asume para ML-KEM-768. Por eso el borrador de combinadores del CFRG distingue marcos que exigen C2PRI del componente PQ y marcos «universales» que no lo exigen [4].</p></div></details></div>
 
         <h2 id="referencias">Referencias</h2>
         <ol class="refs">
@@ -276,7 +276,7 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
       <div class="footer-links">
         <a href="../glosario.html">Glosario</a>
         <a href="../recursos/index.html">Recursos</a>

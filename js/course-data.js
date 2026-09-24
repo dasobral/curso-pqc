@@ -9,7 +9,7 @@ window.COURSE = {
       title: 'Curso',
       items: [
         { id: 'inicio', path: 'index.html', title: 'Inicio' },
-        { id: 'programa', path: 'programa.html', title: 'Programa y calendario' },
+        { id: 'programa', path: 'programa.html', title: 'Programa y plan de estudio' },
       ],
     },
     {

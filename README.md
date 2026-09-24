@@ -5,7 +5,7 @@ laboratorios. Contenido revisado en septiembre de 2026.
 
 Sitio web: [dasobral.github.io/curso-pqc](https://dasobral.github.io/curso-pqc/)
 
-Profesorado: Prof. Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco.
+Curso en línea y a tu ritmo, escrito y mantenido por [Daniel Sobral Blanco](https://dasobral.github.io/).
 
 ## Contenido
 
@@ -39,6 +39,7 @@ también abriendo los ficheros directamente.
 - `js/course-data.js`: estructura del curso (menú lateral, paginación, búsqueda)
 - `js/course.js`: mejora progresiva común (índice de página, anclajes, copiar código, menú móvil, búsqueda)
 - `js/*_interactive.js`: demos, en JavaScript sin dependencias
+- `vendor/katex/`: KaTeX 0.18.9 (MIT) para las fórmulas en LaTeX, servido desde el propio sitio
 - `docs/AUTHORING.md` y `docs/componentes.html`: guía para editar o añadir páginas
 
 Las demos son material didáctico: no son implementaciones seguras ni de tiempo constante.

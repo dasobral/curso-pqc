@@ -6,9 +6,9 @@
   <title>Laboratorio L1 · Shor y el fin de RSA — Curso PQC</title>
   <meta name="description" content="Laboratorio: implementar en Python las partes clásicas de Shor, romper una clave RSA de juguete, construir con Qiskit 2.x el circuito de búsqueda de orden para N = 15 y N = 21 y analizar estimaciones de recursos.">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/styles.css">
-  <script src="../js/course-data.js" defer></script>
-  <script src="../js/course.js" defer></script>
+  <link rel="stylesheet" href="../css/styles.css?v=2026092402">
+  <script src="../js/course-data.js?v=2026092402" defer></script>
+  <script src="../js/course.js?v=2026092402" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -43,7 +43,7 @@
       <header class="page-head">
         <p class="eyebrow">Laboratorio L1 · Python y Qiskit</p>
         <h1>Shor y el <em>fin de RSA</em></h1>
-        <p class="lede">Implementarás las partes clásicas del algoritmo de Shor, romperás una clave RSA de juguete, construirás con Qiskit el circuito cuántico de búsqueda de orden para <var>N</var> = 15 y <var>N</var> = 21 y, con esos números en la mano, analizarás qué separa estos juguetes de RSA-2048.</p>
+        <p class="lede">Implementarás las partes clásicas del algoritmo de Shor, romperás una clave RSA de juguete, construirás con Qiskit el circuito cuántico de búsqueda de orden para \(N = 15\) y \(N = 21\) y, con esos números en la mano, analizarás qué separa estos juguetes de RSA-2048.</p>
         <dl class="page-meta">
           <div><dt>Duración</dt><dd>2–3 h</dd></div>
           <div><dt>Nivel</dt><dd>Introductorio–intermedio</dd></div>
@@ -74,7 +74,7 @@ $ source .venv-shor/bin/activate  # Windows: .venv-shor\Scripts\activate
         <div class="callout warning"><span class="callout-title">Si usas otra versión de Qiskit</span><p>Qiskit 1.x y 2.x cambiaron varias API respecto a los tutoriales antiguos: ya no existen <code>execute()</code>, <code>qiskit.algorithms.Shor</code> ni el <em>textbook</em> de qiskit.org, y las implementaciones V1 de las primitivas (<code>Sampler</code>, <code>Estimator</code>) se eliminaron en Qiskit 2.0. Esta guía usa <code>generate_preset_pass_manager</code>, <code>QFTGate</code> y <code>qiskit_aer.primitives.SamplerV2</code>. Si un fragmento de Internet usa <code>execute</code> o <code>QuantumInstance</code>, está desactualizado.</p></div>
 
         <h2 id="parte-a"><span class="sec">L1.2</span>Parte A · Las partes clásicas</h2>
-        <p>El fichero siguiente contiene todo lo que Shor hace en un ordenador clásico. La función <code>orden_bruto</code> sustituye a la parte cuántica: es correcta pero exponencial en el número de bits de <var>N</var>.</p>
+        <p>El fichero siguiente contiene todo lo que Shor hace en un ordenador clásico. La función <code>orden_bruto</code> sustituye a la parte cuántica: es correcta pero exponencial en el número de bits de \(N\).</p>
         <pre data-lang="python"><code>"""Partes clásicas del algoritmo de Shor (laboratorio L1)."""
 from fractions import Fraction
 from math import gcd
@@ -174,7 +174,7 @@ if __name__ == "__main__":
     for y in (0, 64, 128, 192):
         print("y =", y, "-&gt;", orden_desde_medida(y, 8, 7, 15))</code></pre>
         <p class="code-caption">shor_clasico.py</p>
-        <p><strong>Tarea A1.</strong> Ejecuta el fichero. La salida debe ser esta (la semilla depende de <var>N</var>, así que es reproducible):</p>
+        <p><strong>Tarea A1.</strong> Ejecuta el fichero. La salida debe ser esta (la semilla depende de \(N\), así que es reproducible):</p>
         <pre class="terminal" data-lang="salida"><code>[1] a=5: gcd(a,N)=5 -&gt; factor por suerte
 N=15: (5, 3)
 [1] a=7: gcd(a,N)=7 -&gt; factor por suerte
@@ -192,8 +192,8 @@ y = 0 -&gt; None
 y = 64 -&gt; 4
 y = 128 -&gt; 4
 y = 192 -&gt; 4</code></pre>
-        <p><strong>Tarea A2.</strong> Observa las tres formas de terminar: «por suerte» (gcd no trivial, frecuente en <var>N</var> pequeños y despreciable en RSA real), éxito con <var>r</var> par, y el fallo <span class="math"><var>a</var><sup><var>r</var>/2</sup> ≡ −1</span> con <span class="math"><var>N</var> = 91</span>, <span class="math"><var>a</var> = 12</span>. Modifica <code>shor_clasico</code> para que no acepte la «suerte» (descarta las <var>a</var> no coprimas) y mide, para <span class="math"><var>N</var> ∈ {21, 91, 143, 3233}</span>, la fracción de bases coprimas que factorizan. Compárala con la cota <span class="math">1 − 1/2<sup><var>m</var>−1</sup> = 1/2</span>.</p>
-        <p><strong>Tarea A3.</strong> Explica por qué <code>orden_desde_medida</code> descarta el convergente 0/1, prueba múltiplos <span class="math"><var>k</var>·<var>q</var></span> y llama a <code>orden_minimo</code>. Pista: calcula a mano <code>orden_desde_medida(128, 9, 2, 21)</code>.</p>
+        <p><strong>Tarea A2.</strong> Observa las tres formas de terminar: «por suerte» (gcd no trivial, frecuente en \(N\) pequeños y despreciable en RSA real), éxito con \(r\) par, y el fallo \(a^{r/2} \equiv -1\) con \(N = 91\), \(a = 12\). Modifica <code>shor_clasico</code> para que no acepte la «suerte» (descarta las \(a\) no coprimas) y mide, para \(N \in \{21, 91, 143, 3\,233\}\), la fracción de bases coprimas que factorizan. Compárala con la cota \(1 - 1/2^{m-1} = 1/2\).</p>
+        <p><strong>Tarea A3.</strong> Explica por qué <code>orden_desde_medida</code> descarta el convergente 0/1, prueba múltiplos \(k\cdot q\) y llama a <code>orden_minimo</code>. Pista: calcula a mano <code>orden_desde_medida(128, 9, 2, 21)</code>.</p>
         <div class="callout"><span class="callout-title">Punto de control A</span><p>Estas aserciones deben pasar sin error:</p>
           <pre data-lang="python"><code>from shor_clasico import *
 assert orden_bruto(7, 15) == 4 and orden_bruto(2, 21) == 6 and orden_bruto(12, 91) == 6
@@ -203,7 +203,7 @@ assert factores_desde_orden(12, 6, 91)[0] is None # 12^3 ≡ −1 (mod 91)
 print("checkpoints OK")</code></pre></div>
 
         <h2 id="parte-b"><span class="sec">L1.3</span>Parte B · Romper una clave RSA de juguete</h2>
-        <p>El atacante solo conoce la clave pública <span class="math">(<var>N</var>, <var>e</var>)</span> y un cifrado <var>c</var>. Factorizar <var>N</var> da <span class="math">φ(<var>N</var>)</span>, de ahí <var>d</var>, y con <var>d</var> todos los mensajes.</p>
+        <p>El atacante solo conoce la clave pública \((N, e)\) y un cifrado \(c\). Factorizar \(N\) da \(\varphi(N)\), de ahí \(d\), y con \(d\) todos los mensajes.</p>
         <pre data-lang="python"><code>"""Romper una clave RSA de juguete con la reducción de Shor."""
 import random
 from shor_clasico import shor_clasico
@@ -226,14 +226,14 @@ print(f"Mensaje descifrado: {pow(c, d_rec, N)}")</code></pre>
 [1] a=489: r=52 -&gt; ok
 Factores: 61 x 53; d recuperado = 2753 (correcto: True)
 Mensaje descifrado: 1234</code></pre>
-        <p><strong>Tarea B1.</strong> Genera tú una clave con primos de 16 bits (usa <code>sympy.randprime</code> o una criba propia) y rómpela. Mide el tiempo de <code>orden_bruto</code> para primos de 12, 16, 20 y 24 bits y representa el crecimiento. ¿Qué tamaño de <var>N</var> es inasumible para tu portátil con este método? ¿Qué complejidad tiene frente a la de Shor, <span class="math"><var>O</var>(<var>n</var><sup>3</sup>)</span>?</p>
-        <p><strong>Tarea B2.</strong> Variante sin factorizar: si el atacante conoce el orden <var>r</var> de <var>c</var> módulo <var>N</var>, entonces <span class="math"><var>d</var>′ = <var>e</var><sup>−1</sup> mod <var>r</var></span> cumple <span class="math"><var>c</var><sup><var>d</var>′</sup> ≡ <var>m</var></span> (cuando <span class="math">gcd(<var>e</var>, <var>r</var>) = 1</span>). Compruébalo con el ejemplo y explica por qué basta un buscador de orden para descifrar un mensaje concreto.</p>
+        <p><strong>Tarea B1.</strong> Genera tú una clave con primos de 16 bits (usa <code>sympy.randprime</code> o una criba propia) y rómpela. Mide el tiempo de <code>orden_bruto</code> para primos de 12, 16, 20 y 24 bits y representa el crecimiento. ¿Qué tamaño de \(N\) es inasumible para tu portátil con este método? ¿Qué complejidad tiene frente a la de Shor, \(O(n^3)\)?</p>
+        <p><strong>Tarea B2.</strong> Variante sin factorizar: si el atacante conoce el orden \(r\) de \(c\) módulo \(N\), entonces \(d' = e^{-1} \bmod r\) cumple \(c^{d'} \equiv m\) (cuando \(\gcd(e, r) = 1\)). Compruébalo con el ejemplo y explica por qué basta un buscador de orden para descifrar un mensaje concreto.</p>
 
         <h2 id="parte-c"><span class="sec">L1.4</span>Parte C · El circuito de búsqueda de orden en Qiskit</h2>
-        <p>El circuito tiene un registro de fase de <span class="math"><var>t</var> = 2<var>m</var></span> qubits y un registro de trabajo de <span class="math"><var>m</var> = ⌈log<sub>2</sub>(<var>N</var> + 1)⌉</span> qubits inicializado a |1⟩. El qubit de fase <var>k</var> controla una multiplicación por <span class="math"><var>a</var><sup>2<sup><var>k</var></sup></sup> mod <var>N</var></span>; tras la QFT inversa se mide el registro de fase.</p>
+        <p>El circuito tiene un registro de fase de \(t = 2m\) qubits y un registro de trabajo de \(m = \lceil \log_2(N + 1)\rceil\) qubits inicializado a \(|1\rangle\). El qubit de fase \(k\) controla una multiplicación por \(a^{2^k} \bmod N\); tras la QFT inversa se mide el registro de fase.</p>
         <h3 id="multiplicacion">Una multiplicación modular correcta</h3>
-        <p>La operación <span class="math">|<var>x</var>⟩ ↦ |<var>a</var><var>x</var> mod <var>N</var>⟩</span> es una <strong>permutación</strong> de los estados <span class="math">0 ≤ <var>x</var> &lt; <var>N</var></span> cuando <span class="math">gcd(<var>a</var>, <var>N</var>) = 1</span>; completándola con la identidad para <span class="math"><var>x</var> ≥ <var>N</var></span> se obtiene una matriz unitaria. La función <code>mult_mod_gate</code> construye esa matriz de permutación y Qiskit la sintetiza en puertas. Es correcta para cualquier <var>a</var> y <var>N</var>, pero su tamaño es <span class="math">2<sup><var>m</var></sup> × 2<sup><var>m</var></sup></span>: no escala. Un circuito escalable implementa la multiplicación con sumadores reversibles (por ejemplo, los de Beauregard [3] o las construcciones de [4]).</p>
-        <p>Para <span class="math"><var>N</var> = 15</span>, <span class="math"><var>a</var> = 7</span> existe una construcción compacta conocida: tres SWAP y cuatro X. El script <strong>comprueba</strong> con <code>Operator</code> que coincide con <span class="math"><var>x</var> ↦ 7<var>x</var> mod 15</span> en todos los estados <span class="math"><var>x</var> = 1…14</span> antes de usarla; no la aceptes sin esa verificación (el orden de los SWAP es fácil de invertir por error, y entonces el circuito implementa otra permutación).</p>
+        <p>La operación \(|x\rangle \mapsto |ax \bmod N\rangle\) es una <strong>permutación</strong> de los estados \(0 \le x &lt; N\) cuando \(\gcd(a, N) = 1\); completándola con la identidad para \(x \ge N\) se obtiene una matriz unitaria. La función <code>mult_mod_gate</code> construye esa matriz de permutación y Qiskit la sintetiza en puertas. Es correcta para cualquier \(a\) y \(N\), pero su tamaño es \(2^m \times 2^m\): no escala. Un circuito escalable implementa la multiplicación con sumadores reversibles (por ejemplo, los de Beauregard [3] o las construcciones de [4]).</p>
+        <p>Para \(N = 15\), \(a = 7\) existe una construcción compacta conocida: tres SWAP y cuatro X. El script <strong>comprueba</strong> con <code>Operator</code> que coincide con \(x \mapsto 7x \bmod 15\) en todos los estados \(x = 1, \dots, 14\) antes de usarla; no la aceptes sin esa verificación (el orden de los SWAP es fácil de invertir por error, y entonces el circuito implementa otra permutación).</p>
         <pre data-lang="python"><code>"""Búsqueda de orden (parte cuántica de Shor) con Qiskit 2.x y Qiskit Aer.
 
 Uso:  python shor_qiskit.py [N] [a] [--swaps] [--ruido P]
@@ -365,8 +365,8 @@ Medidas más frecuentes (Q = 2^8 = 256):
   y=   0  y/Q=0.0000  n= 473  r=None
 Órdenes candidatos (votos): {None: 473, 4: 1575}
 r=4: 7^2 mod 15 = 4 -&gt; factores 3 x 5</code></pre>
-        <p>Con la permutación genérica, las medidas son las mismas en distribución (0, 64, 128 y 192, ≈ 25 % cada una) pero el circuito transpilado tiene 539 CX y profundidad 1 936, frente a 224 CX y profundidad 351 con SWAP. Solo aparecen dos multiplicaciones controladas: <span class="math">7<sup>1</sup> = 7</span> y <span class="math">7<sup>2</sup> ≡ 4</span>; para <span class="math"><var>k</var> ≥ 2</span>, <span class="math">7<sup>2<sup><var>k</var></sup></sup> ≡ 1</span> y la puerta es la identidad.</p>
-        <p><strong>Tarea C2.</strong> Ejecuta <code>python shor_qiskit.py 21 2</code>. Aquí <span class="math"><var>r</var> = 6</span> no divide a <span class="math"><var>Q</var> = 1 024</span> y los picos se reparten entre enteros vecinos:</p>
+        <p>Con la permutación genérica, las medidas son las mismas en distribución (0, 64, 128 y 192, ≈ 25 % cada una) pero el circuito transpilado tiene 539 CX y profundidad 1 936, frente a 224 CX y profundidad 351 con SWAP. Solo aparecen dos multiplicaciones controladas: \(7^1 = 7\) y \(7^2 \equiv 4\); para \(k \ge 2\), \(7^{2^k} \equiv 1\) y la puerta es la identidad.</p>
+        <p><strong>Tarea C2.</strong> Ejecuta <code>python shor_qiskit.py 21 2</code>. Aquí \(r = 6\) no divide a \(Q = 1\,024\) y los picos se reparten entre enteros vecinos:</p>
         <pre class="terminal" data-lang="salida"><code>N=21, a=2: 15 qubits, profundidad 40233, CX = 10145
 Medidas más frecuentes (Q = 2^10 = 1024):
   y= 512  y/Q=0.5000  n= 335  r=6
@@ -379,10 +379,10 @@ Medidas más frecuentes (Q = 2^10 = 1024):
   y= 854  y/Q=0.8340  n=  75  r=6
 Órdenes candidatos (votos): {6: 1710, None: 338}
 r=6: 2^3 mod 21 = 8 -&gt; factores 7 x 3</code></pre>
-        <p>Compara las frecuencias con las del <a href="../ejemplos/algoritmo_shor.html">ejemplo E1</a> (que usa <span class="math"><var>Q</var> = 512</span> para <span class="math"><var>N</var> = 21</span>): ¿qué fracción de medidas no aporta información y por qué? Ejecuta también <code>python shor_qiskit.py 21 4</code> y explica el mensaje final.</p>
-        <p><strong>Tarea C3 (ruido).</strong> Ejecuta <code>python shor_qiskit.py --swaps --ruido 0.02</code> (error despolarizante del 2 % en cada CX). Los picos se ensanchan y aparecen valores como <var>y</var> = 65 o 200; muchos siguen dando <var>r</var> = 4 porque las fracciones continuas toleran pequeñas desviaciones. Sube el ruido a 0,05 y 0,1: ¿a partir de qué nivel deja de recuperarse <var>r</var> de forma fiable? Relaciona el resultado con la necesidad de corrección de errores (<a href="../temas/tema1/index.html#computacion-cuantica">tema 1, §1.5</a>).</p>
-        <div class="callout"><span class="callout-title">Punto de control C</span><p>Con <code>--swaps</code> debes ver la línea de comprobación, 12 qubits, <var>r</var> = 4 y los factores 3 × 5. Con <code>21 2</code>, 15 qubits, votos casi todos para <var>r</var> = 6 y los factores 7 × 3.</p></div>
-        <div class="callout danger"><span class="callout-title">Cómo no «demostrar» Shor</span><p>Las implementaciones que sustituyen la exponenciación modular por un circuito diseñado <em>sabiendo ya</em> el periodo, o que reducen el registro a lo que el resultado conocido necesita, pueden «factorizar» cualquier número con dos qubits [2]. Tu circuito de la tarea C1 genérica no usa el periodo: solo usa <span class="math"><var>a</var><sup>2<sup><var>k</var></sup></sup> mod <var>N</var></span>, que cualquier atacante calcula clásicamente. La versión con SWAP sí es específica de <span class="math">(15, 7)</span>, pero se deriva de la multiplicación, no del resultado.</p></div>
+        <p>Compara las frecuencias con las del <a href="../ejemplos/algoritmo_shor.html">ejemplo E1</a> (que usa \(Q = 512\) para \(N = 21\)): ¿qué fracción de medidas no aporta información y por qué? Ejecuta también <code>python shor_qiskit.py 21 4</code> y explica el mensaje final.</p>
+        <p><strong>Tarea C3 (ruido).</strong> Ejecuta <code>python shor_qiskit.py --swaps --ruido 0.02</code> (error despolarizante del 2 % en cada CX). Los picos se ensanchan y aparecen valores como \(y = 65\) o 200; muchos siguen dando \(r = 4\) porque las fracciones continuas toleran pequeñas desviaciones. Sube el ruido a 0,05 y 0,1: ¿a partir de qué nivel deja de recuperarse \(r\) de forma fiable? Relaciona el resultado con la necesidad de corrección de errores (<a href="../temas/tema1/index.html#computacion-cuantica">tema 1, §1.5</a>).</p>
+        <div class="callout"><span class="callout-title">Punto de control C</span><p>Con <code>--swaps</code> debes ver la línea de comprobación, 12 qubits, \(r = 4\) y los factores \(3 \times 5\). Con <code>21 2</code>, 15 qubits, votos casi todos para \(r = 6\) y los factores \(7 \times 3\).</p></div>
+        <div class="callout danger"><span class="callout-title">Cómo no «demostrar» Shor</span><p>Las implementaciones que sustituyen la exponenciación modular por un circuito diseñado <em>sabiendo ya</em> el periodo, o que reducen el registro a lo que el resultado conocido necesita, pueden «factorizar» cualquier número con dos qubits [2]. Tu circuito de la tarea C1 genérica no usa el periodo: solo usa \(a^{2^k} \bmod N\), que cualquier atacante calcula clásicamente. La versión con SWAP sí es específica de \((15, 7)\), pero se deriva de la multiplicación, no del resultado.</p></div>
 
         <h2 id="parte-d"><span class="sec">L1.5</span>Parte D · Del juguete a RSA-2048</h2>
         <pre data-lang="python"><code>"""Análisis de estimaciones de recursos (parte D del laboratorio L1)."""
@@ -422,34 +422,36 @@ Gidney 2025: 15,168 Toffoli/s
 x=5, y=5, z=15: x+y=10 -&gt; a tiempo (margen +5 años)
 x=15, y=7, z=15: x+y=22 -&gt; EXPUESTO (margen -7 años)
 x=25, y=10, z=10: x+y=35 -&gt; EXPUESTO (margen -25 años)</code></pre>
-        <p>La fórmula de Gidney y Ekerå [5] da ≈ 2,6·10<sup>9</sup> Toffoli para <var>n</var> = 2 048 (el artículo de 2025 redondea a «3 000 millones» en su comparación). Responde razonadamente:</p>
+        <p>La fórmula de Gidney y Ekerå [5] da \(\approx 2{,}6\cdot 10^9\) Toffoli para \(n = 2\,048\) (el artículo de 2025 redondea a «3 000 millones» en su comparación). Responde razonadamente:</p>
         <ol>
           <li><strong>D1.</strong> ¿Cuántos qubits lógicos y Toffoli necesitaría RSA-4096 según la fórmula de 2019? ¿En qué factor crece el coste al doblar el tamaño de clave? ¿Protege doblar la clave RSA frente a Shor?</li>
           <li><strong>D2.</strong> Gidney (2025) [6] usa 1 399 qubits lógicos y 897 864 físicos: ¿cuántos qubits físicos por qubit lógico hay en promedio? ¿En qué se gasta la diferencia además del almacenamiento (fábricas o cultivo de estados mágicos, enrutamiento)?</li>
-          <li><strong>D3.</strong> Tu circuito para <span class="math"><var>N</var> = 15</span> tiene 224 CX. Si una puerta de dos qubits tiene un error del 0,1 %, ¿qué probabilidad aproximada hay de que el circuito completo se ejecute sin ningún error? ¿Y un circuito de 10<sup>9</sup> puertas? Concluye por qué no hay Shor útil sin corrección de errores.</li>
-          <li><strong>D4.</strong> Las estimaciones de 2026 para ECDLP-256 (≤ 1 200 qubits lógicos, ≤ 9·10<sup>7</sup> Toffoli, menos de 500 000 físicos, minutos) [7] son más bajas que las de RSA-2048. ¿Qué implica para el orden de migración de ECDH/X25519, ECDSA y RSA en una organización?</li>
-          <li><strong>D5.</strong> Aplica la desigualdad de Mosca a un sistema real que conozcas (nómina, historia clínica, firmware de un dispositivo IoT). Justifica tus valores de <var>x</var> e <var>y</var> y usa como <var>z</var> los rangos de la encuesta del Global Risk Institute publicada en marzo de 2026 (<a href="../temas/tema1/index.html#cuando">tema 1, §1.9</a>).</li>
+          <li><strong>D3.</strong> Tu circuito para \(N = 15\) tiene 224 CX. Si una puerta de dos qubits tiene un error del 0,1 %, ¿qué probabilidad aproximada hay de que el circuito completo se ejecute sin ningún error? ¿Y un circuito de \(10^9\) puertas? Concluye por qué no hay Shor útil sin corrección de errores.</li>
+          <li><strong>D4.</strong> Las estimaciones de 2026 para ECDLP-256 (≤ 1 200 qubits lógicos, ≤ \(9\cdot 10^7\) Toffoli, menos de 500 000 físicos, minutos) [7] son más bajas que las de RSA-2048. ¿Qué implica para el orden de migración de ECDH/X25519, ECDSA y RSA en una organización?</li>
+          <li><strong>D5.</strong> Aplica la desigualdad de Mosca a un sistema real que conozcas (nómina, historia clínica, firmware de un dispositivo IoT). Justifica tus valores de \(x\) e \(y\) y usa como \(z\) los rangos de la encuesta del Global Risk Institute publicada en marzo de 2026 (<a href="../temas/tema1/index.html#cuando">tema 1, §1.9</a>).</li>
         </ol>
-        <details><summary>Orientación para D1–D3 (consúltala después de intentarlo)</summary><div class="details-body"><p>D1: ≈ 12 400 qubits lógicos y ≈ 2,1·10<sup>10</sup> Toffoli; el coste crece ≈ 8 veces (cúbico) al doblar <var>n</var>, así que alargar claves solo compra un factor polinómico: no es una defensa. D2: ≈ 640 físicos por lógico de media. D3: <span class="math">0,999<sup>224</sup> ≈ 0,80</span>; para 10<sup>9</sup> puertas, <span class="math">0,999<sup>10<sup>9</sup></sup> ≈ <var>e</var><sup>−10<sup>6</sup></sup></span>, es decir, cero.</p></div></details>
+        <details><summary>Orientación para D1–D3 (consúltala después de intentarlo)</summary><div class="details-body"><p>D1: ≈ 12 400 qubits lógicos y \(\approx 2{,}1\cdot 10^{10}\) Toffoli; el coste crece ≈ 8 veces (cúbico) al doblar \(n\), así que alargar claves solo compra un factor polinómico: no es una defensa. D2: ≈ 640 físicos por lógico de media. D3: \(0{,}999^{224} \approx 0{,}80\); para \(10^9\) puertas, \(0{,}999^{10^9} \approx e^{-10^6}\), es decir, cero.</p></div></details>
 
-        <h2 id="entregables"><span class="sec">L1.6</span>Entregables</h2>
+        <h2 id="entregables"><span class="sec">L1.6</span>Resultado final</h2>
+        <p>Al terminar el laboratorio deberías tener, en tu propio cuaderno de laboratorio (Markdown, Jupyter o PDF, como prefieras):</p>
         <ol>
           <li>Los cuatro scripts, con tus modificaciones de A2, B1 y B2, y un <code>requirements.txt</code> con las versiones usadas.</li>
-          <li>Un informe de 3–5 páginas (PDF) con: salidas de las tareas A1–C3, la gráfica de tiempos de B1, un histograma de medidas de C2 y de C3 con dos niveles de ruido, y las respuestas D1–D5.</li>
-          <li>Una conclusión de media página: qué parte de Shor es cuántica, qué recursos haría falta para RSA-2048 hoy y qué recomendarías migrar primero.</li>
+          <li>Las salidas de las tareas A1–C3, la gráfica de tiempos de B1, un histograma de medidas de C2 y de C3 con dos niveles de ruido, y tus respuestas razonadas a D1–D5.</li>
+          <li>Una conclusión breve, con tus palabras: qué parte de Shor es cuántica, qué recursos harían falta para RSA-2048 hoy y qué recomendarías migrar primero.</li>
         </ol>
 
-        <h2 id="rubrica"><span class="sec">L1.7</span>Rúbrica de evaluación</h2>
+        <h2 id="rubrica"><span class="sec">L1.7</span>Autoevaluación</h2>
+        <p>Usa esta tabla para revisar tu propio trabajo: compara cada parte con las dos columnas y, si en algún criterio no llegas a «Suficiente», vuelve a la sección de esa parte (L1.2 a L1.5), repite sus tareas y comprueba de nuevo los puntos de control antes de seguir.</p>
         <div class="table-wrap">
           <table>
-            <caption>Evaluación sobre 10 puntos</caption>
-            <thead><tr><th>Criterio</th><th class="num">Peso</th><th>Excelente</th><th>Suficiente</th></tr></thead>
+            <caption>Criterios de autoevaluación</caption>
+            <thead><tr><th>Criterio</th><th>Dominado</th><th>Suficiente</th></tr></thead>
             <tbody>
-              <tr><th>Parte A: código clásico</th><td class="num">2,0</td><td>Pasa los puntos de control, A2 medido y comparado con la cota, A3 bien razonado</td><td>Código funcional, análisis incompleto</td></tr>
-              <tr><th>Parte B: RSA de juguete</th><td class="num">1,5</td><td>B1 con gráfica y extrapolación, B2 demostrado y explicado</td><td>Clave rota, sin análisis de coste</td></tr>
-              <tr><th>Parte C: circuito Qiskit</th><td class="num">3,0</td><td>C1–C3 ejecutados, histogramas interpretados, umbral de ruido estimado, distingue construcción válida de «compilada»</td><td>Circuitos ejecutados y factores obtenidos</td></tr>
-              <tr><th>Parte D: recursos y Mosca</th><td class="num">2,5</td><td>Cifras correctas con fuentes, conclusiones sobre ECC frente a RSA y sobre corrección de errores, caso de Mosca realista</td><td>Cálculos correctos sin discusión</td></tr>
-              <tr><th>Calidad del informe</th><td class="num">1,0</td><td>Claro, reproducible (versiones, semillas), bien citado</td><td>Completo pero desordenado</td></tr>
+              <tr><th>Parte A: código clásico</th><td>Pasa los puntos de control, A2 medido y comparado con la cota, A3 bien razonado</td><td>Código funcional, análisis incompleto</td></tr>
+              <tr><th>Parte B: RSA de juguete</th><td>B1 con gráfica y extrapolación, B2 demostrado y explicado</td><td>Clave rota, sin análisis de coste</td></tr>
+              <tr><th>Parte C: circuito Qiskit</th><td>C1–C3 ejecutados, histogramas interpretados, umbral de ruido estimado, distingue construcción válida de «compilada»</td><td>Circuitos ejecutados y factores obtenidos</td></tr>
+              <tr><th>Parte D: recursos y Mosca</th><td>Cifras correctas con fuentes, conclusiones sobre ECC frente a RSA y sobre corrección de errores, caso de Mosca realista</td><td>Cálculos correctos sin discusión</td></tr>
+              <tr><th>Calidad del cuaderno</th><td>Claro, reproducible (versiones, semillas), bien citado</td><td>Completo pero desordenado</td></tr>
             </tbody>
           </table>
         </div>
@@ -460,7 +462,7 @@ x=25, y=10, z=10: x+y=35 -&gt; EXPUESTO (margen -25 años)</code></pre>
           <li>J. A. Smolin, G. Smith, A. Vargo. <a href="https://arxiv.org/abs/1301.7007">Pretending to factor large numbers on a quantum computer</a>. <span class="src">Nature 499, 163–165, 2013.</span></li>
           <li>S. Beauregard. <a href="https://arxiv.org/abs/quant-ph/0205095">Circuit for Shor's algorithm using 2n+3 qubits</a>. <span class="src">Quantum Information and Computation 3(2), 2003.</span></li>
           <li>C. Gidney, M. Ekerå. <a href="https://arxiv.org/abs/1905.09749">How to factor 2048 bit RSA integers in 8 hours using 20 million noisy qubits</a>. <span class="src">Quantum 5, 433, 2021.</span></li>
-          <li>Ibid. [4]: fórmulas de coste <span class="math">3<var>n</var> + 0,002 <var>n</var> lg <var>n</var></span> qubits y <span class="math">0,3 <var>n</var><sup>3</sup> + 0,0005 <var>n</var><sup>3</sup> lg <var>n</var></span> Toffoli. <span class="src">Resumen del artículo.</span></li>
+          <li>Ibid. [4]: fórmulas de coste \(3n + 0{,}002\, n \lg n\) qubits y \(0{,}3\, n^3 + 0{,}0005\, n^3 \lg n\) Toffoli. <span class="src">Resumen del artículo.</span></li>
           <li>C. Gidney. <a href="https://arxiv.org/abs/2505.15917">How to factor 2048 bit RSA integers with less than a million noisy qubits</a>. <span class="src">arXiv:2505.15917, mayo de 2025.</span></li>
           <li>R. Babbush et al. <a href="https://eprint.iacr.org/2026/625">Securing Elliptic Curve Cryptocurrencies against Quantum Vulnerabilities: Resource Estimates and Mitigations</a>. <span class="src">IACR ePrint 2026/625 y arXiv:2603.28846, 2026.</span></li>
           <li>IBM Quantum. <a href="https://quantum.cloud.ibm.com/docs/en/api/qiskit">Qiskit SDK API reference</a> y <a href="https://qiskit.github.io/qiskit-aer/">Qiskit Aer documentation</a>. <span class="src">Documentación en línea.</span></li>
@@ -474,7 +476,7 @@ x=25, y=10, z=10: x+y=35 -&gt; EXPUESTO (margen -25 años)</code></pre>
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
       <div class="footer-links">
         <a href="../glosario.html">Glosario</a>
         <a href="../recursos/index.html">Recursos</a>

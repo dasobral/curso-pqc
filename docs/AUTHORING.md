@@ -1,7 +1,7 @@
 # Guía de autoría del curso
 
 Sitio estático sin dependencias: HTML a mano, `css/styles.css`, `js/course-data.js` y `js/course.js`.
-Sin CDNs, sin fuentes externas, sin librerías de terceros. Todo el contenido está en español
+Sin CDNs ni fuentes externas; la única librería de terceros es KaTeX, copiada en `vendor/katex/` (MIT). Todo el contenido está en español
 (de España), con terminología técnica en inglés cuando es la de uso habitual (KEM, *handshake*,
 *harvest now, decrypt later*), marcada en cursiva la primera vez.
 
@@ -38,9 +38,9 @@ del elemento en `course-data.js`. Sustituye `{R}` por la misma ruta relativa. Ma
   <title>Tema 1 · Criptografía moderna y la amenaza cuántica — Curso PQC</title>
   <meta name="description" content="Una frase que resuma la página.">
   <link rel="icon" href="{R}assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{R}css/styles.css">
-  <script src="{R}js/course-data.js" defer></script>
-  <script src="{R}js/course.js" defer></script>
+  <link rel="stylesheet" href="{R}css/styles.css?v=2026092402">
+  <script src="{R}js/course-data.js?v=2026092402" defer></script>
+  <script src="{R}js/course.js?v=2026092402" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -96,7 +96,7 @@ del elemento en `course-data.js`. Sustituye `{R}` por la misma ruta relativa. Ma
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
       <div class="footer-links">
         <a href="{R}glosario.html">Glosario</a>
         <a href="{R}recursos/index.html">Recursos</a>
@@ -111,6 +111,10 @@ del elemento en `course-data.js`. Sustituye `{R}` por la misma ruta relativa. Ma
 
 Páginas sin índice lateral derecho (índices de sección): `<div class="layout no-toc">` y sin
 `<aside class="toc">`.
+
+Cuando cambies `css/styles.css` o un fichero de `js/`, actualiza el parámetro `?v=` en todas las
+páginas (GitHub Pages permite que el navegador guarde en caché estos ficheros durante 10 minutos o
+más; sin el parámetro, un visitante puede ver HTML nuevo con CSS antiguo).
 
 ## Componentes
 
@@ -127,9 +131,11 @@ otras páginas; si falta, JS lo genera.
 <!-- Definición / teorema / problema -->
 <div class="definition"><span class="def-title"><b>Definición</b>Learning With Errors (LWE)</span><p>…</p></div>
 
-<!-- Ecuación (HTML + Unicode; usa <var>, <sub>, <sup>; nada de LaTeX) -->
-<div class="equation"><var>t</var> = <b>A</b><var>s</var> + <var>e</var> (mod <var>q</var>)<span class="eq-label">(3.1)</span></div>
-<p>En línea: <span class="math">φ(<var>N</var>)</span></p>
+<!-- Fórmulas: LaTeX renderizado con KaTeX (vendor/katex, se carga solo si la página tiene \( o \[).
+     En línea \( … \); en bloque <div class="equation">\[ … \tag{3.1} \]</div>. Nunca $…$.
+     Macros: \Z \R \F \N. Escapa < > & como &lt; &gt; &amp;. Sin LaTeX en SVG, pre/code ni en texto que reescribe una demo. -->
+<div class="equation">\[ \mathbf{t} = \mathbf{A}\mathbf{s} + \mathbf{e} \pmod{q} \tag{3.1} \]</div>
+<p>En línea: \(R_q = \Z_q[X]/(X^{256}+1)\)</p>
 
 <!-- Código: añade data-lang. El botón Copiar lo añade JS. Resaltado manual opcional: tok-c (comentario), tok-k (palabra clave), tok-s (cadena), tok-n (número), tok-f (función) -->
 <pre data-lang="python"><code>…</code></pre>

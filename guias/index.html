@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Laboratorios — Curso PQC</title>
-  <meta name="description" content="Cinco prácticas con herramientas reales. Cada guía incluye objetivos, preparación, pasos con salida esperada, preguntas, entregables y rúbrica.">
+  <meta name="description" content="Cinco prácticas con herramientas reales. Cada guía incluye objetivos, preparación, pasos con salida esperada, preguntas y una tabla de autoevaluación.">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/styles.css">
-  <script src="../js/course-data.js" defer></script>
-  <script src="../js/course.js" defer></script>
+  <link rel="stylesheet" href="../css/styles.css?v=2026092402">
+  <script src="../js/course-data.js?v=2026092402" defer></script>
+  <script src="../js/course.js?v=2026092402" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -43,7 +43,7 @@
       <header class="page-head">
         <p class="eyebrow">Laboratorios</p>
         <h1>Guías de <em>laboratorio</em></h1>
-        <p class="lede">Cinco prácticas con herramientas reales. Cada guía incluye objetivos, preparación, pasos con salida esperada, preguntas, entregables y rúbrica.</p>
+        <p class="lede">Cinco prácticas con herramientas reales. Cada guía incluye objetivos, preparación, pasos con salida esperada, preguntas y una tabla de autoevaluación.</p>
       </header>
       <div class="card-grid">
         <a class="card" href="../guias/algoritmo_shor.html"><span class="card-kicker">L1</span><h3 class="card-title">Shor y el fin de RSA</h3><p>Partes clásicas de Shor en Python, búsqueda de orden con Qiskit para casos pequeños y ruptura de una clave RSA de juguete.</p><span class="card-foot"><span>Python · Qiskit</span><span>Tema 1</span></span></a>
@@ -60,9 +60,9 @@ $ python3 -m venv ~/pqc-lab && source ~/pqc-lab/bin/activate
 $ python -m pip install --upgrade pip numpy
 $ openssl version            # 3.5 o posterior para ML-KEM, ML-DSA y SLH-DSA nativos</code></pre>
         <p>Si tu sistema trae una versión de OpenSSL anterior a la 3.5, la <a href="criptografia_hibrida.html">guía L4</a> explica alternativas. Los laboratorios funcionan en Linux, macOS y Windows con WSL.</p>
-        <h2 id="evaluacion">Entregables y evaluación</h2>
-        <p>Cada laboratorio pide un informe breve (código, salidas y respuestas razonadas a las preguntas) y trae su propia rúbrica. En conjunto, los ejercicios prácticos suponen el 40 % de la nota del curso; consulta el <a href="../programa.html#evaluacion">programa</a>.</p>
-        <div class="callout note"><span class="callout-title">Buenas prácticas</span><ul><li>Anota las versiones exactas de las herramientas que uses; la salida cambia entre versiones.</li><li>No reutilices el código de juguete fuera del laboratorio.</li><li>Cuando un resultado no coincida con la salida esperada, explica por qué en el informe; también puntúa.</li></ul></div>
+        <h2 id="evaluacion">Resultado final y autoevaluación</h2>
+        <p>Cada laboratorio termina con un apartado «Resultado final», que dice qué deberías tener al acabar (código, gráficas y respuestas razonadas en tu propio cuaderno), y una tabla de autoevaluación para comprobar tu trabajo y saber qué sección repasar.</p>
+        <div class="callout note"><span class="callout-title">Buenas prácticas</span><ul><li>Anota las versiones exactas de las herramientas que uses; la salida cambia entre versiones.</li><li>No reutilices el código de juguete fuera del laboratorio.</li><li>Cuando un resultado no coincida con la salida esperada, averigua por qué antes de seguir: suele ser la parte que más enseña.</li></ul></div>
       </article>
       <nav class="pager" aria-label="Paginación"></nav>
     </main>
@@ -70,7 +70,7 @@ $ openssl version            # 3.5 o posterior para ML-KEM, ML-DSA y SLH-DSA nat
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
       <div class="footer-links">
         <a href="../glosario.html">Glosario</a>
         <a href="../recursos/index.html">Recursos</a>

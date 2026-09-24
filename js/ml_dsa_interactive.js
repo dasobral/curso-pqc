@@ -707,15 +707,15 @@
       sLab.textContent = String(s);
       const all = [], acc = [];
       for (let i = 0; i < N; i++) {
-        const c = rndInt(2) ? 1 : -1, y = rndInt(2 * G) - G + 1; // y ∈ [−γ+1, γ]
+        const c = rndInt(2) ? 1 : -1, y = rndInt(2 * G + 1) - G; // y ∈ [−γ, γ], simétrico: c·y tiene la misma distribución para c = ±1
         const z = y + c * s;
         all.push(c * z); // público: c y z, luego c·z = c·y + s
         if (Math.abs(z) < G - B) acc.push(c * z);
       }
-      const est = (a) => (Math.max(...a) + Math.min(...a) - 1) / 2;
+      const est = (a) => (Math.max(...a) + Math.min(...a)) / 2;
       out.textContent = '';
       line(out, [['Secreto s = ' + s + ' · γ = ' + G + ' · β = ' + B + ' · ' + N + ' firmas simuladas', 'dim']]);
-      line(out, [['Sin rechazo: c·z ∈ [' + Math.min(...all) + ', ' + Math.max(...all) + ']  ⇒  ŝ = (máx + mín − 1)/2 = ' + fmtDec(est(all), 1), 'bad']]);
+      line(out, [['Sin rechazo: c·z ∈ [' + Math.min(...all) + ', ' + Math.max(...all) + ']  ⇒  ŝ = (máx + mín)/2 = ' + fmtDec(est(all), 1), 'bad']]);
       if (acc.length) line(out, [['Con rechazo (|z| < γ − β): ' + acc.length + ' aceptadas, c·z ∈ [' + Math.min(...acc) + ', ' + Math.max(...acc) + ']  ⇒  ŝ = ' + fmtDec(est(acc), 1), 'ok']]);
       line(out, [['Con rechazo, c·z es uniforme en [−' + (G - B - 1) + ', ' + (G - B - 1) + '] sea cual sea s: la salida no depende del secreto.', 'dim']]);
       fig.textContent = '';

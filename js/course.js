@@ -249,7 +249,51 @@
     search();
   }
 
+  // ---------- LaTeX: KaTeX (vendored) only on pages that contain \( \) or \[ \] ----------
+  function renderMath() {
+    const main = document.querySelector('main');
+    if (!main || !/\\\(|\\\[/.test(main.textContent)) return;
+    const base = `${root}vendor/katex/`;
+    const css = el('link', { rel: 'stylesheet', href: `${base}katex.min.css?v=0.18.9` });
+    document.head.append(css);
+    const load = (src) => new Promise((ok, fail) => {
+      const s = el('script', { src });
+      s.onload = ok; s.onerror = fail;
+      document.head.append(s);
+    });
+    load(`${base}katex.min.js?v=0.18.9`)
+      .then(() => load(`${base}auto-render.min.js?v=0.18.9`))
+      .then(() => {
+        window.renderMathInElement(main, {
+          delimiters: [
+            { left: '\\[', right: '\\]', display: true },
+            { left: '\\(', right: '\\)', display: false },
+          ],
+          ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'option'],
+          ignoredClasses: ['output', 'no-math'],
+          throwOnError: false,
+          strict: 'ignore',
+          macros: { '\\Z': '\\mathbb{Z}', '\\R': '\\mathbb{R}', '\\F': '\\mathbb{F}', '\\N': '\\mathbb{N}' },
+        });
+        document.documentElement.classList.add('math-ready');
+        buildTocLabels();
+      })
+      .catch(() => { /* formulas stay as readable LaTeX source */ });
+  }
+
+  // TOC entries were built from heading text before KaTeX ran; refresh them with rendered math.
+  function buildTocLabels() {
+    document.querySelectorAll('.toc a[href^="#"]').forEach((a) => {
+      const h = document.getElementById(a.getAttribute('href').slice(1));
+      if (!h || !h.querySelector('.katex')) return;
+      const clone = h.cloneNode(true);
+      clone.querySelectorAll('.anchor, .sec, .katex-mathml').forEach((n) => n.remove());
+      a.innerHTML = clone.innerHTML;
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    renderMath();
     buildCourseNav();
     buildToc();
     buildPager();

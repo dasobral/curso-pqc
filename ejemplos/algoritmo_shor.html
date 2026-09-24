@@ -6,10 +6,10 @@
   <title>Ejemplo E1 · Algoritmo de Shor — Curso PQC</title>
   <meta name="description" content="Simulación clásica e interactiva de la reducción de Shor para N pequeños: periodo de a^x mod N, picos tras la QFT, fracciones continuas y casos de fallo.">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../css/styles.css">
-  <script src="../js/course-data.js" defer></script>
-  <script src="../js/course.js" defer></script>
-  <script src="../js/shor_interactive.js" defer></script>
+  <link rel="stylesheet" href="../css/styles.css?v=2026092402">
+  <script src="../js/course-data.js?v=2026092402" defer></script>
+  <script src="../js/course.js?v=2026092402" defer></script>
+  <script src="../js/shor_interactive.js?v=2026092402" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -44,7 +44,7 @@
       <header class="page-head">
         <p class="eyebrow">Ejemplo E1 · Interactivo</p>
         <h1>Algoritmo de <em>Shor</em>, paso a paso</h1>
-        <p class="lede">Elige un número compuesto pequeño y una base, observa el periodo de <span class="math"><var>a</var><sup><var>x</var></sup> mod <var>N</var></span>, «mide» el registro cuántico según su distribución ideal y recupera el orden con fracciones continuas. Todo es clásico: la página explica qué parte haría un ordenador cuántico y dónde se hace trampa.</p>
+        <p class="lede">Elige un número compuesto pequeño y una base, observa el periodo de \(a^x \bmod N\), «mide» el registro cuántico según su distribución ideal y recupera el orden con fracciones continuas. Todo es clásico: la página explica qué parte haría un ordenador cuántico y dónde se hace trampa.</p>
         <dl class="page-meta">
           <div><dt>Tiempo</dt><dd>30–45 min</dd></div>
           <div><dt>Nivel</dt><dd>Introductorio</dd></div>
@@ -55,31 +55,31 @@
 
       <article class="prose">
         <h2 id="que-simula"><span class="sec">E1.1</span>Qué se simula y qué no</h2>
-        <p>El algoritmo de Shor tiene dos mitades. La mitad <strong>clásica</strong> reduce la factorización de <var>N</var> al cálculo del <em>orden</em> de un número módulo <var>N</var> y, al final, convierte ese orden en factores con dos máximos comunes divisores. La mitad <strong>cuántica</strong> es una subrutina de búsqueda de orden (<em>order finding</em>): prepara una superposición de todos los exponentes, calcula <span class="math"><var>a</var><sup><var>x</var></sup> mod <var>N</var></span> de forma reversible, aplica la transformada cuántica de Fourier inversa (QFT<sup>−1</sup>) y mide. La medida devuelve un número aleatorio <var>y</var> concentrado cerca de múltiplos de <span class="math"><var>Q</var>/<var>r</var></span>, del que se extrae <var>r</var> clásicamente.</p>
+        <p>El algoritmo de Shor tiene dos mitades. La mitad <strong>clásica</strong> reduce la factorización de \(N\) al cálculo del <em>orden</em> de un número módulo \(N\) y, al final, convierte ese orden en factores con dos máximos comunes divisores. La mitad <strong>cuántica</strong> es una subrutina de búsqueda de orden (<em>order finding</em>): prepara una superposición de todos los exponentes, calcula \(a^x \bmod N\) de forma reversible, aplica la transformada cuántica de Fourier inversa (\(\mathrm{QFT}^{-1}\)) y mide. La medida devuelve un número aleatorio \(y\) concentrado cerca de múltiplos de \(Q/r\), del que se extrae \(r\) clásicamente.</p>
         <div class="table-wrap">
           <table>
             <caption>Qué hace cada paso en esta página frente a un ordenador cuántico real</caption>
             <thead><tr><th>Paso</th><th>En un CRQC</th><th>En esta simulación</th></tr></thead>
             <tbody>
-              <tr><th>Comprobar <var>N</var>, elegir <var>a</var>, gcd</th><td>Clásico</td><td>Clásico, idéntico</td></tr>
-              <tr><th>Calcular el orden <var>r</var></th><td>Circuito cuántico: exponenciación modular controlada, QFT<sup>−1</sup> y medida</td><td><strong>Fuerza bruta</strong>: multiplicar por <var>a</var> hasta obtener 1 (hasta <var>r</var> pasos, exponencial en el número de bits de <var>N</var>)</td></tr>
-              <tr><th>Distribución de la medida <var>y</var></th><td>Emerge de la interferencia de 2<sup><var>t</var></sup> amplitudes</td><td>Fórmula cerrada que <strong>usa el <var>r</var> ya conocido</strong>; se muestrea con un generador pseudoaleatorio</td></tr>
-              <tr><th>Fracciones continuas → <var>r</var></th><td>Clásico</td><td>Clásico, idéntico</td></tr>
-              <tr><th><span class="math">gcd(<var>a</var><sup><var>r</var>/2</sup> ± 1, <var>N</var>)</span></th><td>Clásico</td><td>Clásico, idéntico</td></tr>
+              <tr><th>Comprobar \(N\), elegir \(a\), gcd</th><td>Clásico</td><td>Clásico, idéntico</td></tr>
+              <tr><th>Calcular el orden \(r\)</th><td>Circuito cuántico: exponenciación modular controlada, \(\mathrm{QFT}^{-1}\) y medida</td><td><strong>Fuerza bruta</strong>: multiplicar por \(a\) hasta obtener 1 (hasta \(r\) pasos, exponencial en el número de bits de \(N\))</td></tr>
+              <tr><th>Distribución de la medida \(y\)</th><td>Emerge de la interferencia de \(2^t\) amplitudes</td><td>Fórmula cerrada que <strong>usa el \(r\) ya conocido</strong>; se muestrea con un generador pseudoaleatorio</td></tr>
+              <tr><th>Fracciones continuas → \(r\)</th><td>Clásico</td><td>Clásico, idéntico</td></tr>
+              <tr><th>\(\gcd(a^{r/2} \pm 1, N)\)</th><td>Clásico</td><td>Clásico, idéntico</td></tr>
             </tbody>
           </table>
         </div>
-        <div class="callout warning"><span class="callout-title">La trampa, dicha explícitamente</span><p>Para dibujar los picos, la página necesita <var>r</var>, que ha calculado por fuerza bruta. Un ordenador cuántico no «conoce» <var>r</var>: la distribución aparece sola por interferencia y solo se accede a ella midiendo. Esta demo sirve para entender <em>qué</em> se mide y <em>cómo</em> se post-procesa, no para factorizar nada que un portátil no factorice ya. Por la misma razón, las «factorizaciones cuánticas» de 15 o 21 con circuitos simplificados que aprovechan el resultado conocido no dicen nada sobre la escala de la amenaza [3].</p></div>
+        <div class="callout warning"><span class="callout-title">La trampa, dicha explícitamente</span><p>Para dibujar los picos, la página necesita \(r\), que ha calculado por fuerza bruta. Un ordenador cuántico no «conoce» \(r\): la distribución aparece sola por interferencia y solo se accede a ella midiendo. Esta demo sirve para entender <em>qué</em> se mide y <em>cómo</em> se post-procesa, no para factorizar nada que un portátil no factorice ya. Por la misma razón, las «factorizaciones cuánticas» de 15 o 21 con circuitos simplificados que aprovechan el resultado conocido no dicen nada sobre la escala de la amenaza [3].</p></div>
 
         <h2 id="reduccion"><span class="sec">E1.2</span>De factorizar a hallar un orden</h2>
-        <div class="definition"><span class="def-title"><b>Definición</b>Orden multiplicativo</span><p>Si <span class="math">gcd(<var>a</var>, <var>N</var>) = 1</span>, el orden de <var>a</var> módulo <var>N</var> es el menor entero <span class="math"><var>r</var> &gt; 0</span> con <span class="math"><var>a</var><sup><var>r</var></sup> ≡ 1 (mod <var>N</var>)</span>. La función <span class="math"><var>f</var>(<var>x</var>) = <var>a</var><sup><var>x</var></sup> mod <var>N</var></span> es periódica de periodo exactamente <var>r</var>.</p></div>
-        <p>Si <var>r</var> es par, <span class="math"><var>x</var> = <var>a</var><sup><var>r</var>/2</sup> mod <var>N</var></span> cumple <span class="math"><var>x</var><sup>2</sup> ≡ 1</span>, es decir, <var>N</var> divide a <span class="math">(<var>x</var> − 1)(<var>x</var> + 1)</span>. Como <var>r</var> es el orden, <span class="math"><var>x</var> ≢ 1</span>. Si además <span class="math"><var>x</var> ≢ −1</span>, <var>N</var> no divide a ninguno de los dos factores por separado, así que cada uno comparte con <var>N</var> un divisor no trivial:</p>
-        <div class="equation"><var>p</var> = gcd(<var>a</var><sup><var>r</var>/2</sup> − 1, <var>N</var>),  <var>q</var> = gcd(<var>a</var><sup><var>r</var>/2</sup> + 1, <var>N</var>)<span class="eq-label">(E1.1)</span></div>
-        <p><strong>Ejemplo resuelto (N = 15, a = 7).</strong> Las potencias de 7 módulo 15 son 1, 7, 4, 13, 1, 7, 4, 13, …, luego <span class="math"><var>r</var> = 4</span>. Entonces <span class="math">7<sup>2</sup> mod 15 = 4</span>, <span class="math">gcd(3, 15) = 3</span> y <span class="math">gcd(5, 15) = 5</span>: <span class="math">15 = 3 × 5</span>.</p>
-        <p>Si <var>N</var> es impar con <var>m</var> factores primos distintos y <var>a</var> se elige al azar entre los coprimos con <var>N</var>, la probabilidad de que <var>r</var> sea par y <span class="math"><var>a</var><sup><var>r</var>/2</sup> ≢ −1</span> es al menos <span class="math">1 − 1/2<sup><var>m</var>−1</sup></span>; para un módulo RSA (<span class="math"><var>m</var> = 2</span>), al menos 1/2 por intento. Para <span class="math"><var>N</var> = 21</span> la cota es exacta: de las 12 bases coprimas en [1, 20] funcionan 6 (el panel «Todas las bases» excluye 1 y 20, que siempre fallan, y muestra 6 de 10).</p>
+        <div class="definition"><span class="def-title"><b>Definición</b>Orden multiplicativo</span><p>Si \(\gcd(a, N) = 1\), el orden de \(a\) módulo \(N\) es el menor entero \(r &gt; 0\) con \(a^r \equiv 1 \pmod{N}\). La función \(f(x) = a^x \bmod N\) es periódica de periodo exactamente \(r\).</p></div>
+        <p>Si \(r\) es par, \(x = a^{r/2} \bmod N\) cumple \(x^2 \equiv 1\), es decir, \(N\) divide a \((x - 1)(x + 1)\). Como \(r\) es el orden, \(x \not\equiv 1\). Si además \(x \not\equiv -1\), \(N\) no divide a ninguno de los dos factores por separado, así que cada uno comparte con \(N\) un divisor no trivial:</p>
+        <div class="equation">\[ p = \gcd(a^{r/2} - 1, N), \qquad q = \gcd(a^{r/2} + 1, N) \tag{E1.1} \]</div>
+        <p><strong>Ejemplo resuelto (\(N = 15\), \(a = 7\)).</strong> Las potencias de 7 módulo 15 son 1, 7, 4, 13, 1, 7, 4, 13, …, luego \(r = 4\). Entonces \(7^2 \bmod 15 = 4\), \(\gcd(3, 15) = 3\) y \(\gcd(5, 15) = 5\): \(15 = 3 \times 5\).</p>
+        <p>Si \(N\) es impar con \(m\) factores primos distintos y \(a\) se elige al azar entre los coprimos con \(N\), la probabilidad de que \(r\) sea par y \(a^{r/2} \not\equiv -1\) es al menos \(1 - 1/2^{m-1}\); para un módulo RSA (\(m = 2\)), al menos 1/2 por intento. Para \(N = 21\) la cota es exacta: de las 12 bases coprimas en [1, 20] funcionan 6 (el panel «Todas las bases» excluye 1 y 20, que siempre fallan, y muestra 6 de 10).</p>
 
         <h2 id="demo"><span class="sec">E1.3</span>Simulador</h2>
-        <p>Pulsa <b>Ejecutar</b> para calcular el orden y la distribución ideal; después <b>Medir</b> para simular tiradas del registro de fase. Los casos predefinidos muestran un éxito con picos exactos, uno con <var>r</var> que no es potencia de 2, los dos modos de fallo y un <var>N</var> de 10 bits.</p>
+        <p>Pulsa <b>Ejecutar</b> para calcular el orden y la distribución ideal; después <b>Medir</b> para simular tiradas del registro de fase. Los casos predefinidos muestran un éxito con picos exactos, uno con \(r\) que no es potencia de 2, los dos modos de fallo y un \(N\) de 10 bits.</p>
 
         <section class="demo" id="demo-shor" aria-labelledby="demo-shor-t">
           <div class="demo-head"><p class="demo-title" id="demo-shor-t">Reducción de Shor para N ≤ 1023</p><button class="btn ghost" type="button" id="shor-reset">Reiniciar</button></div>
@@ -106,39 +106,39 @@
               <div class="stat"><b id="stat-p">—</b><small>resultado</small></div>
             </div>
             <div class="output" id="shor-out" aria-live="polite">Activa JavaScript para usar el simulador.</div>
-            <p class="small"><b>Secuencia <span class="math"><var>f</var>(<var>x</var>) = <var>a</var><sup><var>x</var></sup> mod <var>N</var></span>.</b> Es la función cuyo periodo busca el ordenador cuántico.</p>
+            <p class="small"><b>Secuencia \(f(x) = a^x \bmod N\).</b> Es la función cuyo periodo busca el ordenador cuántico.</p>
             <div id="shor-seq"></div>
-            <p class="small"><b>Distribución ideal de la medida del registro de fase.</b> Tras la QFT<sup>−1</sup>, la probabilidad se concentra en torno a <span class="math"><var>s</var>·<var>Q</var>/<var>r</var></span>.</p>
+            <p class="small"><b>Distribución ideal de la medida del registro de fase.</b> Tras la \(\mathrm{QFT}^{-1}\), la probabilidad se concentra en torno a \(s\cdot Q/r\).</p>
             <div id="shor-peaks"></div>
             <div class="output" id="shor-cf" aria-live="polite">Pulsa «Medir» para obtener un valor y y recuperar r.</div>
-            <p class="small"><b>Todas las bases.</b> Estadística exacta sobre todas las <var>a</var> en [2, <var>N</var> − 2].</p>
+            <p class="small"><b>Todas las bases.</b> Estadística exacta sobre todas las \(a\) en \([2, N-2]\).</p>
             <div id="shor-survey"></div>
           </div>
         </section>
 
-        <h2 id="picos"><span class="sec">E1.4</span>Por qué aparecen picos en múltiplos de Q/r</h2>
-        <p>El registro de fase tiene <var>t</var> qubits, con <span class="math"><var>Q</var> = 2<sup><var>t</var></sup> ≥ <var>N</var><sup>2</sup></span>; el de trabajo, <span class="math">⌈log<sub>2</sub>(<var>N</var> + 1)⌉</span>. Tras las puertas Hadamard y la exponenciación modular controlada, el estado es</p>
-        <div class="equation">|ψ⟩ = <var>Q</var><sup>−1/2</sup> Σ<sub><var>x</var>=0</sub><sup><var>Q</var>−1</sup> |<var>x</var>⟩ |<var>a</var><sup><var>x</var></sup> mod <var>N</var>⟩<span class="eq-label">(E1.2)</span></div>
-        <p>Si se mide (o simplemente se ignora) el registro de trabajo y sale <span class="math"><var>a</var><sup><var>x</var><sub>0</sub></sup></span>, el registro de fase queda en la superposición uniforme de <span class="math"><var>x</var><sub>0</sub>, <var>x</var><sub>0</sub> + <var>r</var>, <var>x</var><sub>0</sub> + 2<var>r</var>, …</span>: un «peine» de periodo <var>r</var>. La QFT<sup>−1</sup> de un peine de periodo <var>r</var> es otro peine, de periodo <span class="math"><var>Q</var>/<var>r</var></span>, y el desplazamiento <var>x</var><sub>0</sub> solo añade fases que no cambian las probabilidades. Con <var>M</var> dientes,</p>
-        <div class="equation">P(<var>y</var> | <var>x</var><sub>0</sub>) = (1 / <var>MQ</var>) · sin<sup>2</sup>(π<var>M</var><var>r</var><var>y</var>/<var>Q</var>) / sin<sup>2</sup>(π<var>r</var><var>y</var>/<var>Q</var>)<span class="eq-label">(E1.3)</span></div>
-        <p>que vale exactamente <span class="math"><var>M</var>/<var>Q</var> ≈ 1/<var>r</var></span> cuando <span class="math"><var>r</var><var>y</var>/<var>Q</var></span> es entero y es pequeña lejos de esos puntos. Si <var>r</var> divide a <var>Q</var> (caso <span class="math"><var>N</var> = 15</span>, <span class="math"><var>r</var> = 4</span>), los picos son exactos: solo salen <span class="math"><var>y</var> ∈ {0, 64, 128, 192}</span>, con probabilidad 1/4 cada uno. Si no lo divide (caso <span class="math"><var>N</var> = 21</span>, <span class="math"><var>a</var> = 2</span>, <span class="math"><var>r</var> = 6</span>, <span class="math"><var>Q</var> = 512</span>), cada pico cae entre dos enteros y la probabilidad se reparte entre vecinos: <span class="math">P(85) ≈ 0,114</span>, <span class="math">P(86) ≈ 0,029</span>, <span class="math">P(84) ≈ 0,007</span>; los seis enteros más cercanos a los picos suman ≈ 0,79. La demo calcula esta distribución con (E1.3); se ha comprobado contra la suma directa de las 2<sup><var>t</var></sup> amplitudes para varios <var>N</var> (error &lt; 10<sup>−13</sup>).</p>
+        <h2 id="picos"><span class="sec">E1.4</span>Por qué aparecen picos en múltiplos de \(Q/r\)</h2>
+        <p>El registro de fase tiene \(t\) qubits, con \(Q = 2^t \ge N^2\); el de trabajo, \(\lceil \log_2(N + 1)\rceil\). Tras las puertas Hadamard y la exponenciación modular controlada, el estado es</p>
+        <div class="equation">\[ |\psi\rangle = Q^{-1/2} \sum_{x=0}^{Q-1} |x\rangle |a^x \bmod N\rangle \tag{E1.2} \]</div>
+        <p>Si se mide (o simplemente se ignora) el registro de trabajo y sale \(a^{x_0}\), el registro de fase queda en la superposición uniforme de \(x_0, x_0 + r, x_0 + 2r, \dots\): un «peine» de periodo \(r\). La \(\mathrm{QFT}^{-1}\) de un peine de periodo \(r\) es otro peine, de periodo \(Q/r\), y el desplazamiento \(x_0\) solo añade fases que no cambian las probabilidades. Con \(M\) dientes,</p>
+        <div class="equation">\[ P(y \mid x_0) = \frac{1}{MQ} \cdot \frac{\sin^2(\pi M r y/Q)}{\sin^2(\pi r y/Q)} \tag{E1.3} \]</div>
+        <p>que vale exactamente \(M/Q \approx 1/r\) cuando \(ry/Q\) es entero y es pequeña lejos de esos puntos. Si \(r\) divide a \(Q\) (caso \(N = 15\), \(r = 4\)), los picos son exactos: solo salen \(y \in \{0, 64, 128, 192\}\), con probabilidad 1/4 cada uno. Si no lo divide (caso \(N = 21\), \(a = 2\), \(r = 6\), \(Q = 512\)), cada pico cae entre dos enteros y la probabilidad se reparte entre vecinos: \(P(85) \approx 0{,}114\), \(P(86) \approx 0{,}029\), \(P(84) \approx 0{,}007\); los seis enteros más cercanos a los picos suman \(\approx 0{,}79\). La demo calcula esta distribución con (E1.3); se ha comprobado contra la suma directa de las \(2^t\) amplitudes para varios \(N\) (error &lt; \(10^{-13}\)).</p>
 
-        <h2 id="fracciones"><span class="sec">E1.5</span>Recuperar r con fracciones continuas</h2>
-        <p>Una medida <var>y</var> en el entero más cercano a <span class="math"><var>s</var>·<var>Q</var>/<var>r</var></span> cumple <span class="math">|<var>y</var>/<var>Q</var> − <var>s</var>/<var>r</var>| ≤ 1/(2<var>Q</var>)</span>. Como <span class="math"><var>Q</var> ≥ <var>N</var><sup>2</sup> &gt; <var>r</var><sup>2</sup></span>, eso implica <span class="math">|<var>y</var>/<var>Q</var> − <var>s</var>/<var>r</var>| &lt; 1/(2<var>r</var><sup>2</sup>)</span> y, por un teorema clásico de Legendre, <span class="math"><var>s</var>/<var>r</var></span> (reducida) es uno de los convergentes de la fracción continua de <span class="math"><var>y</var>/<var>Q</var></span>. Basta recorrer los convergentes con denominador menor que <var>N</var> y comprobar cuál verifica <span class="math"><var>a</var><sup><var>q</var></sup> ≡ 1</span>.</p>
+        <h2 id="fracciones"><span class="sec">E1.5</span>Recuperar \(r\) con fracciones continuas</h2>
+        <p>Una medida \(y\) en el entero más cercano a \(s\cdot Q/r\) cumple \(\lvert y/Q - s/r \rvert \le 1/(2Q)\). Como \(Q \ge N^2 &gt; r^2\), eso implica \(\lvert y/Q - s/r \rvert &lt; 1/(2r^2)\) y, por un teorema clásico de Legendre, \(s/r\) (reducida) es uno de los convergentes de la fracción continua de \(y/Q\). Basta recorrer los convergentes con denominador menor que \(N\) y comprobar cuál verifica \(a^q \equiv 1\).</p>
         <div class="table-wrap">
           <table>
-            <caption>N = 21, a = 2, Q = 512: medidas típicas y lo que se recupera</caption>
-            <thead><tr><th class="num">y</th><th class="num">y/Q</th><th>Convergentes (q &lt; 21)</th><th>Candidato</th><th>Resultado</th></tr></thead>
+            <caption>\(N = 21\), \(a = 2\), \(Q = 512\): medidas típicas y lo que se recupera</caption>
+            <thead><tr><th class="num">y</th><th class="num">y/Q</th><th>Convergentes (\(q &lt; 21\))</th><th>Candidato</th><th>Resultado</th></tr></thead>
             <tbody>
-              <tr><td class="num">85</td><td class="num">0,16602</td><td>0/1, 1/6</td><td>q = 6</td><td><span class="math">2<sup>6</sup> mod 21 = 1</span> → <var>r</var> = 6</td></tr>
-              <tr><td class="num">427</td><td class="num">0,83398</td><td>0/1, 1/1, 5/6</td><td>q = 6</td><td><var>r</var> = 6</td></tr>
-              <tr><td class="num">171</td><td class="num">0,33398</td><td>0/1, 1/2, 1/3</td><td>q = 2 y 3 fallan; 3·2 = 6</td><td><var>r</var> = 6 (<var>s</var> = 2 compartía factor con <var>r</var>)</td></tr>
-              <tr><td class="num">256</td><td class="num">0,50000</td><td>0/1, 1/2</td><td>q = 2 falla; 3·2 = 6</td><td><var>r</var> = 6 (<var>s</var> = 3)</td></tr>
-              <tr><td class="num">0</td><td class="num">0</td><td>0/1</td><td>—</td><td>Medida inútil (<var>s</var> = 0); repetir</td></tr>
+              <tr><td class="num">85</td><td class="num">0,16602</td><td>0/1, 1/6</td><td>\(q = 6\)</td><td>\(2^6 \bmod 21 = 1\) → \(r = 6\)</td></tr>
+              <tr><td class="num">427</td><td class="num">0,83398</td><td>0/1, 1/1, 5/6</td><td>\(q = 6\)</td><td>\(r = 6\)</td></tr>
+              <tr><td class="num">171</td><td class="num">0,33398</td><td>0/1, 1/2, 1/3</td><td>\(q = 2\) y \(3\) fallan; \(3 \cdot 2 = 6\)</td><td>\(r = 6\) (\(s = 2\) compartía factor con \(r\))</td></tr>
+              <tr><td class="num">256</td><td class="num">0,50000</td><td>0/1, 1/2</td><td>\(q = 2\) falla; \(3 \cdot 2 = 6\)</td><td>\(r = 6\) (\(s = 3\))</td></tr>
+              <tr><td class="num">0</td><td class="num">0</td><td>0/1</td><td>—</td><td>Medida inútil (\(s = 0\)); repetir</td></tr>
             </tbody>
           </table>
         </div>
-        <p>Cuando <span class="math">gcd(<var>s</var>, <var>r</var>) &gt; 1</span> la fracción aparece simplificada y el denominador es un divisor de <var>r</var>. Hay dos remedios estándar: probar múltiplos pequeños del denominador (lo que hace la demo, hasta ×4) o repetir la medida y tomar el mínimo común múltiplo de los denominadores. En ambos casos, si se obtiene un <var>R</var> con <span class="math"><var>a</var><sup><var>R</var></sup> ≡ 1</span>, el orden divide a <var>R</var> y se reduce quitando factores primos mientras <span class="math"><var>a</var><sup><var>R</var>/<var>p</var></sup> ≡ 1</span> (por ejemplo, <span class="math"><var>y</var> = 128</span> da 1/4 y 3·4 = 12, que se reduce a 6). En promedio basta un número pequeño de repeticiones.</p>
+        <p>Cuando \(\gcd(s, r) &gt; 1\) la fracción aparece simplificada y el denominador es un divisor de \(r\). Hay dos remedios estándar: probar múltiplos pequeños del denominador (lo que hace la demo, hasta ×4) o repetir la medida y tomar el mínimo común múltiplo de los denominadores. En ambos casos, si se obtiene un \(R\) con \(a^R \equiv 1\), el orden divide a \(R\) y se reduce quitando factores primos mientras \(a^{R/p} \equiv 1\) (por ejemplo, \(y = 128\) da \(1/4\) y \(3 \cdot 4 = 12\), que se reduce a 6). En promedio basta un número pequeño de repeticiones.</p>
 
         <h2 id="fallos"><span class="sec">E1.6</span>Casos de fallo</h2>
         <div class="table-wrap">
@@ -146,25 +146,25 @@
             <caption>Modos de fallo y su remedio (todos se reproducen con los casos predefinidos)</caption>
             <thead><tr><th>Situación</th><th>Ejemplo</th><th>Qué pasa</th><th>Remedio</th></tr></thead>
             <tbody>
-              <tr><th><var>r</var> impar</th><td><span class="math"><var>N</var> = 21</span>, <span class="math"><var>a</var> = 4</span>: 4, 16, 1 → <var>r</var> = 3</td><td>No existe <span class="math"><var>a</var><sup><var>r</var>/2</sup></span></td><td>Otra base</td></tr>
-              <tr><th><span class="math"><var>a</var><sup><var>r</var>/2</sup> ≡ −1</span></th><td><span class="math"><var>N</var> = 91</span>, <span class="math"><var>a</var> = 12</span>: <var>r</var> = 6, <span class="math">12<sup>3</sup> mod 91 = 90</span></td><td><span class="math">gcd(89, 91) = 1</span>, <span class="math">gcd(91, 91) = 91</span>: factores triviales</td><td>Otra base</td></tr>
-              <tr><th>Medida sin información</th><td><var>y</var> = 0, o <var>y</var> lejos de un pico</td><td>Ningún convergente válido</td><td>Repetir el circuito</td></tr>
-              <tr><th>Fracción simplificada</th><td><var>y</var> = 256 con <var>r</var> = 6</td><td>Se obtiene un divisor de <var>r</var></td><td>Múltiplos o mcm de varias medidas</td></tr>
-              <tr><th>«Suerte»</th><td><span class="math">gcd(<var>a</var>, <var>N</var>) &gt; 1</span></td><td>Factor sin parte cuántica</td><td>— (probabilidad despreciable para RSA real)</td></tr>
+              <tr><th>\(r\) impar</th><td>\(N = 21\), \(a = 4\): 4, 16, 1 → \(r = 3\)</td><td>No existe \(a^{r/2}\)</td><td>Otra base</td></tr>
+              <tr><th>\(a^{r/2} \equiv -1\)</th><td>\(N = 91\), \(a = 12\): \(r = 6\), \(12^3 \bmod 91 = 90\)</td><td>\(\gcd(89, 91) = 1\), \(\gcd(91, 91) = 91\): factores triviales</td><td>Otra base</td></tr>
+              <tr><th>Medida sin información</th><td>\(y = 0\), o \(y\) lejos de un pico</td><td>Ningún convergente válido</td><td>Repetir el circuito</td></tr>
+              <tr><th>Fracción simplificada</th><td>\(y = 256\) con \(r = 6\)</td><td>Se obtiene un divisor de \(r\)</td><td>Múltiplos o mcm de varias medidas</td></tr>
+              <tr><th>«Suerte»</th><td>\(\gcd(a, N) &gt; 1\)</td><td>Factor sin parte cuántica</td><td>— (probabilidad despreciable para RSA real)</td></tr>
             </tbody>
           </table>
         </div>
 
         <h2 id="escala"><span class="sec">E1.7</span>Del juguete a RSA-2048</h2>
         <p>La demo llega a 20 qubits de fase y 10 de trabajo, sin ruido. Un ataque a RSA-2048 necesita del orden de 1 400 a 6 200 qubits <em>lógicos</em> según la construcción y miles de millones de puertas Toffoli; cada qubit lógico se construye con cientos o miles de qubits físicos mediante corrección de errores. La estimación de referencia de 2025 es de menos de un millón de qubits físicos durante menos de una semana [4], y las propuestas de 2026 con códigos QLDPC la rebajan sobre el papel. El tema 1 resume cómo han evolucionado estas cifras y qué significan: <a href="../temas/tema1/index.html#recursos">§1.8 Estimaciones de recursos</a>.</p>
-        <p>Para ver el circuito cuántico de verdad (Hadamard, multiplicación modular controlada y QFT<sup>−1</sup>) y ejecutarlo en un simulador, sigue el laboratorio <a href="../guias/algoritmo_shor.html">L1 · Shor y el fin de RSA</a>, que implementa con Qiskit los casos <span class="math"><var>N</var> = 15</span>, <span class="math"><var>a</var> = 7</span> y <span class="math"><var>N</var> = 21</span>, <span class="math"><var>a</var> = 2</span> y reproduce los picos de esta página.</p>
+        <p>Para ver el circuito cuántico de verdad (Hadamard, multiplicación modular controlada y \(\mathrm{QFT}^{-1}\)) y ejecutarlo en un simulador, sigue el laboratorio <a href="../guias/algoritmo_shor.html">L1 · Shor y el fin de RSA</a>, que implementa con Qiskit los casos \(N = 15\), \(a = 7\) y \(N = 21\), \(a = 2\) y reproduce los picos de esta página.</p>
 
         <h2 id="prueba"><span class="sec">E1.8</span>Prueba esto</h2>
         <ol>
-          <li>Con <span class="math"><var>N</var> = 15</span>, <span class="math"><var>a</var> = 7</span>, haz 100 medidas. ¿Qué fracción no sirve? Compárala con la teoría (1/4).</li>
-          <li>Con <span class="math"><var>N</var> = 21</span>, <span class="math"><var>a</var> = 2</span>, haz 1 000 medidas. ¿Qué fracción recupera <span class="math"><var>r</var> = 6</span>? Debería rondar el 83 %. ¿Por qué no es 5/6?</li>
-          <li>Para <span class="math"><var>N</var> = 143</span>, compara en «Todas las bases» el número de bases con <var>r</var> impar y con <span class="math"><var>a</var><sup><var>r</var>/2</sup> ≡ −1</span>. Pista: si <var>a</var> tiene orden impar <var>r</var>, ¿qué vale <span class="math">(<var>N</var> − <var>a</var>)<sup><var>r</var></sup></span> y qué orden tiene <span class="math"><var>N</var> − <var>a</var></span>?</li>
-          <li>Prueba <span class="math"><var>N</var> = 1003 = 17 × 59</span>, <span class="math"><var>a</var> = 2</span>. ¿Cuántos picos hay? ¿Por qué la fuerza bruta es instantánea aquí y no lo sería para un <var>N</var> de 2 048 bits?</li>
+          <li>Con \(N = 15\), \(a = 7\), haz 100 medidas. ¿Qué fracción no sirve? Compárala con la teoría (1/4).</li>
+          <li>Con \(N = 21\), \(a = 2\), haz 1 000 medidas. ¿Qué fracción recupera \(r = 6\)? Debería rondar el 83 %. ¿Por qué no es 5/6?</li>
+          <li>Para \(N = 143\), compara en «Todas las bases» el número de bases con \(r\) impar y con \(a^{r/2} \equiv -1\). Pista: si \(a\) tiene orden impar \(r\), ¿qué vale \((N - a)^r\) y qué orden tiene \(N - a\)?</li>
+          <li>Prueba \(N = 1003 = 17 \times 59\), \(a = 2\). ¿Cuántos picos hay? ¿Por qué la fuerza bruta es instantánea aquí y no lo sería para un \(N\) de 2 048 bits?</li>
         </ol>
 
         <h2 id="referencias">Referencias</h2>
@@ -183,7 +183,7 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Florina Almenares, Francisco Javier Blanco Romero y Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
+      <p><strong>Curso de Criptografía Post-Cuántica</strong> · Daniel Sobral Blanco · Actualizado en septiembre de 2026</p>
       <div class="footer-links">
         <a href="../glosario.html">Glosario</a>
         <a href="../recursos/index.html">Recursos</a>

@@ -24,8 +24,8 @@
   --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   --header-h: 64px;
-  --measure: 74ch;
   --wide: 1180px;
+  --measure: var(--wide);
   --frame: 1760px;
   --radius: 4px;
 }
@@ -61,6 +61,9 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 3rem 0; }
 .header-search input { width: 11rem; height: 2.1rem; padding: 0 .75rem; border: 1px solid #2b3742; border-radius: var(--radius); background: #101c27; color: #eeeae2; font-size: .85rem; }
 .header-search input::placeholder { color: #7d8894; }
 .header-search input:focus { outline: none; border-color: var(--signal-on-ink); }
+.header-home { display: inline-flex; align-items: center; gap: .45rem; height: 2.1rem; padding: 0 .85rem; border: 1px solid #2b3742; border-radius: var(--radius); color: #eeeae2; font-size: .82rem; text-decoration: none; white-space: nowrap; }
+.header-home:hover { border-color: var(--signal-on-ink); color: var(--signal-on-ink); text-decoration: none; }
+.header-home .dot { width: .45rem; height: .45rem; border-radius: 50%; background: var(--signal-on-ink); }
 .menu-toggle { display: none; background: none; border: 1px solid #2b3742; border-radius: var(--radius); color: #eeeae2; padding: .35rem .75rem; font-size: .85rem; cursor: pointer; }
 
 /* ---------- Layout: course nav · content · on-this-page ---------- */
@@ -90,10 +93,8 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 3rem 0; }
 .content { min-width: 0; padding-block: 2.5rem 5rem; }
 .content > * { max-width: var(--measure); }
 .content > .prose, .content > .pager, .content > .page-head { max-width: var(--wide); }
-.page-head > .lede { max-width: var(--measure); }
 .content > .full, .content > .card-grid, .content > .hero-home, .content > .section-intro + .card-grid, .layout.wide .content > * { max-width: none; }
-.prose > * { max-width: var(--measure); }
-.prose > :is(.table-wrap, figure, .demo, pre, .equation, .grid-2, .key-points, .card-grid, section, .timeline) { max-width: var(--wide); }
+.prose > * { max-width: var(--wide); }
 
 /* ---------- Page head ---------- */
 .breadcrumb { font-size: .78rem; color: var(--muted); margin-bottom: 2rem; }

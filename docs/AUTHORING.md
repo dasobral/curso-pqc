@@ -38,9 +38,9 @@ del elemento en `course-data.js`. Sustituye `{R}` por la misma ruta relativa. Ma
   <title>Tema 1 · Criptografía moderna y la amenaza cuántica — Curso PQC</title>
   <meta name="description" content="Una frase que resuma la página.">
   <link rel="icon" href="{R}assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{R}css/styles.css?v=2026092402">
-  <script src="{R}js/course-data.js?v=2026092402" defer></script>
-  <script src="{R}js/course.js?v=2026092402" defer></script>
+  <link rel="stylesheet" href="{R}css/styles.css?v=2026092403">
+  <script src="{R}js/course-data.js?v=2026092403" defer></script>
+  <script src="{R}js/course.js?v=2026092403" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -62,6 +62,7 @@ del elemento en `course-data.js`. Sustituye `{R}` por la misma ruta relativa. Ma
         <label class="visually-hidden" for="q">Buscar en el curso</label>
         <input id="q" name="q" type="search" placeholder="Buscar…" autocomplete="off">
       </form>
+      <a class="header-home" href="https://dasobral.github.io/" title="Volver a dasobral.github.io"><span class="dot" aria-hidden="true"></span>Portfolio</a>
       <button class="menu-toggle" type="button" aria-expanded="false">Menú</button>
     </div>
   </header>

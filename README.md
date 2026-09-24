@@ -1,6 +1,6 @@
-# curso-pqc-santander
+# curso-pqc
 Introducción a la Criptografía Post-Cuántica
 
 Sitio web:
 
-[curso-pqc-santander](https://dasobral.github.io/curso-pqc-santander/index.html)
+[curso-pqc](https://dasobral.github.io/curso-pqc/)
